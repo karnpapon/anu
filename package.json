@@ -1,0 +1,21 @@
+{
+  "name": "seeq-custom-sequencer",
+  "version": "1.0.0",
+  "description": "custom sequencer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "",
+  "keywords": [
+    "Electron"
+  ],
+  "author": "karnpapon",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^3.0.7"
+  },
+  "dependencies": {
+    "axios": "^0.18.0"
+  }
+}

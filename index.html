@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <link rel="stylesheet" href="src/links/main.css">
+   <link rel="stylesheet" href="src/links/fonts.css">
+
+   <script src="./src/scripts/seq.js"></script>
+   <script src="./src/scripts/karnpapon.js"></script>
+    <meta charset="UTF-8">
+    <title>Letter Sequencer</title>
+  </head>
+  <body>
+    <!-- <div id="container">
+      <h1>Electron Boilerplate</h1>
+      <p>-----------------</p>
+      <h2>with hot-reload</h2>
+      <p>
+        We are using Node.js <script>document.write(process.versions.node)</script><br>
+        Chromium <script>document.write(process.versions.chrome)</script><br>
+        and Electron <script>document.write(process.versions.electron)</script>.
+      </p>
+    </div>   -->
+    <script>
+        const {dialog,app} = require('electron').remote;
+        const fs = require('fs');
+        const axios = require('axios');
+
+        var karnpapon = new Karnpapon();
+        karnpapon.start();
+    </script>
+  </body>
+</html>

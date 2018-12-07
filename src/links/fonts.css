@@ -1,0 +1,35 @@
+/* input mono */
+@font-face {
+    font-family: 'input_mono_regular';
+    src: url('../media/fonts/InputMono-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'input_mono_medium';
+    src: url('../media/fonts/InputMono-Medium.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'input_mono_bold';
+    src: url('../media/fonts/InputMono-Black.ttf') format('truetype');
+}
+
+/* input sans condense */
+@font-face {
+    font-family: 'input_sans_condensed_regular';
+    src: url('../media/fonts/InputSansCondensed-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'input_sans_condensed_light';
+    src: url('../media/fonts/InputSansCondensed-Thin.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'input_sans_condensed_bold';
+    src: url('../media/fonts/InputSansCondensed-Black.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
