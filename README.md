@@ -2,7 +2,7 @@
 
 ```bash
 # Go into the repository
-cd electron-quick-start
+cd Seeq
 # Install dependencies
 npm install
 # Run the app
