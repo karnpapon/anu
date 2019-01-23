@@ -10,10 +10,11 @@
   "keywords": [
     "Electron"
   ],
-  "author": "karnpapon",
+  "author": "seeq",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^3.0.7"
+    "electron": "^3.0.7",
+    "mark.js": "^8.11.1"
   },
   "dependencies": {
     "axios": "^0.18.0"

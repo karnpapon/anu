@@ -1,0 +1,25 @@
+body {
+  padding: 30px;
+  background-color: white !important;
+  color: black !important;
+}
+
+div.header{ margin-bottom: 15px; }
+
+div button{
+  background-color: white !important;
+  border: 1px solid !important;
+}
+
+div button:focus{ outline: none;}
+div button:hover{ cursor: pointer; background-color: black !important; color: white;}
+
+div input{
+  background-color: white !important;
+  border: 1px solid !important; 
+}
+
+mark { background: yellow;}
+mark.current { background: green; }
+div input:focus{ outline: none;}
+.content {margin-top: 50px;}
