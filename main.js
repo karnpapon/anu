@@ -1,5 +1,8 @@
 const {app, BrowserWindow} = require('electron')
 require('electron-reload')(__dirname);
+const Server = require('./server');
+const options = require('./options');
+const server = new Server(options);
 
 let mainWindow
 
@@ -16,13 +19,20 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', function (){
+  createWindow()
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  server.start();
+  server.hello();
 })
+
+app.on('window-all-closed', () => {
+  server.stop();
+
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
 
 app.on('activate', function () {
   if (mainWindow === null) {

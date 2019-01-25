@@ -83,8 +83,13 @@
     <script>
         const {dialog,app} = require('electron').remote;
         const fs = require('fs');
+        const OSC = require('osc-js')
         const axios = require('axios');
 
+        // const config = { udpClient: { port: 9129 } }
+        const options = { send: { port: 57120 } }
+        const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
+        var message = new OSC.Message('/ding');
         var seeq = new Seeq();
         seeq.start();
     </script>

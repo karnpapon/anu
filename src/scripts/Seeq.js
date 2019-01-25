@@ -11,22 +11,7 @@ function Seeq(){
   this.offsetTop = 50
   this.currentIndex = 0
 
-  // this.container = document.createElement("div")
-  // this.wrapper = document.createElement("div")
-  // this.container.className = "header"
-  // this.wrapper.className = "content"
-
-  // document.body.appendChild(this.container)
-  // document.body.appendChild(this.container)
-
   this.start = function(){
-    // this.container.innerHTML += `
-    // <input type=\"search\" placeholder=\"Lorem\">
-    // <button data-search="next">&darr;</button>
-    //   <button data-search="prev">&uarr;</button>
-    //   <!-- <button id="clear">✖</button> -->
-    // </input>
-    // `
     this.searchInput.addEventListener("input", function() {
       var searchVal = this.value;
       seeq.content.unmark({
@@ -48,14 +33,16 @@ function Seeq(){
   this.jump = function(){
     if (seeq.results.length) {
       var position, current
+      var nextEl = seeq.currentIndex + 1
+      var prevEl = seeq.currentIndex - 1
       current = seeq.results[seeq.currentIndex];
       current.classList.add(this.currentClass);
-      console.log("current length", current)
-      if (current.length) {
-        current.classList.remove(this.currentClass);
-        position = current.offsetTop() - offsetTop;
-        window.scrollTo(0, position);
+      if ( seeq.results[prevEl].className == this.currentClass){
+        seeq.results[prevEl].classList.remove(this.currentClass);
+        // position = seeq.results[seeq.currentIndex].offsetTop- this.offsetTop;
+        // window.scrollTo(0, position);
       }
+      this.sendOsc() 
     }
   }
 
@@ -71,6 +58,10 @@ function Seeq(){
      }
     seeq.jump();
   })
+
+  this.sendOsc = function(){
+    osc.send(message)
+  }
 
   // this.handleInputChange = function(e){
   //   seeq.input = e.target.value
