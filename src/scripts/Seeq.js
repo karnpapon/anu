@@ -33,14 +33,28 @@ function Seeq(){
   this.jump = function(){
     if (seeq.results.length) {
       var position, current
-      var nextEl = seeq.currentIndex + 1
-      var prevEl = seeq.currentIndex - 1
+      var nextEl, prevEl
+
+      // handle outbound wrapped cursor.
+      if(seeq.currentIndex == seeq.results.length - 1){
+        nextEl = 0
+        prevEl = seeq.results.length - 2
+      } else if ( seeq.currentIndex == 0) {
+        nextEl = seeq.currentIndex + 1  
+        prevEl = seeq.results.length - 1
+      } else {
+        nextEl = seeq.currentIndex + 1
+        prevEl = seeq.currentIndex - 1
+      }
       current = seeq.results[seeq.currentIndex];
       current.classList.add(this.currentClass);
+
       if ( seeq.results[prevEl].className == this.currentClass){
         seeq.results[prevEl].classList.remove(this.currentClass);
         // position = seeq.results[seeq.currentIndex].offsetTop- this.offsetTop;
         // window.scrollTo(0, position);
+      } else if (seeq.results[nextEl].className == this.currentClass ){
+        seeq.results[nextEl].classList.remove(this.currentClass);
       }
       this.sendOsc() 
     }
@@ -50,12 +64,19 @@ function Seeq(){
     if(seeq.results.length){
       seeq.currentIndex += 1
     }
-     if (seeq.currentIndex < 0) {
-       seeq.currentIndex = seeq.results.length - 1;
-     }
-     if (seeq.currentIndex > seeq.results.length - 1) {
+     if (seeq.currentIndex > seeq.results.length - 1) { // reset cursor to top.
        seeq.currentIndex = 0;
      }
+    seeq.jump();
+  })
+
+  this.prevBtn.addEventListener("click", function(){
+    if(seeq.results.length){
+      seeq.currentIndex -= 1
+    }
+    if (seeq.currentIndex < 0) {
+      seeq.currentIndex = seeq.results.length - 1; // prev btn case to get outbound top to show at to bottom.
+    }
     seeq.jump();
   })
 
