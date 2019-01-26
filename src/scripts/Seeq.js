@@ -7,6 +7,9 @@ function Seeq(){
   this.inputFetch = document.querySelector("input[data-fetch='fetch']")
   this.getText = document.querySelector("button[data-gettext='gettext']")
 
+  this.url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles="
+  this.urlEnd = "&redirects=1"
+
   this.content = new Mark( document.querySelector("div.content") )
   this.results = []
   this.currentClass = "current"
@@ -94,13 +97,14 @@ function Seeq(){
   })
 
   this.sendOsc = function(){
+    var message = new OSC.Message('/ding', Math.random());  // re-render to get new value everytime.
     osc.send(message)
   }
 
   this.getData = function () {
     axios({
         method: "get",
-        url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=" + seeq.fetchSearchInput + "&redirects=1",
+        url: seeq.url + seeq.fetchSearchInput + seeq.urlEnd,
         responseType: "json"}).then( function(response){
           var { pages } = response.data.query
           var extract

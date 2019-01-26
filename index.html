@@ -23,8 +23,8 @@
       <div class="header">
         find:
         <input type="search" placeholder="Lorem">
-        <button data-search="next">&darr;</button>
-        <button data-search="prev">&uarr;</button>
+        <button data-search="next">next</button>
+        <button data-search="prev">prev</button>
         <!-- <button id="clear">✖</button> -->
       </div>
       
@@ -40,7 +40,6 @@
 
         const options = { send: { port: 57120 } }
         const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
-        var message = new OSC.Message('/ding');
         var seeq = new Seeq();
         seeq.start();
     </script>
