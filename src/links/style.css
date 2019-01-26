@@ -3,7 +3,9 @@ body {
   background-color: white !important;
   color: black !important;
 }
-
+body p{ font-family: 'input_mono_regular'; font-size:12px}
+body input{ font-family: 'input_mono_regular'; font-size:12px}
+body .header{ font-family: 'input_mono_regular'; font-size:12px}
 div.header{ margin-bottom: 15px; }
 
 div button{
@@ -17,6 +19,12 @@ button:active{
   transition: 0s linear;
 }
 
+.header-wrapper{ 
+  display: flex; 
+  height: 100%;
+  justify-content: space-between;
+}
+
 div button:focus{ outline: none;}
 div button:hover{ cursor: pointer;}
 
@@ -25,7 +33,7 @@ div input{
   border: 1px solid !important; 
 }
 
-mark { background: yellow;}
+mark { background: yellow; padding: unset !important;}
 mark.current { background: rgb(164, 171, 255) }
 div input:focus{ outline: none;}
 .content {margin-top: 50px;}

@@ -8,85 +8,36 @@
    <link rel="stylesheet" href="https://code.jquery.com/jquery-latest.min.js"/>
    <script src="node_modules/mark.js/dist/mark.min.js"></script>
    <script src="./src/scripts/sequencer.js"></script>
+   <script src="./src/scripts/init.js"></script>
    <script src="./src/scripts/Seeq.js"></script>
     <meta charset="UTF-8">
     <title>Letter Sequencer</title>
   </head>
   <body>
-  <div class="header">
-      Search:
-      <input type="search" placeholder="Lorem">
-      <button data-search="next">&darr;</button>
-      <button data-search="prev">&uarr;</button>
-      <!-- <button id="clear">✖</button> -->
+    <div class="header-wrapper">
+      <div class="header">
+        search:
+        <input data-fetch="fetch" placeholder="get text here..">
+        <button data-gettext="gettext"> Enter </button>
+      </div>
+      <div class="header">
+        find:
+        <input type="search" placeholder="Lorem">
+        <button data-search="next">&darr;</button>
+        <button data-search="prev">&uarr;</button>
+        <!-- <button id="clear">✖</button> -->
+      </div>
+      
     </div>
-    
-    <div class="content">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu ullamcorper orci, eget porttitor justo. Aliquam id sollicitudin elit. Nulla in sodales ipsum. Donec vulputate venenatis magna. Vestibulum sit amet leo lacinia, cursus lectus in, gravida
-        metus. In ultricies sed tortor non pellentesque. Mauris quis tempor neque. Donec nec sagittis magna. Integer fringilla posuere metus eu mollis. Ut ac porta metus. Duis sed lacinia metus. Nunc malesuada iaculis risus vitae bibendum.
-      </p>
-    
-      <p>
-        Vivamus posuere condimentum leo eu hendrerit. Pellentesque placerat iaculis ante a rhoncus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum eu ipsum ac magna congue congue sed maximus tortor. Vivamus id odio elementum, vehicula nunc
-        ut, efficitur felis. Nullam hendrerit velit libero, gravida porttitor tortor ullamcorper eu. Ut ut lectus non enim sagittis aliquam quis in orci. Donec a arcu eu eros cursus cursus. Donec dictum dignissim tellus, dictum egestas purus pellentesque
-        sed.
-      </p>
-    
-      <p>
-        Vestibulum eu ornare urna, nec aliquam lectus. Phasellus eu odio sapien. Vestibulum eu turpis at lorem sagittis posuere. Quisque tellus nunc, facilisis id lacus nec, ornare rhoncus elit. Vivamus vehicula eros a condimentum venenatis. Sed orci massa, pulvinar
-        sed erat nec, pellentesque suscipit leo. Mauris lobortis tincidunt nunc, sed tempus ex congue vitae. Curabitur lobortis mauris in ex malesuada, quis vehicula neque lobortis. Curabitur aliquam porttitor tellus eget tempus. Donec maximus tempus tristique.
-        Aliquam tincidunt odio dictum, scelerisque ipsum ut, facilisis quam. Ut nec malesuada neque.
-      </p>
-    
-      <p>
-        Proin felis eros, tincidunt vitae scelerisque sit amet, dictum nec ante. Praesent tincidunt ac lacus nec elementum. Vivamus sed gravida purus, sed efficitur tortor. Nulla non molestie arcu. Sed tincidunt consectetur ligula sed lobortis. In non sapien
-        ac urna lacinia placerat sed nec lacus. Aenean lobortis tincidunt sapien a hendrerit. Quisque eu turpis accumsan nisl blandit efficitur.
-      </p>
-    
-      <p>
-        Nam sit amet pellentesque est. Sed ligula turpis, ultricies sit amet mattis elementum, tristique non risus. Phasellus at congue ex. Proin nisi leo, vestibulum vitae accumsan in, imperdiet id dolor. Quisque at blandit nisl. Class aptent taciti sociosqu
-        ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc eget metus augue. Morbi faucibus venenatis sapien, fermentum porttitor felis pharetra a. Nam interdum nibh tortor, quis maximus turpis blandit eget. Praesent in feugiat neque, sed
-        vulputate quam. Curabitur erat quam, efficitur et congue quis, iaculis euismod libero. Quisque odio sapien, efficitur non mauris ac, tincidunt condimentum turpis.
-      </p>
-    
-      <p>
-        Maecenas dapibus aliquam vehicula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Praesent convallis viverra leo quis porta. Sed sit amet porttitor quam. Fusce nec risus non augue consectetur ultricies. Aliquam
-        elit lorem, tincidunt ac dolor vel, vulputate consectetur ex. In hac habitasse platea dictumst. Sed eget nisl aliquam, cursus odio nec, commodo lorem. Nulla mollis tortor eu odio rutrum vulputate. Donec condimentum molestie mauris, nec sodales nisi
-        volutpat aliquam. Nulla mollis libero sed nibh volutpat, ac mollis elit tincidunt. Vestibulum cursus velit vitae felis aliquam ultricies. Donec vehicula dictum feugiat. Vestibulum volutpat sollicitudin sagittis.
-      </p>
-    
-      <p>
-        Aliquam consequat, diam eu ullamcorper porta, diam eros rhoncus turpis, in rutrum sem diam a risus. Duis lacinia velit sed ante feugiat venenatis. Aenean orci leo, dictum non finibus nec, dignissim quis eros. Nullam sit amet orci ac purus blandit commodo
-        sit amet eget neque. Sed pellentesque dictum tortor. Ut dui erat, tempus in odio in, aliquet convallis mi. Morbi efficitur justo ante, quis ultricies turpis suscipit ac. Sed sit amet nisl rutrum, laoreet mauris id, ullamcorper orci. In facilisis nisi
-        eget fringilla imperdiet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi ut ultricies dui. Pellentesque elit urna, imperdiet sed congue eget, hendrerit sed urna.
-      </p>
-    
-      <p>
-        Proin vel hendrerit nulla. Vivamus vehicula nibh nec lorem blandit, quis aliquam ipsum suscipit. Nulla at vestibulum felis. Aenean ac nibh eget enim molestie pulvinar. Duis nulla justo, tristique id nulla nec, faucibus imperdiet arcu. In vel pretium dui,
-        at lobortis sapien. Phasellus ullamcorper id enim eget dictum. Ut imperdiet rutrum est a rutrum. Curabitur eget dignissim tellus. Fusce tempus leo nisl, vitae auctor diam feugiat sit amet. Vestibulum accumsan justo eget odio imperdiet, consectetur
-        efficitur ex dapibus.
-      </p>
-    
-      <p>
-        Sed pharetra odio a nibh pharetra rutrum. Suspendisse ut ullamcorper lectus. Donec ipsum mauris, congue et lobortis sit amet, ultricies ac tellus. Sed nisi risus, condimentum at varius quis, condimentum ac velit. In condimentum, magna sed ornare eleifend,
-        dolor nulla mollis felis, quis feugiat elit turpis non ipsum. Etiam aliquam est imperdiet dolor rutrum, at varius leo sodales. Morbi quis iaculis metus.
-      </p>
-    
-      <p>
-        Maecenas auctor nec ligula ac luctus. Nam sit amet euismod mauris. Donec et diam sit amet eros efficitur tempor. Mauris non erat sit amet nunc interdum pulvinar. Sed luctus hendrerit justo eget pulvinar. Cras non arcu sed ligula faucibus pulvinar. Sed
-        egestas risus nisl. Duis quis arcu tempus, cursus erat ac, gravida enim. Cras et condimentum ante. Nullam eleifend egestas velit, quis semper est imperdiet non. Donec quis purus varius, placerat mi et, dictum lorem. Sed quis finibus nisi, vitae molestie
-        metus. Donec lobortis eros quis vestibulum vulputate.
-      </p>
-    </div>
-    
+    <script>
+      const initDocument = new InitDoc()
+    </script>
     <script>
         const {dialog,app} = require('electron').remote;
         const fs = require('fs');
         const OSC = require('osc-js')
         const axios = require('axios');
 
-        // const config = { udpClient: { port: 9129 } }
         const options = { send: { port: 57120 } }
         const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
         var message = new OSC.Message('/ding');

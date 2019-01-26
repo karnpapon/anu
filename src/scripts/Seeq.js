@@ -4,12 +4,16 @@ function Seeq(){
   this.clearBtn = document.querySelector("button[data-search='clear']")
   this.prevBtn = document.querySelector("button[data-search='prev']")
   this.nextBtn = document.querySelector("button[data-search='next']")
+  this.inputFetch = document.querySelector("input[data-fetch='fetch']")
+  this.getText = document.querySelector("button[data-gettext='gettext']")
 
   this.content = new Mark( document.querySelector("div.content") )
   this.results = []
   this.currentClass = "current"
   this.offsetTop = 50
   this.currentIndex = 0
+  this.fetchSearchInput = ""
+  this.txt = ""
 
   this.start = function(){
     this.searchInput.addEventListener("input", function() {
@@ -80,19 +84,34 @@ function Seeq(){
     seeq.jump();
   })
 
+  this.getText.addEventListener("click",function(){ 
+    initDocument.clear()
+    seeq.getData()
+  })
+
+  this.inputFetch.addEventListener("input", function(){
+    seeq.fetchSearchInput = this.value;
+  })
+
   this.sendOsc = function(){
     osc.send(message)
   }
 
-  // this.handleInputChange = function(e){
-  //   seeq.input = e.target.value
-  // }
-
-  // this.fetchData = function(){
-  //   axios.get(`https://api.github.com/users/${seeq.input}`).then(
-  //     (resolve, reject) => {
-  //       document.getElementById('img-placeholder').src = resolve.data.avatar_url
-  //     }
-  //   )
-  // }
+  this.getData = function () {
+    axios({
+        method: "get",
+        url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=" + seeq.fetchSearchInput + "&redirects=1",
+        responseType: "json"}).then( function(response){
+          var { pages } = response.data.query
+          var extract
+          Object.keys(pages).map(function(field){
+            extract = pages[ field ]
+          })
+          if(response){
+            initDocument.update(extract.extract)
+          } else {
+            initDocument.update("no result found..")
+          }
+        })
+  }
 }
