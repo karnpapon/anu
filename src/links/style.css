@@ -10,11 +10,12 @@ div.header{ margin-bottom: 15px; }
 
 div button{
   border: 1px solid !important;
-  transition: 0.5s;
+  transition: 0.1s;
 }
 
 button:active{
-  background-color: rgb(164, 171, 255);
+  background-color: black;
+  color: white;
   border: 5px solid;
   transition: 0s linear;
 }
@@ -26,14 +27,32 @@ button:active{
 }
 
 div button:focus{ outline: none;}
-div button:hover{ cursor: pointer;}
+div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
+.control-wrapper{ display: flex; justify-content: space-between;}
+.control-info{ 
+  font-size: 10px;     
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+}
+.control-info p{ margin: 0}
+.counter{ display: flex;}
+
+
+div button.control-btn:hover{ border:1px solid black;}
 
 div input{
   background-color: white !important;
   border: 1px solid !important; 
 }
 
+span.current-active{ background: black; color: white;}
+
+/* sq{background: black;} */
+
 mark { background: yellow; padding: unset !important;}
 mark.current { background: rgb(164, 171, 255) }
+/* mark { border: 1px solid; background: white !important ; padding: unset !important;}
+mark.current { color: white; background: black !important; } */
 div input:focus{ outline: none;}
-.content {margin-top: 50px;}
+.content {margin-top: 30px;}

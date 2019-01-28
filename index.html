@@ -16,19 +16,33 @@
   <body>
     <div class="header-wrapper">
       <div class="header">
-        search:
-        <input data-fetch="fetch" placeholder="get text here..">
+        seeq:
+        <input data-fetch="fetch" placeholder="seeking for text..">
         <button data-gettext="gettext"> Enter </button>
       </div>
       <div class="header">
         find:
-        <input type="search" placeholder="Lorem">
+        <input type="search" placeholder="">
         <button data-search="next">next</button>
         <button data-search="prev">prev</button>
         <!-- <button id="clear">✖</button> -->
       </div>
-      
     </div>
+    <div class="control-wrapper">
+      <div class="control-btn">
+        <button data-ctrl="play">⊛</button>
+        <button data-ctrl="stop">⊘</button>
+      </div>
+      <div class="control-info">
+        <p>120 bpm</p>
+        <div class="counter">
+          <p data-ctrl="current">1</p>
+          /
+          <p data-ctrl="total">99</p>
+        </div>
+      </div>
+      </div>
+    <div>-------------------------------------------------------------------------------------------------------------------------</div>
     <script>
       const initDocument = new InitDoc()
     </script>

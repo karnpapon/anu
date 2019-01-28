@@ -14,7 +14,6 @@ function InitDoc(  ){
       }
       this.el.appendChild(initDocument.text)
       document.body.appendChild(this.el)
-      console.log("rerender")
     }
 
     this.clear = function(){
