@@ -120,12 +120,15 @@ function Seeq(){
             extract = pages[ field ]
           })
           if(response){
-            initDocument.update(extract.extract)
+            if (extract.extract){
+              initDocument.update(extract.extract)
+            } else {
+              initDocument.update("sorry, please try again..")
+            }
           } else {
             initDocument.update("no result found..")
           }
         })
-        console.log("initDocument.text.innerHTML.charAt( seeq.seq.currentIndex)", initDocument.text.innerHTML)
   }
 
   this.play = function(){
