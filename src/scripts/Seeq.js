@@ -136,7 +136,7 @@ function Seeq(){
   }
 
   this.stop = function(){
-    this.seq.stop()
+    this.seq.increment()
   }
 
   this.playBtn.addEventListener("click", function(){
