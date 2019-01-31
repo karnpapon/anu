@@ -24,20 +24,20 @@ function Sequencer(id, overlayID){
   this.paragraphCursorPosition = 0
 
   this.play = function(){
+    console.log("innerText", initDocument.el.innerText)
+    console.log("innerHTML", initDocument.el.innerHTML)
     var output = ""
     var self = seeq.seq
-    this.position %= this.size; 
-    var text = initDocument.text.innerHTML;
-    // var paragraphCursorPosition = self.position-self.previousParagraphLength;
+    var text = initDocument.text.innerText;
 
 		output = "<p>" + text.substr(0, self.paragraphCursorPosition) +
 		"<span class=\"current-active\">" +
 		text.substr(self.paragraphCursorPosition, 1) +
 		"</span>" +
     text.substr(self.paragraphCursorPosition+1) + "</p>";
-    
-    console.log("self", self.paragraphCursorPosition)
 
+    console.log("output", output)
+    
     initDocument.el.innerHTML = output
     self.currentNumber.innerHTML = self.paragraphCursorPosition
     self.totalNumber.innerHTML = initDocument.el.innerHTML.length

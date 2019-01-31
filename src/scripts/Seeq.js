@@ -8,6 +8,7 @@ function Seeq(){
   this.getText = document.querySelector("button[data-gettext='gettext']")
   this.playBtn = document.querySelector("button[data-ctrl='play']")
   this.stopBtn = document.querySelector("button[data-ctrl='stop']")
+  this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
 
   this.url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles="
   this.urlEnd = "&redirects=1"
@@ -20,7 +21,8 @@ function Seeq(){
   this.currentIndex = 0
   this.fetchSearchInput = ""
   this.txt = ""
-
+  this.isModeChanged = false
+  this.extract = "" // text buffers
 
   this.seq = new Sequencer()
 
@@ -115,13 +117,13 @@ function Seeq(){
         url: seeq.url + seeq.fetchSearchInput + seeq.urlEnd,
         responseType: "json"}).then( function(response){
           var { pages } = response.data.query
-          var extract
+          seeq.extract
           Object.keys(pages).map(function(field){
-            extract = pages[ field ]
+            seeq.extract = pages[ field ]
           })
           if(response){
-            if (extract.extract){
-              initDocument.update(extract.extract)
+            if (seeq.extract.extract){
+              initDocument.update(seeq.extract.extract)
             } else {
               initDocument.update("sorry, please try again..")
             }
@@ -147,5 +149,32 @@ function Seeq(){
   this.stopBtn.addEventListener("click", function(){
     seeq.isPlaying = false
     seeq.stop()
+  })
+
+  this.notationMode.addEventListener("click", function(){
+    var self = seeq
+    self.isModeChanged = !self.isModeChanged
+
+    // turn matched letter/words into symbols
+    var notation = initDocument.text.innerText.replace(/[d]/g, "+")
+    console.log("nonation", notation.length)
+
+    // turn letter into "-" except symbol
+    var switchText = notation.replace(/[^+]/g, "-")
+    console.log("switchtext", switchText.length)
+    
+    // actual contents
+    var fetchText = self.extract.extract
+    console.log("self.extract.extract", fetchText.length)
+
+    if( self.isModeChanged ){
+      initDocument.clear() 
+      initDocument.update(switchText) 
+    } else {
+      initDocument.clear() 
+      initDocument.update(fetchText) 
+    }
+   
+
   })
 }

@@ -8,9 +8,13 @@ function InitDoc(  ){
     this.update = function(txt){
       initDocument.dataText = txt
       if(initDocument.dataText && initDocument.dataText.length){
-        var trimmedText = initDocument.dataText.substring(0, 1700)
-        trimmedText += `...`
-        initDocument.text.innerHTML += trimmedText
+        if( initDocument.dataText.length > 1700 ){
+          var trimmedText = initDocument.dataText.substring(0, 1700)
+          trimmedText += `...`
+          initDocument.text.innerHTML += trimmedText
+        } else {
+          initDocument.text.innerHTML += initDocument.dataText 
+        }
       }
       this.el.appendChild(initDocument.text)
       document.body.appendChild(this.el)
