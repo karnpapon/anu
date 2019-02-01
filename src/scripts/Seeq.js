@@ -1,6 +1,7 @@
 function Seeq(){
   
   this.searchInput = document.querySelector("input[type='search']")
+  this.searchRegExp = document.querySelector("input[type='search-regex']")
   this.clearBtn = document.querySelector("button[data-search='clear']")
   this.prevBtn = document.querySelector("button[data-search='prev']")
   this.nextBtn = document.querySelector("button[data-search='next']")
@@ -23,6 +24,8 @@ function Seeq(){
   this.txt = ""
   this.isModeChanged = false
   this.extract = "" // text buffers
+  this.searchValue = ""
+  this.searchValueRegExp = ""
 
   this.seq = new Sequencer()
 
@@ -30,10 +33,10 @@ function Seeq(){
 
   this.start = function(){
     this.searchInput.addEventListener("input", function() {
-      var searchVal = this.value;
+      seeq.searchVal = this.value;
       seeq.content.unmark({
         done: function( ) {
-          seeq.content.mark(searchVal, {
+          seeq.content.mark(seeq.searchVal, {
             separateWordSearch: true,
             done: function() {
               seeq.results = document.getElementsByTagName("mark");
@@ -45,6 +48,22 @@ function Seeq(){
       });
     });
   }
+
+  this.searchRegExp.addEventListener("input", function() {
+    seeq.searchValueRegExp = this.value;
+    var targetRegExp = new RegExp(seeq.searchValueRegExp, "gi")
+    seeq.content.unmark({
+      done: function( ) {
+        seeq.content.markRegExp(targetRegExp, {
+          done: function() {
+            seeq.results = document.getElementsByTagName("mark");
+            seeq.currentIndex = 0;
+            seeq.jump();
+          }
+        });
+      }
+    });
+  });
 
 
   this.jump = function(){
@@ -151,30 +170,58 @@ function Seeq(){
     seeq.stop()
   })
 
+  this.updateMark = function(value){
+    seeq.content.unmark({
+      done: function( ) {
+        seeq.content.mark(value, {
+          separateWordSearch: true,
+          done: function() {
+            seeq.results = document.getElementsByTagName("mark");
+            seeq.currentIndex = 0;
+            seeq.jump();
+          }
+        });
+      }
+    });
+  }
+
   this.notationMode.addEventListener("click", function(){
     var self = seeq
+    var target = new RegExp("[" + seeq.searchVal + "]", "gi")
+    var target2 = new RegExp("[" + seeq.searchVal + "]", "i")
+    var targetSpace = new RegExp("\\n" + seeq.searchVal, "g")
     self.isModeChanged = !self.isModeChanged
-
-    // turn matched letter/words into symbols
-    var notation = initDocument.text.innerText.replace(/[d]/g, "+")
-    console.log("nonation", notation.length)
-
-    // turn letter into "-" except symbol
-    var switchText = notation.replace(/[^+]/g, "-")
-    console.log("switchtext", switchText.length)
+    var updateMark = self.searchVal
+    // var ps = document.getElementsByTagName('p');
+    // var p = ps[3];
+    // var lines = lineWrapDetector.getLines(p);
+    // var lineRow = [] 
+    // var lineCol = []
+    // var row = lines.length
     
+    // for(var i=0; i< lines.length; i++){
+    //   for(var j=0; j<lines[i].length; j++){
+    //     lineRow = initDocument.text.innerText.replace(target, "+")
+    //     // lineRow[i] += lines[i][j].innerText.replace(target, "+")
+    //   }
+
+    // }
+    
+    // turn matched letter/words into symbols
+    var notation = initDocument.text.innerText.replace(target, "+")
+    var switchText = notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
     // actual contents
     var fetchText = self.extract.extract
-    console.log("self.extract.extract", fetchText.length)
-
+    
+ 
     if( self.isModeChanged ){
       initDocument.clear() 
       initDocument.update(switchText) 
+      seeq.updateMark("+")
     } else {
       initDocument.clear() 
       initDocument.update(fetchText) 
+      seeq.updateMark(updateMark)
     }
-   
-
   })
 }

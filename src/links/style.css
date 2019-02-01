@@ -6,7 +6,7 @@ body {
 body p{ font-family: 'input_mono_regular'; font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
-div.header{ margin-bottom: 15px; }
+/* div.header{ margin-bottom: 15px; } */
 
 div button{
   border: 1px solid !important;
@@ -34,6 +34,7 @@ div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
   display: flex;
   align-items: flex-end;
   flex-direction: column;
+  justify-content: flex-end;
 }
 .control-info p{ margin: 0}
 .counter{ display: flex;}
@@ -50,9 +51,28 @@ span.current-active{ background: black; color: white;}
 
 /* sq{background: black;} */
 
-mark { background: yellow; padding: unset !important;}
-mark.current { background: rgb(164, 171, 255) }
+/* mark { background: yellow; padding: unset !important;} */
+mark { 
+  padding: unset !important;
+  -webkit-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+  -moz-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+  background: rgb(32, 255, 236) !important;
+}
+mark.current { 
+  background: rgb(255, 133, 62) !important;
+}
 /* mark { border: 1px solid; background: white !important ; padding: unset !important;}
 mark.current { color: white; background: black !important; } */
 div input:focus{ outline: none;}
 .content {margin-top: 30px;}
+.content p{white-space: pre-wrap;}
+/* .content p{
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+} */
