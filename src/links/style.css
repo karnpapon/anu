@@ -54,10 +54,11 @@ span.current-active{ background: black; color: white;}
 /* mark { background: yellow; padding: unset !important;} */
 mark { 
   padding: unset !important;
-  -webkit-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+  /* -webkit-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
   -moz-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
-  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
-  background: rgb(32, 255, 236) !important;
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
+  /* background: rgb(0, 60, 255) !important; */
+  /* color: white !important; */
 }
 mark.current { 
   background: rgb(255, 133, 62) !important;

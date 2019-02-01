@@ -25,7 +25,7 @@ function Seeq(){
   this.isModeChanged = false
   this.extract = "" // text buffers
   this.searchValue = ""
-  this.searchValueRegExp = ""
+  this.updateMarkType = "normal"
 
   this.seq = new Sequencer()
 
@@ -33,10 +33,10 @@ function Seeq(){
 
   this.start = function(){
     this.searchInput.addEventListener("input", function() {
-      seeq.searchVal = this.value;
+      seeq.searchValue = this.value;
       seeq.content.unmark({
         done: function( ) {
-          seeq.content.mark(seeq.searchVal, {
+          seeq.content.mark(seeq.searchValue, {
             separateWordSearch: true,
             done: function() {
               seeq.results = document.getElementsByTagName("mark");
@@ -46,12 +46,13 @@ function Seeq(){
           });
         }
       });
+      seeq.updateMarkType = "normal"
     });
   }
 
   this.searchRegExp.addEventListener("input", function() {
-    seeq.searchValueRegExp = this.value;
-    var targetRegExp = new RegExp(seeq.searchValueRegExp, "gi")
+    seeq.searchValue = this.value;
+    var targetRegExp = new RegExp(seeq.searchValue, "gi")
     seeq.content.unmark({
       done: function( ) {
         seeq.content.markRegExp(targetRegExp, {
@@ -63,6 +64,7 @@ function Seeq(){
         });
       }
     });
+    seeq.updateMarkType = "regex"
   });
 
 
@@ -84,9 +86,10 @@ function Seeq(){
       current = seeq.results[seeq.currentIndex];
       current.classList.add(this.currentClass);
 
-      if ( seeq.results[prevEl].className == this.currentClass){
+
+      if (seeq.results[prevEl] && seeq.results[prevEl].className == this.currentClass){
         seeq.results[prevEl].classList.remove(this.currentClass);
-      } else if (seeq.results[nextEl].className == this.currentClass ){
+      } else if (seeq.results[nextEl] && seeq.results[nextEl].className == this.currentClass ){
         seeq.results[nextEl].classList.remove(this.currentClass);
       }
       this.sendOsc() 
@@ -170,28 +173,42 @@ function Seeq(){
     seeq.stop()
   })
 
-  this.updateMark = function(value){
-    seeq.content.unmark({
-      done: function( ) {
-        seeq.content.mark(value, {
-          separateWordSearch: true,
-          done: function() {
-            seeq.results = document.getElementsByTagName("mark");
-            seeq.currentIndex = 0;
-            seeq.jump();
-          }
-        });
-      }
-    });
+  this.updateMark = function(value, markType){
+    if(markType == 'normal'){
+      seeq.content.unmark({
+        done: function( ) {
+          seeq.content.mark(value, {
+            separateWordSearch: true,
+            done: function() {
+              seeq.results = document.getElementsByTagName("mark");
+              seeq.currentIndex = 0;
+              seeq.jump();
+            }
+          });
+        }
+      });
+    } else if (markType == 'regex') {
+      var targetRegExp = new RegExp(value, "gi")
+      seeq.content.unmark({
+        done: function( ) {
+          seeq.content.markRegExp(targetRegExp, {
+            done: function() {
+              seeq.results = document.getElementsByTagName("mark");
+              seeq.currentIndex = 0;
+              seeq.jump();
+            }
+          });
+        }
+      });
+    }
   }
 
   this.notationMode.addEventListener("click", function(){
     var self = seeq
-    var target = new RegExp("[" + seeq.searchVal + "]", "gi")
-    var target2 = new RegExp("[" + seeq.searchVal + "]", "i")
-    var targetSpace = new RegExp("\\n" + seeq.searchVal, "g")
+    var target = new RegExp(seeq.searchValue, "gi")
+    var targetSpace = new RegExp("\\n" + seeq.searchValue, "g")
     self.isModeChanged = !self.isModeChanged
-    var updateMark = self.searchVal
+    var update = self.searchValue
     // var ps = document.getElementsByTagName('p');
     // var p = ps[3];
     // var lines = lineWrapDetector.getLines(p);
@@ -212,16 +229,23 @@ function Seeq(){
     var switchText = notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
     // actual contents
     var fetchText = self.extract.extract
-    
- 
+
+    console.log("self.isModeChage", self.isModeChanged)
+
+    // initDocument.clear() 
+    // initDocument.update(self.isModeChanged? switchText:fetchText) 
+    // seeq.updateMark(self.isModeChanged? "+":update, seeq.updateMarkType) 
+
     if( self.isModeChanged ){
+      seeq.updateMarkType = "normal"
       initDocument.clear() 
       initDocument.update(switchText) 
-      seeq.updateMark("+")
+      seeq.updateMark("+", seeq.updateMarkType)
     } else {
+      seeq.updateMarkType = "regex"
       initDocument.clear() 
       initDocument.update(fetchText) 
-      seeq.updateMark(updateMark)
+      seeq.updateMark(update, seeq.updateMarkType)
     }
   })
 }
