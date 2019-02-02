@@ -38,7 +38,23 @@ div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
 }
 .control-info p{ margin: 0}
 .counter{ display: flex;}
-
+app { 
+  display: flex; 
+  flex-direction: column;
+  width:30px; 
+  height:30px; 
+  padding:20px; 
+  color:black; 
+  overflow: hidden; 
+  z-index:20; 
+  margin: calc(50vh - 270px) auto; 
+  transition: background-color 150ms, opacity 350ms; 
+  max-width: 830px; 
+  height: 480px; 
+  position: relative; 
+  opacity:0; 
+  width:calc(100% - 60px); 
+}
 
 div button.control-btn:hover{ border:1px solid black;}
 
@@ -66,7 +82,10 @@ mark.current {
 /* mark { border: 1px solid; background: white !important ; padding: unset !important;}
 mark.current { color: white; background: black !important; } */
 div input:focus{ outline: none;}
-.content {margin-top: 30px;}
+.content {
+  /* margin-top: 30px; */
+  overflow: hidden;
+}
 .content p{white-space: pre-wrap;}
 /* .content p{
   word-break: break-all;

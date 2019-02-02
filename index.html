@@ -15,43 +15,6 @@
     <title>Letter Sequencer</title>
   </head>
   <body>
-    <div class="header-wrapper">
-      <div class="header">
-        <div class="title">seeq:</div>
-        <input data-fetch="fetch" placeholder="seeking for text..">
-        <button data-gettext="gettext"> Enter </button>
-      </div>
-      <div class="header">
-        <div class="title">find:</div>
-        <input type="search" placeholder="">
-        <button data-search="next">next</button>
-        <button data-search="prev">prev</button>
-        <!-- <button id="clear">✖</button> -->
-      </div>
-    </div>
-    <div class="control-wrapper">
-      <div class="header">
-        <div class="title">RegExp:</div>
-        <input type="search-regex" placeholder="">
-        <button data-ctrl="play">⊛</button>
-        <button data-ctrl="stop">⊘</button>
-        <button data-ctrl="notation-mode">⟳</button>
-      </div>
-      <!-- <div class="control-btn">
-      </div> -->
-      <div class="control-info">
-        <p>120 bpm</p>
-        <div class="counter">
-          <p data-ctrl="current">-</p>
-          /
-          <p data-ctrl="total">--</p>
-        </div>
-      </div>
-      </div>
-    <div>-------------------------------------------------------------------------------------------------------------------------</div>
-    <script>
-      const initDocument = new InitDoc()
-    </script>
     <script>
         const {dialog,app} = require('electron').remote;
 

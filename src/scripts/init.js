@@ -1,28 +1,32 @@
-function InitDoc(  ){
+function Data( ){
     this.el = document.createElement("div")
     this.text = document.createElement("p")
-    this.el.classList.add("content")
-    this.el.appendChild(this.text)
-    document.body.appendChild(this.el) 
+
+    this.build = function(){
+      this.el.classList.add("content")
+      this.el.appendChild(this.text)
+      // document.body.appendChild(this.el) 
+      seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
+    }
 
     this.update = function(txt){
-      initDocument.dataText = txt
-      if(initDocument.dataText && initDocument.dataText.length){
-        if( initDocument.dataText.length > 1700 ){
-          var trimmedText = initDocument.dataText.substring(0, 1700)
+      this.dataText = txt
+      if(this.dataText && this.dataText.length){
+        if( this.dataText.length > 1700 ){
+          var trimmedText = this.dataText.substring(0, 1700)
           trimmedText += `...`
-          initDocument.text.innerHTML += trimmedText
+          this.text.innerHTML += trimmedText
         } else {
-          initDocument.text.innerHTML += initDocument.dataText 
+          this.text.innerHTML += this.dataText 
         }
       }
-      this.el.appendChild(initDocument.text)
-      document.body.appendChild(this.el)
+      this.el.appendChild(this.text)
+      seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
     }
 
     this.clear = function(){
-      initDocument.text.innerHTML = ""
-      this.el.appendChild(initDocument.text)
-      document.body.appendChild(this.el)
+      this.text.innerHTML = ""
+      this.el.appendChild(this.text)
+      seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
     }
 }

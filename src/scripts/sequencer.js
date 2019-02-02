@@ -6,15 +6,11 @@ function Sequencer(id, overlayID){
   this.currentIndex = 0
   this.target
 
-  this.currentNumber = document.querySelector("p[data-ctrl='current']")
-  this.totalNumber = document.querySelector("p[data-ctrl='total']")
-
-
   this.size = 0;
   this.position = 0;
   this.id = id;
   this.overlayID = overlayID;
-  this.content = initDocument.text.innerHTML;
+  // this.content = this.data.text.innerHTML;
   this.map = {};
   this.allMatchedIndexes = [];
   this.currentParagraphIndex = 0;
@@ -24,23 +20,23 @@ function Sequencer(id, overlayID){
   this.paragraphCursorPosition = 0
 
   this.play = function(){
-    console.log("innerText", initDocument.el.innerText)
-    console.log("innerHTML", initDocument.el.innerHTML)
+    // console.log("innerHTML", this.data.el.innerHTML)
     var output = ""
-    var self = seeq.seq
-    var text = initDocument.text.innerText;
+    var text = seeq.fetchDataSection.el.innerText;
 
-		output = "<p>" + text.substr(0, self.paragraphCursorPosition) +
+    console.log('text sdf = ', seeq)
+
+		output = "<p>" + text.substr(0, this.paragraphCursorPosition) +
 		"<span class=\"current-active\">" +
-		text.substr(self.paragraphCursorPosition, 1) +
+		text.substr(this.paragraphCursorPosition, 1) +
 		"</span>" +
-    text.substr(self.paragraphCursorPosition+1) + "</p>";
+    text.substr(this.paragraphCursorPosition+1) + "</p>";
 
     console.log("output", output)
     
-    initDocument.el.innerHTML = output
-    self.currentNumber.innerHTML = self.paragraphCursorPosition
-    self.totalNumber.innerHTML = initDocument.el.innerHTML.length
+    seeq.fetchDataSection.text.innerHTML = output
+    seeq.currentNumber.innerHTML = this.paragraphCursorPosition
+    seeq.totalNumber.innerHTML = seeq.fetchDataSection.el.innerText.length
   }
 
   this.increment = function(){
@@ -53,7 +49,7 @@ function Sequencer(id, overlayID){
   // this.play = function(){
   //   // get first letter of contents.
 
-  //   target = initDocument.text.innerHTML.charAt( seeq.seq.currentIndex)
+  //   target = this.data.text.innerHTML.charAt( seeq.seq.currentIndex)
   //   seeq.seq.current.unmark({
   //     done: function(){
   //       seeq.seq.current.mark(target,{
@@ -91,7 +87,7 @@ function Sequencer(id, overlayID){
 
 
   this.run = function(){
-    // for(var i = 0; i < initDocument.dataText.length; i++ ){
+    // for(var i = 0; i < this.data.dataText.length; i++ ){
       setTimeout( function(){
         var self = seeq.seq
         self.paragraphCursorPosition  += 1
