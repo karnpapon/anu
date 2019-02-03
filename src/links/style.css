@@ -1,8 +1,11 @@
 body {
   padding: 30px;
-  background-color: white !important;
+  /* background-color: white !important; */
   color: black !important;
+  margin: 0;
 }
+
+*{box-sizing: border-box; }
 body p{ font-family: 'input_mono_regular'; font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}

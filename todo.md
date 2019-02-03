@@ -8,6 +8,7 @@
 -- flashing when trigger/active events.
 
 - task
+-- editable RegExp's flag ( also display full format eg. [/d/]g)
 -- redesign UI.
 -- sequencing ( !important )
 

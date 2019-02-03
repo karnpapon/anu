@@ -20,11 +20,9 @@ function Sequencer(id, overlayID){
   this.paragraphCursorPosition = 0
 
   this.play = function(){
-    // console.log("innerHTML", this.data.el.innerHTML)
-    var output = ""
-    var text = seeq.fetchDataSection.el.innerText;
 
-    console.log('text sdf = ', seeq)
+    var output = ""
+    var text = seeq.fetchDataSection.text.innerHTML;
 
 		output = "<p>" + text.substr(0, this.paragraphCursorPosition) +
 		"<span class=\"current-active\">" +
@@ -32,15 +30,16 @@ function Sequencer(id, overlayID){
 		"</span>" +
     text.substr(this.paragraphCursorPosition+1) + "</p>";
 
-    console.log("output", output)
-    
-    seeq.fetchDataSection.text.innerHTML = output
+    seeq.fetchDataSection.el.innerHTML = output
     seeq.currentNumber.innerHTML = this.paragraphCursorPosition
     seeq.totalNumber.innerHTML = seeq.fetchDataSection.el.innerText.length
   }
 
   this.increment = function(){
-    seeq.seq.run()
+    // seeq.seq.run()
+    var self = seeq.seq
+    self.paragraphCursorPosition  += 1
+    this.play()
   }
 
 
@@ -87,14 +86,12 @@ function Sequencer(id, overlayID){
 
 
   this.run = function(){
-    // for(var i = 0; i < this.data.dataText.length; i++ ){
       setTimeout( function(){
         var self = seeq.seq
         self.paragraphCursorPosition  += 1
         self.play()
         self.increment()
       }, 100)
-    // }
   }
 
   

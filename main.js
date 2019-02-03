@@ -11,8 +11,17 @@ app.inspect = function(){
 }
 
 function createWindow () {
-  mainWindow = new BrowserWindow({width: 694, height: 580, frame: false})
+  mainWindow = new BrowserWindow({
+    width: 694, 
+    height: 580, 
+    frame: false,
+    // resizable: false,
+    transparent: true,
+    movable: true
+  })
   mainWindow.loadFile('index.html')
+  mainWindow.setBackgroundColor("#FFFF")
+  // mainWindow.setOpacity(0.78)
 
   mainWindow.on('closed', function () {
     mainWindow = null

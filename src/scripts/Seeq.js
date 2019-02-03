@@ -56,9 +56,9 @@ function Seeq(){
       <div class="header">
         <div class="title">RegExp:</div>
         <input type="search-regex" placeholder="">
-        <button data-ctrl="play">⊛</button>
-        <button data-ctrl="stop">⊘</button>
-        <button data-ctrl="notation-mode">⟳</button>
+        <button data-ctrl="play">set</button>
+        <button data-ctrl="stop">run</button>
+        <button data-ctrl="notation-mode">mode</button>
       </div>
       <!-- <div class="control-btn">
       </div> -->
@@ -71,7 +71,7 @@ function Seeq(){
         </div>
       </div>
       </div>
-    <div>------------------------------------------------------------------------------------------------------</div> 
+    <div>----------------------------------------------------------------------------------------------------</div> 
     `;
 
     this.fetchDataSection.build()
@@ -91,7 +91,7 @@ function Seeq(){
     this.inputFetch = document.querySelector("input[data-fetch='fetch']")
     this.getText = document.querySelector("button[data-gettext='gettext']")
     this.playBtn = document.querySelector("button[data-ctrl='play']")
-    this.stopBtn = document.querySelector("button[data-ctrl='stop']")
+    this.nextStep = document.querySelector("button[data-ctrl='stop']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     var context = document.querySelector("div.content")
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
@@ -169,9 +169,9 @@ function Seeq(){
         seeq.play()
       })
 
-      this.stopBtn.addEventListener("click", function(){
-        seeq.isPlaying = false
-        seeq.stop()
+      this.nextStep.addEventListener("click", function(){
+        // seeq.isPlaying = false
+        seeq.nextStep()
       })
 
 
@@ -180,6 +180,8 @@ function Seeq(){
         var targetSpace = new RegExp("\\n" + seeq.searchValue, "g")
         seeq.isModeChanged = !seeq.isModeChanged
         var update = seeq.searchValue
+        var notation
+        var switchText
         // var ps = document.getElementsByTagName('p');
         // var p = ps[3];
         // var lines = lineWrapDetector.getLines(p);
@@ -192,19 +194,17 @@ function Seeq(){
         //     lineRow = initDocument.text.innerText.replace(target, "+")
         //     // lineRow[i] += lines[i][j].innerText.replace(target, "+")
         //   }
-    
         // }
-        
+
         // turn matched letter/words into symbols
-        var notation = seeq.fetchDataSection.text.innerText.replace(target, "+")
-        var switchText = notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
-        // actual contents
+        if( seeq.searchValue !== ""){
+          notation = seeq.fetchDataSection.text.innerText.replace(target, "+")
+        } else {
+          notation = seeq.fetchDataSection.text.innerText
+        }
+        switchText = notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
         var fetchText = seeq.extract.extract
-    
-        // initDocument.clear() 
-        // initDocument.update(seeq.isModeChanged? switchText:fetchText) 
-        // seeq.updateMark(seeq.isModeChanged? "+":update, seeq.updateMarkType) 
-    
+
         if( seeq.isModeChanged ){
           seeq.updateMarkType = "normal"
           seeq.fetchDataSection.clear() 
@@ -281,7 +281,7 @@ function Seeq(){
     this.seq.play()
   }
 
-  this.stop = function(){
+  this.nextStep = function(){
     this.seq.increment()
   }
 
