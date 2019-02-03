@@ -21,12 +21,12 @@ function Data( ){
         }
       }
       this.el.appendChild(this.text)
-      seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
+      // seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
     }
 
     this.clear = function(){
       this.text.innerHTML = ""
       // this.el.appendChild(this.text)
-      seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
+      // seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
     }
 }

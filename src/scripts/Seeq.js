@@ -176,11 +176,10 @@ function Seeq(){
 
       this.notationMode.addEventListener("click", function(){
         var target = new RegExp(seeq.searchValue, "gi")
-        var targetSpace = new RegExp("\\n" + seeq.searchValue, "g")
         seeq.isModeChanged = !seeq.isModeChanged
         var update = seeq.searchValue
         var notation
-        var switchText
+        var switchText, fetchText
         // var ps = document.getElementsByTagName('p');
         // var p = ps[3];
         // var lines = lineWrapDetector.getLines(p);
@@ -202,7 +201,7 @@ function Seeq(){
           notation = seeq.fetchDataSection.text.innerText
         }
         switchText = notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
-        var fetchText = seeq.extract.extract
+        fetchText = seeq.extract.extract
 
         if( seeq.isModeChanged ){
           seeq.updateMarkType = "normal"

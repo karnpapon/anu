@@ -36,9 +36,7 @@ function Sequencer(id, overlayID){
   }
 
   this.increment = function(){
-    // seeq.seq.run()
-    var self = seeq.seq
-    self.paragraphCursorPosition  += 1
+    seeq.seq.run()
     this.play()
   }
 
