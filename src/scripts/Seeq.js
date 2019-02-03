@@ -26,7 +26,6 @@ function Seeq(){
   this.extract = "" // text buffers
   this.searchValue = ""
   this.updateMarkType = "normal"
-  this.content
 
   document.body.appendChild(this.el);
 
