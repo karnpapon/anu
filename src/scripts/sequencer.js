@@ -1,4 +1,4 @@
-function Sequencer(id, overlayID){
+function Sequencer(){
 
   this.row = 32
   this.step = 16*3
@@ -8,8 +8,6 @@ function Sequencer(id, overlayID){
 
   this.size = 0;
   this.position = 0;
-  this.id = id;
-  this.overlayID = overlayID;
   // this.content = this.data.text.innerHTML;
   this.map = {};
   this.allMatchedIndexes = [];
@@ -18,26 +16,38 @@ function Sequencer(id, overlayID){
   this.lastParagraphNumber = 0;
   this.isPlayed = false;
   this.paragraphCursorPosition = 0
+  this.textBuffers = ""
+  this.output = ""
+  this.isCursorActived = false
 
-  this.play = function(){
-
-    var output = ""
-    var text = seeq.fetchDataSection.text.innerHTML;
-
-		output = "<p>" + text.substr(0, this.paragraphCursorPosition) +
+  this.set = function(){
+    this.textBuffers = seeq.fetchDataSection.text.innerHTML; 
+		this.output =  "<p>" + this.textBuffers.substr(0, this.paragraphCursorPosition) +
 		"<span class=\"current-active\">" +
-		text.substr(this.paragraphCursorPosition, 1) +
+		this.textBuffers.substr(this.paragraphCursorPosition, 1) +
 		"</span>" +
-    text.substr(this.paragraphCursorPosition+1) + "</p>";
+    this.textBuffers.substr(this.paragraphCursorPosition+1) + "</p>" ;
 
-    seeq.fetchDataSection.el.innerHTML = output
+    seeq.fetchDataSection.updateWithCursor(this.output)
+    this.isCursorActived = true
     seeq.currentNumber.innerHTML = this.paragraphCursorPosition
     seeq.totalNumber.innerHTML = seeq.fetchDataSection.el.innerText.length
   }
 
+
+  this.play = function(){
+    console.log("cursor", seeq.seq.paragraphCursorPosition)
+    console.log("this textBuffers", this.textBuffers)
+    // seeq.updateMark(target, seeq.updateMarkType)
+  }
+
   this.increment = function(){
-    seeq.seq.run()
-    this.play()
+    // seeq.seq.run()
+    seeq.updateMarkType = "normal"
+    // seeq.fetchDataSection.update() 
+    this.paragraphCursorPosition  += 1
+    seeq.fetchDataSection.updateWithCursor(seeq.seq.output) 
+    seeq.updateMark(seeq.searchValue, seeq.updateMarkType)
   }
 
 
@@ -87,7 +97,7 @@ function Sequencer(id, overlayID){
       setTimeout( function(){
         var self = seeq.seq
         self.paragraphCursorPosition  += 1
-        self.play()
+        self.set()
         self.increment()
       }, 100)
   }
