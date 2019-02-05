@@ -25,6 +25,12 @@ function Data( ){
       this.text.innerHTML = data
     }
 
+    // var context = document.querySelector("p.masking")
+    this.maskText.addEventListener("mouseup", function(){
+      // seeq.selectedText = seeq.getSelectionText()
+      console.log("this.selectedText,")
+    })
+
     this.update = function(txt){
       this.dataText = txt
       var limitedChar = 1500
@@ -40,6 +46,8 @@ function Data( ){
 
       this.maskText.innerText = this.textBuffers
       this.text.innerText = this.textBuffers
+
+      seeq.isDomReadyForDrag = true
 
       // paragraph row detector.
       // seeq.lines = lineWrapDetector.getLines(this.text);

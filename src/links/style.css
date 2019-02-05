@@ -6,7 +6,7 @@ body {
 }
 
 *{box-sizing: border-box; }
-body p{ font-family: 'input_mono_regular'; font-size:12px}
+body p{font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
 /* div.header{ margin-bottom: 15px; } */
@@ -20,6 +20,7 @@ div button{
   font-family: 'input_mono_thin'; 
   font-size:12px;
   color: white;
+  height: 350px;
 }
 
 .trigger{
@@ -28,7 +29,9 @@ div button{
 }
 
 .no-masking{
+  font-family: 'input_mono_regular';
   position: absolute;
+  height: 350px;
 }
 
 button:active{
@@ -52,9 +55,14 @@ div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
+  width: 260px;
+  justify-content: space-between;
 }
-.control-info p{ margin: 0}
-.counter{ display: flex; justify-content: flex-end;}
+.control-info p{ margin: 0;text-align: right;}
+.counter{ 
+  display: flex; 
+  justify-content: flex-end;
+}
 app { 
   display: flex; 
   flex-direction: column;
@@ -75,8 +83,8 @@ app {
 
 .btn-show{  display: block; }
 .btn-hide{  display: none; }
-.control-panel{ margin-right: 48px}
-.tempo{ }
+.control-panel{ }
+.tempo{ font: 400 11px system-ui; width: 55px }
 
 div button.control-btn:hover{ border:1px solid black;}
 

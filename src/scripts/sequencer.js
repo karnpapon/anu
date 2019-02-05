@@ -42,8 +42,13 @@ function Sequencer(){
     seeq.totalNumber.innerHTML = seeq.fetchDataSection.text.innerText.length
   }
 
+  this.selectedTextArea = function(){
+    
+  }
+
   this.increment = function(){
     var length = seeq.fetchDataSection.text.innerText.length
+
     if( this.paragraphCursorPosition > length-1){
       this.paragraphCursorPosition = 0
       seeq.seq.refresh()

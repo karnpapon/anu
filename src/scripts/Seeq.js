@@ -20,7 +20,7 @@ function Seeq(){
   this.currentClass = "current"
   this.offsetTop = 50
   this.currentIndex = 0
-  this.fetchSearchInput = "livecoding"
+  this.fetchSearchInput = ""
   this.txt = ""
   this.isSearchModeChanged = false
 
@@ -30,6 +30,7 @@ function Seeq(){
   this.fetchText = ""
   this.textAfterFoundMatched = ""
   this.notation = ""
+  this.selectedText = ""
 
   this.searchValue = ""
   this.updateMarkType = "normal"
@@ -39,6 +40,8 @@ function Seeq(){
   // paragraph row detector
   this.lines = ""
   this.textLineBuffers = ""
+
+  this.isDomReadyForDrag = false
 
   this.matchedPosition = []
 
@@ -115,6 +118,13 @@ function Seeq(){
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
     seeq.content = new Mark(context)
 
+    // if(context.text.innerText){
+    //   context.addEventListener("mouseup", function(){
+    //     seeq.selectedText = seeq.getSelectionText()
+    //     console.log("this.selectedText,", seeq.selectedText)
+    //   })
+    // }
+
     this.inputFetch.addEventListener("input", function(){
       seeq.fetchSearchInput = this.value;
     })
@@ -171,7 +181,7 @@ function Seeq(){
           // reset cursor to top.
           seeq.currentIndex = 0;
         }
-        // seeq.jump();
+        seeq.jump();
       })
 
       this.prevBtn.addEventListener("click", function(){
@@ -182,12 +192,16 @@ function Seeq(){
           // prev btn case to get outbound top to show at to bottom.
           seeq.currentIndex = seeq.results.length - 1; 
         }
-        // seeq.jump();
+        seeq.jump();
       })
 
       this.getText.addEventListener("click",function(){ 
         seeq.fetchDataSection.clear()
-        seeq.getData()
+        if( seeq.fetchSearchInput !== ""){
+          seeq.getData()
+        } else {
+          seeq.fetchDataSection.update('no input value...')
+        }
       })
 
 
@@ -216,7 +230,6 @@ function Seeq(){
         seeq.textConvertor()
       })
 
-
       // this.extractLines.addEventListener("click", function(){
       //   seeq.extractLinesParagraph()
       // })
@@ -224,6 +237,17 @@ function Seeq(){
 
   });
 
+ 
+
+  this.getSelectionText = function() {
+    var text = "";
+    if (window.getSelection) {
+      text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+      text = document.selection.createRange().text;
+    }
+    return text;
+  }
 
   this.toggleIsSearchModeChanged = function(){
     this.isSearchModeChanged = !this.isSearchModeChanged
