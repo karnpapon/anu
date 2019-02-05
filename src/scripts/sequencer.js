@@ -16,6 +16,7 @@ function Sequencer(){
   this.textBuffers = ""
   this.output = ""
   this.isCursorActived = false
+  this.timer = ""
 
   this.refresh = function(){
     this.textBuffers = seeq.fetchDataSection.text.innerText; 
@@ -30,25 +31,43 @@ function Sequencer(){
 
     seeq.fetchDataSection.updateWithCursor(this.output)
     this.isCursorActived = true
+    this.setCounterDisplay()
+  }
+
+  this.setCounterDisplay = function(){
     seeq.currentNumber.innerHTML = this.paragraphCursorPosition
+  }
+
+  this.setTotalLenghtCounterDisplay = function(){
     seeq.totalNumber.innerHTML = seeq.fetchDataSection.text.innerText.length
   }
 
   this.increment = function(){
+    var length = seeq.fetchDataSection.text.innerText.length
+    if( this.paragraphCursorPosition > length-1){
+      this.paragraphCursorPosition = 0
+      seeq.seq.refresh()
+      seeq.seq.set() 
+    }
     this.paragraphCursorPosition  += 1
     seeq.seq.run()
     this.trigger()
-
   }
 
   this.trigger = function(){
-    if(seeq.matchedPosition.indexOf(this.paragraphCursorPosition) !== (-1)){
-      console.log("triggered!!!")
+    if( seeq.searchValue !== ""){
+      if(seeq.matchedPosition.indexOf(this.paragraphCursorPosition) !== (-1) && seeq.matchedPosition){
+        document.body.classList.add("trigger")
+        seeq.sendOsc()
+      }
+      setTimeout(() => {
+        document.body.classList.remove("trigger")
+      }, 200);
     }
   }
 
   this.run = function(){
-    setTimeout( function(){
+    this.timer = setTimeout( function(){
         // this.paragraphCursorPosition  += 1  //remove this when wanted to run auto.
         seeq.seq.refresh()
         seeq.seq.set()
@@ -62,7 +81,10 @@ function Sequencer(){
 
 
   this.stop = function(){
-    clearTimeout(seeq.seq.run)
+    clearTimeout(this.timer)
+    this.paragraphCursorPosition = 0
+    seeq.seq.refresh()
+    seeq.seq.set()
   }
 
 

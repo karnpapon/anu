@@ -62,29 +62,31 @@ function Seeq(){
         <input type="search" placeholder="">
         <button data-search="next">next</button>
         <button data-search="prev">prev</button>
-        <!-- <button id="clear">✖</button> -->
       </div>
     </div>
     <div class="control-wrapper">
       <div class="header">
         <div class="title">RegExp:</div>
         <input type="search-regex" placeholder="">
-        <button data-ctrl="play">set</button>
-        <button data-ctrl="stop">run</button>
-        <button data-ctrl="notation-mode">mode</button>
       </div>
-      <!-- <div class="control-btn">
-      </div> -->
       <div class="control-info">
-        <p>120 bpm</p>
-        <div class="counter">
-          <p data-ctrl="current">-</p>
-          /
-          <p data-ctrl="total">--</p>
+        <div class="control-panel">
+          <button data-ctrl="play">set</button>
+          <button data-ctrl="run">run</button>
+          <button data-ctrl="stop">stop</button>
+          <button data-ctrl="notation-mode">mode</button>
+        </div>
+        <div class="tempo">
+          <p>120 bpm</p>
+          <div class="counter">
+            <p data-ctrl="current">-</p>
+            /
+            <p data-ctrl="total">--</p>
+          </div>
         </div>
       </div>
       </div>
-    <div>----------------------------------------------------------------------------------------------------</div> 
+    <div>---------------------------------------------------------------------------------------------------</div> 
     `;
 
     this.fetchDataSection.build()
@@ -104,7 +106,8 @@ function Seeq(){
     this.inputFetch = document.querySelector("input[data-fetch='fetch']")
     this.getText = document.querySelector("button[data-gettext='gettext']")
     this.playBtn = document.querySelector("button[data-ctrl='play']")
-    this.nextStep = document.querySelector("button[data-ctrl='stop']")
+    this.nextStep = document.querySelector("button[data-ctrl='run']")
+    this.stopBtn = document.querySelector("button[data-ctrl='stop']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
     var context = document.querySelector("p.masking")
@@ -124,9 +127,11 @@ function Seeq(){
               separateWordSearch: true,
               done: function() {
                 seeq.results = document.getElementsByTagName("mark");
-                seeq.currentIndex = 0;
-                seeq.jump();
+                // seeq.currentIndex = 0;
+                // seeq.jump();
                 if(seeq.searchValue !== ""){
+                  // clear position every searching.
+                  seeq.matchedPosition = [] 
                   seeq.findMatchedPosition()
                 }
               }
@@ -144,8 +149,13 @@ function Seeq(){
             seeq.content.markRegExp(targetRegExp, {
               done: function() {
                 seeq.results = document.getElementsByTagName("mark");
-                seeq.currentIndex = 0;
-                seeq.jump();
+                // seeq.currentIndex = 0;
+                // seeq.jump();
+                if(seeq.searchValue !== ""){
+                  // clear position every searching.
+                  seeq.matchedPosition = [] 
+                  seeq.findMatchedPosition()
+                }
               }
             });
           }
@@ -161,7 +171,7 @@ function Seeq(){
           // reset cursor to top.
           seeq.currentIndex = 0;
         }
-        seeq.jump();
+        // seeq.jump();
       })
 
       this.prevBtn.addEventListener("click", function(){
@@ -172,7 +182,7 @@ function Seeq(){
           // prev btn case to get outbound top to show at to bottom.
           seeq.currentIndex = seeq.results.length - 1; 
         }
-        seeq.jump();
+        // seeq.jump();
       })
 
       this.getText.addEventListener("click",function(){ 
@@ -188,10 +198,16 @@ function Seeq(){
       })
 
       this.nextStep.addEventListener("click", function(){
-        // seeq.isPlaying = false
+        seeq.isPlaying = true 
         seeq.nextStep()
       })
 
+
+      this.stopBtn.addEventListener("click", function(){
+        seeq.isPlaying = false
+        seeq.seq.stop()
+      })
+      
 
       this.notationMode.addEventListener("click", function(){
         // separated search mode from toggle mode 
@@ -293,7 +309,7 @@ function Seeq(){
   }
 
   this.findMatchedPosition = function(){
-    // find position to unmarks.
+    // find position to trigger events.
     var searchText = seeq.fetchDataSection.text.innerText
     var search = new RegExp(this.searchValue,"gi")
     var match
@@ -316,7 +332,8 @@ function Seeq(){
           if(response){
             if (seeq.extract.extract){
               seeq.fetchDataSection.update(seeq.extract.extract)
-              // seeq.fetchDataSection.updateTextMask(seeq.extract.extract)
+              // move total length here to avoid re-render every counting.
+              seeq.seq.setTotalLenghtCounterDisplay()
             } else {
               seeq.fetchDataSection.update("sorry, please try again..")
             }
@@ -329,7 +346,7 @@ function Seeq(){
   this.setCursor = function(){
     seeq.seq.refresh()
     seeq.seq.set()
-    seeq.jump()
+    // seeq.jump()
   }
 
   this.nextStep = function(){
@@ -345,7 +362,7 @@ function Seeq(){
             done: function() {
               seeq.results = document.getElementsByTagName("mark");
               seeq.currentIndex = 0;
-              seeq.jump();
+              // seeq.jump();
             }
           });
         }
@@ -358,7 +375,7 @@ function Seeq(){
             done: function() {
               seeq.results = document.getElementsByTagName("mark");
               seeq.currentIndex = 0;
-              seeq.jump();
+              // seeq.jump();
             }
           });
         }

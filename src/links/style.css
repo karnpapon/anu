@@ -1,6 +1,6 @@
 body {
   padding: 30px;
-  background-color: #CBCBCB !important;
+  background-color: white !important;
   color: black !important;
   margin: 0;
 }
@@ -17,7 +17,14 @@ div button{
 }
 
 .masking{
-  font-family: 'input_mono_thin'; font-size:12px
+  font-family: 'input_mono_thin'; 
+  font-size:12px;
+  color: white;
+}
+
+.trigger{
+  background-color: rgb(255, 133, 62) !important;
+  transition: 200ms;
 }
 
 .no-masking{
@@ -44,11 +51,10 @@ div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
   font-size: 10px;     
   display: flex;
   align-items: flex-end;
-  flex-direction: column;
   justify-content: flex-end;
 }
 .control-info p{ margin: 0}
-.counter{ display: flex;}
+.counter{ display: flex; justify-content: flex-end;}
 app { 
   display: flex; 
   flex-direction: column;
@@ -66,6 +72,11 @@ app {
   opacity:0; 
   width:calc(100% - 60px); 
 }
+
+.btn-show{  display: block; }
+.btn-hide{  display: none; }
+.control-panel{ margin-right: 48px}
+.tempo{ }
 
 div button.control-btn:hover{ border:1px solid black;}
 
@@ -85,10 +96,10 @@ mark {
   -moz-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
   box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
   /* background: rgb(0, 60, 255) !important; */
-  /* color: white !important; */
+  background-color: rgb(255, 133, 62) !important;
 }
 mark.current { 
-  background: rgb(255, 133, 62) !important;
+  background: rgb(255, 62, 168) !important;
 }
 /* mark { border: 1px solid; background: white !important ; padding: unset !important;}
 mark.current { color: white; background: black !important; } */
