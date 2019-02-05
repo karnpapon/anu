@@ -20,7 +20,7 @@ function createWindow () {
     movable: true
   })
   mainWindow.loadFile('index.html')
-  mainWindow.setBackgroundColor("#FFFF")
+  // mainWindow.setBackgroundColor("#CBCBCB")
   // mainWindow.setOpacity(0.78)
 
   mainWindow.on('closed', function () {

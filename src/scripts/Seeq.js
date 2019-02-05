@@ -28,11 +28,19 @@ function Seeq(){
   this.extract = "" 
   this.switchText = ""
   this.fetchText = ""
+  this.textAfterFoundMatched = ""
+  this.notation = ""
 
   this.searchValue = ""
   this.updateMarkType = "normal"
 
   this.matchedSymbol = "+"
+
+  // paragraph row detector
+  this.lines = ""
+  this.textLineBuffers = ""
+
+  this.matchedPosition = []
 
   document.body.appendChild(this.el);
 
@@ -42,7 +50,6 @@ function Seeq(){
   this.isPlaying = false
 
   this.start = function(){
-
     this.wrapper_el.innerHTML += `
       <div class="header-wrapper">
       <div class="header">
@@ -99,7 +106,8 @@ function Seeq(){
     this.playBtn = document.querySelector("button[data-ctrl='play']")
     this.nextStep = document.querySelector("button[data-ctrl='stop']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
-    var context = document.querySelector("div.content")
+    // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
+    var context = document.querySelector("p.masking")
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
     seeq.content = new Mark(context)
@@ -116,8 +124,11 @@ function Seeq(){
               separateWordSearch: true,
               done: function() {
                 seeq.results = document.getElementsByTagName("mark");
-                // seeq.currentIndex = 0;
-                // seeq.jump();
+                seeq.currentIndex = 0;
+                seeq.jump();
+                if(seeq.searchValue !== ""){
+                  seeq.findMatchedPosition()
+                }
               }
             });
           }
@@ -133,8 +144,8 @@ function Seeq(){
             seeq.content.markRegExp(targetRegExp, {
               done: function() {
                 seeq.results = document.getElementsByTagName("mark");
-                // seeq.currentIndex = 0;
-                // seeq.jump();
+                seeq.currentIndex = 0;
+                seeq.jump();
               }
             });
           }
@@ -172,8 +183,8 @@ function Seeq(){
 
       this.playBtn.addEventListener("click", function(){
         // seeq.isPlaying = true
+        seeq.seq.refresh()
         seeq.setCursor()
-        // seeq.toggleMode()
       })
 
       this.nextStep.addEventListener("click", function(){
@@ -183,48 +194,50 @@ function Seeq(){
 
 
       this.notationMode.addEventListener("click", function(){
-        //separated search mode from toggle mode to avoid messing up with cursor's active.
+        // separated search mode from toggle mode 
+        // to avoid messing up when cursor is actived.
         seeq.toggleIsSearchModeChanged() 
-        seeq.toggleMode()
+        seeq.textConvertor()
       })
+
+
+      // this.extractLines.addEventListener("click", function(){
+      //   seeq.extractLinesParagraph()
+      // })
 
 
   });
 
 
-  this.refresh = function(data){
-    seeq.fetchDataSection.text.innerText = data
-  }
-
   this.toggleIsSearchModeChanged = function(){
     this.isSearchModeChanged = !this.isSearchModeChanged
   }
 
+  // this.extractLinesParagraph = function(){
+  //    // make eachline has linebreak 
+  //   // before converting letters into dashes.
+  //   for(var i=0; i< this.lines.length; i++){
+  //     for(var j=0; j<this.lines[i].length; j++){
+  //       this.textLineBuffers += this.lines[i][j].innerText
+  //       this.textLineBuffers += " "
+  //     }
+  //     this.textLineBuffers += "<br/>"
+  //   }
+  //   seeq.fetchDataSection.updateWithCursor(this.textLineBuffers)
+  // }
 
-  this.toggleMode = function(){
+  this.textConvertor = function(){
     var target = new RegExp(seeq.searchValue, "gi")
-    var notation
-    // var ps = document.getElementsByTagName('p');
-    // var p = ps[3];
-    // var lines = lineWrapDetector.getLines(p);
-    // var lineRow = [] 
-    // var lineCol = []
-    // var row = lines.length
-    
-    // for(var i=0; i< lines.length; i++){
-    //   for(var j=0; j<lines[i].length; j++){
-    //     lineRow = initDocument.text.innerText.replace(target, "+")
-    //     // lineRow[i] += lines[i][j].innerText.replace(target, "+")
-    //   }
-    // }
-
+   
     // turn matched letter/words into symbols
     if( seeq.searchValue !== ""){
-      notation = seeq.fetchDataSection.text.innerText.replace(target, "+")
+      this.notation = seeq.fetchDataSection.text.innerText.replace(target, "+")
     } else {
-      notation = seeq.fetchDataSection.text.innerText
+      this.notation = seeq.fetchDataSection.text.innerText
     }
-    this.switchText = notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
+
+   
+    this.switchText = this.notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
     this.fetchText = seeq.extract.extract
 
     if( seeq.isSearchModeChanged ){
@@ -235,7 +248,7 @@ function Seeq(){
 
     if(seeq.seq.isCursorActived){
       this.setCursor()
-    } 
+    }
   }
 
   this.update = function(markType, modeContent, target ){
@@ -279,6 +292,17 @@ function Seeq(){
     osc.send(message)
   }
 
+  this.findMatchedPosition = function(){
+    // find position to unmarks.
+    var searchText = seeq.fetchDataSection.text.innerText
+    var search = new RegExp(this.searchValue,"gi")
+    var match
+
+    while( match = search.exec(searchText)){
+      this.matchedPosition.push(match.index)
+    }
+  }
+
   this.getData = function () {
     axios({
         method: "get",
@@ -292,6 +316,7 @@ function Seeq(){
           if(response){
             if (seeq.extract.extract){
               seeq.fetchDataSection.update(seeq.extract.extract)
+              // seeq.fetchDataSection.updateTextMask(seeq.extract.extract)
             } else {
               seeq.fetchDataSection.update("sorry, please try again..")
             }
@@ -302,16 +327,14 @@ function Seeq(){
   }
 
   this.setCursor = function(){
-    this.seq.set()
+    seeq.seq.refresh()
+    seeq.seq.set()
+    seeq.jump()
   }
 
   this.nextStep = function(){
-    // this.seq.increment()
-    seeq.seq.paragraphCursorPosition  += 1
-    this.toggleMode()
+    this.seq.increment()
   }
-
-  
 
   this.updateMark = function(value, markType){
     if(markType == 'normal'){

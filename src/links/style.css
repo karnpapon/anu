@@ -1,6 +1,6 @@
 body {
   padding: 30px;
-  /* background-color: white !important; */
+  background-color: #CBCBCB !important;
   color: black !important;
   margin: 0;
 }
@@ -14,6 +14,14 @@ body .header{ font-family: 'input_mono_regular'; font-size:12px}
 div button{
   border: 1px solid !important;
   transition: 0.1s;
+}
+
+.masking{
+  font-family: 'input_mono_thin'; font-size:12px
+}
+
+.no-masking{
+  position: absolute;
 }
 
 button:active{
@@ -88,8 +96,9 @@ div input:focus{ outline: none;}
 .content {
   /* margin-top: 30px; */
   overflow: hidden;
+  position: inherit;
 }
-.content p{white-space: pre-wrap;}
+/* .content p{white-space: pre-wrap;} */
 /* .content p{
   word-break: break-all;
   word-wrap: break-word;

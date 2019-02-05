@@ -14,6 +14,11 @@
     src: url('../media/fonts/InputMono-Black.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'input_mono_thin';
+    src: url('../media/fonts/InputMono-Thin.ttf') format('truetype');
+}
+
 /* input sans condense */
 @font-face {
     font-family: 'input_sans_condensed_regular';
