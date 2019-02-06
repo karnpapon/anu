@@ -3,15 +3,6 @@ function Sequencer(){
   this.currentIndex = 0
   this.target
 
-  this.size = 0;
-  this.position = 0;
-  // this.content = this.data.text.innerHTML;
-  this.map = {};
-  this.allMatchedIndexes = [];
-  this.currentParagraphIndex = 0;
-  this.previousParagraphLength = 0;
-  this.lastParagraphNumber = 0;
-  this.isPlayed = false;
   this.paragraphCursorPosition = 0
   this.textBuffers = ""
   this.output = ""
@@ -43,7 +34,14 @@ function Sequencer(){
   }
 
   this.selectedTextArea = function(){
-    
+    if( seeq.matchedSelectPosition.length > 0){
+      this.paragraphCursorPosition = seeq.matchedSelectPosition
+      seeq.seq.refresh()
+      seeq.seq.set() 
+    }
+    this.paragraphCursorPosition += 1
+    seeq.seq.run()
+    this.trigger()
   }
 
   this.increment = function(){

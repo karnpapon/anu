@@ -21,6 +21,7 @@ div button{
   font-size:12px;
   color: white;
   height: 350px;
+  
 }
 
 .trigger{
@@ -32,6 +33,7 @@ div button{
   font-family: 'input_mono_regular';
   position: absolute;
   height: 350px;
+  mix-blend-mode: multiply;
 }
 
 button:active{
@@ -117,7 +119,7 @@ div input:focus{ outline: none;}
   overflow: hidden;
   position: inherit;
 }
-/* .content p{white-space: pre-wrap;} */
+.content p{white-space: pre-wrap;}
 /* .content p{
   word-break: break-all;
   word-wrap: break-word;

@@ -30,7 +30,9 @@ function Seeq(){
   this.fetchText = ""
   this.textAfterFoundMatched = ""
   this.notation = ""
-  this.selectedText = ""
+  this.textSelect = ""
+  this.matchedSelectPosition = []
+  
 
   this.searchValue = ""
   this.updateMarkType = "normal"
@@ -117,13 +119,6 @@ function Seeq(){
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
     seeq.content = new Mark(context)
-
-    // if(context.text.innerText){
-    //   context.addEventListener("mouseup", function(){
-    //     seeq.selectedText = seeq.getSelectionText()
-    //     console.log("this.selectedText,", seeq.selectedText)
-    //   })
-    // }
 
     this.inputFetch.addEventListener("input", function(){
       seeq.fetchSearchInput = this.value;
@@ -234,7 +229,6 @@ function Seeq(){
       //   seeq.extractLinesParagraph()
       // })
 
-
   });
 
  
@@ -247,6 +241,16 @@ function Seeq(){
       text = document.selection.createRange().text;
     }
     return text;
+  }
+
+  this.getSelectionTextPosition = function(){
+    var searchText = seeq.fetchDataSection.text.innerText
+    var search = new RegExp(this.textSelect, "gi")
+    var match
+
+    while (match = search.exec(searchText)) {
+      this.matchedSelectPosition.push(match.index)
+    }
   }
 
   this.toggleIsSearchModeChanged = function(){
@@ -265,6 +269,9 @@ function Seeq(){
   //   }
   //   seeq.fetchDataSection.updateWithCursor(this.textLineBuffers)
   // }
+
+  
+  
 
   this.textConvertor = function(){
     var target = new RegExp(seeq.searchValue, "gi")
@@ -358,6 +365,7 @@ function Seeq(){
               seeq.fetchDataSection.update(seeq.extract.extract)
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
+              seeq.isDomReadyForDrag = true
             } else {
               seeq.fetchDataSection.update("sorry, please try again..")
             }

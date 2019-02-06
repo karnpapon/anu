@@ -25,11 +25,7 @@ function Data( ){
       this.text.innerHTML = data
     }
 
-    // var context = document.querySelector("p.masking")
-    this.maskText.addEventListener("mouseup", function(){
-      // seeq.selectedText = seeq.getSelectionText()
-      console.log("this.selectedText,")
-    })
+   
 
     this.update = function(txt){
       this.dataText = txt
@@ -47,11 +43,20 @@ function Data( ){
       this.maskText.innerText = this.textBuffers
       this.text.innerText = this.textBuffers
 
-      seeq.isDomReadyForDrag = true
+      // this.textDragSelect()
 
       // paragraph row detector.
       // seeq.lines = lineWrapDetector.getLines(this.text);
     }
+
+    // this.textDragSelect = function(){
+    //   // var contextSelect = document.querySelector("p.masking")
+    //   this.text.addEventListener("mouseup", function(){
+    //     seeq.textSelect = seeq.getSelectionText()
+    //     seeq.getSelectionTextPosition()
+    //     console.log("selectText position", seeq.matchedSelectPosition)
+    //   })
+    // }
 
     this.clear = function(){
       this.text.innerHTML = ""
