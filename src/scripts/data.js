@@ -43,20 +43,20 @@ function Data( ){
       this.maskText.innerText = this.textBuffers
       this.text.innerText = this.textBuffers
 
-      // this.textDragSelect()
+      this.textDragSelect()
 
       // paragraph row detector.
       // seeq.lines = lineWrapDetector.getLines(this.text);
     }
 
-    // this.textDragSelect = function(){
-    //   // var contextSelect = document.querySelector("p.masking")
-    //   this.text.addEventListener("mouseup", function(){
-    //     seeq.textSelect = seeq.getSelectionText()
-    //     seeq.getSelectionTextPosition()
-    //     console.log("selectText position", seeq.matchedSelectPosition)
-    //   })
-    // }
+    this.textDragSelect = function(){
+      // var contextSelect = document.querySelector("p.masking")
+      this.maskText.addEventListener("mouseup", function(){
+        seeq.textSelect = seeq.getSelectionText()
+        seeq.getSelectionTextPosition()
+        seeq.seq.selectedTextArea()
+      })
+    }
 
     this.clear = function(){
       this.text.innerHTML = ""

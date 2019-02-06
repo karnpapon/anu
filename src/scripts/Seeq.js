@@ -32,6 +32,7 @@ function Seeq(){
   this.notation = ""
   this.textSelect = ""
   this.matchedSelectPosition = []
+  this.selectAreaLength = 0
   
 
   this.searchValue = ""
@@ -43,7 +44,7 @@ function Seeq(){
   this.lines = ""
   this.textLineBuffers = ""
 
-  this.isDomReadyForDrag = false
+  this.isSelectDrag = false
 
   this.matchedPosition = []
 
@@ -245,13 +246,25 @@ function Seeq(){
 
   this.getSelectionTextPosition = function(){
     var searchText = seeq.fetchDataSection.text.innerText
-    var search = new RegExp(this.textSelect, "gi")
+    var search = ""
     var match
 
-    while (match = search.exec(searchText)) {
-      this.matchedSelectPosition.push(match.index)
+    if(this.textSelect !== ""){
+      search = new RegExp(this.textSelect, "gi")
+      this.matchedSelectPosition = []
+      while (match = search.exec(searchText)) {
+        this.matchedSelectPosition = match.index
+      }
+      this.isSelectDrag = true
+    } else {
+      seeq.isSelectDrag = false
     }
+    this.selectAreaLength = this.matchedSelectPosition + this.textSelect.length
   }
+
+  // this.checkIsSelectDragActive = function(){
+  //   this.isSelectDrag = this.textSelect !== ""? true:false
+  // }
 
   this.toggleIsSearchModeChanged = function(){
     this.isSearchModeChanged = !this.isSearchModeChanged
@@ -365,7 +378,6 @@ function Seeq(){
               seeq.fetchDataSection.update(seeq.extract.extract)
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
-              seeq.isDomReadyForDrag = true
             } else {
               seeq.fetchDataSection.update("sorry, please try again..")
             }

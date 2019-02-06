@@ -33,7 +33,8 @@ div button{
   font-family: 'input_mono_regular';
   position: absolute;
   height: 350px;
-  mix-blend-mode: multiply;
+  /* mix-blend-mode: multiply; */
+  pointer-events: none;
 }
 
 button:active{

@@ -34,18 +34,24 @@ function Sequencer(){
   }
 
   this.selectedTextArea = function(){
-    if( seeq.matchedSelectPosition.length > 0){
-      this.paragraphCursorPosition = seeq.matchedSelectPosition
-      seeq.seq.refresh()
-      seeq.seq.set() 
-    }
-    this.paragraphCursorPosition += 1
-    seeq.seq.run()
-    this.trigger()
+    seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
+  }
+
+  this.setSelectLoopRange = function(){
+    // limited sequence within select range.
+    if( seeq.isSelectDrag){
+      if( seeq.seq.paragraphCursorPosition > seeq.selectAreaLength - 2){
+        seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
+      }
+    } 
+    
   }
 
   this.increment = function(){
     var length = seeq.fetchDataSection.text.innerText.length
+    console.log("isSelectDrag", seeq.isSelectDrag)
+    this.setSelectLoopRange()
+    console.log("isSelectDrag after", seeq.isSelectDrag)
 
     if( this.paragraphCursorPosition > length-1){
       this.paragraphCursorPosition = 0
