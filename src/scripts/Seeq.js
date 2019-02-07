@@ -59,7 +59,7 @@ function Seeq(){
     this.wrapper_el.innerHTML += `
       <div class="header-wrapper">
       <div class="header">
-        <div class="title">seeq:</div>
+        <div class="title">s/ee/q:</div>
         <input data-fetch="fetch" placeholder="seeking for text..">
         <button data-gettext="gettext"> Enter </button>
       </div>
@@ -376,6 +376,9 @@ function Seeq(){
           if(response){
             if (seeq.extract.extract){
               seeq.fetchDataSection.update(seeq.extract.extract)
+
+              // avoid re-render
+              seeq.fetchDataSection.updateOnce( seeq.extract.extract)
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
             } else {

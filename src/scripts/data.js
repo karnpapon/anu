@@ -2,8 +2,11 @@ function Data( ){
     this.el = document.createElement("div")
     this.text = document.createElement("p")
 
-    // this layer only to display mark.
+    // this layer only for displaying mark.
     this.maskText = document.createElement("p") 
+    
+    // this layer only for select text ( hihger z-index child's issue workaround).
+    this.selectedText = document.createElement("p") 
 
     this.textBuffers = ""
 
@@ -11,20 +14,37 @@ function Data( ){
       this.el.classList.add("content")
       this.maskText.classList.add("masking")
       this.text.classList.add("no-masking")
+      this.selectedText.classList.add("for-select-text")
       this.el.appendChild(this.text)
       this.el.appendChild(this.maskText)
+      this.el.appendChild(this.selectedText)
       seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
     }
 
     this.refresh = function(){
       this.el.appendChild(this.text) 
       this.el.appendChild(this.maskText) 
+      this.el.appendChild(this.selectedText) 
     }
 
     this.updateWithCursor = function(data){
       this.text.innerHTML = data
     }
 
+    this.updateOnce = function(txt){
+      this.dataText = txt
+      var limitedChar = 1500
+      if(this.dataText && this.dataText.length){
+        if( this.dataText.length > limitedChar ){
+          var trimmedText = this.dataText.substring(0, limitedChar)
+          trimmedText += `...`
+          this.textBuffers = trimmedText
+        } else {
+          this.textBuffers = this.dataText 
+        }
+      } 
+      this.selectedText.innerText = this.textBuffers 
+    }
    
 
     this.update = function(txt){
@@ -51,7 +71,7 @@ function Data( ){
 
     this.textDragSelect = function(){
       // var contextSelect = document.querySelector("p.masking")
-      this.maskText.addEventListener("mouseup", function(){
+      this.selectedText.addEventListener("mouseup", function(){
         seeq.textSelect = seeq.getSelectionText()
         seeq.getSelectionTextPosition()
         seeq.seq.selectedTextArea()

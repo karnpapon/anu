@@ -21,8 +21,15 @@ div button{
   font-size:12px;
   color: white;
   height: 350px;
-  
+  pointer-events: none;
+  position: relative;
+  z-index: 2;
 }
+
+.title{
+  font-family: 'input_sans_condensed_bold';
+  padding-bottom: 5px;
+ }
 
 .trigger{
   background-color: rgb(255, 133, 62) !important;
@@ -30,11 +37,19 @@ div button{
 }
 
 .no-masking{
-  font-family: 'input_mono_regular';
+  font-family: 'input_mono_light';
   position: absolute;
   height: 350px;
-  /* mix-blend-mode: multiply; */
+  z-index: 5;
   pointer-events: none;
+}
+
+.for-select-text{
+  font-family: 'input_mono_light';
+  position: absolute;
+  top: 0;
+  height: 350px;
+  z-index: 1;
 }
 
 button:active{
@@ -47,6 +62,7 @@ button:active{
 .header-wrapper{ 
   display: flex; 
   height: 100%;
+  padding-bottom: 5px;
   justify-content: space-between;
 }
 
