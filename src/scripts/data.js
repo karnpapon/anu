@@ -31,20 +31,20 @@ function Data( ){
       this.text.innerHTML = data
     }
 
-    this.updateOnce = function(txt){
-      this.dataText = txt
-      var limitedChar = 1500
-      if(this.dataText && this.dataText.length){
-        if( this.dataText.length > limitedChar ){
-          var trimmedText = this.dataText.substring(0, limitedChar)
-          trimmedText += `...`
-          this.textBuffers = trimmedText
-        } else {
-          this.textBuffers = this.dataText 
-        }
-      } 
-      this.selectedText.innerText = this.textBuffers 
-    }
+    // this.updateOnce = function(txt){
+    //   this.dataText = txt
+    //   var limitedChar = 1500
+    //   if(this.dataText && this.dataText.length){
+    //     if( this.dataText.length > limitedChar ){
+    //       var trimmedText = this.dataText.substring(0, limitedChar)
+    //       trimmedText += `...`
+    //       this.textBuffers = trimmedText
+    //     } else {
+    //       this.textBuffers = this.dataText 
+    //     }
+    //   } 
+    //   this.selectedText.innerText = this.textBuffers 
+    // }
    
 
     this.update = function(txt){
@@ -52,7 +52,7 @@ function Data( ){
       var limitedChar = 1500
       if(this.dataText && this.dataText.length){
         if( this.dataText.length > limitedChar ){
-          var trimmedText = this.dataText.substring(0, limitedChar)
+          var trimmedText = this.dataText.substring(0, limitedChar - 100 )
           trimmedText += `...`
           this.textBuffers = trimmedText
         } else {
@@ -62,6 +62,7 @@ function Data( ){
 
       this.maskText.innerText = this.textBuffers
       this.text.innerText = this.textBuffers
+      this.selectedText.innerText = this.textBuffers 
 
       this.textDragSelect()
 

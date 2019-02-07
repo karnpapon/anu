@@ -38,7 +38,7 @@ function Seeq(){
   this.searchValue = ""
   this.updateMarkType = "normal"
 
-  this.matchedSymbol = "+"
+  this.matchedSymbol = "𝝣"
 
   // paragraph row detector
   this.lines = ""
@@ -59,7 +59,7 @@ function Seeq(){
     this.wrapper_el.innerHTML += `
       <div class="header-wrapper">
       <div class="header">
-        <div class="title">s/ee/q:</div>
+        <div class="title">s/𝝣𝝣/q:</div>
         <input data-fetch="fetch" placeholder="seeking for text..">
         <button data-gettext="gettext"> Enter </button>
       </div>
@@ -291,13 +291,13 @@ function Seeq(){
    
     // turn matched letter/words into symbols
     if( seeq.searchValue !== ""){
-      this.notation = seeq.fetchDataSection.text.innerText.replace(target, "+")
+      this.notation = seeq.fetchDataSection.text.innerText.replace(target,'𝝣')
     } else {
       this.notation = seeq.fetchDataSection.text.innerText
     }
 
    
-    this.switchText = this.notation.replace(/[^+(|):;,\/"' \.,\-]/g, "-")
+    this.switchText = this.notation.replace(/[^+(|)𝝣:;,\/"' \.,\-]/g, "-")
     this.fetchText = seeq.extract.extract
 
     if( seeq.isSearchModeChanged ){
@@ -377,8 +377,6 @@ function Seeq(){
             if (seeq.extract.extract){
               seeq.fetchDataSection.update(seeq.extract.extract)
 
-              // avoid re-render
-              seeq.fetchDataSection.updateOnce( seeq.extract.extract)
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
             } else {

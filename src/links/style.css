@@ -1,6 +1,6 @@
 body {
   padding: 30px;
-  background-color: white !important;
+  background-color: #e6e6e673 !important;
   color: black !important;
   margin: 0;
 }
@@ -119,11 +119,11 @@ span.current-active{ background: black; color: white;}
 /* mark { background: yellow; padding: unset !important;} */
 mark { 
   padding: unset !important;
-  /* -webkit-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
-  -moz-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
-  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
+   /* -webkit-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
+  /* -moz-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
+  /* box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
   /* background: rgb(0, 60, 255) !important; */
-  background-color: rgb(255, 133, 62) !important;
+  background-color: rgb(62, 251, 0) !important;
 }
 mark.current { 
   background: rgb(255, 62, 168) !important;

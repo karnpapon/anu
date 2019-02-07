@@ -3,15 +3,22 @@ const path = require('path');
 
 const OSC = require('osc-js');
 const chalk = require('chalk');
-const express = require('express');
+// const app = require('express');
 const ip = require('ip');
 
 const pkg = require('./package.json');
+
+const app = require('express');
+const appLink = app();
+const serverLink = require('http').createServer(appLink);
+const IO = require('socket.io');
+// const abletonlink = require('abletonlink');
 
 class Server {
   constructor(options) {
     this.options = options;
 
+    // OSC connection.
     this.osc = new OSC({
       plugin: new OSC.BridgePlugin(this.options),
     });
@@ -23,19 +30,38 @@ class Server {
     this.osc.on('open', () => {
       console.log(`${chalk.green('✔')} osc bridge ready`, this.osc);
     });
-
     this.httpServer = undefined;
+
+
+    // Ableton Link connection.
+    // this.io = new IO(serverLink)
+    // this.link = new abletonlink();
+    // this.startLink = function(){
+    //   let lastBeat = 0.0;
+    //   this.link.startUpdate(60, (beat, phase, bpm) => {
+    //     beat = 0 ^ beat;
+    //     if(0 < beat - lastBeat) {
+    //         io.emit('beat', { beat });
+    //         lastBeat = beat;
+    //     }
+    // }); 
+    // }
+    // this.io.on('connection', function(client){
+    //   client.on('event', function(data){});
+    //   client.on('disconnect', function(){});
+    // });
   }
 
   start() {
     this.osc.open();
+    // this.startLink()
   }
 
   startHttp() {
     const { port, host } = this.options.httpServer;
     const staticPath = path.resolve(__dirname, this.options.staticFolderName);
 
-    this.httpServer = express();
+    this.httpServer = app();
 
     fs.access(staticPath, err => {
       if (!err) {
@@ -45,7 +71,7 @@ class Server {
       }
     });
 
-    this.httpServer.use(express.static(staticPath));
+    this.httpServer.use(app.static(staticPath));
 
     this.httpServer.listen(port, host, () => {
       console.log(`${chalk.green('✔')} http server ready`);

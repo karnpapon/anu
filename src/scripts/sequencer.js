@@ -49,9 +49,7 @@ function Sequencer(){
 
   this.increment = function(){
     var length = seeq.fetchDataSection.text.innerText.length
-    console.log("isSelectDrag", seeq.isSelectDrag)
     this.setSelectLoopRange()
-    console.log("isSelectDrag after", seeq.isSelectDrag)
 
     if( this.paragraphCursorPosition > length-1){
       this.paragraphCursorPosition = 0
