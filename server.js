@@ -3,7 +3,6 @@ const path = require('path');
 
 const OSC = require('osc-js');
 const chalk = require('chalk');
-// const app = require('express');
 const ip = require('ip');
 
 const pkg = require('./package.json');
@@ -12,7 +11,9 @@ const app = require('express');
 const appLink = app();
 const serverLink = require('http').createServer(appLink);
 const IO = require('socket.io');
-// const abletonlink = require('abletonlink');
+const abletonlink = require('abletonlink');
+const io = new IO(serverLink)
+const link = new abletonlink();
 
 class Server {
   constructor(options) {
@@ -32,29 +33,28 @@ class Server {
     });
     this.httpServer = undefined;
 
+    
+    io.on('connection', function (client) {
+      client.on('event', function (data) { });
+      client.on('disconnect', function () { });
+    });
 
     // Ableton Link connection.
-    // this.io = new IO(serverLink)
-    // this.link = new abletonlink();
-    // this.startLink = function(){
-    //   let lastBeat = 0.0;
-    //   this.link.startUpdate(60, (beat, phase, bpm) => {
-    //     beat = 0 ^ beat;
-    //     if(0 < beat - lastBeat) {
-    //         io.emit('beat', { beat });
-    //         lastBeat = beat;
-    //     }
-    // }); 
-    // }
-    // this.io.on('connection', function(client){
-    //   client.on('event', function(data){});
-    //   client.on('disconnect', function(){});
-    // });
+    this.startLink = function(){
+      let lastBeat = 0.0;
+      link.startUpdate(60, function(beat, phase, bpm) {
+        beat = 0 ^ beat;
+        if (0 < beat - lastBeat) {
+          io.emit('beat', { beat });
+          lastBeat = beat;
+        }
+    }); 
+    }
   }
 
   start() {
     this.osc.open();
-    // this.startLink()
+    this.startLink()
   }
 
   startHttp() {

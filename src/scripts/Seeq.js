@@ -1,5 +1,4 @@
 function Seeq(){
-
   this.el = document.createElement("app");
   this.el.style.opacity = 0;
   this.el.id = "seeq";
@@ -59,7 +58,7 @@ function Seeq(){
     this.wrapper_el.innerHTML += `
       <div class="header-wrapper">
       <div class="header">
-        <div class="title">s/𝝣𝝣/q:</div>
+        <div class="title">s/𝝣𝝣/q</div>
         <input data-fetch="fetch" placeholder="seeking for text..">
         <button data-gettext="gettext"> Enter </button>
       </div>
@@ -97,6 +96,7 @@ function Seeq(){
 
     this.fetchDataSection.build()
     setTimeout(seeq.show,200)
+    
   }
 
   this.show = function(){

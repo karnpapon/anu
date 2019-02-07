@@ -44,7 +44,6 @@ function Sequencer(){
         seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
       }
     } 
-    
   }
 
   this.increment = function(){
@@ -82,21 +81,12 @@ function Sequencer(){
     }, 100)
   }
 
-  this.update = function(){
-    var current, nextEl, prevEl
-  }
-
-
   this.stop = function(){
     clearTimeout(this.timer)
     this.paragraphCursorPosition = 0
     seeq.seq.refresh()
     seeq.seq.set()
   }
-
-
-
-
   
 }
 
