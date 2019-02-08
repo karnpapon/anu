@@ -3,6 +3,8 @@ require('electron-reload')(__dirname);
 const Server = require('./server');
 const options = require('./options');
 const server = new Server(options);
+const url = require('url')
+const path = require('path')
 
 let mainWindow
 
@@ -19,7 +21,12 @@ function createWindow () {
     transparent: true,
     movable: true
   })
-  mainWindow.loadFile('index.html')
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+  mainWindow.webContents.openDevTools()
   // mainWindow.setBackgroundColor("#CBCBCB")
   // mainWindow.setOpacity(0.78)
 
@@ -32,7 +39,7 @@ app.on('ready', function (){
   createWindow()
 
   server.start();
-  server.hello();
+  // server.hello();
 })
 
 app.on('window-all-closed', () => {

@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="src/links/style.css">
     <link rel="stylesheet" href="src/links/fonts.css">
     <script src="node_modules/mark.js/dist/mark.min.js"></script>
+    <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="./src/libs/lineWrapDetector.js"></script>
     <script src="./src/scripts/sequencer.js"></script>
     <script src="./src/scripts/data.js"></script>
@@ -23,8 +24,10 @@
         const fs = require('fs');
         const OSC = require('osc-js')
         const axios = require('axios');
-        var socket = require('socket.io').listen(3000);
-        console.log("socket is here", socket)
+        var socket = io('http://localhost:3000');
+        //  socket.on('connect', function () {
+        //     console.log('socket io connected');
+        //   });
         socket.on('beat', function (data) {
           console.log(data.beat);
         });         
