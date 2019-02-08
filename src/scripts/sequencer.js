@@ -9,6 +9,8 @@ function Sequencer(){
   this.isCursorActived = false
   this.timer = ""
 
+  this.linkInfo =  100
+
   this.refresh = function(){
     this.textBuffers = seeq.fetchDataSection.text.innerText; 
   }
@@ -23,6 +25,17 @@ function Sequencer(){
     seeq.fetchDataSection.updateWithCursor(this.output)
     this.isCursorActived = true
     this.setCounterDisplay()
+  }
+
+  // connect with Ableton Link.
+  this.connect = function(data){
+    const { beat, bpm } = data
+    var TIME_SIGNATURE = 4
+    var MS_PER_BEAT = 1000 * 60 / bpm
+    var CONVERTED_BPM = MS_PER_BEAT / TIME_SIGNATURE
+    if( beat % TIME_SIGNATURE == 0){
+      this.linkInfo = CONVERTED_BPM
+    }
   }
 
   this.setCounterDisplay = function(){
@@ -78,7 +91,7 @@ function Sequencer(){
         seeq.seq.refresh()
         seeq.seq.set()
         seeq.seq.increment() //enable this when wanted to run auto.
-    }, 100)
+    }, seeq.seq.linkInfo)
   }
 
   this.stop = function(){

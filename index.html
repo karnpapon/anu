@@ -28,15 +28,18 @@
         //  socket.on('connect', function () {
         //     console.log('socket io connected');
         //   });
-        socket.on('beat', function (data) {
-          console.log(data.beat);
-        });         
+               
         
         const options = { send: { port: 57120 } }
         const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
         var seeq = new Seeq();
        
         seeq.start();
+
+        socket.on('beat', function (data) {
+          const { beat, bpm } = data
+          seeq.seq.connect( data )
+        }); 
     </script>
   </body>
 </html>

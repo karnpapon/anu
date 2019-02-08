@@ -42,7 +42,7 @@ class Server {
       link.startUpdate(60, function (beat, phase, bpm) {
         beat = 0 ^ beat;
         if (0 < beat - lastBeat) {
-          io.emit('beat', { beat });
+          io.emit('beat', { beat, phase, bpm });
           lastBeat = beat;
         }
       });
