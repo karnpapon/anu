@@ -54,21 +54,31 @@ function Sequencer(){
     // limited sequence within select range.
     if( seeq.isSelectDrag){
       if( seeq.seq.paragraphCursorPosition > seeq.selectAreaLength - 2){
-        seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
+        return seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
+      } else if (seeq.isReverse && seeq.seq.paragraphCursorPosition < seeq.matchedSelectPosition){
+        return seeq.seq.paragraphCursorPosition = seeq.selectAreaLength - 2
       }
     } 
   }
 
   this.increment = function(){
     var length = seeq.fetchDataSection.text.innerText.length
-    this.setSelectLoopRange()
 
+    // boundary.
     if( this.paragraphCursorPosition > length-1){
       this.paragraphCursorPosition = 0
       seeq.seq.refresh()
       seeq.seq.set() 
+    } else if ( seeq.isReverse && this.paragraphCursorPosition <= 0){
+      this.paragraphCursorPosition = length - 1
+      seeq.seq.refresh()
+      seeq.seq.set() 
     }
-    this.paragraphCursorPosition  += 1
+
+    // increment | decrement.
+    this.selectDom
+    seeq.isReverse ? this.paragraphCursorPosition -= 1 : this.paragraphCursorPosition += 1
+    this.setSelectLoopRange()
     seeq.seq.run()
     this.trigger()
   }

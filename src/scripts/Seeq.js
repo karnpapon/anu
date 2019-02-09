@@ -46,6 +46,7 @@ function Seeq(){
   this.textLineBuffers = ""
 
   this.isSelectDrag = false
+  this.isReverse = false
 
   this.matchedPosition = []
   this.bpm = ""
@@ -81,6 +82,7 @@ function Seeq(){
         <div class="control-panel">
           <button data-ctrl="play">set</button>
           <button data-ctrl="run">run</button>
+          <button data-ctrl="rev">rev</button>
           <button data-ctrl="stop">stop</button>
           <button data-ctrl="notation-mode">mode</button>
         </div>
@@ -117,6 +119,7 @@ function Seeq(){
     this.playBtn = document.querySelector("button[data-ctrl='play']")
     this.nextStep = document.querySelector("button[data-ctrl='run']")
     this.stopBtn = document.querySelector("button[data-ctrl='stop']")
+    this.revBtn = document.querySelector("button[data-ctrl='rev']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
     var context = document.querySelector("p.masking")
@@ -212,6 +215,11 @@ function Seeq(){
 
       this.nextStep.addEventListener("click", function(){
         seeq.isPlaying = true 
+        seeq.isReverse = false
+
+        // avoiding speeded up increment.
+        clearTimeout(seeq.seq.timer)
+
         seeq.nextStep()
       })
 
@@ -220,7 +228,10 @@ function Seeq(){
         seeq.isPlaying = false
         seeq.seq.stop()
       })
-      
+
+      this.revBtn.addEventListener("click", function () {
+        seeq.isReverse = true
+      })
 
       this.notationMode.addEventListener("click", function(){
         // separated search mode from toggle mode 
