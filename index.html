@@ -7,6 +7,7 @@
     <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="./src/libs/lineWrapDetector.js"></script>
     <script src="./src/scripts/sequencer.js"></script>
+    <script src="./src/scripts/midi.js"></script>
     <script src="./src/scripts/data.js"></script>
     <script src="./src/scripts/Seeq.js"></script>
     <style>
@@ -25,6 +26,7 @@
         const OSC = require('osc-js')
         const axios = require('axios');
         var socket = io('http://localhost:3000');
+        const WebMidi = require('WebMidi')
         
         const options = { send: { port: 8000 } }
         const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
@@ -34,6 +36,9 @@
         socket.on('beat', function (data) {
           const { beat, bpm } = data
           seeq.seq.connect( data )
+          // if(beat){
+          //   seeq.seq.midiTrigger()
+          // }
         }); 
 
         socket.on('bpmchange', function(data){

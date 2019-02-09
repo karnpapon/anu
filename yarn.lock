@@ -2994,6 +2994,11 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
+webmidi@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/webmidi/-/webmidi-2.3.2.tgz#dce4cbe5d66c5bb922edde80d8a3e378dff8219f"
+  integrity sha512-vUHWgx6JYtZKBavlNK865BxYIMsDEDrbo19xtKu6vHgPNVklaZfUtHy009yh4MJ9u771BFEv0GDESVKgx49WgQ==
+
 which-module@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"

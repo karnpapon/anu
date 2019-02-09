@@ -88,11 +88,19 @@ function Sequencer(){
       if(seeq.matchedPosition.indexOf(this.paragraphCursorPosition) !== (-1) && seeq.matchedPosition){
         seeq.appWrapper.classList.add("trigger")
         seeq.sendOsc()
+        seeq.seq.midiTrigger()
+       
       }
       setTimeout(() => {
         seeq.appWrapper.classList.remove("trigger")
       }, 50);
     }
+  }
+
+  this.midiTrigger = function(){
+    var output = WebMidi.getOutputByName("IAC Driver Tidal1");
+    // second param = midi channel.
+    output.playNote( 60 * ( Math.random() * 1.5 ), 1);
   }
 
   this.run = function(){

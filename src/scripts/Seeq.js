@@ -54,6 +54,7 @@ function Seeq(){
   document.body.appendChild(this.appWrapper);
 
   this.fetchDataSection = new Data
+  this.midi = new Midi()
   this.seq = new Sequencer()
 
   this.isPlaying = false
@@ -100,6 +101,7 @@ function Seeq(){
     `;
 
     this.fetchDataSection.build()
+    this.midi.start()
     setTimeout(seeq.show,200)
     
   }
@@ -299,7 +301,7 @@ function Seeq(){
 
   this.setBPMdisplay = function( msg ){
     this.bpm = document.getElementById("bpm")
-    this.bpm.innerText = msg + " " + "bpm"
+    this.bpm.innerHTML = "<b>" + msg + "</b>" + " " + "bpm"
   }
   
   
