@@ -4,7 +4,9 @@
 # Go into the repository
 cd Seeq
 # Install dependencies
-npm install
+yarn install or npm install
+# rebuild Electron to match with dependencies.
+./node_modules/.bin/electron-rebuild
 # Run the app
-npm start
+yarn start or npm start
 ```
