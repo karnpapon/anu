@@ -1,7 +1,9 @@
 function Seeq(){
+  this.appWrapper = document.createElement("appwrapper")
   this.el = document.createElement("app");
   this.el.style.opacity = 0;
   this.el.id = "seeq";
+  this.appWrapper.appendChild(this.el)
   this.wrapper_el = document.createElement("div")
   this.wrapper_el.className = "wrapper-control"
   this.el.appendChild(this.wrapper_el)
@@ -37,7 +39,7 @@ function Seeq(){
   this.searchValue = ""
   this.updateMarkType = "normal"
 
-  this.matchedSymbol = "𝝣"
+  this.matchedSymbol = "◊"
 
   // paragraph row detector
   this.lines = ""
@@ -46,8 +48,9 @@ function Seeq(){
   this.isSelectDrag = false
 
   this.matchedPosition = []
+  this.bpm = ""
 
-  document.body.appendChild(this.el);
+  document.body.appendChild(this.appWrapper);
 
   this.fetchDataSection = new Data
   this.seq = new Sequencer()
@@ -58,7 +61,7 @@ function Seeq(){
     this.wrapper_el.innerHTML += `
       <div class="header-wrapper">
       <div class="header">
-        <div class="title">s/𝝣𝝣/q</div>
+        <div class="title">seeq</div>
         <input data-fetch="fetch" placeholder="seeking for text..">
         <button data-gettext="gettext"> Enter </button>
       </div>
@@ -82,7 +85,7 @@ function Seeq(){
           <button data-ctrl="notation-mode">mode</button>
         </div>
         <div class="tempo">
-          <p>120 bpm</p>
+          <p id="bpm"><b>120</b> bpm</p>
           <div class="counter">
             <p data-ctrl="current">-</p>
             /
@@ -283,6 +286,10 @@ function Seeq(){
   //   seeq.fetchDataSection.updateWithCursor(this.textLineBuffers)
   // }
 
+  this.setBPMdisplay = function( msg ){
+    this.bpm = document.getElementById("bpm")
+    this.bpm.innerText = msg + " " + "bpm"
+  }
   
   
 
@@ -291,13 +298,13 @@ function Seeq(){
    
     // turn matched letter/words into symbols
     if( seeq.searchValue !== ""){
-      this.notation = seeq.fetchDataSection.text.innerText.replace(target,'𝝣')
+      this.notation = seeq.fetchDataSection.text.innerText.replace(target, this.matchedSymbol)
     } else {
       this.notation = seeq.fetchDataSection.text.innerText
     }
 
    
-    this.switchText = this.notation.replace(/[^+(|)𝝣:;,\/"' \.,\-]/g, "-")
+    this.switchText = this.notation.replace(/[^+(|)◊:;,\/"' \.,\-]/g, "-")
     this.fetchText = seeq.extract.extract
 
     if( seeq.isSearchModeChanged ){

@@ -11,7 +11,7 @@
     <script src="./src/scripts/Seeq.js"></script>
     <style>
       ::selection {
-        background: deepskyblue;
+        background: yellow;
       }
     </style>
     <meta charset="UTF-8">
@@ -25,21 +25,22 @@
         const OSC = require('osc-js')
         const axios = require('axios');
         var socket = io('http://localhost:3000');
-        //  socket.on('connect', function () {
-        //     console.log('socket io connected');
-        //   });
-               
         
-        const options = { send: { port: 57120 } }
+        const options = { send: { port: 8000 } }
         const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
         var seeq = new Seeq();
        
         seeq.start();
-
         socket.on('beat', function (data) {
           const { beat, bpm } = data
           seeq.seq.connect( data )
         }); 
+
+        socket.on('bpmchange', function(data){
+          const { bpm } = data
+          seeq.setBPMdisplay(Math.round( bpm )) 
+        })
+
     </script>
   </body>
 </html>

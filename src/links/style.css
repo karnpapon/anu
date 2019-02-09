@@ -1,6 +1,5 @@
 body {
-  padding: 30px;
-  background-color: #e6e6e6 !important;
+  background: #e6e6e6 !important;
   color: black !important;
   margin: 0;
 }
@@ -32,8 +31,7 @@ div button{
  }
 
 .trigger{
-  background-color: rgb(255, 133, 62) !important;
-  transition: 200ms;
+  background-color: rgb(62, 251, 0)  !important;
 }
 
 .no-masking{
@@ -81,6 +79,13 @@ div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
 .counter{ 
   display: flex; 
   justify-content: flex-end;
+}
+
+appwrapper{ 
+  display: flex;
+  background: #e6e6e6;
+  transition: 25ms;
+  padding: 30px;
 }
 app { 
   display: flex; 

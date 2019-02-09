@@ -9,7 +9,7 @@ function Sequencer(){
   this.isCursorActived = false
   this.timer = ""
 
-  this.linkInfo =  100
+  this.clock =  100
 
   this.refresh = function(){
     this.textBuffers = seeq.fetchDataSection.text.innerText; 
@@ -30,11 +30,11 @@ function Sequencer(){
   // connect with Ableton Link.
   this.connect = function(data){
     const { beat, bpm } = data
-    var TIME_SIGNATURE = 4
+    var CLOCK_DIVIDER = 8
     var MS_PER_BEAT = 1000 * 60 / bpm
-    var CONVERTED_BPM = MS_PER_BEAT / TIME_SIGNATURE
-    if( beat % TIME_SIGNATURE == 0){
-      this.linkInfo = CONVERTED_BPM
+    var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
+    if( beat % CLOCK_DIVIDER == 0){
+      this.clock = CONVERTED_BPM
     }
   }
 
@@ -76,12 +76,12 @@ function Sequencer(){
   this.trigger = function(){
     if( seeq.searchValue !== ""){
       if(seeq.matchedPosition.indexOf(this.paragraphCursorPosition) !== (-1) && seeq.matchedPosition){
-        document.body.classList.add("trigger")
+        seeq.appWrapper.classList.add("trigger")
         seeq.sendOsc()
       }
       setTimeout(() => {
-        document.body.classList.remove("trigger")
-      }, 200);
+        seeq.appWrapper.classList.remove("trigger")
+      }, 50);
     }
   }
 
@@ -91,7 +91,7 @@ function Sequencer(){
         seeq.seq.refresh()
         seeq.seq.set()
         seeq.seq.increment() //enable this when wanted to run auto.
-    }, seeq.seq.linkInfo)
+    }, seeq.seq.clock)
   }
 
   this.stop = function(){
