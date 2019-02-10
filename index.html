@@ -3,6 +3,7 @@
   <head>
     <link rel="stylesheet" href="src/links/style.css">
     <link rel="stylesheet" href="src/links/fonts.css">
+    <link rel="stylesheet" href="src/links/loading.css">
     <script src="node_modules/mark.js/dist/mark.min.js"></script>
     <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="./src/libs/lineWrapDetector.js"></script>
@@ -26,12 +27,10 @@
         const OSC = require('osc-js')
         const axios = require('axios');
         var socket = io('http://localhost:3000');
-        // const WebMidi = require('WebMidi')
         
         const options = { send: { port: 8000 } }
         const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
         var seeq = new Seeq();
-        // var outputMidi = WebMidi.getOutputByName("IAC Driver Tidal1");
        
         seeq.start();
         socket.on('beat', function (data) {

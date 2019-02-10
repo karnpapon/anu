@@ -116,7 +116,6 @@ function Sequencer(){
 
   this.midiTrigger = function(){
     // second param = midi channel.
-    // outputMidi.playNote( 60 * ( Math.random() * 1.5 ), 1);
     seeq.midi.send(0, 4, this.getRandomInt(0, 6), 100, 7)
     seeq.midi.run()
     seeq.midi.clear()
@@ -124,7 +123,7 @@ function Sequencer(){
 
   this.run = function(){
     this.timer = setTimeout( function(){
-        // this.paragraphCursorPosition  += 1  //remove this when wanted to run auto.
+        // this.paragraphCursorPosition  += 1  //for debugging.
         seeq.seq.refresh()
         seeq.seq.set()
         seeq.seq.increment() //enable this when wanted to run auto.

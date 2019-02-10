@@ -1,6 +1,7 @@
 function Data( ){
     this.el = document.createElement("div")
     this.text = document.createElement("p")
+    this.loading = document.createElement("div")
 
     // this layer only for displaying mark.
     this.maskText = document.createElement("p") 
@@ -14,7 +15,9 @@ function Data( ){
       this.el.classList.add("content")
       this.maskText.classList.add("masking")
       this.text.classList.add("no-masking")
+      this.loading.classList.add("loading")
       this.selectedText.classList.add("for-select-text")
+      this.el.appendChild(this.loading)
       this.el.appendChild(this.text)
       this.el.appendChild(this.maskText)
       this.el.appendChild(this.selectedText)
@@ -82,5 +85,6 @@ function Data( ){
     this.clear = function(){
       this.text.innerHTML = ""
       this.maskText.innerHTML = ""
+      this.selectedText.innerHTML = ""
     }
 }

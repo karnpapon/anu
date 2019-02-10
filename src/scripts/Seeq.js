@@ -47,6 +47,7 @@ function Seeq(){
 
   this.isSelectDrag = false
   this.isReverse = false
+  this.isGettingData = false
 
   this.matchedPosition = []
   this.bpm = ""
@@ -202,6 +203,7 @@ function Seeq(){
       this.getText.addEventListener("click",function(){ 
         seeq.fetchDataSection.clear()
         if( seeq.fetchSearchInput !== ""){
+          seeq.isGettingData = true
           seeq.getData()
         } else {
           seeq.fetchDataSection.update('no input value...')
@@ -384,6 +386,9 @@ function Seeq(){
   }
 
   this.getData = function () {
+    if( this.isGettingData){
+      seeq.fetchDataSection.loading.style.display = 'block' 
+    }
     axios({
         method: "get",
         url: seeq.url + seeq.fetchSearchInput + seeq.urlEnd,
@@ -399,11 +404,16 @@ function Seeq(){
 
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
+              seeq.isGettingData = false
+              seeq.fetchDataSection.loading.style.display = 'none'  
+              // seeq.fetchDataSection.el.removeChild(seeq.fetchDataSection.loading)
             } else {
               seeq.fetchDataSection.update("sorry, please try again..")
+              seeq.isGettingData = false
             }
           } else {
             seeq.fetchDataSection.update("no result found..")
+            seeq.isGettingData = false
           }
         })
   }
