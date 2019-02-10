@@ -8,6 +8,9 @@ function Sequencer(){
   this.output = ""
   this.isCursorActived = false
   this.timer = ""
+  this.bpm = 120
+  this.counter = 0
+  this.isSync = false
 
   this.clock =  100
 
@@ -30,12 +33,11 @@ function Sequencer(){
   // connect with Ableton Link.
   this.connect = function(data){
     const { beat, bpm } = data
-    var CLOCK_DIVIDER = 8
+    this.bpm = bpm
+    var CLOCK_DIVIDER = 2
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
-    if( beat % CLOCK_DIVIDER == 0){
-      this.clock = CONVERTED_BPM
-    }
+    this.clock = CONVERTED_BPM
   }
 
   this.setCounterDisplay = function(){
@@ -53,17 +55,22 @@ function Sequencer(){
   this.setSelectLoopRange = function(){
     // limited sequence within select range.
     if( seeq.isSelectDrag){
-      if( seeq.seq.paragraphCursorPosition > seeq.selectAreaLength - 2){
+      if( seeq.seq.paragraphCursorPosition > seeq.selectAreaLength - 1){
         return seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
       } else if (seeq.isReverse && seeq.seq.paragraphCursorPosition < seeq.matchedSelectPosition){
-        return seeq.seq.paragraphCursorPosition = seeq.selectAreaLength - 2
+        return seeq.seq.paragraphCursorPosition = seeq.selectAreaLength - 1
       }
     } 
   }
 
+  this.getRandomInt = function(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   this.increment = function(){
     var length = seeq.fetchDataSection.text.innerText.length
-
     // boundary.
     if( this.paragraphCursorPosition > length-1){
       this.paragraphCursorPosition = 0
@@ -75,12 +82,23 @@ function Sequencer(){
       seeq.seq.set() 
     }
 
-    // increment | decrement.
-    this.selectDom
-    seeq.isReverse ? this.paragraphCursorPosition -= 1 : this.paragraphCursorPosition += 1
+    this.counting()
     this.setSelectLoopRange()
-    seeq.seq.run()
+    seeq.seq.run() 
     this.trigger()
+  }
+
+  this.counting = function(){
+    // increment | decrement.
+    if(!this.isSync) { return }
+    seeq.isReverse ? 
+    this.paragraphCursorPosition -= 1 : 
+    this.paragraphCursorPosition += 1
+  }
+
+  this.countIn = function( beat ){
+    if (this.counter != beat ){ this.isSync = true }
+    this.counter = beat
   }
 
   this.trigger = function(){
@@ -89,7 +107,6 @@ function Sequencer(){
         seeq.appWrapper.classList.add("trigger")
         seeq.sendOsc()
         seeq.seq.midiTrigger()
-       
       }
       setTimeout(() => {
         seeq.appWrapper.classList.remove("trigger")
@@ -98,9 +115,11 @@ function Sequencer(){
   }
 
   this.midiTrigger = function(){
-    var output = WebMidi.getOutputByName("IAC Driver Tidal1");
     // second param = midi channel.
-    output.playNote( 60 * ( Math.random() * 1.5 ), 1);
+    // outputMidi.playNote( 60 * ( Math.random() * 1.5 ), 1);
+    seeq.midi.send(0, 4, this.getRandomInt(0, 6), 100, 7)
+    seeq.midi.run()
+    seeq.midi.clear()
   }
 
   this.run = function(){
@@ -117,6 +136,7 @@ function Sequencer(){
     this.paragraphCursorPosition = 0
     seeq.seq.refresh()
     seeq.seq.set()
+    this.isSync = false
   }
   
 }

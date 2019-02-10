@@ -18,8 +18,8 @@ function createWindow () {
     height: 580, 
     frame: false,
     // resizable: false,
-    transparent: true,
-    movable: true
+    // transparent: true,
+    // movable: true
   })
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),

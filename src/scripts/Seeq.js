@@ -379,7 +379,7 @@ function Seeq(){
     var match
 
     while( match = search.exec(searchText)){
-      this.matchedPosition.push(match.index)
+      this.matchedPosition.push(match.index + 1)
     }
   }
 
