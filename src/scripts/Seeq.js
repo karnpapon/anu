@@ -223,7 +223,7 @@ function Seeq(){
 
         // avoiding speeded up increment.
         clearTimeout(seeq.seq.timer)
-
+        seeq.findMatchedPosition()
         seeq.nextStep()
       })
 
@@ -235,6 +235,9 @@ function Seeq(){
 
       this.revBtn.addEventListener("click", function () {
         seeq.isReverse = true
+
+        // refresh position avoiding messed up trigger.
+        seeq.findMatchedPosition()
       })
 
       this.notationMode.addEventListener("click", function(){
@@ -380,8 +383,16 @@ function Seeq(){
     var search = new RegExp(this.searchValue,"gi")
     var match
 
-    while( match = search.exec(searchText)){
-      this.matchedPosition.push(match.index + 1)
+    this.matchedPosition = []
+
+    if( !this.isReverse){
+      while( match = search.exec(searchText)){
+        this.matchedPosition.push(match.index + 1)
+      }
+    } else {
+      while (match = search.exec(searchText)) {
+        this.matchedPosition.push(match.index - 1)
+      } 
     }
   }
 
@@ -406,14 +417,15 @@ function Seeq(){
               seeq.seq.setTotalLenghtCounterDisplay()
               seeq.isGettingData = false
               seeq.fetchDataSection.loading.style.display = 'none'  
-              // seeq.fetchDataSection.el.removeChild(seeq.fetchDataSection.loading)
             } else {
               seeq.fetchDataSection.update("sorry, please try again..")
               seeq.isGettingData = false
+              seeq.fetchDataSection.loading.style.display = 'none'  
             }
           } else {
             seeq.fetchDataSection.update("no result found..")
             seeq.isGettingData = false
+            seeq.fetchDataSection.loading.style.display = 'none'  
           }
         })
   }

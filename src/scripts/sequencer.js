@@ -115,7 +115,6 @@ function Sequencer(){
   }
 
   this.midiTrigger = function(){
-    // second param = midi channel.
     seeq.midi.send(0, 4, this.getRandomInt(0, 6), 100, 7)
     seeq.midi.run()
     seeq.midi.clear()
