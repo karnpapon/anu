@@ -1,4 +1,6 @@
 function Seeq(){
+
+  
   this.appWrapper = document.createElement("appwrapper")
   this.el = document.createElement("app");
   this.el.style.opacity = 0;
@@ -231,6 +233,7 @@ function Seeq(){
       this.stopBtn.addEventListener("click", function(){
         seeq.isPlaying = false
         seeq.seq.stop()
+        seeq.fetchDataSection.hltr.removeHighlights();
       })
 
       this.revBtn.addEventListener("click", function () {

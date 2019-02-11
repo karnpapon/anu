@@ -10,6 +10,13 @@ function Data( ){
     this.selectedText = document.createElement("p") 
 
     this.textBuffers = ""
+    this.hltr = new TextHighlighter(this.selectedText,{
+      onAfterHighlight: function(){
+        seeq.textSelect = seeq.getSelectionText()
+        seeq.getSelectionTextPosition()
+        seeq.seq.selectedTextArea()
+      }
+    });
 
     this.build = function(){
       this.el.classList.add("content")
@@ -34,22 +41,6 @@ function Data( ){
       this.text.innerHTML = data
     }
 
-    // this.updateOnce = function(txt){
-    //   this.dataText = txt
-    //   var limitedChar = 1500
-    //   if(this.dataText && this.dataText.length){
-    //     if( this.dataText.length > limitedChar ){
-    //       var trimmedText = this.dataText.substring(0, limitedChar)
-    //       trimmedText += `...`
-    //       this.textBuffers = trimmedText
-    //     } else {
-    //       this.textBuffers = this.dataText 
-    //     }
-    //   } 
-    //   this.selectedText.innerText = this.textBuffers 
-    // }
-   
-
     this.update = function(txt){
       this.dataText = txt
       var limitedChar = 1500
@@ -67,20 +58,18 @@ function Data( ){
       this.text.innerText = this.textBuffers
       this.selectedText.innerText = this.textBuffers 
 
-      this.textDragSelect()
-
+      // this.textDragSelect()
       // paragraph row detector.
       // seeq.lines = lineWrapDetector.getLines(this.text);
     }
 
-    this.textDragSelect = function(){
-      // var contextSelect = document.querySelector("p.masking")
-      this.selectedText.addEventListener("mouseup", function(){
-        seeq.textSelect = seeq.getSelectionText()
-        seeq.getSelectionTextPosition()
-        seeq.seq.selectedTextArea()
-      })
-    }
+    // this.textDragSelect = function(){
+    //   this.selectedText.addEventListener("mouseup", function(){
+    //     seeq.textSelect = seeq.getSelectionText()
+    //     seeq.getSelectionTextPosition()
+    //     seeq.seq.selectedTextArea()
+    //   })
+    // }
 
     this.clear = function(){
       this.text.innerHTML = ""

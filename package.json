@@ -17,6 +17,7 @@
     "mark.js": "^8.11.1"
   },
   "dependencies": {
+    "TextHighlighter": "https://github.com/h1u2i3/texthighlighter.git",
     "abletonlink": "^0.0.7",
     "axios": "^0.18.0",
     "chalk": "^2.4.2",

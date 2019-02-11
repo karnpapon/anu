@@ -15,6 +15,11 @@ div button{
   transition: 0.1s;
 }
 
+
+.hltr{
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+}
+
 .masking{
   font-family: 'input_mono_thin'; 
   font-size:12px;
@@ -58,6 +63,11 @@ div button{
   height: 100%;
   background-repeat: no-repeat;
   background-image: url('../media/images/ajax-loading-gif-4.gif')
+}
+
+.highlight{
+  background-color: yellow;
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
 }
 
 button:active{

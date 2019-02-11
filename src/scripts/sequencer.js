@@ -3,6 +3,7 @@ function Sequencer(){
   this.currentIndex = 0
   this.target
 
+  this.textSelectHighlight = ""
   this.paragraphCursorPosition = 0
   this.textBuffers = ""
   this.output = ""
@@ -30,6 +31,17 @@ function Sequencer(){
     this.setCounterDisplay()
   }
 
+  // this.setTextSelection = function (text){
+  //   this.textSelectHighlight = seeq.fetchDataSection.selectedText.innerHTML; 
+  //   var index = this.textSelectHighlight.indexOf(text);
+  //   var output = this.textSelectHighlight.substr(0, index) + 
+  //   "<span class='highlight'>" + 
+  //   this.textSelectHighlight.substr(index, text.length) + 
+  //   "</span>" + 
+  //   this.textSelectHighlight.substr(index + text.length);
+  //   // seeq.fetchDataSection.selectedText.innerHTML = output;
+  // }
+
   // connect with Ableton Link.
   this.connect = function(data){
     const { beat, bpm } = data
@@ -56,9 +68,9 @@ function Sequencer(){
     // limited sequence within select range.
     if( seeq.isSelectDrag){
       if( seeq.seq.paragraphCursorPosition > seeq.selectAreaLength - 1){
-        return seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
+        seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
       } else if (seeq.isReverse && seeq.seq.paragraphCursorPosition < seeq.matchedSelectPosition){
-        return seeq.seq.paragraphCursorPosition = seeq.selectAreaLength - 1
+        seeq.seq.paragraphCursorPosition = seeq.selectAreaLength - 1
       }
     } 
   }
