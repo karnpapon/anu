@@ -1,46 +1,60 @@
-function Sequencer(){
+'use strict'
+
+function Sequencer(id){
 
   this.currentIndex = 0
   this.target
+  this.id = id
 
   this.textSelectHighlight = ""
   this.paragraphCursorPosition = 0
   this.textBuffers = ""
   this.output = ""
+  this.outputLoop = ""
   this.isCursorActived = false
   this.timer = ""
   this.bpm = 120
   this.counter = 0
   this.isSync = false
-
   this.clock =  100
 
   this.refresh = function(){
-    this.textBuffers = seeq.fetchDataSection.text.innerText; 
+    seeq.seq.textBuffers = seeq.fetchDataSection.text.textContent; 
+  }
+
+  this.setWithChunk = function(){
+    this.output1 = seeq.fetchDataSection.text.textContent.substr(0, this.paragraphCursorPosition)
+    this.output2 = `<span id=${this.id} class=\"current-active\">` + seeq.fetchDataSection.text.textContent.substr(this.paragraphCursorPosition, 1) + "</span>"
+    this.output3 = seeq.fetchDataSection.text.innerHTML.substr(this.paragraphCursorPosition + 1) 
+
+    this.combinedChunk = this.output1 + this.output2 + this.output3
   }
 
   this.set = function(){
-		this.output =  this.textBuffers.substr(0, this.paragraphCursorPosition) +
-		"<span class=\"current-active\">" +
-		this.textBuffers.substr(this.paragraphCursorPosition, 1) +
+    this.output = seeq.fetchDataSection.text.textContent.substr(0, this.paragraphCursorPosition) +
+		`<span id=${this.id} class=\"current-active\">` +
+      seeq.fetchDataSection.text.textContent.substr(this.paragraphCursorPosition, 1) +
 		"</span>" +
-    this.textBuffers.substr(this.paragraphCursorPosition+1)  ;
+      seeq.fetchDataSection.text.textContent.substr(this.paragraphCursorPosition+1)  ;
 
     seeq.fetchDataSection.updateWithCursor(this.output)
     this.isCursorActived = true
     this.setCounterDisplay()
   }
 
-  // this.setTextSelection = function (text){
-  //   this.textSelectHighlight = seeq.fetchDataSection.selectedText.innerHTML; 
-  //   var index = this.textSelectHighlight.indexOf(text);
-  //   var output = this.textSelectHighlight.substr(0, index) + 
-  //   "<span class='highlight'>" + 
-  //   this.textSelectHighlight.substr(index, text.length) + 
-  //   "</span>" + 
-  //   this.textSelectHighlight.substr(index + text.length);
-  //   // seeq.fetchDataSection.selectedText.innerHTML = output;
-  // }
+
+  this.setMultiLoop = function(){
+    // this.textBuffers = seeq.fetchDataSection.text.innerHTML;
+    this.output = seeq.fetchDataSection.text.innerHTML.substr(0, this.paragraphCursorPosition) +
+      `<span id=${this.id} class=\"current-active\">` +
+      seeq.fetchDataSection.text.innerHTML.substr(this.paragraphCursorPosition, 1) +
+      "</span>" +
+      seeq.fetchDataSection.text.innerHTML.substr(this.paragraphCursorPosition + 1);
+
+    seeq.fetchDataSection.updateWithCursor(this.output)
+    this.isCursorActived = true
+    // this.setCounterDisplay()
+  }
 
   // connect with Ableton Link.
   this.connect = function(data){
@@ -61,43 +75,44 @@ function Sequencer(){
   }
 
   this.selectedTextArea = function(){
-    seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
+    this.paragraphCursorPosition = seeq.matchedSelectPosition
   }
 
   this.setSelectLoopRange = function(){
     // limited sequence within select range.
     if( seeq.isSelectDrag){
-      if( seeq.seq.paragraphCursorPosition > seeq.selectAreaLength - 1){
-        seeq.seq.paragraphCursorPosition = seeq.matchedSelectPosition
-      } else if (seeq.isReverse && seeq.seq.paragraphCursorPosition < seeq.matchedSelectPosition){
-        seeq.seq.paragraphCursorPosition = seeq.selectAreaLength - 1
+      if( this.paragraphCursorPosition > seeq.selectAreaLength - 1){
+        this.paragraphCursorPosition = seeq.matchedSelectPosition
+      } else if (seeq.isReverse && this.paragraphCursorPosition < seeq.matchedSelectPosition){
+        this.paragraphCursorPosition = seeq.selectAreaLength - 1
       }
     } 
   }
 
   this.getRandomInt = function(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
+    var min = Math.ceil(min);
+    var max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   this.increment = function(){
-    var length = seeq.fetchDataSection.text.innerText.length
-    // boundary.
-    if( this.paragraphCursorPosition > length-1){
-      this.paragraphCursorPosition = 0
-      seeq.seq.refresh()
-      seeq.seq.set() 
-    } else if ( seeq.isReverse && this.paragraphCursorPosition <= 0){
-      this.paragraphCursorPosition = length - 1
-      seeq.seq.refresh()
-      seeq.seq.set() 
-    }
+    // var length = seeq.fetchDataSection.text.innerText.length
+    // // boundary.
+    // if( this.paragraphCursorPosition > length-1){
+    //   this.paragraphCursorPosition = 0
+    //   this.refresh()
+    //   this.set() 
+    // } else if ( seeq.isReverse && this.paragraphCursorPosition <= 0){
+    //   this.paragraphCursorPosition = length - 1
+    //   this.refresh()
+    //   this.set() 
+    // }
 
-    this.counting()
-    this.setSelectLoopRange()
-    seeq.seq.run() 
-    this.trigger()
+    // this.counting()
+    // this.setSelectLoopRange()
+    // this.refresh()
+    this.run() 
+    // this.trigger()
   }
 
   this.counting = function(){
@@ -118,7 +133,7 @@ function Sequencer(){
       if(seeq.matchedPosition.indexOf(this.paragraphCursorPosition) !== (-1) && seeq.matchedPosition){
         seeq.appWrapper.classList.add("trigger")
         seeq.sendOsc()
-        seeq.seq.midiTrigger()
+        this.midiTrigger()
       }
       setTimeout(() => {
         seeq.appWrapper.classList.remove("trigger")
@@ -133,21 +148,23 @@ function Sequencer(){
   }
 
   this.run = function(){
-    this.timer = setTimeout( function(){
-        // this.paragraphCursorPosition  += 1  //for debugging.
-        seeq.seq.refresh()
-        seeq.seq.set()
-        seeq.seq.increment() //enable this when wanted to run auto.
-    }, seeq.seq.clock)
+    var self = this
+    // this.timer = setTimeout( function(){
+        this.paragraphCursorPosition  += 1  //for debugging.
+        // self.refresh()
+        self.set()
+        // self.increment() //enable this when wanted to run auto.
+    // }, this.clock)
   }
 
   this.stop = function(){
     clearTimeout(this.timer)
     this.paragraphCursorPosition = 0
-    seeq.seq.refresh()
-    seeq.seq.set()
+    this.refresh()
+    this.set()
     this.isSync = false
   }
   
 }
 
+module.exports = Sequencer

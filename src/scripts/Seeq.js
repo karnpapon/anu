@@ -58,7 +58,8 @@ function Seeq(){
 
   this.fetchDataSection = new Data
   this.midi = new Midi()
-  this.seq = new Sequencer()
+  this.seq = new Sequencer("1")
+  this.seq2
 
   this.isPlaying = false
 
@@ -81,10 +82,11 @@ function Seeq(){
       <div class="header">
         <div class="title">RegExp:</div>
         <input type="search-regex" placeholder="">
+        <button data-ctrl="add">+</button>
       </div>
       <div class="control-info">
         <div class="control-panel">
-          <button data-ctrl="play">set</button>
+          <button data-ctrl="set">set</button>
           <button data-ctrl="run">run</button>
           <button data-ctrl="rev">rev</button>
           <button data-ctrl="stop">stop</button>
@@ -121,10 +123,11 @@ function Seeq(){
     this.nextBtn = document.querySelector("button[data-search='next']")
     this.inputFetch = document.querySelector("input[data-fetch='fetch']")
     this.getText = document.querySelector("button[data-gettext='gettext']")
-    this.playBtn = document.querySelector("button[data-ctrl='play']")
-    this.nextStep = document.querySelector("button[data-ctrl='run']")
+    this.setBtn = document.querySelector("button[data-ctrl='set']")
+    this.runStep = document.querySelector("button[data-ctrl='run']")
     this.stopBtn = document.querySelector("button[data-ctrl='stop']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
+    this.addBtn = document.querySelector("button[data-ctrl='add']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
     var context = document.querySelector("p.masking")
@@ -213,26 +216,33 @@ function Seeq(){
       })
 
 
-      this.playBtn.addEventListener("click", function(){
+      this.setBtn.addEventListener("click", function(){
         // seeq.isPlaying = true
-        seeq.seq.refresh()
-        seeq.setCursor()
+        // seeq.seq.refresh()
+        // seeq.setCursor()
+        seeq.seq.set()
       })
 
-      this.nextStep.addEventListener("click", function(){
+      this.runStep.addEventListener("click", function(){
         seeq.isPlaying = true 
         seeq.isReverse = false
 
         // avoiding speeded up increment.
         clearTimeout(seeq.seq.timer)
+        if(seeq.seq2){
+          clearTimeout(seeq.seq2.timer)
+        }
         seeq.findMatchedPosition()
-        seeq.nextStep()
+        seeq.runStep()
       })
 
 
       this.stopBtn.addEventListener("click", function(){
         seeq.isPlaying = false
         seeq.seq.stop()
+        if(seeq.seq2){
+          seeq.seq2.stop()
+        }
         seeq.fetchDataSection.hltr.removeHighlights();
       })
 
@@ -241,6 +251,11 @@ function Seeq(){
 
         // refresh position avoiding messed up trigger.
         seeq.findMatchedPosition()
+      })
+
+      this.addBtn.addEventListener("click", function(){
+        seeq.addSequencer()
+        seeq.seq2.setMultiLoop()
       })
 
       this.notationMode.addEventListener("click", function(){
@@ -292,6 +307,12 @@ function Seeq(){
 
   this.toggleIsSearchModeChanged = function(){
     this.isSearchModeChanged = !this.isSearchModeChanged
+  }
+
+  this.addSequencer = function(){
+    this.seq2 = new Sequencer("2")
+    // this.seq2.refresh()
+    this.seq2.paragraphCursorPosition = 200
   }
 
   // this.extractLinesParagraph = function(){
@@ -434,13 +455,16 @@ function Seeq(){
   }
 
   this.setCursor = function(){
-    seeq.seq.refresh()
+    // seeq.seq.refresh()
     seeq.seq.set()
     // seeq.jump()
   }
 
-  this.nextStep = function(){
+  this.runStep = function(){
     this.seq.increment()
+    if(seeq.seq2){
+      this.seq2.increment()
+    }
   }
 
   this.updateMark = function(value, markType){

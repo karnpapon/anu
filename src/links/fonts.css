@@ -2,26 +2,31 @@
 @font-face {
     font-family: 'input_mono_regular';
     src: url('../media/fonts/InputMono-Regular.ttf') format('truetype');
+    font-display: block;
 }
 
 @font-face {
     font-family: 'input_mono_medium';
     src: url('../media/fonts/InputMono-Medium.ttf') format('truetype');
+    font-display: block;
 }
 
 @font-face {
     font-family: 'input_mono_bold';
     src: url('../media/fonts/InputMono-Black.ttf') format('truetype');
+    font-display: block;
 }
 
 @font-face {
     font-family: 'input_mono_thin';
     src: url('../media/fonts/InputMono-Thin.ttf') format('truetype');
+    font-display: block;
 }
 
 @font-face {
     font-family: 'input_mono_light';
     src: url('../media/fonts/InputMono-Light.ttf') format('truetype');
+    font-display: block;
 }
 
 /* input sans condense */

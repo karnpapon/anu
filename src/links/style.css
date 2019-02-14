@@ -1,5 +1,9 @@
+:root {
+  --main-bg-color: #e6e6e6;
+}
+
 body {
-  background: #e6e6e6 !important;
+  background: var(--main-bg-color) !important;
   color: black !important;
   margin: 0;
 }
@@ -15,15 +19,18 @@ div button{
   transition: 0.1s;
 }
 
-
 .hltr{
-  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+ transition: 200ms;
+}
+.hltr:hover{
+  cursor: pointer;
+  background-color: #d0d0d0 !important;
 }
 
 .masking{
   font-family: 'input_mono_thin'; 
   font-size:12px;
-  color: white;
+  color: var(--main-bg-color);
   height: 350px;
   pointer-events: none;
   position: relative;
@@ -47,11 +54,21 @@ div button{
   pointer-events: none;
 }
 
+.no-masking2{
+  font-family: 'input_mono_light';
+  position: absolute;
+  height: 350px;
+  z-index: 4;
+  color: var(--main-bg-color);
+  pointer-events: none;
+}
+
 .for-select-text{
   font-family: 'input_mono_light';
   position: absolute;
   top: 0;
   height: 350px;
+  color: var(--main-bg-color);
   z-index: 1;
 }
 

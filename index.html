@@ -38,8 +38,14 @@
           const { beat, bpm } = data
           if(beat % 4 == 0){
             seeq.seq.connect( data )
+            if(seeq.seq2){
+              seeq.seq2.connect( data )
+            }
             if( seeq.isPlaying ){
               seeq.seq.countIn( beat )
+              if(seeq.seq2){
+                seeq.seq2.countIn( beat )
+              }
             }
           }
         }); 
