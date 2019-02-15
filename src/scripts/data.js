@@ -48,9 +48,9 @@ function Data( ){
       this.el.appendChild(this.selectedText) 
     }
 
-    this.updateWithCursor = function(data){
-      this.text.innerHTML = data
-    }
+    // this.updateWithCursor = function(data){
+    //   this.text.innerHTML = data
+    // }
 
     // var targetHighlight = document.getElementsByClassName("hltr")
     // targetHighlight.addEventListener("click", function(){

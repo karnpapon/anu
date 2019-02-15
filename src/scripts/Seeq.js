@@ -54,11 +54,13 @@ function Seeq(){
   this.matchedPosition = []
   this.bpm = ""
 
+  this.paragraphCursorPosition = [10]
+
   document.body.appendChild(this.appWrapper);
 
   this.fetchDataSection = new Data
   this.midi = new Midi()
-  this.seq = new Sequencer("1")
+  this.seq = new Sequencer()
   this.seq2
 
   this.isPlaying = false
@@ -217,10 +219,8 @@ function Seeq(){
 
 
       this.setBtn.addEventListener("click", function(){
-        // seeq.isPlaying = true
         // seeq.seq.refresh()
-        // seeq.setCursor()
-        seeq.seq.set()
+        seeq.setCursor()
       })
 
       this.runStep.addEventListener("click", function(){
@@ -229,9 +229,6 @@ function Seeq(){
 
         // avoiding speeded up increment.
         clearTimeout(seeq.seq.timer)
-        if(seeq.seq2){
-          clearTimeout(seeq.seq2.timer)
-        }
         seeq.findMatchedPosition()
         seeq.runStep()
       })
@@ -240,9 +237,6 @@ function Seeq(){
       this.stopBtn.addEventListener("click", function(){
         seeq.isPlaying = false
         seeq.seq.stop()
-        if(seeq.seq2){
-          seeq.seq2.stop()
-        }
         seeq.fetchDataSection.hltr.removeHighlights();
       })
 
@@ -255,7 +249,8 @@ function Seeq(){
 
       this.addBtn.addEventListener("click", function(){
         seeq.addSequencer()
-        seeq.seq2.setMultiLoop()
+        seeq.seq.set()
+        seeq.findMatchedPosition()
       })
 
       this.notationMode.addEventListener("click", function(){
@@ -310,9 +305,7 @@ function Seeq(){
   }
 
   this.addSequencer = function(){
-    this.seq2 = new Sequencer("2")
-    // this.seq2.refresh()
-    this.seq2.paragraphCursorPosition = 200
+    this.paragraphCursorPosition.push(100) //test add new cursor with hardcoded position.
   }
 
   // this.extractLinesParagraph = function(){
@@ -333,8 +326,6 @@ function Seeq(){
     this.bpm.innerHTML = "<b>" + msg + "</b>" + " " + "bpm"
   }
   
-  
-
   this.textConvertor = function(){
     var target = new RegExp(seeq.searchValue, "gi")
    
@@ -409,14 +400,16 @@ function Seeq(){
 
     this.matchedPosition = []
 
-    if( !this.isReverse){
-      while( match = search.exec(searchText)){
-        this.matchedPosition.push(match.index + 1)
+    if( this.searchValue !== ""){
+      if( !this.isReverse){
+        while( match = search.exec(searchText)){
+          this.matchedPosition.push(match.index + 1)
+        }
+      } else {
+        while (match = search.exec(searchText)) {
+          this.matchedPosition.push(match.index - 1)
+        } 
       }
-    } else {
-      while (match = search.exec(searchText)) {
-        this.matchedPosition.push(match.index - 1)
-      } 
     }
   }
 
@@ -456,16 +449,22 @@ function Seeq(){
 
   this.setCursor = function(){
     // seeq.seq.refresh()
-    seeq.seq.set()
+    this.seq.set()
     // seeq.jump()
   }
 
   this.runStep = function(){
     this.seq.increment()
-    if(seeq.seq2){
-      this.seq2.increment()
-    }
+    // this.seq.set()
+    // if(seeq.seq2){
+    //   this.seq2.increment()
+    // }
   }
+
+  // this.increment = function () {
+  //   inc = this.paragraphCursorPosition.map(pos => pos + 1)
+  //   this.paragraphCursorPosition = inc
+  // }
 
   this.updateMark = function(value, markType){
     if(markType == 'normal'){
