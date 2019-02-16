@@ -15,13 +15,17 @@ function Sequencer(){
   this.isSync = false
   this.clock =  100
   this.offset = 0
+  this.targetHighlight
 
   this.set = function () {
     seeq.paragraphCursorPosition.forEach((cursor, index) => {
+      var offsetCursor = 0
       if (index == 0) {
         this.outputType = seeq.fetchDataSection.text.innerText
+        offsetCursor = 0
       } else {
         this.outputType = seeq.fetchDataSection.text.innerHTML
+        offsetCursor = 36 * index
       }
 
       // handle negative index to behave correctly.
@@ -32,11 +36,11 @@ function Sequencer(){
         "</span>" + 
         this.outputType.substr(0,0)
       } else {
-        this.output = this.outputType.substr(0, cursor) +
+        this.output = this.outputType.substr(0, cursor + offsetCursor) +
         `<span class=\"current-active\">` +
-        this.outputType.substr(cursor, 1) +
+          this.outputType.substr(cursor + offsetCursor , 1) +
         "</span>" +
-        this.outputType.substr(cursor + 1) 
+        this.outputType.substr(cursor + 1 + offsetCursor) 
       }
 
       seeq.fetchDataSection.text.innerHTML = this.output
@@ -50,7 +54,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 2
+    var CLOCK_DIVIDER = 6
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM
@@ -58,7 +62,13 @@ function Sequencer(){
 
   this.setCounterDisplay = function(){
     seeq.currentNumber.innerHTML = "--"
+    // this.getHighlightEl()
   }
+  
+  // this.getHighlightEl = function(){
+  //   if (seeq.fetchDataSection.getHighlight){
+  //   }
+  // }
 
   this.setTotalLenghtCounterDisplay = function(){
     seeq.totalNumber.innerHTML = seeq.fetchDataSection.text.innerText.length
@@ -66,24 +76,18 @@ function Sequencer(){
 
   this.selectedTextArea = function(){
     seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
-
-      // index 0 = first cursor
-      // for debugging.
-      if(index == 0){
-        array[index] = seeq.matchedSelectPosition
-      }
-    } 
-    )
+      array[index] = seeq.matchedSelectPosition[index]
+    })
   }
 
   this.setSelectLoopRange = function(){
     // limited sequence within select range.
     if( seeq.isSelectDrag){
       seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
-        if( cursor > seeq.selectAreaLength - 1){
-          array[index] = seeq.matchedSelectPosition
-        } else if (seeq.isReverse && cursor < seeq.matchedSelectPosition){
-          array[index]  = seeq.selectAreaLength - 1
+        if( cursor > seeq.selectAreaLength[index] - 1){
+          array[index] = seeq.matchedSelectPosition[index]
+        } else if (seeq.isReverse && cursor < seeq.matchedSelectPosition[index]){
+          array[index]  = seeq.selectAreaLength[index] - 1
         }
       })
     } 
@@ -138,7 +142,7 @@ function Sequencer(){
           if(seeq.matchedPosition.indexOf(cursor) !== (-1) && seeq.matchedPosition){
             seeq.appWrapper.classList.add("trigger")
             seeq.sendOsc()
-            this.midiTrigger()
+            this.midiTrigger(index)
           }
         } else {
           var offsetNumber = 36 // offsetted html element to get actual matchedPositions.
@@ -146,7 +150,7 @@ function Sequencer(){
           if (offsetPosition.indexOf(cursor) !== (-1) && offsetPosition) {
             seeq.appWrapper.classList.add("trigger")
             seeq.sendOsc()
-            this.midiTrigger()
+            this.midiTrigger(index)
           } 
         }
         setTimeout(() => {
@@ -156,8 +160,8 @@ function Sequencer(){
     }
   }
 
-  this.midiTrigger = function(){
-    seeq.midi.send(0, 4, this.getRandomInt(0, 6), 100, 7)
+  this.midiTrigger = function(chan = 0){
+    seeq.midi.send(chan, 4, this.getRandomInt(0, 6), 100, 7)
     seeq.midi.run()
     seeq.midi.clear()
   }
@@ -176,6 +180,8 @@ function Sequencer(){
     seeq.paragraphCursorPosition = [0]
     this.set()
     this.isSync = false
+    seeq.selectAreaLength = []
+    seeq.matchedSelectPosition = []
   }
   
 }

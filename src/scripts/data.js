@@ -15,14 +15,22 @@ function Data( ){
     this.selectedText = document.createElement("p") 
 
     this.textBuffers = ""
+    this.getHighlight
 
     // multiple highlighter.
     this.hltr = new TextHighlighter(this.selectedText,{
       highlightedClass: 'hltr',
       onAfterHighlight: function(){
+
+        this.getHighlight = seeq.fetchDataSection.hltr.getHighlights(this.selectedText)
         seeq.textSelect = seeq.getSelectionText()
         seeq.getSelectionTextPosition()
         seeq.seq.selectedTextArea()
+
+        // start adding new cursor.
+        if (seeq.selectAreaLength.length > 1 ){
+          seeq.addCursorWhenSelectRange()
+        }
       }
     });
 
@@ -52,11 +60,6 @@ function Data( ){
     //   this.text.innerHTML = data
     // }
 
-    // var targetHighlight = document.getElementsByClassName("hltr")
-    // targetHighlight.addEventListener("click", function(){
-    //   targetHighlight.removeHighlights()
-    // })
-
     this.update = function(txt){
       this.dataText = txt
       var limitedChar = 1500
@@ -80,13 +83,16 @@ function Data( ){
       // seeq.lines = lineWrapDetector.getLines(this.text);
     }
 
-    // this.textDragSelect = function(){
-    //   this.selectedText.addEventListener("mouseup", function(){
-    //     seeq.textSelect = seeq.getSelectionText()
-    //     seeq.getSelectionTextPosition()
-    //     seeq.seq.selectedTextArea()
-    //   })
-    // }
+    this.textDragSelect = function(){
+      var self = this
+      this.selectedText.addEventListener("mouseup", function(){
+        if( self.getHighlight ){
+          console.log("haveeee")
+        } else {
+          console.log("no haveee")
+        }
+      })
+    }
 
     this.clear = function(){
       this.text.innerHTML = ""

@@ -35,13 +35,14 @@ function Seeq(){
   this.notation = ""
   this.textSelect = ""
   this.matchedSelectPosition = []
-  this.selectAreaLength = 0
+  this.selectAreaLength = []
   
 
   this.searchValue = ""
   this.updateMarkType = "normal"
 
   this.matchedSymbol = "◊"
+  this.startPos
 
   // paragraph row detector
   this.lines = ""
@@ -246,9 +247,9 @@ function Seeq(){
       })
 
       this.addBtn.addEventListener("click", function(){
-        seeq.addSequencer()
-        seeq.seq.set()
-        seeq.findMatchedPosition()
+        // seeq.addSequencer()
+        // seeq.seq.set()
+        // seeq.findMatchedPosition()
       })
 
       this.notationMode.addEventListener("click", function(){
@@ -280,18 +281,21 @@ function Seeq(){
     var searchText = seeq.fetchDataSection.text.innerText
     var search = ""
     var match
+    var length
 
     if(this.textSelect !== ""){
+      length = this.textSelect.length
       search = new RegExp(this.textSelect, "gi")
-      this.matchedSelectPosition = []
+      // this.matchedSelectPosition = []
       while (match = search.exec(searchText)) {
-        this.matchedSelectPosition = match.index
+        this.startPos = match.index
+        this.matchedSelectPosition.push( this.startPos )
       }
       this.isSelectDrag = true
     } else {
       this.isSelectDrag = false
     }
-    this.selectAreaLength = this.matchedSelectPosition + this.textSelect.length
+    this.selectAreaLength.push(this.startPos + length)
   }
 
   this.toggleIsSearchModeChanged = function(){
@@ -299,7 +303,8 @@ function Seeq(){
   }
 
   this.addSequencer = function(){
-    this.paragraphCursorPosition.push(100) //test add new cursor with hardcoded position.
+    this.paragraphCursorPosition.push(this.startPos)
+    console.log("cursor position added = ", this.paragraphCursorPosition)
   }
 
   // this.extractLinesParagraph = function(){
@@ -343,6 +348,12 @@ function Seeq(){
     if(seeq.seq.isCursorActived){
       this.setCursor()
     }
+  }
+
+  this.addCursorWhenSelectRange = function(){
+    this.addSequencer()
+    // this.seq.set()
+    // this.findMatchedPosition()
   }
 
   this.update = function(markType, modeContent, target ){
@@ -479,6 +490,5 @@ function Seeq(){
       });
     }
   }
-
   
 }
