@@ -16,32 +16,28 @@ function Sequencer(){
   this.clock =  100
   this.offset = 0
 
-  // this.set = function(){
-  //   let offset = 0
-  //   seeq.paragraphCursorPosition.forEach((cursor) => {
-  //     this.output = seeq.fetchDataSection.text.innerHTML.substr(0, cursor + offset) +
-  //     `<span class=\"current-active\">` +
-  //       seeq.fetchDataSection.text.innerHTML.substr(cursor + offset, 1) +
-  //     "</span>" +
-  //     seeq.fetchDataSection.text.innerHTML.substr(cursor+1+offset)  ;
-  //     seeq.fetchDataSection.text.innerHTML = this.output
-  //   })
-  //   offset += 37
-  // }
-
   this.set = function () {
     seeq.paragraphCursorPosition.forEach((cursor, index) => {
       if (index == 0) {
-        this.outputType = seeq.fetchDataSection.text.textContent
+        this.outputType = seeq.fetchDataSection.text.innerText
       } else {
         this.outputType = seeq.fetchDataSection.text.innerHTML
       }
 
-      this.output = this.outputType.substr(0, cursor) + 
-      `<span class=\"current-active\">` + 
-      this.outputType.substr(cursor, 1) + 
-      "</span>" + 
-      this.outputType.substr(cursor + 1)
+      // handle negative index to behave correctly.
+      if( cursor < 0 ){
+        this.output = this.outputType.substr(0) + 
+        `<span class=\"current-active\">` + 
+        this.outputType.substr(cursor, 1) + 
+        "</span>" + 
+        this.outputType.substr(0,0)
+      } else {
+        this.output = this.outputType.substr(0, cursor) +
+        `<span class=\"current-active\">` +
+        this.outputType.substr(cursor, 1) +
+        "</span>" +
+        this.outputType.substr(cursor + 1) 
+      }
 
       seeq.fetchDataSection.text.innerHTML = this.output
       this.isCursorActived = true
@@ -54,7 +50,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 6
+    var CLOCK_DIVIDER = 2
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM
@@ -69,17 +65,27 @@ function Sequencer(){
   }
 
   this.selectedTextArea = function(){
-    this.paragraphCursorPosition = seeq.matchedSelectPosition
+    seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
+
+      // index 0 = first cursor
+      // for debugging.
+      if(index == 0){
+        array[index] = seeq.matchedSelectPosition
+      }
+    } 
+    )
   }
 
   this.setSelectLoopRange = function(){
     // limited sequence within select range.
     if( seeq.isSelectDrag){
-      if( this.paragraphCursorPosition > seeq.selectAreaLength - 1){
-        this.paragraphCursorPosition = seeq.matchedSelectPosition
-      } else if (seeq.isReverse && this.paragraphCursorPosition < seeq.matchedSelectPosition){
-        this.paragraphCursorPosition = seeq.selectAreaLength - 1
-      }
+      seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
+        if( cursor > seeq.selectAreaLength - 1){
+          array[index] = seeq.matchedSelectPosition
+        } else if (seeq.isReverse && cursor < seeq.matchedSelectPosition){
+          array[index]  = seeq.selectAreaLength - 1
+        }
+      })
     } 
   }
 
@@ -93,22 +99,19 @@ function Sequencer(){
 
     var length = seeq.fetchDataSection.text.innerText.length
     // boundary.
-    seeq.paragraphCursorPosition.forEach( cursor => {
+    seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
       if( cursor > length-1){
-        cursor = 0
-        this.set() 
-      } else if ( seeq.isReverse && cursor <= 0){
-        cursor = length - 1
-        this.set() 
+        array[index] = 0
+      } else if ( seeq.isReverse && cursor < 0){
+        array[index] = length - 1
       }
+      this.set() 
     })
 
     this.counting()
-    // self.setSelectLoopRange()
-    // self.refresh()
+    this.setSelectLoopRange()
     this.run() 
     this.trigger()
-    // this.set()
   }
 
   this.counting = function(){
@@ -118,7 +121,7 @@ function Sequencer(){
     if(seeq.isReverse){
       inc = seeq.paragraphCursorPosition.map(pos => pos - 1)
     } else {
-    inc = seeq.paragraphCursorPosition.map(pos => pos + 1) 
+      inc = seeq.paragraphCursorPosition.map(pos => pos + 1) 
     } 
     seeq.paragraphCursorPosition = inc
   }
@@ -138,7 +141,8 @@ function Sequencer(){
             this.midiTrigger()
           }
         } else {
-          var offsetPosition = seeq.matchedPosition.map( pos => pos + 36)
+          var offsetNumber = 36 // offsetted html element to get actual matchedPositions.
+          var offsetPosition = seeq.matchedPosition.map(pos => pos + offsetNumber)
           if (offsetPosition.indexOf(cursor) !== (-1) && offsetPosition) {
             seeq.appWrapper.classList.add("trigger")
             seeq.sendOsc()

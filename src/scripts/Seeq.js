@@ -54,14 +54,13 @@ function Seeq(){
   this.matchedPosition = []
   this.bpm = ""
 
-  this.paragraphCursorPosition = [10]
+  this.paragraphCursorPosition = [0]
 
   document.body.appendChild(this.appWrapper);
 
   this.fetchDataSection = new Data
   this.midi = new Midi()
   this.seq = new Sequencer()
-  this.seq2
 
   this.isPlaying = false
 
@@ -219,7 +218,6 @@ function Seeq(){
 
 
       this.setBtn.addEventListener("click", function(){
-        // seeq.seq.refresh()
         seeq.setCursor()
       })
 
@@ -291,14 +289,10 @@ function Seeq(){
       }
       this.isSelectDrag = true
     } else {
-      seeq.isSelectDrag = false
+      this.isSelectDrag = false
     }
     this.selectAreaLength = this.matchedSelectPosition + this.textSelect.length
   }
-
-  // this.checkIsSelectDragActive = function(){
-  //   this.isSelectDrag = this.textSelect !== ""? true:false
-  // }
 
   this.toggleIsSearchModeChanged = function(){
     this.isSearchModeChanged = !this.isSearchModeChanged
@@ -448,23 +442,13 @@ function Seeq(){
   }
 
   this.setCursor = function(){
-    // seeq.seq.refresh()
     this.seq.set()
     // seeq.jump()
   }
 
   this.runStep = function(){
     this.seq.increment()
-    // this.seq.set()
-    // if(seeq.seq2){
-    //   this.seq2.increment()
-    // }
   }
-
-  // this.increment = function () {
-  //   inc = this.paragraphCursorPosition.map(pos => pos + 1)
-  //   this.paragraphCursorPosition = inc
-  // }
 
   this.updateMark = function(value, markType){
     if(markType == 'normal'){
