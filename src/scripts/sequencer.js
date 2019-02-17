@@ -139,21 +139,11 @@ function Sequencer(){
   this.trigger = function(){
     if( seeq.searchValue !== ""){
       seeq.paragraphCursorPosition.forEach( ( cursor, index ) => {
-        if(index == 0){
           if(seeq.matchedPosition.indexOf(cursor) !== (-1) && seeq.matchedPosition){
             seeq.appWrapper.classList.add("trigger")
             seeq.sendOsc()
             this.midiTrigger(index)
           }
-        } else {
-          var offsetNumber = 36 // offsetted html element to get actual matchedPositions.
-          var offsetPosition = seeq.matchedPosition.map(pos => pos + offsetNumber)
-          if (offsetPosition.indexOf(cursor) !== (-1) && offsetPosition) {
-            seeq.appWrapper.classList.add("trigger")
-            seeq.sendOsc()
-            this.midiTrigger(index)
-          } 
-        }
         setTimeout(() => {
           seeq.appWrapper.classList.remove("trigger")
         }, 50);
@@ -179,10 +169,10 @@ function Sequencer(){
   this.stop = function(){
     clearTimeout(this.timer)
     seeq.paragraphCursorPosition = [0]
-    this.set()
     this.isSync = false
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []
+    this.set()
   }
   
 }
