@@ -18,6 +18,7 @@ function Sequencer(){
   this.targetHighlight
 
   this.set = function () {
+  
     seeq.paragraphCursorPosition.forEach((cursor, index) => {
       var offsetCursor = 0
       if (index == 0) {
@@ -54,7 +55,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 6
+    var CLOCK_DIVIDER = 2
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM

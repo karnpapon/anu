@@ -304,7 +304,10 @@ function Seeq(){
 
   this.addSequencer = function(){
     this.paragraphCursorPosition.push(this.startPos)
-    console.log("cursor position added = ", this.paragraphCursorPosition)
+    // sorting indexes.
+    this.matchedSelectPosition.sort(function (a, b) { return a - b });
+    this.selectAreaLength.sort(function (a, b) { return a - b });
+    this.paragraphCursorPosition.sort(function (a, b) { return a - b });
   }
 
   // this.extractLinesParagraph = function(){

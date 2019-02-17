@@ -5,7 +5,7 @@ function Data( ){
     this.text = document.createElement("p")
     this.loading = document.createElement("div")
 
-    // this layer for multi-cursor.
+    // this layer for multi-cursor(currently unused).
     this.text2 = document.createElement("p")
 
     // this layer only for displaying mark.
@@ -21,16 +21,16 @@ function Data( ){
     this.hltr = new TextHighlighter(this.selectedText,{
       highlightedClass: 'hltr',
       onAfterHighlight: function(){
-
+      
         this.getHighlight = seeq.fetchDataSection.hltr.getHighlights(this.selectedText)
         seeq.textSelect = seeq.getSelectionText()
         seeq.getSelectionTextPosition()
-        seeq.seq.selectedTextArea()
-
+        
         // start adding new cursor.
         if (seeq.selectAreaLength.length > 1 ){
           seeq.addCursorWhenSelectRange()
         }
+        seeq.seq.selectedTextArea()
       }
     });
 
