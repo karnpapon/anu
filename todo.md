@@ -15,6 +15,7 @@
 - fix
 -- notation mode should've same position as normal mode ( check wordwrap issue).
 -- fixed width/height. (not sure)
+-- ":" messed up layout. 
 
 - done
 -- fix prev btn

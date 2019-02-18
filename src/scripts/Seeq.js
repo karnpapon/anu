@@ -54,6 +54,7 @@ function Seeq(){
 
   this.matchedPosition = []
   this.bpm = ""
+  this.logoSeeq
 
   this.paragraphCursorPosition = [0]
 
@@ -63,13 +64,17 @@ function Seeq(){
   this.midi = new Midi()
   this.seq = new Sequencer()
 
+  this.observer 
+  this.observeConfig = { attributes: true, childList: true, subtree: true };
+
   this.isPlaying = false
+  this.getHighlight = []
 
   this.start = function(){
     this.wrapper_el.innerHTML += `
       <div class="header-wrapper">
       <div class="header">
-        <div class="title">seeq</div>
+        <div data-logo="seeq" class="title">seeq</div>
         <input data-fetch="fetch" placeholder="seeking for text..">
         <button data-gettext="gettext"> Enter </button>
       </div>
@@ -84,7 +89,6 @@ function Seeq(){
       <div class="header">
         <div class="title">RegExp:</div>
         <input type="search-regex" placeholder="">
-        <button data-ctrl="add">+</button>
       </div>
       <div class="control-info">
         <div class="control-panel">
@@ -129,13 +133,15 @@ function Seeq(){
     this.runStep = document.querySelector("button[data-ctrl='run']")
     this.stopBtn = document.querySelector("button[data-ctrl='stop']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
-    this.addBtn = document.querySelector("button[data-ctrl='add']")
+    // this.addBtn = document.querySelector("button[data-ctrl='add']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
+    this.logo = document.querySelector("div[data-logo='seeq']")
     var context = document.querySelector("p.masking")
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
     seeq.content = new Mark(context)
+    seeq.logoSeeq = new Mark( this.logo )
 
     this.inputFetch.addEventListener("input", function(){
       seeq.fetchSearchInput = this.value;
@@ -161,6 +167,14 @@ function Seeq(){
           }
         });
         seeq.updateMarkType = "normal"
+
+        seeq.logoSeeq.unmark({
+          done: function(){
+            seeq.logoSeeq.mark(seeq.searchValue, {
+              className: "logo-seeq"
+            })
+          }
+        })
       });
 
       this.searchRegExp.addEventListener("input", function() {
@@ -246,11 +260,11 @@ function Seeq(){
         seeq.findMatchedPosition()
       })
 
-      this.addBtn.addEventListener("click", function(){
+      // this.addBtn.addEventListener("click", function(){
         // seeq.addSequencer()
         // seeq.seq.set()
         // seeq.findMatchedPosition()
-      })
+      // })
 
       this.notationMode.addEventListener("click", function(){
         // separated search mode from toggle mode 
@@ -259,13 +273,37 @@ function Seeq(){
         seeq.textConvertor()
       })
 
+      // observing when Highlight elements inserted into DOM.
+      this.observeCallback = function(mutationsList, observer) {
+        var cursorAmount =  seeq.paragraphCursorPosition.length
+        seeq.getHighlight.forEach( ( hl, index ) => {
+          hl.addEventListener("dblclick", function(e){
+            // e.preventDefault();
+            seeq.removeHighlightsEl(index)
+            seeq.fetchDataSection.hltr.removeHighlights(hl);
+          })
+          hl.addEventListener("click", function(e){
+            e.preventDefault();
+            console.log("single click !!!! ")
+          })
+        })
+        seeq.sortingIndex()
+      };
+      
+      this.observer = new MutationObserver(this.observeCallback); 
+      this.observer.observe(seeq.fetchDataSection.selectedText, seeq.observeConfig);
+
       // this.extractLines.addEventListener("click", function(){
       //   seeq.extractLinesParagraph()
       // })
 
   });
 
- 
+  this.removeHighlightsEl = function(index){
+    this.matchedSelectPosition.splice(index, 1)
+    this.selectAreaLength.splice(index, 1)
+    this.paragraphCursorPosition.splice(index, 1)
+  }
 
   this.getSelectionText = function() {
     var text = "";
@@ -304,24 +342,28 @@ function Seeq(){
 
   this.addSequencer = function(){
     this.paragraphCursorPosition.push(this.startPos)
-    // sorting indexes.
+    this.sortingIndex()
+  }
+  
+  this.sortingIndex = function(){
     this.matchedSelectPosition.sort(function (a, b) { return a - b });
     this.selectAreaLength.sort(function (a, b) { return a - b });
     this.paragraphCursorPosition.sort(function (a, b) { return a - b });
   }
 
-  // this.extractLinesParagraph = function(){
-  //    // make eachline has linebreak 
-  //   // before converting letters into dashes.
-  //   for(var i=0; i< this.lines.length; i++){
-  //     for(var j=0; j<this.lines[i].length; j++){
-  //       this.textLineBuffers += this.lines[i][j].innerText
-  //       this.textLineBuffers += " "
-  //     }
-  //     this.textLineBuffers += "<br/>"
-  //   }
-  //   seeq.fetchDataSection.updateWithCursor(this.textLineBuffers)
-  // }
+  this.extractLinesParagraph = function(){
+    // make eachline has linebreak 
+    // before converting letters into dashes.
+    for(var i=0; i< this.lines.length; i++){
+      for(var j=0; j<this.lines[i].length; j++){
+        this.textLineBuffers += this.lines[i][j].innerText
+        this.textLineBuffers += " "
+      }
+      this.textLineBuffers += "<br/>"
+    }
+    console.log("this.lines", this.lines)
+    // seeq.fetchDataSection.updateWithCursor(this.textLineBuffers)
+  }
 
   this.setBPMdisplay = function( msg ){
     this.bpm = document.getElementById("bpm")
@@ -442,6 +484,7 @@ function Seeq(){
               seeq.seq.setTotalLenghtCounterDisplay()
               seeq.isGettingData = false
               seeq.fetchDataSection.loading.style.display = 'none'  
+              // seeq.extractLinesParagraph()
             } else {
               seeq.fetchDataSection.update("sorry, please try again..")
               seeq.isGettingData = false
@@ -493,5 +536,13 @@ function Seeq(){
       });
     }
   }
+
+  this.getHighlightAfterSelect = function(){
+    var data = seeq.fetchDataSection
+    this.getHighlight = data.hltr.getHighlights(data.selectedText)
+    console.log("getHighlight", this.getHighlight)
+  }
+  
+  
   
 }

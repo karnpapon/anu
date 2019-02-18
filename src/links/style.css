@@ -37,6 +37,12 @@ div button{
   z-index: 2;
 }
 
+.logo-seeq{
+  background-color: black !important;
+  color: rgb(62, 251, 0);
+  /* box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);   */
+}
+
 .title{
   font-family: 'input_sans_condensed_bold';
   padding-bottom: 5px;

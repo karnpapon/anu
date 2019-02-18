@@ -5,9 +5,6 @@ function Data( ){
     this.text = document.createElement("p")
     this.loading = document.createElement("div")
 
-    // this layer for multi-cursor(currently unused).
-    this.text2 = document.createElement("p")
-
     // this layer only for displaying mark.
     this.maskText = document.createElement("p") 
     
@@ -22,7 +19,6 @@ function Data( ){
       highlightedClass: 'hltr',
       onAfterHighlight: function(){
       
-        this.getHighlight = seeq.fetchDataSection.hltr.getHighlights(this.selectedText)
         seeq.textSelect = seeq.getSelectionText()
         seeq.getSelectionTextPosition()
         
@@ -31,6 +27,7 @@ function Data( ){
           seeq.addCursorWhenSelectRange()
         }
         seeq.seq.selectedTextArea()
+        seeq.getHighlightAfterSelect()
       }
     });
 
@@ -38,12 +35,10 @@ function Data( ){
       this.el.classList.add("content")
       this.maskText.classList.add("masking")
       this.text.classList.add("no-masking")
-      // this.text2.classList.add("no-masking2")
       this.loading.classList.add("loading")
       this.selectedText.classList.add("for-select-text")
       this.el.appendChild(this.loading)
       this.el.appendChild(this.text)
-      // this.el.appendChild(this.text2)
       this.el.appendChild(this.maskText)
       this.el.appendChild(this.selectedText)
       seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
@@ -51,12 +46,11 @@ function Data( ){
 
     this.refresh = function(){
       this.el.appendChild(this.text) 
-      // this.el.appendChild(this.text2) 
       this.el.appendChild(this.maskText) 
       this.el.appendChild(this.selectedText) 
     }
 
-    // this.updateWithCursor = function(data){
+    // this.updateWithCursor = function( data ){
     //   this.text.innerHTML = data
     // }
 
@@ -75,28 +69,15 @@ function Data( ){
 
       this.maskText.innerText = this.textBuffers
       this.text.innerText = this.textBuffers
-      // this.text2.innerText = this.textBuffers
       this.selectedText.innerText = this.textBuffers 
 
-      // this.textDragSelect()
       // paragraph row detector.
       // seeq.lines = lineWrapDetector.getLines(this.text);
-    }
-
-    this.textDragSelect = function(){
-      var self = this
-      this.selectedText.addEventListener("mouseup", function(){
-        if( self.getHighlight ){
-          console.log("haveeee")
-        } else {
-          console.log("no haveee")
-        }
-      })
+      // console.log("this.lines", seeq.lines)
     }
 
     this.clear = function(){
       this.text.innerHTML = ""
-      // this.text2.innerHTML = ""
       this.maskText.innerHTML = ""
       this.selectedText.innerHTML = ""
     }
