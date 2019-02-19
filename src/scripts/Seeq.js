@@ -65,7 +65,8 @@ function Seeq(){
   this.seq = new Sequencer()
 
   this.observer 
-  this.observeConfig = { attributes: true, childList: true, subtree: true };
+  this.observeConfig = { childList: true, subtree: true };
+  this.indexTarget
 
   this.isPlaying = false
   this.getHighlight = []
@@ -275,19 +276,23 @@ function Seeq(){
 
       // observing when Highlight elements inserted into DOM.
       this.observeCallback = function(mutationsList, observer) {
-        var cursorAmount =  seeq.paragraphCursorPosition.length
-        seeq.getHighlight.forEach( ( hl, index ) => {
-          hl.addEventListener("dblclick", function(e){
-            // e.preventDefault();
-            seeq.removeHighlightsEl(index)
-            seeq.fetchDataSection.hltr.removeHighlights(hl);
-          })
-          hl.addEventListener("click", function(e){
-            e.preventDefault();
-            console.log("single click !!!! ")
-          })
-        })
-        seeq.sortingIndex()
+        for(var mutation of mutationsList) {
+          if (mutation.type == 'childList' && mutation.target.nodeName == 'SPAN' ) {
+            mutation.target.addEventListener("click", function(e){
+              var indexTarget
+              seeq.getHighlight.forEach( ( el, index ) => {
+                if( el.dataset.timestamp == mutation.target.dataset.timestamp){
+                  indexTarget = index
+                }
+              })
+              seeq.removeHighlightsEl(indexTarget)
+              seeq.fetchDataSection.hltr.removeHighlights(mutation.target);
+            })
+            seeq.sortingIndex()
+            seeq.getHighlightAfterSelect()
+            // seeq.getHighlight.sort(function (a, b) { return parseInt( a.dataset.timestamp ) - parseInt( b.dataset.timestamp ) });
+          }
+        }
       };
       
       this.observer = new MutationObserver(this.observeCallback); 
@@ -298,6 +303,16 @@ function Seeq(){
       // })
 
   });
+
+  this.findHighlightIndex = function(target){
+    var indexTarget
+    seeq.getHighlight.forEach( ( el, index ) => {
+      if( el.dataset.timestamp == target.timestamp){
+        indexTarget = index
+        return indexTarget
+      }
+    })
+  }
 
   this.removeHighlightsEl = function(index){
     this.matchedSelectPosition.splice(index, 1)
@@ -349,6 +364,7 @@ function Seeq(){
     this.matchedSelectPosition.sort(function (a, b) { return a - b });
     this.selectAreaLength.sort(function (a, b) { return a - b });
     this.paragraphCursorPosition.sort(function (a, b) { return a - b });
+   
   }
 
   this.extractLinesParagraph = function(){
@@ -361,7 +377,7 @@ function Seeq(){
       }
       this.textLineBuffers += "<br/>"
     }
-    console.log("this.lines", this.lines)
+    // console.log("this.lines", this.lines)
     // seeq.fetchDataSection.updateWithCursor(this.textLineBuffers)
   }
 
@@ -540,7 +556,6 @@ function Seeq(){
   this.getHighlightAfterSelect = function(){
     var data = seeq.fetchDataSection
     this.getHighlight = data.hltr.getHighlights(data.selectedText)
-    console.log("getHighlight", this.getHighlight)
   }
   
   

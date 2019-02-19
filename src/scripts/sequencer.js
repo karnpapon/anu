@@ -63,14 +63,8 @@ function Sequencer(){
 
   this.setCounterDisplay = function(){
     seeq.currentNumber.innerHTML = "--"
-    // this.getHighlightEl()
   }
   
-  // this.getHighlightEl = function(){
-  //   if (seeq.fetchDataSection.getHighlight){
-  //   }
-  // }
-
   this.setTotalLenghtCounterDisplay = function(){
     seeq.totalNumber.innerHTML = seeq.fetchDataSection.text.innerText.length
   }

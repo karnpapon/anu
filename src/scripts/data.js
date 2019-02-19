@@ -18,7 +18,6 @@ function Data( ){
     this.hltr = new TextHighlighter(this.selectedText,{
       highlightedClass: 'hltr',
       onAfterHighlight: function(){
-      
         seeq.textSelect = seeq.getSelectionText()
         seeq.getSelectionTextPosition()
         
