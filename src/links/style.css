@@ -20,11 +20,11 @@ div button{
 }
 
 .hltr{
- transition: 200ms;
+ transition: 100ms;
 }
 .hltr:hover{
   cursor: pointer;
-  background-color: #d0d0d0 !important;
+  opacity: 0.6;
 }
 
 .masking{
@@ -50,6 +50,12 @@ div button{
 
 .trigger{
   background-color: rgb(62, 251, 0)  !important;
+}
+
+.mute-target{ 
+  color: #d0d0d0;
+  background-color: #a7a7a7 !important;
+  transition: 100ms;
 }
 
 .no-masking{
@@ -150,8 +156,21 @@ app {
 
 .btn-show{  display: block; }
 .btn-hide{  display: none; }
-.control-panel{ }
-.tempo{ font: 400 11px system-ui; width: 55px }
+.control-panel{     
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: inherit;
+}
+.operator{font: 400 11px system-ui;  }
+.tempo{ 
+  font: 400 11px system-ui; 
+  width: 55px ;
+  height: 100%;
+  justify-content: inherit;
+  display: flex;
+  flex-direction: column;
+}
 
 div button.control-btn:hover{ border:1px solid black;}
 

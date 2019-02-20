@@ -55,7 +55,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 2
+    var CLOCK_DIVIDER = 6
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM
@@ -133,11 +133,11 @@ function Sequencer(){
   this.trigger = function(){
     if( seeq.searchValue !== ""){
       seeq.paragraphCursorPosition.forEach( ( cursor, index ) => {
-          if(seeq.matchedPosition.indexOf(cursor) !== (-1) && seeq.matchedPosition){
-            seeq.appWrapper.classList.add("trigger")
-            seeq.sendOsc()
-            this.midiTrigger(index)
-          }
+        if(seeq.matchedPosition.indexOf(cursor) !== (-1) && seeq.matchedPosition && seeq.selectIndex != index){
+          seeq.appWrapper.classList.add("trigger")
+          seeq.sendOsc()
+          this.midiTrigger(index)
+        } 
         setTimeout(() => {
           seeq.appWrapper.classList.remove("trigger")
         }, 50);

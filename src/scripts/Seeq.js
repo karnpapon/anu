@@ -17,6 +17,10 @@ function Seeq(){
   this.content
   this.currentNumber
   this.totalNumber
+
+  this.isShiftPressed = false
+  this.isMuted = false
+  this.targetMute
   
   this.currentResult = []
   this.results = []
@@ -26,6 +30,7 @@ function Seeq(){
   this.fetchSearchInput = ""
   this.txt = ""
   this.isSearchModeChanged = false
+  this.operator
 
   // text buffers
   this.extract = "" 
@@ -57,6 +62,7 @@ function Seeq(){
   this.logoSeeq
 
   this.paragraphCursorPosition = [0]
+  this.selectIndex
 
   document.body.appendChild(this.appWrapper);
 
@@ -92,12 +98,15 @@ function Seeq(){
         <input type="search-regex" placeholder="">
       </div>
       <div class="control-info">
-        <div class="control-panel">
+      <div class="control-panel">
+        <div id="operator" class="operator"> press anykey to operate..</div>
+        <div>
           <button data-ctrl="set">set</button>
           <button data-ctrl="run">run</button>
           <button data-ctrl="rev">rev</button>
           <button data-ctrl="stop">stop</button>
           <button data-ctrl="notation-mode">mode</button>
+        </div>
         </div>
         <div class="tempo">
           <p id="bpm"><b>120</b> bpm</p>
@@ -122,6 +131,27 @@ function Seeq(){
     seeq.el.style.opacity = 1;
   }
 
+  document.addEventListener("keydown", function(event){
+    var op = document.getElementById("operator")
+    switch (event.keyCode) {
+      case 77: // 77 = "m" acronym for "mute"
+        seeq.isShiftPressed = true;
+        op.innerHTML = "<b>mute</b> : mute/unmute selected area." 
+        break;
+      case 13: //mockup
+      op.innerHTML = "<b>enter</b> : enter."  
+      default:
+        break;
+    }
+    
+  })
+  document.addEventListener("keyup", function(){
+    seeq.isShiftPressed = false;
+    var opoff = document.getElementById("operator")
+    opoff.innerText = "press anykey to operate.." 
+  })
+
+
   document.addEventListener("DOMContentLoaded", function() {
     this.searchInput = document.querySelector("input[type='search']")
     this.searchRegExp = document.querySelector("input[type='search-regex']")
@@ -134,6 +164,7 @@ function Seeq(){
     this.runStep = document.querySelector("button[data-ctrl='run']")
     this.stopBtn = document.querySelector("button[data-ctrl='stop']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
+    // this.operator = document.getElementById("opr8")
     // this.addBtn = document.querySelector("button[data-ctrl='add']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
@@ -232,6 +263,13 @@ function Seeq(){
         }
       })
 
+      // document.body.addEventListener("keydown", function(){
+      //   // if( seeq.isShiftPressed){
+      //     console.log("this.operate")
+      //     // this.operator.innerText = "mute : mute selected area"
+      //   // }
+      // })
+
 
       this.setBtn.addEventListener("click", function(){
         seeq.setCursor()
@@ -262,9 +300,7 @@ function Seeq(){
       })
 
       // this.addBtn.addEventListener("click", function(){
-        // seeq.addSequencer()
-        // seeq.seq.set()
-        // seeq.findMatchedPosition()
+      //   console.log("this.addBtn", seeq.isShiftPressed)
       // })
 
       this.notationMode.addEventListener("click", function(){
@@ -275,22 +311,32 @@ function Seeq(){
       })
 
       // observing when Highlight elements inserted into DOM.
+      // handle add/remove/mute/unmute highlight.
       this.observeCallback = function(mutationsList, observer) {
         for(var mutation of mutationsList) {
           if (mutation.type == 'childList' && mutation.target.nodeName == 'SPAN' ) {
             mutation.target.addEventListener("click", function(e){
-              var indexTarget
+              seeq.isMuted = !seeq.isMuted
+              var indexTarget, muteTarget
               seeq.getHighlight.forEach( ( el, index ) => {
                 if( el.dataset.timestamp == mutation.target.dataset.timestamp){
-                  indexTarget = index
+                  seeq.selectIndex = index
                 }
               })
-              seeq.removeHighlightsEl(indexTarget)
-              seeq.fetchDataSection.hltr.removeHighlights(mutation.target);
+              if(seeq.isShiftPressed){
+                muteTarget = seeq.getHighlight[seeq.selectIndex]
+                if( seeq.isMuted){
+                  muteTarget.classList.add("mute-target")
+                } else {
+                  muteTarget.classList.remove("mute-target")
+                }
+              } else {
+                seeq.removeHighlightsEl(seeq.selectIndex)
+                seeq.fetchDataSection.hltr.removeHighlights(mutation.target);
+                seeq.sortingIndex()
+                seeq.getHighlightAfterSelect() //sorting highlight element.
+              }
             })
-            seeq.sortingIndex()
-            seeq.getHighlightAfterSelect()
-            // seeq.getHighlight.sort(function (a, b) { return parseInt( a.dataset.timestamp ) - parseInt( b.dataset.timestamp ) });
           }
         }
       };
@@ -303,6 +349,13 @@ function Seeq(){
       // })
 
   });
+
+
+  // this.muteSelection = function( index ){
+  //   // this.paragraphCursorPosition[index]
+  //   this.selectIndex = index
+  // }
+
 
   this.findHighlightIndex = function(target){
     var indexTarget
