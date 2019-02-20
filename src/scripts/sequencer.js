@@ -16,10 +16,11 @@ function Sequencer(){
   this.clock =  100
   this.offset = 0
   this.targetHighlight
+  this.isMuted = false
 
   this.set = function () {
   
-    seeq.paragraphCursorPosition.forEach((cursor, index) => {
+    seeq.cursor.forEach((cursor, index) => {
       var offsetCursor = 0
       if (index == 0) {
         this.outputType = seeq.fetchDataSection.text.innerText
@@ -30,18 +31,18 @@ function Sequencer(){
       }
 
       // handle negative index to behave correctly.
-      if( cursor < 0 ){
+      if( cursor.position < 0 ){
         this.output = this.outputType.substr(0) + 
         `<span class=\"current-active\">` + 
-        this.outputType.substr(cursor, 1) + 
+        this.outputType.substr(cursor.position, 1) + 
         "</span>" + 
         this.outputType.substr(0,0)
       } else {
-        this.output = this.outputType.substr(0, cursor + offsetCursor) +
+        this.output = this.outputType.substr(0, cursor.position + offsetCursor) +
         `<span class=\"current-active\">` +
-          this.outputType.substr(cursor + offsetCursor , 1) +
+          this.outputType.substr(cursor.position + offsetCursor , 1) +
         "</span>" +
-        this.outputType.substr(cursor + 1 + offsetCursor) 
+        this.outputType.substr(cursor.position + 1 + offsetCursor) 
       }
 
       seeq.fetchDataSection.text.innerHTML = this.output
@@ -55,7 +56,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 6
+    var CLOCK_DIVIDER = 2
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM
@@ -70,19 +71,19 @@ function Sequencer(){
   }
 
   this.selectedTextArea = function(){
-    seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
-      array[index] = seeq.matchedSelectPosition[index]
+    seeq.cursor.forEach( ( cursor, index, array ) => {
+      array[index].position = seeq.matchedSelectPosition[index]
     })
   }
 
   this.setSelectLoopRange = function(){
     // limited sequence within select range.
     if( seeq.isSelectDrag){
-      seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
-        if( cursor > seeq.selectAreaLength[index] - 1){
-          array[index] = seeq.matchedSelectPosition[index]
-        } else if (seeq.isReverse && cursor < seeq.matchedSelectPosition[index]){
-          array[index]  = seeq.selectAreaLength[index] - 1
+      seeq.cursor.forEach( ( cursor, index, array ) => {
+        if( cursor.position > seeq.selectAreaLength[index] - 1){
+          array[index].position = seeq.matchedSelectPosition[index]
+        } else if (seeq.isReverse && cursor.position < seeq.matchedSelectPosition[index]){
+          array[index].position  = seeq.selectAreaLength[index] - 1
         }
       })
     } 
@@ -98,11 +99,11 @@ function Sequencer(){
 
     var length = seeq.fetchDataSection.text.innerText.length
     // boundary.
-    seeq.paragraphCursorPosition.forEach( ( cursor, index, array ) => {
-      if( cursor > length-1){
-        array[index] = 0
-      } else if ( seeq.isReverse && cursor < 0){
-        array[index] = length - 1
+    seeq.cursor.forEach( ( cursor, index, array ) => {
+      if( cursor.position > length-1){
+        array[index].position = 0
+      } else if ( seeq.isReverse && cursor.position < 0){
+        array[index].position = length - 1
       }
       this.set() 
     })
@@ -118,11 +119,12 @@ function Sequencer(){
     // increment | decrement.
     if(!this.isSync) { return }
     if(seeq.isReverse){
-      inc = seeq.paragraphCursorPosition.map(pos => pos - 1)
+      seeq.cursor.forEach(target => target.position -= 1)
     } else {
-      inc = seeq.paragraphCursorPosition.map(pos => pos + 1) 
+      seeq.cursor.forEach(target => target.position += 1) 
     } 
-    seeq.paragraphCursorPosition = inc
+    // seeq.cursor = inc
+    // console.log("cursor with props = ", seeq.cursor)
   }
 
   this.countIn = function( beat ){
@@ -132,15 +134,17 @@ function Sequencer(){
 
   this.trigger = function(){
     if( seeq.searchValue !== ""){
-      seeq.paragraphCursorPosition.forEach( ( cursor, index ) => {
-        if(seeq.matchedPosition.indexOf(cursor) !== (-1) && seeq.matchedPosition && seeq.selectIndex != index){
-          seeq.appWrapper.classList.add("trigger")
-          seeq.sendOsc()
-          this.midiTrigger(index)
-        } 
-        setTimeout(() => {
-          seeq.appWrapper.classList.remove("trigger")
-        }, 50);
+      seeq.cursor.forEach( ( cursor, index ) => {
+        if( !cursor.isMuted ){
+          if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) && seeq.matchedPosition){
+            seeq.appWrapper.classList.add("trigger")
+            seeq.sendOsc()
+            this.midiTrigger(index)
+          } 
+          setTimeout(() => {
+            seeq.appWrapper.classList.remove("trigger")
+          }, 50);
+        }
       })
     }
   }
@@ -154,7 +158,7 @@ function Sequencer(){
   this.run = function(){
     var self = this
     this.timer = setTimeout( function(){
-      // seeq.paragraphCursorPosition  += 1  //for debugging.
+      // seeq.cursor  += 1  //for debugging.
       self.set()
       self.increment() //enable this when wanted to run auto.
     }, this.clock)
@@ -162,7 +166,10 @@ function Sequencer(){
 
   this.stop = function(){
     clearTimeout(this.timer)
-    seeq.paragraphCursorPosition = [0]
+    seeq.cursor = [{
+      position: 0,
+      isMuted: false
+    }]
     this.isSync = false
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []

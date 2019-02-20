@@ -61,7 +61,11 @@ function Seeq(){
   this.bpm = ""
   this.logoSeeq
 
-  this.paragraphCursorPosition = [0]
+  // this.cursor = [0]
+  this.cursor = [{
+    position: 0,
+    isMuted: false
+  }]
   this.selectIndex
 
   document.body.appendChild(this.appWrapper);
@@ -327,8 +331,10 @@ function Seeq(){
                 muteTarget = seeq.getHighlight[seeq.selectIndex]
                 if( seeq.isMuted){
                   muteTarget.classList.add("mute-target")
+                  seeq.cursor[seeq.selectIndex].isMuted = true
                 } else {
                   muteTarget.classList.remove("mute-target")
+                  seeq.cursor[seeq.selectIndex].isMuted = false
                 }
               } else {
                 seeq.removeHighlightsEl(seeq.selectIndex)
@@ -352,7 +358,7 @@ function Seeq(){
 
 
   // this.muteSelection = function( index ){
-  //   // this.paragraphCursorPosition[index]
+  //   // this.cursor[index]
   //   this.selectIndex = index
   // }
 
@@ -370,7 +376,7 @@ function Seeq(){
   this.removeHighlightsEl = function(index){
     this.matchedSelectPosition.splice(index, 1)
     this.selectAreaLength.splice(index, 1)
-    this.paragraphCursorPosition.splice(index, 1)
+    this.cursor.splice(index, 1)
   }
 
   this.getSelectionText = function() {
@@ -409,14 +415,17 @@ function Seeq(){
   }
 
   this.addSequencer = function(){
-    this.paragraphCursorPosition.push(this.startPos)
+    this.cursor.push({ 
+      position: this.startPos ,
+      isMuted: false
+    })
     this.sortingIndex()
   }
   
   this.sortingIndex = function(){
     this.matchedSelectPosition.sort(function (a, b) { return a - b });
     this.selectAreaLength.sort(function (a, b) { return a - b });
-    this.paragraphCursorPosition.sort(function (a, b) { return a - b });
+    this.cursor.sort(function (a, b) { return a.position - b.position });
    
   }
 
