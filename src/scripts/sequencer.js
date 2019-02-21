@@ -19,17 +19,37 @@ function Sequencer(){
   this.isMuted = false
 
   this.set = function () {
-  
+
     seeq.cursor.forEach((cursor, index) => {
+      // clearTimeout(this.timer)
+      var self = this
       var offsetCursor = 0
       if (index == 0) {
-        this.outputType = seeq.fetchDataSection.text.innerText
+        this.outputType = seeq.data.text.innerText
         offsetCursor = 0
       } else {
-        this.outputType = seeq.fetchDataSection.text.innerHTML
+        this.outputType = seeq.data.text.innerHTML
         offsetCursor = 36 * index
       }
-
+      // this.timer = setTimeout( function(){
+      //   // handle negative index to behave correctly.
+      //   if( cursor.position < 0 ){
+      //     self.output = self.outputType.substr(0) + 
+      //     `<span class=\"current-active\">` + 
+      //     self.outputType.substr(cursor.position, 1) + 
+      //     "</span>" + 
+      //     self.outputType.substr(0,0)
+      //   } else {
+      //     self.output = self.outputType.substr(0, cursor.position + offsetCursor) +
+      //     `<span class=\"current-active\">` +
+      //       self.outputType.substr(cursor.position + offsetCursor , 1) +
+      //     "</span>" +
+      //     self.outputType.substr(cursor.position + 1 + offsetCursor) 
+      //   }
+      //   seeq.data.text.innerHTML = self.output
+      //   self.isCursorActived = true
+      // }, 300)
+      
       // handle negative index to behave correctly.
       if( cursor.position < 0 ){
         this.output = this.outputType.substr(0) + 
@@ -45,10 +65,12 @@ function Sequencer(){
         this.outputType.substr(cursor.position + 1 + offsetCursor) 
       }
 
-      seeq.fetchDataSection.text.innerHTML = this.output
+     
+      seeq.data.text.innerHTML = this.output
       this.isCursorActived = true
       this.setCounterDisplay()
     })
+   
   }
 
 
@@ -56,7 +78,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 2
+    var CLOCK_DIVIDER = 4 
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM
@@ -67,7 +89,7 @@ function Sequencer(){
   }
   
   this.setTotalLenghtCounterDisplay = function(){
-    seeq.totalNumber.innerHTML = seeq.fetchDataSection.text.innerText.length
+    seeq.totalNumber.innerHTML = seeq.data.text.innerText.length
   }
 
   this.selectedTextArea = function(){
@@ -78,15 +100,14 @@ function Sequencer(){
 
   this.setSelectLoopRange = function(){
     // limited sequence within select range.
-    if( seeq.isSelectDrag){
-      seeq.cursor.forEach( ( cursor, index, array ) => {
-        if( cursor.position > seeq.selectAreaLength[index] - 1){
-          array[index].position = seeq.matchedSelectPosition[index]
-        } else if (seeq.isReverse && cursor.position < seeq.matchedSelectPosition[index]){
-          array[index].position  = seeq.selectAreaLength[index] - 1
-        }
-      })
-    } 
+    if( !seeq.isSelectDrag ) { return }
+    seeq.cursor.forEach( ( cursor, index, array ) => {
+      if( cursor.position > seeq.selectAreaLength[index] - 1){
+        array[index].position = seeq.matchedSelectPosition[index]
+      } else if (seeq.isReverse && cursor.position < seeq.matchedSelectPosition[index]){
+        array[index].position  = seeq.selectAreaLength[index] - 1
+      }
+    })
   }
 
   this.getRandomInt = function(min, max) {
@@ -97,7 +118,7 @@ function Sequencer(){
 
   this.increment = function(){
 
-    var length = seeq.fetchDataSection.text.innerText.length
+    var length = seeq.data.text.innerText.length
     // boundary.
     seeq.cursor.forEach( ( cursor, index, array ) => {
       if( cursor.position > length-1){
@@ -110,12 +131,11 @@ function Sequencer(){
 
     this.counting()
     this.setSelectLoopRange()
-    this.run() 
+    this.run()
     this.trigger()
   }
 
   this.counting = function(){
-    var inc = []
     // increment | decrement.
     if(!this.isSync) { return }
     if(seeq.isReverse){
@@ -123,8 +143,6 @@ function Sequencer(){
     } else {
       seeq.cursor.forEach(target => target.position += 1) 
     } 
-    // seeq.cursor = inc
-    // console.log("cursor with props = ", seeq.cursor)
   }
 
   this.countIn = function( beat ){
@@ -157,18 +175,24 @@ function Sequencer(){
 
   this.run = function(){
     var self = this
+    
     this.timer = setTimeout( function(){
       // seeq.cursor  += 1  //for debugging.
       self.set()
       self.increment() //enable this when wanted to run auto.
-    }, this.clock)
+    }, this.clock )
+
+    
+    // this.increment() 
   }
 
   this.stop = function(){
     clearTimeout(this.timer)
     seeq.cursor = [{
       position: 0,
-      isMuted: false
+      isMuted: false,
+      up: 0,
+      down: 0
     }]
     this.isSync = false
     seeq.selectAreaLength = []

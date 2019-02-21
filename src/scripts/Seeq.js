@@ -18,8 +18,12 @@ function Seeq(){
   this.currentNumber
   this.totalNumber
 
+  // operation.
   this.isShiftPressed = false
+  this.isUpPressed = false
+  this.isDownPressed = false
   this.isMuted = false
+
   this.targetMute
   
   this.currentResult = []
@@ -61,16 +65,17 @@ function Seeq(){
   this.bpm = ""
   this.logoSeeq
 
-  // this.cursor = [0]
   this.cursor = [{
     position: 0,
-    isMuted: false
+    isMuted: false,
+    up: 0,
+    down: 0
   }]
   this.selectIndex
 
   document.body.appendChild(this.appWrapper);
 
-  this.fetchDataSection = new Data
+  this.data = new Data
   this.midi = new Midi()
   this.seq = new Sequencer()
 
@@ -103,7 +108,7 @@ function Seeq(){
       </div>
       <div class="control-info">
       <div class="control-panel">
-        <div id="operator" class="operator"> press anykey to operate..</div>
+        <div id="operator" class="operator"> press any key to operate..</div>
         <div>
           <button data-ctrl="set">set</button>
           <button data-ctrl="run">run</button>
@@ -125,7 +130,7 @@ function Seeq(){
     <div>---------------------------------------------------------------------------------------------------</div> 
     `;
 
-    this.fetchDataSection.build()
+    this.data.build()
     this.midi.start()
     setTimeout(seeq.show,200)
     
@@ -141,9 +146,15 @@ function Seeq(){
       case 77: // 77 = "m" acronym for "mute"
         seeq.isShiftPressed = true;
         op.innerHTML = "<b>mute</b> : mute/unmute selected area." 
-        break;
-      case 13: //mockup
-      op.innerHTML = "<b>enter</b> : enter."  
+      break;
+      case 85: 
+        seeq.isUpPressed = true;
+        op.innerHTML = "<b>up</b> : speed up tempo."  
+      break;
+      case 68: 
+        seeq.isDownPressed = true;
+        op.innerHTML = "<b>down</b> : speed down tempo."  
+      break;
       default:
         break;
     }
@@ -151,8 +162,10 @@ function Seeq(){
   })
   document.addEventListener("keyup", function(){
     seeq.isShiftPressed = false;
+    seeq.isUpPressed = false;
+    seeq.isDownPressed = false;
     var opoff = document.getElementById("operator")
-    opoff.innerText = "press anykey to operate.." 
+    opoff.innerText = "press any key to operate.." 
   })
 
 
@@ -168,7 +181,6 @@ function Seeq(){
     this.runStep = document.querySelector("button[data-ctrl='run']")
     this.stopBtn = document.querySelector("button[data-ctrl='stop']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
-    // this.operator = document.getElementById("opr8")
     // this.addBtn = document.querySelector("button[data-ctrl='add']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
@@ -251,29 +263,21 @@ function Seeq(){
           seeq.currentIndex -= 1
         }
         if (seeq.currentIndex < 0) {
-          // prev btn case to get outbound top to show at to bottom.
+          // prevBtn case to get outbound top to show at to bottom.
           seeq.currentIndex = seeq.results.length - 1; 
         }
         seeq.jump();
       })
 
       this.getText.addEventListener("click",function(){ 
-        seeq.fetchDataSection.clear()
+        seeq.data.clear()
         if( seeq.fetchSearchInput !== ""){
           seeq.isGettingData = true
           seeq.getData()
         } else {
-          seeq.fetchDataSection.update('no input value...')
+          seeq.data.update('no input value...')
         }
       })
-
-      // document.body.addEventListener("keydown", function(){
-      //   // if( seeq.isShiftPressed){
-      //     console.log("this.operate")
-      //     // this.operator.innerText = "mute : mute selected area"
-      //   // }
-      // })
-
 
       this.setBtn.addEventListener("click", function(){
         seeq.setCursor()
@@ -293,7 +297,7 @@ function Seeq(){
       this.stopBtn.addEventListener("click", function(){
         seeq.isPlaying = false
         seeq.seq.stop()
-        seeq.fetchDataSection.hltr.removeHighlights();
+        seeq.data.hltr.removeHighlights();
       })
 
       this.revBtn.addEventListener("click", function () {
@@ -336,9 +340,13 @@ function Seeq(){
                   muteTarget.classList.remove("mute-target")
                   seeq.cursor[seeq.selectIndex].isMuted = false
                 }
+              } else if(seeq.isUpPressed){
+                muteTarget = seeq.getHighlight[seeq.selectIndex]
+                muteTarget.classList.add("up-target")
+                seeq.cursor[seeq.selectIndex].up += 5
               } else {
                 seeq.removeHighlightsEl(seeq.selectIndex)
-                seeq.fetchDataSection.hltr.removeHighlights(mutation.target);
+                seeq.data.hltr.removeHighlights(mutation.target);
                 seeq.sortingIndex()
                 seeq.getHighlightAfterSelect() //sorting highlight element.
               }
@@ -348,7 +356,7 @@ function Seeq(){
       };
       
       this.observer = new MutationObserver(this.observeCallback); 
-      this.observer.observe(seeq.fetchDataSection.selectedText, seeq.observeConfig);
+      this.observer.observe(seeq.data.selectedText, seeq.observeConfig);
 
       // this.extractLines.addEventListener("click", function(){
       //   seeq.extractLinesParagraph()
@@ -390,7 +398,7 @@ function Seeq(){
   }
 
   this.getSelectionTextPosition = function(){
-    var searchText = seeq.fetchDataSection.text.innerText
+    var searchText = seeq.data.text.innerText
     var search = ""
     var match
     var length
@@ -416,8 +424,10 @@ function Seeq(){
 
   this.addSequencer = function(){
     this.cursor.push({ 
-      position: this.startPos ,
-      isMuted: false
+      position: this.startPos,
+      isMuted: false,
+      up: 1,
+      down: 1
     })
     this.sortingIndex()
   }
@@ -440,7 +450,7 @@ function Seeq(){
       this.textLineBuffers += "<br/>"
     }
     // console.log("this.lines", this.lines)
-    // seeq.fetchDataSection.updateWithCursor(this.textLineBuffers)
+    // seeq.data.updateWithCursor(this.textLineBuffers)
   }
 
   this.setBPMdisplay = function( msg ){
@@ -453,9 +463,9 @@ function Seeq(){
    
     // turn matched letter/words into symbols
     if( seeq.searchValue !== ""){
-      this.notation = seeq.fetchDataSection.text.innerText.replace(target, this.matchedSymbol)
+      this.notation = seeq.data.text.innerText.replace(target, this.matchedSymbol)
     } else {
-      this.notation = seeq.fetchDataSection.text.innerText
+      this.notation = seeq.data.text.innerText
     }
 
    
@@ -481,8 +491,8 @@ function Seeq(){
 
   this.update = function(markType, modeContent, target ){
     seeq.updateMarkType = markType
-    seeq.fetchDataSection.clear() 
-    seeq.fetchDataSection.update(modeContent) 
+    seeq.data.clear() 
+    seeq.data.update(modeContent) 
     seeq.updateMark(target, seeq.updateMarkType)
   }
 
@@ -522,7 +532,7 @@ function Seeq(){
 
   this.findMatchedPosition = function(){
     // find position to trigger events.
-    var searchText = seeq.fetchDataSection.text.innerText
+    var searchText = seeq.data.text.innerText
     var search = new RegExp(this.searchValue,"gi")
     var match
 
@@ -539,11 +549,13 @@ function Seeq(){
         } 
       }
     }
+
+    console.log("match position", this.matchedPosition)
   }
 
   this.getData = function () {
     if( this.isGettingData){
-      seeq.fetchDataSection.loading.style.display = 'block' 
+      seeq.data.loading.style.display = 'block' 
     }
     axios({
         method: "get",
@@ -556,22 +568,22 @@ function Seeq(){
           })
           if(response){
             if (seeq.extract.extract){
-              seeq.fetchDataSection.update(seeq.extract.extract)
+              seeq.data.update(seeq.extract.extract)
 
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
               seeq.isGettingData = false
-              seeq.fetchDataSection.loading.style.display = 'none'  
+              seeq.data.loading.style.display = 'none'  
               // seeq.extractLinesParagraph()
             } else {
-              seeq.fetchDataSection.update("sorry, please try again..")
+              seeq.data.update("sorry, please try again..")
               seeq.isGettingData = false
-              seeq.fetchDataSection.loading.style.display = 'none'  
+              seeq.data.loading.style.display = 'none'  
             }
           } else {
-            seeq.fetchDataSection.update("no result found..")
+            seeq.data.update("no result found..")
             seeq.isGettingData = false
-            seeq.fetchDataSection.loading.style.display = 'none'  
+            seeq.data.loading.style.display = 'none'  
           }
         })
   }
@@ -616,7 +628,7 @@ function Seeq(){
   }
 
   this.getHighlightAfterSelect = function(){
-    var data = seeq.fetchDataSection
+    var data = seeq.data
     this.getHighlight = data.hltr.getHighlights(data.selectedText)
   }
   

@@ -33,6 +33,7 @@ div button{
   color: var(--main-bg-color);
   height: 350px;
   pointer-events: none;
+  mix-blend-mode: multiply;
   position: relative;
   z-index: 2;
 }
@@ -54,7 +55,12 @@ div button{
 
 .mute-target{ 
   color: #d0d0d0;
-  background-color: #a7a7a7 !important;
+  background-color: #c5c5c5 !important;
+  transition: 100ms;
+}
+
+.up-target{ 
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
   transition: 100ms;
 }
 
