@@ -22,15 +22,17 @@ function Midi() {
 
   // Midi
 
-  this.send = function (channel, octave, note, velocity, length) {
-    this.stack.push([channel, octave, note, velocity, length])
+  this.send = function ({ channel, octave, note, velocity, length }) {
+    let msg = Object.assign({}, { channel, octave, note, velocity, length })
+    this.stack.push(msg)
+    console.log("this.stack", this.stack)
   }
 
   this.play = function (data = this.stack, device) {
-    const channel = convertChannel(data[0])
-    const note = convertNote(data[1], data[2])
-    const velocity = data[3]
-    const length = window.performance.now() + convertLength(data[4], seeq.seq.bpm)
+    const channel = convertChannel(data['channel'])
+    const note = convertNote(data['octave'], data['note'])
+    const velocity = data['velocity']
+    const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
 
     if (!device) { console.warn('No midi device!'); return }
 
@@ -89,7 +91,6 @@ function Midi() {
   }
 
   function convertChannel(id) {
-    // return [id + 144, id + 128].toString(16);
     if (id === 0) { return [0x90, 0x80] } // ch1
     if (id === 1) { return [0x91, 0x81] } // ch2
     if (id === 2) { return [0x92, 0x82] } // ch3
@@ -113,7 +114,10 @@ function Midi() {
   }
 
   function convertLength(val, bpm) {
-    return (60000 / bpm) * (val / 15)
+    // [ 1 = (1/16) ] ~> 
+    // [ 8 = (8/16) or half bar ] ~> 
+    // [ 16 = (16/16) or full bar. ]
+    return (60000 / bpm) * (val / 16)
   }
 
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v }

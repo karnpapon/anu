@@ -168,7 +168,7 @@ function Sequencer(){
   }
 
   this.midiTrigger = function(chan = 0){
-    seeq.midi.send(chan, 4, this.getRandomInt(0, 6), 100, 7)
+    seeq.midi.send({ channel: chan,octave: 4,note: this.getRandomInt(0, 6),velocity: 100,length: seeq.matchedPositionLength })
     seeq.midi.run()
     seeq.midi.clear()
   }

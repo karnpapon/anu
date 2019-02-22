@@ -62,6 +62,7 @@ function Seeq(){
   this.isGettingData = false
 
   this.matchedPosition = []
+  this.matchedPositionLength = 1
   this.bpm = ""
   this.logoSeeq
 
@@ -535,22 +536,26 @@ function Seeq(){
     var searchText = seeq.data.text.innerText
     var search = new RegExp(this.searchValue,"gi")
     var match
+    let length = this.searchValue.length
 
     this.matchedPosition = []
 
     if( this.searchValue !== ""){
-      if( !this.isReverse){
-        while( match = search.exec(searchText)){
-          this.matchedPosition.push(match.index + 1)
-        }
-      } else {
-        while (match = search.exec(searchText)) {
-          this.matchedPosition.push(match.index - 1)
-        } 
-      }
-    }
 
-    console.log("match position", this.matchedPosition)
+        // if search value = letter.
+        if( !this.isReverse){
+          while( match = search.exec(searchText)){
+            this.matchedPosition.push(match.index + 1)
+          }
+        } else {
+          while (match = search.exec(searchText)) {
+            this.matchedPosition.push(match.index - 1)
+          } 
+        }
+         // if search value = word.
+        this.searchValue.length > 1? this.matchedPositionLength = length - 1: this.matchedPositionLength = 1
+      }
+    console.log("match matchedPositionLength", this.matchedPositionLength)
   }
 
   this.getData = function () {
