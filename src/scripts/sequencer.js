@@ -151,17 +151,35 @@ function Sequencer(){
   }
 
   this.trigger = function(){
+
+    let time = (60000 / this.bpm) * (seeq.matchedPositionLength / 6)
+    // let matchedWord = seeq.matchedPosition + seeq.matchedPositionLength
+
     if( seeq.searchValue !== ""){
       seeq.cursor.forEach( ( cursor, index ) => {
         if( !cursor.isMuted ){
-          if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) && seeq.matchedPosition){
-            seeq.appWrapper.classList.add("trigger")
-            seeq.sendOsc()
-            this.midiTrigger(index)
-          } 
-          setTimeout(() => {
-            seeq.appWrapper.classList.remove("trigger")
-          }, 50);
+          
+          if ( seeq.matchedPositionLength == 1){
+            if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) && seeq.matchedPosition){
+              seeq.appWrapper.classList.add("trigger")
+              seeq.sendOsc()
+              this.midiTrigger(index)
+            } else {
+              seeq.appWrapper.classList.remove("trigger")
+            }
+          }
+
+          else if (seeq.matchedPositionLength > 1){
+            if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) ){
+              seeq.appWrapper.classList.add("trigger")
+              seeq.sendOsc()
+              this.midiTrigger(index)
+            } else {
+              if( seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)  ){
+                seeq.appWrapper.classList.remove("trigger")
+              }
+            }
+          }
         }
       })
     }

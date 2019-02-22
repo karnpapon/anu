@@ -62,6 +62,7 @@ function Seeq(){
   this.isGettingData = false
 
   this.matchedPosition = []
+  this.matchedPositionWithLength = []
   this.matchedPositionLength = 1
   this.bpm = ""
   this.logoSeeq
@@ -169,6 +170,7 @@ function Seeq(){
     opoff.innerText = "press any key to operate.." 
   })
 
+  
 
   document.addEventListener("DOMContentLoaded", function() {
     this.searchInput = document.querySelector("input[type='search']")
@@ -209,6 +211,7 @@ function Seeq(){
                 if(seeq.searchValue !== ""){
                   // clear position every searching.
                   seeq.matchedPosition = [] 
+                  seeq.matchedPositionWithLength = []
                   seeq.findMatchedPosition()
                 }
               }
@@ -239,6 +242,7 @@ function Seeq(){
                 if(seeq.searchValue !== ""){
                   // clear position every searching.
                   seeq.matchedPosition = [] 
+                  seeq.matchedPositionWithLength = []
                   seeq.findMatchedPosition()
                 }
               }
@@ -537,25 +541,39 @@ function Seeq(){
     var search = new RegExp(this.searchValue,"gi")
     var match
     let length = this.searchValue.length
+    let buffers = []
 
     this.matchedPosition = []
+    this.matchedPositionWithLength = []
 
     if( this.searchValue !== ""){
 
-        // if search value = letter.
-        if( !this.isReverse){
-          while( match = search.exec(searchText)){
-            this.matchedPosition.push(match.index + 1)
-          }
-        } else {
-          while (match = search.exec(searchText)) {
-            this.matchedPosition.push(match.index - 1)
-          } 
+      // if search value = letter.
+      if( !this.isReverse){
+        while( match = search.exec(searchText)){
+          this.matchedPosition.push(match.index + 1)
         }
-         // if search value = word.
-        this.searchValue.length > 1? this.matchedPositionLength = length - 1: this.matchedPositionLength = 1
+      } else {
+        while (match = search.exec(searchText)) {
+          this.matchedPosition.push(match.index - 1)
+        } 
       }
-    console.log("match matchedPositionLength", this.matchedPositionLength)
+        // if search value = word.
+      if( this.searchValue.length > 1 ){
+        this.matchedPositionLength = length - 1
+      } else {
+        this.matchedPositionLength = 1
+      }
+    }
+    
+    Array.from( new Array(length)).map((len, index) => { 
+      this.matchedPosition.map( pos => 
+        this.matchedPositionWithLength.push(pos + index ) 
+      )
+    })
+
+    this.matchedPositionWithLength.sort(function (a, b) { return a - b });
+    console.log("match matchedPositionWithLength", this.matchedPositionWithLength)
   }
 
   this.getData = function () {

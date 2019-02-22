@@ -1,5 +1,6 @@
 :root {
   --main-bg-color: #e6e6e6;
+  --clock: 200ms;
 }
 
 body {
@@ -51,6 +52,7 @@ div button{
 
 .trigger{
   background-color: rgb(62, 251, 0)  !important;
+  transition: 200ms;
 }
 
 .mute-target{ 
@@ -139,7 +141,7 @@ div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
 appwrapper{ 
   display: flex;
   background: #e6e6e6;
-  transition: 25ms;
+  /* transition: 25ms; */
   padding: 30px;
 }
 app { 
