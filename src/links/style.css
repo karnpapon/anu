@@ -52,7 +52,7 @@ div button{
 
 .trigger{
   background-color: rgb(62, 251, 0)  !important;
-  transition: 200ms;
+  transition: all .2s ease;
 }
 
 .mute-target{ 
@@ -141,7 +141,7 @@ div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
 appwrapper{ 
   display: flex;
   background: #e6e6e6;
-  /* transition: 25ms; */
+  transition: all .2s ease;
   padding: 30px;
 }
 app { 

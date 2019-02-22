@@ -78,7 +78,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 4 
+    var CLOCK_DIVIDER = 6 
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM
@@ -152,9 +152,6 @@ function Sequencer(){
 
   this.trigger = function(){
 
-    let time = (60000 / this.bpm) * (seeq.matchedPositionLength / 6)
-    // let matchedWord = seeq.matchedPosition + seeq.matchedPositionLength
-
     if( seeq.searchValue !== ""){
       seeq.cursor.forEach( ( cursor, index ) => {
         if( !cursor.isMuted ){
@@ -163,9 +160,10 @@ function Sequencer(){
             if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) && seeq.matchedPosition){
               seeq.appWrapper.classList.add("trigger")
               seeq.sendOsc()
-              this.midiTrigger(index)
+              this.midiNoteOn(index)
             } else {
               seeq.appWrapper.classList.remove("trigger")
+              this.midiNoteOff()
             }
           }
 
@@ -173,10 +171,11 @@ function Sequencer(){
             if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) ){
               seeq.appWrapper.classList.add("trigger")
               seeq.sendOsc()
-              this.midiTrigger(index)
+              this.midiNoteOn(index)
             } else {
               if( seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)  ){
                 seeq.appWrapper.classList.remove("trigger")
+                this.midiNoteOff()
               }
             }
           }
@@ -185,9 +184,14 @@ function Sequencer(){
     }
   }
 
-  this.midiTrigger = function(chan = 0){
+  this.midiNoteOn = function(chan = 0){
     seeq.midi.send({ channel: chan,octave: 4,note: this.getRandomInt(0, 6),velocity: 100,length: seeq.matchedPositionLength })
-    seeq.midi.run()
+    seeq.midi.noteOn()
+    // seeq.midi.clear()
+  }
+
+  this.midiNoteOff = function(){
+    seeq.midi.noteOff()
     seeq.midi.clear()
   }
 

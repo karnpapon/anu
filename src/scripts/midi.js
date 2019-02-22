@@ -14,9 +14,21 @@ function Midi() {
     this.stack = []
   }
 
-  this.run = function () {
+  // this.run = function () {
+  //   for (const id in this.stack) {
+  //     this.play(this.stack[id], this.device())
+  //   }
+  // }
+
+  this.noteOn = function () {
     for (const id in this.stack) {
-      this.play(this.stack[id], this.device())
+      this.set(this.stack[id], this.device())
+    }
+  }
+
+  this.noteOff = function(){
+    for (const id in this.stack) {
+      this.setOff(this.stack[id], this.device())
     }
   }
 
@@ -25,19 +37,38 @@ function Midi() {
   this.send = function ({ channel, octave, note, velocity, length }) {
     let msg = Object.assign({}, { channel, octave, note, velocity, length })
     this.stack.push(msg)
-    console.log("this.stack", this.stack)
   }
 
-  this.play = function (data = this.stack, device) {
+  this.set = function (data = this.stack, device) {
     const channel = convertChannel(data['channel'])
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity']
     const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
 
-    if (!device) { console.warn('No midi device!'); return }
+    // if (!device) { console.warn('No midi device!'); return }
+    // device.send([channel[0], note, velocity]) 
+    this.handleNoteOn(function(){})
+  }
 
-    device.send([channel[0], note, velocity])
-    device.send([channel[1], note, velocity], length)
+  this.setOff = function (data = this.stack, device) {
+    const channel = convertChannel(data['channel'])
+    const note = convertNote(data['octave'], data['note'])
+    const velocity = data['velocity']
+    const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
+
+    // if (!device) { console.warn('No midi device!'); return }
+    // device.send([channel[1], note, velocity], length) 
+    this.handleNoteOff(function(){})
+  }
+  
+  this.handleNoteOn = function( cb ){
+    cb()
+    console.log("note on >>>>")
+  }
+
+  this.handleNoteOff = function(cb){
+    cb()
+    console.log("note off >>>>")
   }
 
   this.select = function (id) {
