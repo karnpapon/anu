@@ -14,23 +14,23 @@ function Midi() {
     this.stack = []
   }
 
-  // this.run = function () {
-  //   for (const id in this.stack) {
-  //     this.play(this.stack[id], this.device())
-  //   }
-  // }
-
-  this.noteOn = function () {
+  this.run = function () {
     for (const id in this.stack) {
       this.set(this.stack[id], this.device())
     }
   }
 
-  this.noteOff = function(){
-    for (const id in this.stack) {
-      this.setOff(this.stack[id], this.device())
-    }
-  }
+  // this.noteOn = function () {
+  //   for (const id in this.stack) {
+  //     this.set(this.stack[id], this.device())
+  //   }
+  // }
+
+  // this.noteOff = function(){
+  //   for (const id in this.stack) {
+  //     this.setOff(this.stack[id], this.device())
+  //   }
+  // }
 
   // Midi
 
@@ -45,31 +45,32 @@ function Midi() {
     const velocity = data['velocity']
     const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
 
-    // if (!device) { console.warn('No midi device!'); return }
-    // device.send([channel[0], note, velocity]) 
-    this.handleNoteOn(function(){})
+    if (!device) { console.warn('No midi device!'); return }
+    device.send([channel[0], note, velocity]) 
+    device.send([channel[1], note, velocity], length)
+    // this.handleNoteOn(device.send([channel[0], note, velocity]))
   }
 
-  this.setOff = function (data = this.stack, device) {
-    const channel = convertChannel(data['channel'])
-    const note = convertNote(data['octave'], data['note'])
-    const velocity = data['velocity']
-    const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
+  // this.setOff = function (data = this.stack, device) {
+  //   const channel = convertChannel(data['channel'])
+  //   const note = convertNote(data['octave'], data['note'])
+  //   const velocity = data['velocity']
+  //   const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
 
-    // if (!device) { console.warn('No midi device!'); return }
-    // device.send([channel[1], note, velocity], length) 
-    this.handleNoteOff(function(){})
-  }
+  //   if (!device) { console.warn('No midi device!'); return }
+  //   device.send([channel[1], note, velocity]) 
+  //   // this.handleNoteOff(device.send([channel[1], note, velocity]) )
+  // }
   
-  this.handleNoteOn = function( cb ){
-    cb()
-    console.log("note on >>>>")
-  }
+  // this.handleNoteOn = function( cb ){
+  //   cb()
+  //   console.log("note on >>>>")
+  // }
 
-  this.handleNoteOff = function(cb){
-    cb()
-    console.log("note off >>>>")
-  }
+  // this.handleNoteOff = function(cb){
+  //   cb()
+  //   console.log("note off >>>>")
+  // }
 
   this.select = function (id) {
     if (!this.devices[id]) { return }
@@ -149,7 +150,7 @@ function Midi() {
     // [ 8 = (8/16) or half bar ] ~> 
     // [ 16 = (16/16) or full bar. ]
     // return (60000 / bpm) * (val / 16)
-    return (60000 / bpm) * (val / 6)
+    return (60000 / bpm) * (val / 16)
   }
 
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v }

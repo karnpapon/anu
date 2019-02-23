@@ -4,12 +4,13 @@ function Data( ){
     this.el = document.createElement("div")
     this.text = document.createElement("p")
     this.loading = document.createElement("div")
+    this.flag = 0
 
     // this layer only for displaying mark.
     this.maskText = document.createElement("p") 
     
     // this layer only for text's selection ( hihger z-index child's issue workaround).
-    this.selectedText = document.createElement("p") 
+    this.selectedText = document.createElement("p")
 
     this.textBuffers = ""
     this.getHighlight
@@ -73,6 +74,29 @@ function Data( ){
       // paragraph row detector.
       // seeq.lines = lineWrapDetector.getLines(this.text);
       // console.log("this.lines", seeq.lines)
+
+      this.textCounter()
+    }
+
+    this.textCounter = function(){
+      var element = this.selectedText;
+      var text = ""
+      var self = this
+      this.selectedText.addEventListener("mousedown", function () {
+        this.flag = 1
+      });
+
+      this.selectedText.addEventListener("mousemove", function () {
+        if (this.flag == 1) {
+          text = window.getSelection().toString();
+          seeq.info.innerHTML = `<div class="info-group">| <lf>LENGTH ${text.length }</lf> | - | <lf>CHAN 0</lf> | - | <lf>NOTE D</lf> | </div> <div class="dashed-line-info"> ---------------------------------------- </div> <lft>: INFO </lft>`
+          }
+      });
+
+      this.selectedText.addEventListener("mouseup", function () {
+        this.flag = 0
+        seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+      }); 
     }
 
     this.clear = function(){

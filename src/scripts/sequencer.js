@@ -78,7 +78,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    var CLOCK_DIVIDER = 6 
+    var CLOCK_DIVIDER = 2
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
     this.clock = CONVERTED_BPM
@@ -156,26 +156,27 @@ function Sequencer(){
       seeq.cursor.forEach( ( cursor, index ) => {
         if( !cursor.isMuted ){
           
+          // trigger letters.
           if ( seeq.matchedPositionLength == 1){
             if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) && seeq.matchedPosition){
-              seeq.appWrapper.classList.add("trigger")
+              seeq.data.el.classList.add("trigger")
               seeq.sendOsc()
               this.midiNoteOn(index)
             } else {
-              seeq.appWrapper.classList.remove("trigger")
-              this.midiNoteOff()
+              seeq.data.el.classList.remove("trigger")
             }
           }
 
+          // trigger words.
           else if (seeq.matchedPositionLength > 1){
             if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) ){
-              seeq.appWrapper.classList.add("trigger")
+              seeq.data.el.classList.add("trigger")
               seeq.sendOsc()
               this.midiNoteOn(index)
             } else {
               if( seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)  ){
-                seeq.appWrapper.classList.remove("trigger")
-                this.midiNoteOff()
+                seeq.data.el.classList.remove("trigger")
+                // this.midiNoteOff()
               }
             }
           }
@@ -186,8 +187,8 @@ function Sequencer(){
 
   this.midiNoteOn = function(chan = 0){
     seeq.midi.send({ channel: chan,octave: 4,note: this.getRandomInt(0, 6),velocity: 100,length: seeq.matchedPositionLength })
-    seeq.midi.noteOn()
-    // seeq.midi.clear()
+    seeq.midi.run()
+    seeq.midi.clear()
   }
 
   this.midiNoteOff = function(){
@@ -216,6 +217,7 @@ function Sequencer(){
       up: 0,
       down: 0
     }]
+    seeq.data.el.classList.remove("trigger")
     this.isSync = false
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []

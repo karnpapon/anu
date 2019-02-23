@@ -39,6 +39,44 @@ div button{
   z-index: 2;
 }
 
+.limit{
+  width:534px;
+  word-wrap: break-word;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.info-group{
+  width: 252px;
+}
+.operator-group{
+  width: 360px;
+}
+
+.dashed-line-info{
+  margin-left: auto;
+}
+.dashed-line-operator{
+  width: 276px;
+}
+
+lf{
+  font-family: 'input_sans_condensed_bold';
+  font-size:12px;  
+}
+
+lft{
+  /* width: 55px; */
+  font-family: 'input_sans_condensed_regular';
+  font-size:12px;  
+  margin-left: 10px;
+}
+
+.ltf-operator{
+  width: 55px;
+}
+
 .logo-seeq{
   background-color: black !important;
   color: rgb(62, 251, 0);
@@ -125,7 +163,7 @@ div button:focus{ outline: none;}
 div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
 .control-wrapper{ display: flex; justify-content: space-between;}
 .control-info{ 
-  font-size: 10px;     
+  font-size: 12px;     
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
@@ -210,6 +248,7 @@ div input:focus{ outline: none;}
   /* margin-top: 30px; */
   overflow: hidden;
   position: inherit;
+  transition: all .2s ease-out;
 }
 .content p{white-space: pre-wrap;}
 /* .content p{

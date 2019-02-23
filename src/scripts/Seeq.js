@@ -110,7 +110,7 @@ function Seeq(){
       </div>
       <div class="control-info">
       <div class="control-panel">
-        <div id="operator" class="operator"> press any key to operate..</div>
+        <div class="title">Control:</div>
         <div>
           <button data-ctrl="set">set</button>
           <button data-ctrl="run">run</button>
@@ -129,13 +129,12 @@ function Seeq(){
         </div>
       </div>
       </div>
-    <div>---------------------------------------------------------------------------------------------------</div> 
+    <div data-ctrl="information" class="limit">|---------------------------------------------------------------------------------------------------|</div> 
     `;
 
     this.data.build()
     this.midi.start()
     setTimeout(seeq.show,200)
-    
   }
 
   this.show = function(){
@@ -143,19 +142,16 @@ function Seeq(){
   }
 
   document.addEventListener("keydown", function(event){
-    var op = document.getElementById("operator")
     switch (event.keyCode) {
       case 77: // 77 = "m" acronym for "mute"
         seeq.isShiftPressed = true;
-        op.innerHTML = "<b>mute</b> : mute/unmute selected area." 
+        seeq.info.innerHTML = `<div class="operator-group">| <lf>MUTE</lf> <lf> : mute/unmute selected area. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
       break;
       case 85: 
         seeq.isUpPressed = true;
-        op.innerHTML = "<b>up</b> : speed up tempo."  
       break;
       case 68: 
         seeq.isDownPressed = true;
-        op.innerHTML = "<b>down</b> : speed down tempo."  
       break;
       default:
         break;
@@ -166,11 +162,8 @@ function Seeq(){
     seeq.isShiftPressed = false;
     seeq.isUpPressed = false;
     seeq.isDownPressed = false;
-    var opoff = document.getElementById("operator")
-    opoff.innerText = "press any key to operate.." 
-  })
-
-  
+    seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+  }); 
 
   document.addEventListener("DOMContentLoaded", function() {
     this.searchInput = document.querySelector("input[type='search']")
@@ -191,8 +184,11 @@ function Seeq(){
     var context = document.querySelector("p.masking")
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
+    seeq.info = document.querySelector("div[data-ctrl='information']")
     seeq.content = new Mark(context)
     seeq.logoSeeq = new Mark( this.logo )
+
+   
 
     this.inputFetch.addEventListener("input", function(){
       seeq.fetchSearchInput = this.value;
@@ -394,6 +390,7 @@ function Seeq(){
 
   this.getSelectionText = function() {
     var text = "";
+    var textCount = 0
     if (window.getSelection) {
       text = window.getSelection().toString();
     } else if (document.selection && document.selection.type != "Control") {
@@ -573,7 +570,7 @@ function Seeq(){
     })
 
     this.matchedPositionWithLength.sort(function (a, b) { return a - b });
-    console.log("match matchedPositionWithLength", this.matchedPositionWithLength)
+    // console.log("match matchedPositionWithLength", this.matchedPositionWithLength)
   }
 
   this.getData = function () {
