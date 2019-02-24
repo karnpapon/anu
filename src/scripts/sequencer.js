@@ -158,12 +158,14 @@ function Sequencer(){
           
           // trigger letters.
           if ( seeq.matchedPositionLength == 1){
-            if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) && seeq.matchedPosition){
-              seeq.data.el.classList.add("trigger")
+            if(seeq.matchedPosition.indexOf(cursor.position) !== (-1)){
               seeq.sendOsc()
               this.midiNoteOn(index)
+              seeq.data.el.classList.add("trigger")
             } else {
-              seeq.data.el.classList.remove("trigger")
+              if( seeq.data.el.classList.contains('trigger')){
+                seeq.data.el.classList.remove("trigger")
+              }
             }
           }
 

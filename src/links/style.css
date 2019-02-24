@@ -41,14 +41,19 @@ div button{
 
 .limit{
   width:534px;
+  height: 30px;
   word-wrap: break-word;
-  padding-top: 10px;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.limit-regex{
+  border: 1px solid;
 }
 
 .info-group{
-  width: 252px;
+  width: 255px;
 }
 .operator-group{
   width: 360px;
@@ -63,7 +68,8 @@ div button{
 
 lf{
   font-family: 'input_sans_condensed_bold';
-  font-size:12px;  
+  font-size:12px;
+  margin: auto;
 }
 
 lft{
@@ -161,7 +167,7 @@ button:active{
 
 div button:focus{ outline: none;}
 div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
-.control-wrapper{ display: flex; justify-content: space-between;}
+.control-wrapper{ display: flex; justify-content: space-between; padding-bottom: 10px;}
 .control-info{ 
   font-size: 12px;     
   display: flex;
@@ -248,9 +254,10 @@ div input:focus{ outline: none;}
   /* margin-top: 30px; */
   overflow: hidden;
   position: inherit;
+  margin-top: 12px;
   transition: all .2s ease-out;
 }
-.content p{white-space: pre-wrap;}
+.content p{white-space: pre-wrap; margin-top: 0;}
 /* .content p{
   word-break: break-all;
   word-wrap: break-word;

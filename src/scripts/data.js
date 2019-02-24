@@ -79,9 +79,7 @@ function Data( ){
     }
 
     this.textCounter = function(){
-      var element = this.selectedText;
       var text = ""
-      var self = this
       this.selectedText.addEventListener("mousedown", function () {
         this.flag = 1
       });
@@ -89,7 +87,8 @@ function Data( ){
       this.selectedText.addEventListener("mousemove", function () {
         if (this.flag == 1) {
           text = window.getSelection().toString();
-          seeq.info.innerHTML = `<div class="info-group">| <lf>LENGTH ${text.length }</lf> | - | <lf>CHAN 0</lf> | - | <lf>NOTE D</lf> | </div> <div class="dashed-line-info"> ---------------------------------------- </div> <lft>: INFO </lft>`
+          seeq.info.classList.remove("limit-regex")
+          seeq.info.innerHTML = `<div class="info-group"><lf>LENGTH ${text.length }</lf> | - | <lf>CHAN 0</lf> | - | <lf>NOTE D</lf> | </div> <div class="dashed-line-info"> ---------------------------------------- </div> <lft>: INFO </lft>`
           }
       });
 

@@ -147,6 +147,20 @@ function Seeq(){
         seeq.isShiftPressed = true;
         seeq.info.innerHTML = `<div class="operator-group">| <lf>MUTE</lf> <lf> : mute/unmute selected area. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
       break;
+      case 32: // spacebar
+        seeq.info.innerHTML = `<div class="operator-group">| <lf>RUN</lf> <lf> : run sequencer. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
+        seeq.isPlaying = true 
+        seeq.isReverse = false
+        clearTimeout(seeq.seq.timer)
+        seeq.findMatchedPosition()
+        seeq.runStep()
+      break;
+      case 27: // esc
+        seeq.info.innerHTML = `<div class="operator-group">| <lf>STOP</lf> <lf> : stop sequencer. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
+        seeq.isPlaying = false
+        seeq.seq.stop()
+        seeq.data.hltr.removeHighlights();
+      break;
       case 85: 
         seeq.isUpPressed = true;
       break;
@@ -162,7 +176,10 @@ function Seeq(){
     seeq.isShiftPressed = false;
     seeq.isUpPressed = false;
     seeq.isDownPressed = false;
-    seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+    if( seeq.searchValue == ""){
+      seeq.info.classList.remove("limit-regex")
+      seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+    }
   }); 
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -240,12 +257,15 @@ function Seeq(){
                   seeq.matchedPosition = [] 
                   seeq.matchedPositionWithLength = []
                   seeq.findMatchedPosition()
+                  seeq.info.classList.add("limit-regex")
+                  seeq.info.innerHTML = `<lf>/${ seeq.searchValue }/g</lf>`
                 }
               }
             });
           }
         });
         seeq.updateMarkType = "regex"
+
       });
 
       this.nextBtn.addEventListener("click", function(){
