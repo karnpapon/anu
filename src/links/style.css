@@ -204,6 +204,7 @@ app {
   position: relative; 
   opacity:0; 
   width:calc(100% - 60px); 
+  transition: all .2s ease;
 }
 
 .btn-show{  display: block; }

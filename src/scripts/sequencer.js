@@ -31,24 +31,6 @@ function Sequencer(){
         this.outputType = seeq.data.text.innerHTML
         offsetCursor = 36 * index
       }
-      // this.timer = setTimeout( function(){
-      //   // handle negative index to behave correctly.
-      //   if( cursor.position < 0 ){
-      //     self.output = self.outputType.substr(0) + 
-      //     `<span class=\"current-active\">` + 
-      //     self.outputType.substr(cursor.position, 1) + 
-      //     "</span>" + 
-      //     self.outputType.substr(0,0)
-      //   } else {
-      //     self.output = self.outputType.substr(0, cursor.position + offsetCursor) +
-      //     `<span class=\"current-active\">` +
-      //       self.outputType.substr(cursor.position + offsetCursor , 1) +
-      //     "</span>" +
-      //     self.outputType.substr(cursor.position + 1 + offsetCursor) 
-      //   }
-      //   seeq.data.text.innerHTML = self.output
-      //   self.isCursorActived = true
-      // }, 300)
       
       // handle negative index to behave correctly.
       if( cursor.position < 0 ){
@@ -64,7 +46,6 @@ function Sequencer(){
         "</span>" +
         this.outputType.substr(cursor.position + 1 + offsetCursor) 
       }
-
      
       seeq.data.text.innerHTML = this.output
       this.isCursorActived = true
@@ -152,8 +133,11 @@ function Sequencer(){
 
   this.trigger = function(){
 
+    let cursorAmount = seeq.cursor.length
+    let currentIndex = 0
+
     if( seeq.searchValue !== ""){
-      seeq.cursor.forEach( ( cursor, index ) => {
+      seeq.cursor.forEach( ( cursor, index, array ) => {
         if( !cursor.isMuted ){
           
           // trigger letters.
@@ -162,9 +146,16 @@ function Sequencer(){
               seeq.sendOsc()
               this.midiNoteOn(index)
               seeq.data.el.classList.add("trigger")
+              currentIndex = index
+            }  else if (
+              // handle multi-cursor trigger.
+              seeq.matchedPosition.indexOf(array[currentIndex].position) !== (-1) && 
+              seeq.matchedPosition.indexOf(array[currentIndex+1].position) == (-1)) {
+              seeq.data.el.classList.add("trigger")
             } else {
               if( seeq.data.el.classList.contains('trigger')){
                 seeq.data.el.classList.remove("trigger")
+                // seeq.el.classList.remove("trigger") 
               }
             }
           }
