@@ -144,7 +144,7 @@ function Sequencer(){
           if ( seeq.matchedPositionLength == 1){
             if(seeq.matchedPosition.indexOf(cursor.position) !== (-1)){
               seeq.sendOsc()
-              this.midiNoteOn(index)
+              this.midiNoteOn(index + 1)
               seeq.data.el.classList.add("trigger")
               currentIndex = index
             }  else if (
@@ -165,7 +165,7 @@ function Sequencer(){
             if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) ){
               seeq.data.el.classList.add("trigger")
               seeq.sendOsc()
-              this.midiNoteOn(index)
+              this.midiNoteOn(index + 1)
             } else {
               if( seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)  ){
                 seeq.data.el.classList.remove("trigger")
@@ -178,8 +178,18 @@ function Sequencer(){
     }
   }
 
-  this.midiNoteOn = function(chan = 0){
-    seeq.midi.send({ channel: chan,octave: 4,note: this.getRandomInt(0, 6),velocity: 100,length: seeq.matchedPositionLength })
+
+  this.triggerFreeMode = function(){
+    // seeq.sendOsc()
+    this.midiNoteOn(0, 16, this.getRandomInt(0, 6))
+    seeq.el.classList.add("trigger-free-mode")
+    setTimeout(() => {
+      seeq.el.classList.remove("trigger-free-mode") 
+    }, 100);
+  }
+
+  this.midiNoteOn = function(chan = 0, noteLength = 7, oct = 4){
+    seeq.midi.send({ channel: chan,octave: oct,note: this.getRandomInt(0, 6),velocity: 100,length: noteLength })
     seeq.midi.run()
     seeq.midi.clear()
   }

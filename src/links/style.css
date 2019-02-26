@@ -99,6 +99,12 @@ lft{
   transition: all .2s ease;
 }
 
+
+.trigger-free-mode{
+  background-color: #CCCCCC;
+  transition: all .1s ease;
+}
+
 .mute-target{ 
   color: #d0d0d0;
   background-color: #c5c5c5 !important;

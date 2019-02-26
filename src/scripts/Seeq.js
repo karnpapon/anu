@@ -88,6 +88,8 @@ function Seeq(){
   this.isPlaying = false
   this.getHighlight = []
 
+  this.triggerTimer
+
   this.start = function(){
     this.wrapper_el.innerHTML += `
       <div class="header-wrapper">
@@ -319,6 +321,7 @@ function Seeq(){
         seeq.isPlaying = false
         seeq.seq.stop()
         seeq.data.hltr.removeHighlights();
+        clearInterval(this.triggerTimer)
       })
 
       this.revBtn.addEventListener("click", function () {
@@ -542,7 +545,10 @@ function Seeq(){
       } else if (seeq.results[nextEl] && seeq.results[nextEl].className == this.currentClass ){
         seeq.results[nextEl].classList.remove(this.currentClass);
       }
-      this.sendOsc() 
+      // this.sendOsc() 
+      // this.triggerTimer = setInterval(() => {
+      seeq.seq.triggerFreeMode()
+      // }, 200);
     }
   }
 
