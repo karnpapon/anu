@@ -1,6 +1,20 @@
 function Seeq(){
 
-  
+  const Data = require('./data')
+  const Sequencer = require('./sequencer')
+  const Midi = require('./midi')
+  const Clock = require('./clock')
+  const IO = require('./io')
+  const Keyboard = require('./keyboard')
+
+  this.data = new Data
+  this.io = new IO(this)
+  this.midi = new Midi()
+  this.seq = new Sequencer()
+  this.keyboard = new Keyboard(this)
+  this.clocks = [new Clock(120)] 
+  this.selectedClock = 0
+
   this.appWrapper = document.createElement("appwrapper")
   this.el = document.createElement("app");
   this.el.style.opacity = 0;
@@ -77,10 +91,6 @@ function Seeq(){
 
   document.body.appendChild(this.appWrapper);
 
-  this.data = new Data
-  this.midi = new Midi()
-  this.seq = new Sequencer()
-
   this.observer 
   this.observeConfig = { childList: true, subtree: true };
   this.indexTarget
@@ -135,54 +145,13 @@ function Seeq(){
     `;
 
     this.data.build()
-    this.midi.start()
+    this.io.start()
     setTimeout(seeq.show,200)
   }
 
   this.show = function(){
     seeq.el.style.opacity = 1;
   }
-
-  document.addEventListener("keydown", function(event){
-    switch (event.keyCode) {
-      case 77: // 77 = "m" acronym for "mute"
-        seeq.isShiftPressed = true;
-        seeq.info.innerHTML = `<div class="operator-group">| <lf>MUTE</lf> <lf> : mute/unmute selected area. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
-      break;
-      case 32: // spacebar
-        seeq.info.innerHTML = `<div class="operator-group">| <lf>RUN</lf> <lf> : run sequencer. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
-        seeq.isPlaying = true 
-        seeq.isReverse = false
-        clearTimeout(seeq.seq.timer)
-        seeq.findMatchedPosition()
-        seeq.runStep()
-      break;
-      case 27: // esc
-        seeq.info.innerHTML = `<div class="operator-group">| <lf>STOP</lf> <lf> : stop sequencer. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
-        seeq.isPlaying = false
-        seeq.seq.stop()
-        seeq.data.hltr.removeHighlights();
-      break;
-      case 85: 
-        seeq.isUpPressed = true;
-      break;
-      case 68: 
-        seeq.isDownPressed = true;
-      break;
-      default:
-        break;
-    }
-    
-  })
-  document.addEventListener("keyup", function(){
-    seeq.isShiftPressed = false;
-    seeq.isUpPressed = false;
-    seeq.isDownPressed = false;
-    if( seeq.searchValue == ""){
-      seeq.info.classList.remove("limit-regex")
-      seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
-    }
-  }); 
 
   document.addEventListener("DOMContentLoaded", function() {
     this.searchInput = document.querySelector("input[type='search']")
@@ -278,7 +247,7 @@ function Seeq(){
           // reset cursor to top.
           seeq.currentIndex = 0;
         }
-        seeq.jump();
+        seeq.jump()
       })
 
       this.prevBtn.addEventListener("click", function(){
@@ -367,7 +336,7 @@ function Seeq(){
               } else if(seeq.isUpPressed){
                 muteTarget = seeq.getHighlight[seeq.selectIndex]
                 muteTarget.classList.add("up-target")
-                seeq.cursor[seeq.selectIndex].up += 5
+                // seeq.cursor[seeq.selectIndex].up += 50
               } else {
                 seeq.removeHighlightsEl(seeq.selectIndex)
                 seeq.data.hltr.removeHighlights(mutation.target);
@@ -387,12 +356,6 @@ function Seeq(){
       // })
 
   });
-
-
-  // this.muteSelection = function( index ){
-  //   // this.cursor[index]
-  //   this.selectIndex = index
-  // }
 
 
   this.findHighlightIndex = function(target){
@@ -546,11 +509,13 @@ function Seeq(){
         seeq.results[nextEl].classList.remove(this.currentClass);
       }
       // this.sendOsc() 
-      // this.triggerTimer = setInterval(() => {
       seeq.seq.triggerFreeMode()
-      // }, 200);
     }
   }
+
+  // this.triggerFree = function(){
+  //   seeq.seq.triggerFreeMode() 
+  // }
 
   this.sendOsc = function(){
     // re-render to get new value everytime.
@@ -678,6 +643,41 @@ function Seeq(){
     this.getHighlight = data.hltr.getHighlights(data.selectedText)
   }
   
+
+  this.clock = function () {
+    return this.clocks[this.selectedClock]
+  }
+
+  this.nextClock = function () {
+    const previousClock = this.clock()
+    if (previousClock) {
+      previousClock.setRunning(false)
+      previousClock.setCallback(() => { })
+    }
+    this.selectedClock = (this.selectedClock + 1) % this.clocks.length
+    this.clock().setRunning(!this.isPaused)
+    this.clock().setCallback(() => this.run())
+
+    // this.update()
+  }
+
+  this.setSpeed = function (bpm) {
+    if (this.clock().canSetBpm()) {
+      bpm = clamp(bpm, 60, 300)
+      this.clock().setBpm(bpm)
+    }
+  }
+
+  this.modSpeed = function (mod = 0) {
+    let bpm = this.clock()
+    if (this.clock().canSetBpm()) {
+      this.setSpeed(this.clock().getBpm() + mod)
+    }
+    this.setBPMdisplay(bpm) 
+  }
+
   
-  
+  function clamp (v, min, max) { return v < min ? min : v > max ? max : v } 
 }
+
+module.exports = Seeq

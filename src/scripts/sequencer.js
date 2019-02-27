@@ -17,6 +17,9 @@ function Sequencer(){
   this.offset = 0
   this.targetHighlight
   this.isMuted = false
+  this.syncFreeMode = false
+  this.clockCounter = 0
+  this.isClockSync = false
 
   this.set = function () {
 
@@ -59,6 +62,7 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
+    // this.beat = beat
     var CLOCK_DIVIDER = 2
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
@@ -110,20 +114,33 @@ function Sequencer(){
       this.set() 
     })
 
+  
+
+    // if(index % 4 == 0){
+    //   tick += 1
+    // }
+
     this.counting()
     this.setSelectLoopRange()
     this.run()
     this.trigger()
+
   }
 
   this.counting = function(){
     // increment | decrement.
-    if(!this.isSync) { return }
+    // if(!this.isSync) { return }
     if(seeq.isReverse){
       seeq.cursor.forEach(target => target.position -= 1)
     } else {
       seeq.cursor.forEach(target => target.position += 1) 
     } 
+
+    this.clockCounter += 1
+
+    this.clockCounter % 8 === 0? this.isClockSync = true: this.isClockSync = false
+    
+
   }
 
   this.countIn = function( beat ){
@@ -141,7 +158,7 @@ function Sequencer(){
         if( !cursor.isMuted ){
           
           // trigger letters.
-          if ( seeq.matchedPositionLength == 1){
+          if (seeq.matchedPositionLength == 1){
             if(seeq.matchedPosition.indexOf(cursor.position) !== (-1)){
               seeq.sendOsc()
               this.midiNoteOn(index + 1)
@@ -150,9 +167,11 @@ function Sequencer(){
             }  else if (
               // handle multi-cursor trigger.
               seeq.matchedPosition.indexOf(array[currentIndex].position) !== (-1) && 
-              seeq.matchedPosition.indexOf(array[currentIndex+1].position) == (-1)) {
+              seeq.matchedPosition.indexOf(array[currentIndex+1].position) == (-1)
+              ) {
               seeq.data.el.classList.add("trigger")
-            } else {
+            } 
+            else {
               if( seeq.data.el.classList.contains('trigger')){
                 seeq.data.el.classList.remove("trigger")
                 // seeq.el.classList.remove("trigger") 
@@ -181,15 +200,29 @@ function Sequencer(){
 
   this.triggerFreeMode = function(){
     // seeq.sendOsc()
-    this.midiNoteOn(0, 16, this.getRandomInt(0, 6))
-    seeq.el.classList.add("trigger-free-mode")
-    setTimeout(() => {
-      seeq.el.classList.remove("trigger-free-mode") 
-    }, 100);
+    let self = this
+    // seeq.clocks().setRunning(true)
+    // if( this.isClockSync ){
+      this.triggerFreeModeClock = setInterval(() => {
+        this.midiNoteOn(0, 12 ,16, this.getRandomInt(0, 6))
+        seeq.el.classList.add("trigger-free-mode")
+        setTimeout(() => {
+          seeq.el.classList.remove("trigger-free-mode") 
+        }, clock.bpm);
+      }, (60000 / seeq.clock().bpm) / 8);
+    // }
   }
 
-  this.midiNoteOn = function(chan = 0, noteLength = 7, oct = 4){
-    seeq.midi.send({ channel: chan,octave: oct,note: this.getRandomInt(0, 6),velocity: 100,length: noteLength })
+
+  this.setSyncFreeMode = function(){
+    // this.syncFreeMode = true
+    let tick = 0
+    tick += 1
+    console.log("this.syncFreeMode", tick)
+  }
+
+  this.midiNoteOn = function(chan = 0, note = this.getRandomInt(0,6), noteLength = 7, oct = 4){
+    seeq.midi.send({ channel: chan,octave: oct, note ,velocity: 100,length: noteLength })
     seeq.midi.run()
     seeq.midi.clear()
   }
@@ -200,16 +233,16 @@ function Sequencer(){
   }
 
   this.run = function(){
-    var self = this
+    let self = this
+    
+    let tick = 0
     
     this.timer = setTimeout( function(){
       // seeq.cursor  += 1  //for debugging.
-      self.set()
+      // self.triggerFreeMode()
       self.increment() //enable this when wanted to run auto.
-    }, this.clock )
-
+    }, (60000 / seeq.clock().bpm) / 4 )
     
-    // this.increment() 
   }
 
   this.stop = function(){
@@ -221,7 +254,8 @@ function Sequencer(){
       down: 0
     }]
     seeq.data.el.classList.remove("trigger")
-    this.isSync = false
+    // this.isSync = false
+    this.clockCounter = 0
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []
     this.set()

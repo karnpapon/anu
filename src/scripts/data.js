@@ -1,6 +1,9 @@
 'use strict'
 
+
 function Data( ){
+
+    // const lineWrapDetector = require('../libs/lineWrapDetector')
     this.el = document.createElement("div")
     this.text = document.createElement("p")
     this.loading = document.createElement("div")

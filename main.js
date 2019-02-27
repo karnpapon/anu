@@ -16,10 +16,12 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 694, 
     height: 580, 
-    frame: false,
     // resizable: false,
     // transparent: true,
     // movable: true
+    frame: process.platform !== 'darwin',
+    skipTaskbar: process.platform === 'darwin',
+    autoHideMenuBar: process.platform === 'darwin'
   })
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),

@@ -6,11 +6,6 @@
     <script src="node_modules/mark.js/dist/mark.min.js"></script>
     <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="node_modules/TextHighlighter/src/TextHighlighter.js"></script>
-    <script src="./src/libs/lineWrapDetector.js"></script>
-    <script src="./src/scripts/sequencer.js"></script>
-    <script src="./src/scripts/midi.js"></script>
-    <script src="./src/scripts/data.js"></script>
-    <script src="./src/scripts/Seeq.js"></script>
     <style>
       ::selection {
         background: yellow;
@@ -21,6 +16,7 @@
   </head>
   <body>
     <script>
+        const Seeq = require('/Users/mac/Desktop/Coding/working/Seeq/src/scripts/Seeq.js')
         const {dialog,app} = require('electron').remote;
 
         const fs = require('fs');
@@ -34,20 +30,20 @@
         var seeq = new Seeq();
        
         seeq.start();
-        socket.on('beat', function (data) {
-          const { beat, bpm } = data
-          if(beat % 4 == 0){
-            seeq.seq.connect( data )
-            if( seeq.isPlaying ){
-              seeq.seq.countIn( beat )
-            }
-          }
-        }); 
+        // socket.on('beat', function (data) {
+        //   const { beat, bpm } = data
+        //   if(beat % 4 == 0){
+        //     seeq.seq.connect( data )
+        //     if( seeq.isPlaying ){
+        //       seeq.seq.countIn( beat )
+        //     }
+        //   }
+        // }); 
 
-        socket.on('bpmchange', function(data){
-          const { bpm } = data
-          seeq.setBPMdisplay(Math.round( bpm )) 
-        })
+        // socket.on('bpmchange', function(data){
+        //   const { bpm } = data
+        //   seeq.setBPMdisplay(Math.round( bpm )) 
+        // })
 
     </script>
   </body>
