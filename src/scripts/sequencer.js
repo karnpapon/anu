@@ -9,7 +9,7 @@ function Sequencer(){
   this.output = ""
   this.outputLoop = ""
   this.isCursorActived = false
-  this.timer = ""
+  this.timer = null
   this.bpm = 120
   this.counter = 0
   this.isSync = false
@@ -20,6 +20,7 @@ function Sequencer(){
   this.syncFreeMode = false
   this.clockCounter = 0
   this.isClockSync = false
+  this.triggerFreeModeClock = null
 
   this.set = function () {
 
@@ -89,7 +90,7 @@ function Sequencer(){
     seeq.cursor.forEach( ( cursor, index, array ) => {
       if( cursor.position > seeq.selectAreaLength[index] - 1){
         array[index].position = seeq.matchedSelectPosition[index]
-      } else if (seeq.isReverse && cursor.position < seeq.matchedSelectPosition[index]){
+      } else if ( cursor.position < seeq.matchedSelectPosition[index]){
         array[index].position  = seeq.selectAreaLength[index] - 1
       }
     })
@@ -114,33 +115,27 @@ function Sequencer(){
       this.set() 
     })
 
-  
-
-    // if(index % 4 == 0){
-    //   tick += 1
-    // }
-
     this.counting()
     this.setSelectLoopRange()
     this.run()
     this.trigger()
-
   }
 
   this.counting = function(){
     // increment | decrement.
     // if(!this.isSync) { return }
+    let offset = 1
     if(seeq.isReverse){
       seeq.cursor.forEach(target => target.position -= 1)
     } else {
-      seeq.cursor.forEach(target => target.position += 1) 
+      seeq.cursor.forEach(( target, index, arr ) => { 
+        if( target.reverse){
+          target.position -= 1 
+        } else {
+          target.position += 1 
+        }
+      }) 
     } 
-
-    this.clockCounter += 1
-
-    this.clockCounter % 8 === 0? this.isClockSync = true: this.isClockSync = false
-    
-
   }
 
   this.countIn = function( beat ){
@@ -151,74 +146,92 @@ function Sequencer(){
   this.trigger = function(){
 
     let cursorAmount = seeq.cursor.length
-    let currentIndex = 0
 
     if( seeq.searchValue !== ""){
-      seeq.cursor.forEach( ( cursor, index, array ) => {
-        if( !cursor.isMuted ){
-          
-          // trigger letters.
-          if (seeq.matchedPositionLength == 1){
-            if(seeq.matchedPosition.indexOf(cursor.position) !== (-1)){
-              seeq.sendOsc()
-              this.midiNoteOn(index + 1)
-              seeq.data.el.classList.add("trigger")
-              currentIndex = index
-            }  else if (
-              // handle multi-cursor trigger.
-              seeq.matchedPosition.indexOf(array[currentIndex].position) !== (-1) && 
-              seeq.matchedPosition.indexOf(array[currentIndex+1].position) == (-1)
-              ) {
-              seeq.data.el.classList.add("trigger")
-            } 
-            else {
-              if( seeq.data.el.classList.contains('trigger')){
-                seeq.data.el.classList.remove("trigger")
-                // seeq.el.classList.remove("trigger") 
-              }
-            }
-          }
 
-          // trigger words.
-          else if (seeq.matchedPositionLength > 1){
-            if(seeq.matchedPosition.indexOf(cursor.position) !== (-1) ){
-              seeq.data.el.classList.add("trigger")
-              seeq.sendOsc()
-              this.midiNoteOn(index + 1)
-            } else {
-              if( seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)  ){
-                seeq.data.el.classList.remove("trigger")
-                // this.midiNoteOff()
+      if(seeq.isSelectDrag){
+        seeq.cursor.forEach((cursor, index, array) => {
+          if (!cursor.isMuted) {
+
+            // trigger letters.
+            if (seeq.matchedPositionLength == 1) {
+              if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
+                seeq.sendOsc()
+                this.midiNoteOn(index + 1, undefined, undefined, undefined)
+                seeq.getHighlight[index].classList.add("trigger")
+              } else {
+                seeq.getHighlight[index].classList.remove("trigger")
+              }
+            }
+
+            // trigger words.
+            else if (seeq.matchedPositionLength > 1) {
+              if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
+                seeq.getHighlight[index].classList.add("trigger")
+                seeq.sendOsc()
+                this.midiNoteOn(index + 1)
+              } else {
+                if (seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
+                  seeq.getHighlight[index].classList.remove("trigger")
+                  // this.midiNoteOff()
+                }
               }
             }
           }
-        }
-      })
+        })
+      } else {
+        seeq.cursor.forEach((cursor, index, array) => {
+          if (!cursor.isMuted) {
+
+            // trigger letters.
+            if (seeq.matchedPositionLength == 1) {
+              if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
+                seeq.sendOsc()
+                this.midiNoteOn(index + 1, undefined, undefined, undefined)
+                seeq.data.el.classList.add("trigger")
+              }
+              else {
+                if( seeq.data.el.classList.contains('trigger')){
+                  seeq.data.el.classList.remove("trigger")
+                  // seeq.el.classList.remove("trigger") 
+                }
+              }
+            }
+
+            // trigger words.
+            else if (seeq.matchedPositionLength > 1) {
+              if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
+                seeq.data.el.classList.add("trigger")
+                seeq.sendOsc()
+                this.midiNoteOn(index + 1)
+              } else {
+                if (seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
+                  seeq.data.el.classList.remove("trigger")
+                  // this.midiNoteOff()
+                }
+              }
+            }
+          }
+        })
+      }
     }
   }
 
 
   this.triggerFreeMode = function(){
-    // seeq.sendOsc()
+
     let self = this
-    // seeq.clocks().setRunning(true)
-    // if( this.isClockSync ){
-      this.triggerFreeModeClock = setInterval(() => {
+    let clock = seeq.clock()
+
+      if( seeq.isFreeModeAutoPlay){
         this.midiNoteOn(0, 12 ,16, this.getRandomInt(0, 6))
         seeq.el.classList.add("trigger-free-mode")
         setTimeout(() => {
           seeq.el.classList.remove("trigger-free-mode") 
         }, clock.bpm);
-      }, (60000 / seeq.clock().bpm) / 8);
-    // }
-  }
-
-
-  this.setSyncFreeMode = function(){
-    // this.syncFreeMode = true
-    let tick = 0
-    tick += 1
-    console.log("this.syncFreeMode", tick)
+      } else {
+        return
+      }
   }
 
   this.midiNoteOn = function(chan = 0, note = this.getRandomInt(0,6), noteLength = 7, oct = 4){
@@ -234,19 +247,18 @@ function Sequencer(){
 
   this.run = function(){
     let self = this
-    
-    let tick = 0
-    
     this.timer = setTimeout( function(){
-      // seeq.cursor  += 1  //for debugging.
-      // self.triggerFreeMode()
-      self.increment() //enable this when wanted to run auto.
+      // self.clockCounter += 1
+      // self.clockCounter % 8 === 0? self.triggerFreeMode():""
+      self.triggerFreeMode()
+      self.increment()
     }, (60000 / seeq.clock().bpm) / 4 )
     
   }
 
   this.stop = function(){
     clearTimeout(this.timer)
+    clearTimeout(this.triggerFreeModeClock)
     seeq.cursor = [{
       position: 0,
       isMuted: false,
@@ -255,6 +267,7 @@ function Sequencer(){
     }]
     seeq.data.el.classList.remove("trigger")
     // this.isSync = false
+    seeq.isFreeModeAutoPlay = false
     this.clockCounter = 0
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []

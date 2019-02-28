@@ -33,10 +33,14 @@ function Seeq(){
   this.totalNumber
 
   // operation.
-  this.isShiftPressed = false
+  this.keyboardPress = false
+  this.isMutePressed = false
   this.isUpPressed = false
   this.isDownPressed = false
   this.isMuted = false
+  this.isReversedCursorPressed = false
+
+  this.isActive = false
 
   this.targetMute
   
@@ -85,7 +89,8 @@ function Seeq(){
     position: 0,
     isMuted: false,
     up: 0,
-    down: 0
+    down: 0,
+    reverse: false
   }]
   this.selectIndex
 
@@ -99,6 +104,7 @@ function Seeq(){
   this.getHighlight = []
 
   this.triggerTimer
+  this.isFreeModeAutoPlay = false
 
   this.start = function(){
     this.wrapper_el.innerHTML += `
@@ -247,6 +253,7 @@ function Seeq(){
           // reset cursor to top.
           seeq.currentIndex = 0;
         }
+        seeq.isFreeModeAutoPlay = true
         seeq.jump()
       })
 
@@ -258,6 +265,7 @@ function Seeq(){
           // prevBtn case to get outbound top to show at to bottom.
           seeq.currentIndex = seeq.results.length - 1; 
         }
+        seeq.isFreeModeAutoPlay = false
         seeq.jump();
       })
 
@@ -278,6 +286,14 @@ function Seeq(){
       this.runStep.addEventListener("click", function(){
         seeq.isPlaying = true 
         seeq.isReverse = false
+
+        // remove operator class if it's actived.
+        if(seeq.getHighlight.length > 1){
+          seeq.getHighlight.forEach((el, index, arr) => {
+            el.classList.remove("reverse-target")
+          })
+        }
+        seeq.cursor.forEach( cursor => cursor.reverse = false)
 
         // avoiding speeded up increment.
         clearTimeout(seeq.seq.timer)
@@ -301,7 +317,7 @@ function Seeq(){
       })
 
       // this.addBtn.addEventListener("click", function(){
-      //   console.log("this.addBtn", seeq.isShiftPressed)
+      //   console.log("this.addBtn", seeq.isMutePressed)
       // })
 
       this.notationMode.addEventListener("click", function(){
@@ -317,27 +333,42 @@ function Seeq(){
         for(var mutation of mutationsList) {
           if (mutation.type == 'childList' && mutation.target.nodeName == 'SPAN' ) {
             mutation.target.addEventListener("click", function(e){
-              seeq.isMuted = !seeq.isMuted
-              var indexTarget, muteTarget
-              seeq.getHighlight.forEach( ( el, index ) => {
+              seeq.isActive = !seeq.isActive
+              let indexTarget, target
+
+              seeq.getHighlight.forEach( ( el, index, arr ) => {
                 if( el.dataset.timestamp == mutation.target.dataset.timestamp){
                   seeq.selectIndex = index
                 }
               })
-              if(seeq.isShiftPressed){
-                muteTarget = seeq.getHighlight[seeq.selectIndex]
-                if( seeq.isMuted){
-                  muteTarget.classList.add("mute-target")
-                  seeq.cursor[seeq.selectIndex].isMuted = true
-                } else {
-                  muteTarget.classList.remove("mute-target")
-                  seeq.cursor[seeq.selectIndex].isMuted = false
+
+              target = seeq.getHighlight[seeq.selectIndex]
+
+              // when keyboard is pressed, to operate.
+              if (seeq.keyboardPress ){
+                if(seeq.isMutePressed){
+                  if (seeq.isActive){
+                    target.classList.add("mute-target")
+                    seeq.cursor[seeq.selectIndex].isMuted = true
+                  } else {
+                    target.classList.remove("mute-target")
+                    seeq.cursor[seeq.selectIndex].isMuted = false
+                  }
+                } 
+                
+                if (seeq.isReversedCursorPressed){
+                  if (seeq.isActive){
+                    target.classList.add("reverse-target")
+                    seeq.cursor[seeq.selectIndex].reverse = true
+                  } else {
+                    target.classList.remove("reverse-target")
+                    seeq.cursor[seeq.selectIndex].reverse = false 
+                  }
                 }
-              } else if(seeq.isUpPressed){
-                muteTarget = seeq.getHighlight[seeq.selectIndex]
-                muteTarget.classList.add("up-target")
-                // seeq.cursor[seeq.selectIndex].up += 50
-              } else {
+              }
+              
+              // otherwise delete selected highlight.
+              else {
                 seeq.removeHighlightsEl(seeq.selectIndex)
                 seeq.data.hltr.removeHighlights(mutation.target);
                 seeq.sortingIndex()
@@ -509,13 +540,9 @@ function Seeq(){
         seeq.results[nextEl].classList.remove(this.currentClass);
       }
       // this.sendOsc() 
-      seeq.seq.triggerFreeMode()
+      // seeq.isFreeModeAutoPlay = true
     }
   }
-
-  // this.triggerFree = function(){
-  //   seeq.seq.triggerFreeMode() 
-  // }
 
   this.sendOsc = function(){
     // re-render to get new value everytime.
@@ -539,13 +566,14 @@ function Seeq(){
       // if search value = letter.
       if( !this.isReverse){
         while( match = search.exec(searchText)){
-          this.matchedPosition.push(match.index + 1)
+          this.matchedPosition.push(match.index)
         }
-      } else {
-        while (match = search.exec(searchText)) {
-          this.matchedPosition.push(match.index - 1)
-        } 
-      }
+      } 
+      // else {
+      //   while (match = search.exec(searchText)) {
+      //     this.matchedPosition.push(match.index - 1)
+      //   } 
+      // }
         // if search value = word.
       if( this.searchValue.length > 1 ){
         this.matchedPositionLength = length - 1

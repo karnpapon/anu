@@ -94,25 +94,30 @@ lft{
   padding-bottom: 5px;
  }
 
-.trigger{
-  background-color: rgb(62, 251, 0)  !important;
-  transition: all .2s ease;
-}
-
-
 .trigger-free-mode{
   background-color: #CCCCCC;
   transition: all .1s ease;
 }
 
-.mute-target{ 
-  color: #d0d0d0;
-  background-color: #c5c5c5 !important;
+.up-target{ 
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
   transition: 100ms;
 }
 
-.up-target{ 
-  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+.reverse-target{ 
+  background-color:rgb(82, 255, 255) !important ;
+  transition: 100ms;
+}
+
+
+.trigger{
+  background-color: rgb(62, 251, 0)  !important;
+  transition: all .2s ease;
+}
+
+.mute-target{ 
+  color: #d0d0d0;
+  background-color: #c5c5c5 !important;
   transition: 100ms;
 }
 
