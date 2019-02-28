@@ -115,6 +115,10 @@ lft{
   transition: all .2s ease;
 }
 
+.selection-trigger{
+  background-color:rgb(255, 173, 182) !important;
+}
+
 .mute-target{ 
   color: #d0d0d0;
   background-color: #c5c5c5 !important;

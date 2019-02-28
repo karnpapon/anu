@@ -202,7 +202,7 @@ function Seeq(){
                   // clear position every searching.
                   seeq.matchedPosition = [] 
                   seeq.matchedPositionWithLength = []
-                  seeq.findMatchedPosition()
+                  seeq.findMatchedPosition('search')
                 }
               }
             });
@@ -233,7 +233,7 @@ function Seeq(){
                   // clear position every searching.
                   seeq.matchedPosition = [] 
                   seeq.matchedPositionWithLength = []
-                  seeq.findMatchedPosition()
+                  seeq.findMatchedPosition('regex-search')
                   seeq.info.classList.add("limit-regex")
                   seeq.info.innerHTML = `<lf>/${ seeq.searchValue }/g</lf>`
                 }
@@ -550,7 +550,7 @@ function Seeq(){
     osc.send(message)
   }
 
-  this.findMatchedPosition = function(){
+  this.findMatchedPosition = function(type = 'search'){
     // find position to trigger events.
     var searchText = seeq.data.text.innerText
     var search = new RegExp(this.searchValue,"gi")
@@ -564,21 +564,24 @@ function Seeq(){
     if( this.searchValue !== ""){
 
       // if search value = letter.
-      if( !this.isReverse){
-        while( match = search.exec(searchText)){
-          this.matchedPosition.push(match.index)
+      while( match = search.exec(searchText)){
+        if( !this.isReverse){
+          this.matchedPosition.push(match.index + 1)
+        } else {
+          this.matchedPosition.push(match.index - 1)
         }
       } 
-      // else {
-      //   while (match = search.exec(searchText)) {
-      //     this.matchedPosition.push(match.index - 1)
-      //   } 
-      // }
-        // if search value = word.
-      if( this.searchValue.length > 1 ){
-        this.matchedPositionLength = length - 1
-      } else {
+
+      // if search value = word.
+      if(type === 'regex-search'){
         this.matchedPositionLength = 1
+      } 
+      else if ( type === 'search') {
+        if (this.searchValue.length > 1) {
+          this.matchedPositionLength = length - 1
+        } else {
+          this.matchedPositionLength = 1
+        }
       }
     }
     

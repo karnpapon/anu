@@ -158,22 +158,21 @@ function Sequencer(){
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 seeq.sendOsc()
                 this.midiNoteOn(index + 1, undefined, undefined, undefined)
-                seeq.getHighlight[index].classList.add("trigger")
+                seeq.getHighlight[index].classList.add("selection-trigger")
               } else {
-                seeq.getHighlight[index].classList.remove("trigger")
+                seeq.getHighlight[index].classList.remove("selection-trigger")
               }
             }
 
             // trigger words.
             else if (seeq.matchedPositionLength > 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                seeq.getHighlight[index].classList.add("trigger")
                 seeq.sendOsc()
                 this.midiNoteOn(index + 1)
+                seeq.getHighlight[index].classList.add("selection-trigger")
               } else {
                 if (seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
-                  seeq.getHighlight[index].classList.remove("trigger")
-                  // this.midiNoteOff()
+                  seeq.getHighlight[index].classList.remove("selection-trigger")
                 }
               }
             }
