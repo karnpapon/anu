@@ -202,7 +202,7 @@ function Seeq(){
                   // clear position every searching.
                   seeq.matchedPosition = [] 
                   seeq.matchedPositionWithLength = []
-                  seeq.findMatchedPosition('search')
+                  seeq.findMatchedPosition()
                 }
               }
             });
@@ -220,8 +220,12 @@ function Seeq(){
       });
 
       this.searchRegExp.addEventListener("input", function() {
-        seeq.searchValue = this.value;
-        var targetRegExp = new RegExp(seeq.searchValue, "gi")
+        let targetRegExp
+        
+        let displayText = this.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        seeq.searchValue = this.value
+        targetRegExp = new RegExp(seeq.searchValue, "gi")
+
         seeq.content.unmark({
           done: function( ) {
             seeq.content.markRegExp(targetRegExp, {
@@ -233,16 +237,16 @@ function Seeq(){
                   // clear position every searching.
                   seeq.matchedPosition = [] 
                   seeq.matchedPositionWithLength = []
-                  seeq.findMatchedPosition('regex-search')
+                  seeq.matchType = "regex"
+                  seeq.findMatchedPosition()
                   seeq.info.classList.add("limit-regex")
-                  seeq.info.innerHTML = `<lf>/${ seeq.searchValue }/g</lf>`
+                  seeq.info.innerHTML = `<lf>/${displayText}/gi</lf>`
                 }
               }
             });
           }
         });
         seeq.updateMarkType = "regex"
-
       });
 
       this.nextBtn.addEventListener("click", function(){
@@ -307,6 +311,7 @@ function Seeq(){
         seeq.seq.stop()
         seeq.data.hltr.removeHighlights();
         clearInterval(this.triggerTimer)
+        seeq.content.unmark()
       })
 
       this.revBtn.addEventListener("click", function () {
@@ -541,6 +546,7 @@ function Seeq(){
       }
       // this.sendOsc() 
       // seeq.isFreeModeAutoPlay = true
+      seeq.seq.trigger2()
     }
   }
 
@@ -550,7 +556,7 @@ function Seeq(){
     osc.send(message)
   }
 
-  this.findMatchedPosition = function(type = 'search'){
+  this.findMatchedPosition = function(){
     // find position to trigger events.
     var searchText = seeq.data.text.innerText
     var search = new RegExp(this.searchValue,"gi")
@@ -562,7 +568,6 @@ function Seeq(){
     this.matchedPositionWithLength = []
 
     if( this.searchValue !== ""){
-
       // if search value = letter.
       while( match = search.exec(searchText)){
         if( !this.isReverse){
@@ -573,15 +578,10 @@ function Seeq(){
       } 
 
       // if search value = word.
-      if(type === 'regex-search'){
+      if (this.searchValue.length > 1 && this.updateMarkType !== "regex") {
+        this.matchedPositionLength = length - 1
+      } else {
         this.matchedPositionLength = 1
-      } 
-      else if ( type === 'search') {
-        if (this.searchValue.length > 1) {
-          this.matchedPositionLength = length - 1
-        } else {
-          this.matchedPositionLength = 1
-        }
       }
     }
     

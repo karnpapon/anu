@@ -216,6 +216,15 @@ function Sequencer(){
     }
   }
 
+  this.trigger2 = function() {
+    let clock = seeq.clock()
+    this.midiNoteOn(0, 12, 16, this.getRandomInt(0, 6)) 
+    seeq.el.classList.add("trigger-free-mode")
+    setTimeout(() => {
+      seeq.el.classList.remove("trigger-free-mode")
+    }, clock.bpm);
+  }
+
 
   this.triggerFreeMode = function(){
 
@@ -247,9 +256,7 @@ function Sequencer(){
   this.run = function(){
     let self = this
     this.timer = setTimeout( function(){
-      // self.clockCounter += 1
-      // self.clockCounter % 8 === 0? self.triggerFreeMode():""
-      self.triggerFreeMode()
+      // self.triggerFreeMode()
       self.increment()
     }, (60000 / seeq.clock().bpm) / 4 )
     
@@ -270,6 +277,7 @@ function Sequencer(){
     this.clockCounter = 0
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []
+    seeq.searchValue = ""
     this.set()
   }
   
