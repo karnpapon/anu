@@ -39,6 +39,8 @@ function Seeq(){
   this.isDownPressed = false
   this.isMuted = false
   this.isReversedCursorPressed = false
+  this.isDeletePressed = false
+  this.isShowInfo = false
 
   this.isActive = false
 
@@ -370,14 +372,28 @@ function Seeq(){
                     seeq.cursor[seeq.selectIndex].reverse = false 
                   }
                 }
+
+                if (seeq.isShowInfo){
+                  if (seeq.isActive){
+                    target.classList.add("select-highlight")
+                    seeq.info.innerHTML = `<div class="operator-group">| <lf> REVERSE </lf> <lf> : reverse target selection. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
+                  } else {
+                    target.classList.remove("select-highlight")
+                    seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+                    seeq.isShowInfo = false;
+                  }
+                }
+
+                if (seeq.isDeletePressed){
+                  seeq.removeHighlightsEl(seeq.selectIndex)
+                  seeq.data.hltr.removeHighlights(mutation.target);
+                  seeq.sortingIndex()
+                  seeq.getHighlightAfterSelect() //sorting highlight element.
+                }
               }
-              
-              // otherwise delete selected highlight.
               else {
-                seeq.removeHighlightsEl(seeq.selectIndex)
-                seeq.data.hltr.removeHighlights(mutation.target);
-                seeq.sortingIndex()
-                seeq.getHighlightAfterSelect() //sorting highlight element.
+                
+              
               }
             })
           }

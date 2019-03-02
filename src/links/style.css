@@ -21,11 +21,17 @@ div button{
 }
 
 .hltr{
- transition: 100ms;
+  /* background-color: black !important; */
+  transition: 100ms;
+  /* color: black; */
 }
 .hltr:hover{
   cursor: pointer;
-  opacity: 0.6;
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
+}
+.hltr:active{
+  cursor: pointer;
+  box-shadow:inset 0px 0px 0px 2px rgb(0, 0, 0);
 }
 
 .masking{
@@ -94,6 +100,11 @@ lft{
   padding-bottom: 5px;
  }
 
+
+.select-highlight{
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); 
+}
+
 .trigger-free-mode{
   background-color: #CCCCCC;
   transition: all .1s ease;
@@ -116,8 +127,11 @@ lft{
 }
 
 .selection-trigger{
-  background-color:rgb(255, 173, 182) !important;
+  background-color: black !important;
+  color: black;
 }
+
+
 
 .mute-target{ 
   color: #d0d0d0;
@@ -162,7 +176,7 @@ lft{
 }
 
 .highlight{
-  background-color: yellow;
+  background-color: white;
   box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
 }
 
@@ -181,7 +195,8 @@ button:active{
 }
 
 div button:focus{ outline: none;}
-div button:hover{ cursor: pointer; background-color: rgb(202, 202, 202)}
+div button:hover{ cursor: pointer; background-color: rgb(62, 251, 0);}
+div button:active{ cursor: pointer; background-color: black; color: white;}
 .control-wrapper{ display: flex; justify-content: space-between; padding-bottom: 10px;}
 .control-info{ 
   font-size: 12px;     

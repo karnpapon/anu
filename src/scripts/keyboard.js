@@ -33,22 +33,34 @@ function Keyboard() {
       seeq.data.hltr.removeHighlights();
     }
 
-     // char = r
+     // char = r = reverse selected.
     if (event.keyCode === 82) {
       seeq.keyboardPress = true; 
       seeq.info.innerHTML = `<div class="operator-group">| <lf> REVERSE </lf> <lf> : reverse target selection. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
       seeq.isReversedCursorPressed = true;
     }
 
-    //  // char = u
+    //  // char = u = increase selected bpm.
     if (event.keyCode === 85) { 
       seeq.isUpPressed = true;
       seeq.keyboardPress = true;
     }
 
-     // char = d
+     // char = d = decrease selected bpm.
     if (event.keyCode === 68) { 
       seeq.isDownPressed = true;
+      seeq.keyboardPress = true;
+    }
+
+     // char = i = information.
+    if (event.keyCode === 73) { 
+      seeq.isShowInfo = true;
+      seeq.keyboardPress = true;
+    }
+
+     // char = x = delete highlight.
+    if (event.keyCode === 88) { 
+      seeq.isDeletePressed = true;
       seeq.keyboardPress = true;
     }
 
@@ -76,6 +88,8 @@ function Keyboard() {
     seeq.isUpPressed = false;
     seeq.isDownPressed = false;
     seeq.keyboardPress = false;
+    seeq.isDeletePressed = false;
+    seeq.isShowInfo = false;
     seeq.isReversedCursorPressed = false;
     if (seeq.searchValue == "") {
       seeq.info.classList.remove("limit-regex")
