@@ -21,6 +21,7 @@ function Sequencer(){
   this.clockCounter = 0
   this.isClockSync = false
   this.triggerFreeModeClock = null
+  this.beatRatio = 4
 
   this.set = function () {
 
@@ -35,25 +36,26 @@ function Sequencer(){
         this.outputType = seeq.data.text.innerHTML
         offsetCursor = 36 * index
       }
+
+      let cursorPosition = cursor.offsetReverse? cursor.position - 2:cursor.position
       
       // handle negative index to behave correctly.
-      if( cursor.position < 0 ){
+      if( cursorPosition < 0 ){
         this.output = this.outputType.substr(0) + 
         `<span class=\"current-active\">` + 
-        this.outputType.substr(cursor.position, 1) + 
+        this.outputType.substr(cursorPosition, 1) + 
         "</span>" + 
         this.outputType.substr(0,0)
       } else {
-        this.output = this.outputType.substr(0, cursor.position + offsetCursor) +
+        this.output = this.outputType.substr(0, cursorPosition + offsetCursor) +
         `<span class=\"current-active\">` +
-          this.outputType.substr(cursor.position + offsetCursor , 1) +
+          this.outputType.substr(cursorPosition + offsetCursor , 1) +
         "</span>" +
-        this.outputType.substr(cursor.position + 1 + offsetCursor) 
+        this.outputType.substr(cursorPosition + 1 + offsetCursor) 
       }
      
       seeq.data.text.innerHTML = this.output
-      this.isCursorActived = true
-      this.setCounterDisplay()
+      // this.isCursorActived = true
     })
    
   }
@@ -63,7 +65,6 @@ function Sequencer(){
   this.connect = function(data){
     const { beat, bpm } = data
     this.bpm = bpm
-    // this.beat = beat
     var CLOCK_DIVIDER = 2
     var MS_PER_BEAT = 1000 * 60 / bpm
     var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
@@ -71,7 +72,7 @@ function Sequencer(){
   }
 
   this.setCounterDisplay = function(){
-    seeq.currentNumber.innerHTML = "--"
+    seeq.currentNumber.innerHTML = this.beatRatio
   }
   
   this.setTotalLenghtCounterDisplay = function(){
@@ -88,10 +89,20 @@ function Sequencer(){
     // limited sequence within select range.
     if( !seeq.isSelectDrag ) { return }
     seeq.cursor.forEach( ( cursor, index, array ) => {
-      if( cursor.position > seeq.selectAreaLength[index] - 1){
+      let cursorPosition, offsetReverseCursor
+      // reversed position compensation.
+      if( cursor.offsetReverse){
+        cursorPosition = cursor.position - 2
+        offsetReverseCursor = 2
+      } else {
+        cursorPosition = cursor.position
+        offsetReverseCursor = 0
+      }
+
+      if( cursorPosition > seeq.selectAreaLength[index] - 1){
         array[index].position = seeq.matchedSelectPosition[index]
-      } else if ( cursor.position < seeq.matchedSelectPosition[index]){
-        array[index].position  = seeq.selectAreaLength[index] - 1
+      } else if ( cursorPosition < seeq.matchedSelectPosition[index]){
+        array[index].position  = seeq.selectAreaLength[index] - 1 +  offsetReverseCursor
       }
     })
   }
@@ -157,7 +168,7 @@ function Sequencer(){
             if (seeq.matchedPositionLength == 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 seeq.sendOsc()
-                this.midiNoteOn(index + 1, undefined, undefined, undefined)
+                this.midiNoteOn(index + 1, cursor.note, cursor.length, undefined)
                 seeq.getHighlight[index].classList.add("selection-trigger")
               } else {
                 seeq.getHighlight[index].classList.remove("selection-trigger")
@@ -186,13 +197,12 @@ function Sequencer(){
             if (seeq.matchedPositionLength == 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 seeq.sendOsc()
-                this.midiNoteOn(index + 1, undefined, undefined, undefined)
+                this.midiNoteOn(index + 1, cursor.note, undefined, undefined)
                 seeq.data.el.classList.add("trigger")
               }
               else {
                 if( seeq.data.el.classList.contains('trigger')){
                   seeq.data.el.classList.remove("trigger")
-                  // seeq.el.classList.remove("trigger") 
                 }
               }
             }
@@ -258,7 +268,7 @@ function Sequencer(){
     this.timer = setTimeout( function(){
       // self.triggerFreeMode()
       self.increment()
-    }, (60000 / seeq.clock().bpm) / 4 )
+    }, (60000 / seeq.clock().bpm) / this.beatRatio )
     
   }
 

@@ -41,6 +41,7 @@ function Seeq(){
   this.isReversedCursorPressed = false
   this.isDeletePressed = false
   this.isShowInfo = false
+  this.isInfoActived = false
 
   this.isActive = false
 
@@ -89,9 +90,13 @@ function Seeq(){
 
   this.cursor = [{
     position: 0,
+    offsetReverse: false,
     isMuted: false,
     up: 0,
     down: 0,
+    note: "",
+    length: "",
+    velocity: "",
     reverse: false
   }]
   this.selectIndex
@@ -127,6 +132,8 @@ function Seeq(){
       <div class="header">
         <div class="title">RegExp:</div>
         <input type="search-regex" placeholder="">
+        <button data-ctrl="add">+</button>
+        <button data-ctrl="subtract">-</button>
       </div>
       <div class="control-info">
       <div class="control-panel">
@@ -173,7 +180,8 @@ function Seeq(){
     this.runStep = document.querySelector("button[data-ctrl='run']")
     this.stopBtn = document.querySelector("button[data-ctrl='stop']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
-    // this.addBtn = document.querySelector("button[data-ctrl='add']")
+    this.addBtn = document.querySelector("button[data-ctrl='add']")
+    this.subtractBtn = document.querySelector("button[data-ctrl='subtract']")
     this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
     this.logo = document.querySelector("div[data-logo='seeq']")
@@ -185,7 +193,7 @@ function Seeq(){
     seeq.logoSeeq = new Mark( this.logo )
 
    
-
+    this.inputFetch.focus()
     this.inputFetch.addEventListener("input", function(){
       seeq.fetchSearchInput = this.value;
     })
@@ -287,33 +295,16 @@ function Seeq(){
 
       this.setBtn.addEventListener("click", function(){
         seeq.setCursor()
+        seeq.seq.setCounterDisplay()
       })
 
       this.runStep.addEventListener("click", function(){
-        seeq.isPlaying = true 
-        seeq.isReverse = false
-
-        // remove operator class if it's actived.
-        if(seeq.getHighlight.length > 1){
-          seeq.getHighlight.forEach((el, index, arr) => {
-            el.classList.remove("reverse-target")
-          })
-        }
-        seeq.cursor.forEach( cursor => cursor.reverse = false)
-
-        // avoiding speeded up increment.
-        clearTimeout(seeq.seq.timer)
-        seeq.findMatchedPosition()
-        seeq.runStep()
+        seeq.play()
       })
 
 
       this.stopBtn.addEventListener("click", function(){
-        seeq.isPlaying = false
-        seeq.seq.stop()
-        seeq.data.hltr.removeHighlights();
-        clearInterval(this.triggerTimer)
-        seeq.content.unmark()
+       seeq.clear()
       })
 
       this.revBtn.addEventListener("click", function () {
@@ -323,9 +314,14 @@ function Seeq(){
         seeq.findMatchedPosition()
       })
 
-      // this.addBtn.addEventListener("click", function(){
-      //   console.log("this.addBtn", seeq.isMutePressed)
-      // })
+      this.addBtn.addEventListener("click", function(){
+        seeq.seq.beatRatio += 1
+        seeq.seq.setCounterDisplay()
+      })
+      this.subtractBtn.addEventListener("click", function(){
+        seeq.seq.beatRatio -= 1
+        seeq.seq.setCounterDisplay()
+      })
 
       this.notationMode.addEventListener("click", function(){
         // separated search mode from toggle mode 
@@ -351,7 +347,7 @@ function Seeq(){
 
               target = seeq.getHighlight[seeq.selectIndex]
 
-              // when keyboard is pressed, to operate.
+              // when keyboard is pressed,then operates.
               if (seeq.keyboardPress ){
                 if(seeq.isMutePressed){
                   if (seeq.isActive){
@@ -367,19 +363,64 @@ function Seeq(){
                   if (seeq.isActive){
                     target.classList.add("reverse-target")
                     seeq.cursor[seeq.selectIndex].reverse = true
+                    seeq.cursor[seeq.selectIndex].offsetReverse = true
+
                   } else {
                     target.classList.remove("reverse-target")
                     seeq.cursor[seeq.selectIndex].reverse = false 
+                    seeq.cursor[seeq.selectIndex].offsetReverse = false
                   }
                 }
 
                 if (seeq.isShowInfo){
+                  let addNote, 
+                  note = seeq.cursor[seeq.selectIndex].note === undefined? "":seeq.cursor[seeq.selectIndex].note,
+                  length = seeq.cursor[seeq.selectIndex].length === undefined? "":seeq.cursor[seeq.selectIndex].length,
+                  velocity = seeq.cursor[seeq.selectIndex].velocity === undefined? "":seeq.cursor[seeq.selectIndex].velocity
+
                   if (seeq.isActive){
+                    seeq.isInfoActived = true
+                    seeq.info.classList.add("limit-regex")
                     target.classList.add("select-highlight")
-                    seeq.info.innerHTML = `<div class="operator-group">| <lf> REVERSE </lf> <lf> : reverse target selection. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
+                    seeq.info.innerHTML = `
+                      <div class="operator-group info"> 
+                        <lf class="info-header">MIDI OUTPUT |</lf> 
+                        <form id="info" class="info-input">
+                          <lf> 
+                            <p>NOTE:</p>
+                            <input id="addnote" class="input-note" type="text" value=${note}>
+                          </lf>
+                          <lf> 
+                            <p>LENGTH:</p>
+                            <input id="addlength" class="input-note" type="text" value=${length}>
+                          </lf>
+                          <lf> 
+                            <p>VEL:</p>
+                            <input id="addvelocity" class="input-note" type="text" value=${velocity}>
+                          </lf>
+                        </form>
+                      </div> 
+                      <button type="submit" value="Submit" form="info" class="send-midi">send</button>
+                  `
+                  addNote = document.getElementById('addnote')
+                  addLength = document.getElementById('addlength')
+                  addVelocity = document.getElementById('addvelocity')
+
+                  addNote.addEventListener("input", function(e){ note = this.value })
+                  addLength.addEventListener("input", function(e){ length = this.value })
+                  addVelocity.addEventListener("input", function(e){ velocity = this.value })
+                  document.querySelector('form.info-input').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    seeq.cursor[seeq.selectIndex].note = note
+                    seeq.cursor[seeq.selectIndex].length = length
+                    seeq.cursor[seeq.selectIndex].velocity = velocity
+                    // console.log("seeq.cursor", seeq.cursor[seeq.selectIndex])
+                  });
                   } else {
+                    seeq.info.classList.remove("limit-regex")
                     target.classList.remove("select-highlight")
                     seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+                    seeq.isInfoActived = false;
                     seeq.isShowInfo = false;
                   }
                 }
@@ -418,6 +459,14 @@ function Seeq(){
         return indexTarget
       }
     })
+  }
+
+  this.clear = function(){
+    this.isPlaying = false
+    this.seq.stop()
+    this.data.hltr.removeHighlights();
+    clearInterval(this.triggerTimer)
+    this.content.unmark()
   }
 
   this.removeHighlightsEl = function(index){
@@ -518,9 +567,9 @@ function Seeq(){
       this.update("regex",this.fetchText,this.searchValue )
     }
 
-    if(seeq.seq.isCursorActived){
-      this.setCursor()
-    }
+    // if(seeq.seq.isCursorActived){
+    //   this.setCursor()
+    // }
   }
 
   this.addCursorWhenSelectRange = function(){
@@ -651,7 +700,21 @@ function Seeq(){
     // seeq.jump()
   }
 
-  this.runStep = function(){
+  this.play = function(){
+    this.isPlaying = true 
+    this.isReverse = false
+
+    // remove operator class if it's actived.
+    if(this.getHighlight.length > 1){
+      this.getHighlight.forEach((el, index, arr) => {
+        el.classList.remove("reverse-target")
+      })
+    }
+    this.cursor.forEach( cursor => cursor.reverse = false)
+
+    // avoiding speeded up increment.
+    clearTimeout(seeq.seq.timer)
+    this.findMatchedPosition()
     this.seq.increment()
   }
 

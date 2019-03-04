@@ -4,7 +4,8 @@
   "description": "custom sequencer",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "reInstall": "rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "repository": "",
   "keywords": [

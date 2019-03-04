@@ -90,13 +90,14 @@ function Data( ){
       this.selectedText.addEventListener("mousemove", function () {
         if (this.flag == 1) {
           text = window.getSelection().toString();
-          seeq.info.classList.remove("limit-regex")
-          seeq.info.innerHTML = `<div class="info-group"><lf>LENGTH ${text.length }</lf> | - | <lf>CHAN 0</lf> | - | <lf>NOTE D</lf> | </div> <div class="dashed-line-info"> ---------------------------------------- </div> <lft>: INFO </lft>`
+          seeq.info.classList.add("limit-regex")
+          seeq.info.innerHTML = `<div class="info-group"><lf>INFO</lf> | </div> <lft>STEP-LENGTH : <p>${text.length}</p> </lft>`
           }
       });
 
       this.selectedText.addEventListener("mouseup", function () {
         this.flag = 0
+        seeq.info.classList.remove("limit-regex")
         seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
       }); 
     }

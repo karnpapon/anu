@@ -3,102 +3,113 @@
 function Keyboard() {
   this.locks = []
   this.history = ''
+  this.down = false;
+  this.isKeyNotFound = false;
 
   this.onKeyDown = function (event) {
 
     // char = m
     if (event.keyCode === 77) { 
-      seeq.info.innerHTML = `<div class="operator-group">| <lf>MUTE</lf> <lf> : mute/unmute selected area. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
+      seeq.info.innerHTML = this.infoDisplay('MUTE : mute target highlight.')
       seeq.isMutePressed = true;
-      seeq.keyboardPress = true;
     }
 
-     // char = spacebar
-    if (event.keyCode === 32) { 
-      seeq.keyboardPress = true;
-      seeq.info.innerHTML = `<div class="operator-group">| <lf>RUN</lf> <lf> : run sequencer. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
-      seeq.isPlaying = true
-      seeq.isReverse = false
-      clearTimeout(seeq.seq.timer)
-      seeq.findMatchedPosition()
-      seeq.runStep()
+    // char = spacebar
+    else if (event.keyCode === 32) { 
+      seeq.info.innerHTML = this.infoDisplay('RUN : run sequencer.')
+      seeq.play()
     }
 
     // char = esc
-    if (event.keyCode === 27) { 
-      seeq.keyboardPress = true;
-      seeq.info.innerHTML = `<div class="operator-group">| <lf>STOP</lf> <lf> : stop sequencer. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
-      seeq.isPlaying = false
-      seeq.seq.stop()
-      seeq.data.hltr.removeHighlights();
+    else if (event.keyCode === 27) { 
+      seeq.info.innerHTML = this.infoDisplay('STOP : stop sequencer.', "e")
+      seeq.clear()
     }
 
-     // char = r = reverse selected.
-    if (event.keyCode === 82) {
-      seeq.keyboardPress = true; 
-      seeq.info.innerHTML = `<div class="operator-group">| <lf> REVERSE </lf> <lf> : reverse target selection. </lf>  </div> <div class="dashed-line-operator"> --------------------------------------- </div> <lft class="ltf-operator">: INFO </lft>`
+    // char = r = reverse selected.
+    else if (event.keyCode === 82) {
+      seeq.info.innerHTML = this.infoDisplay('REVERSE : reverse step.')
       seeq.isReversedCursorPressed = true;
     }
 
-    //  // char = u = increase selected bpm.
-    if (event.keyCode === 85) { 
+      // char = u = increase selected bpm.
+    else if (event.keyCode === 85) { 
       seeq.isUpPressed = true;
-      seeq.keyboardPress = true;
     }
 
-     // char = d = decrease selected bpm.
-    if (event.keyCode === 68) { 
+    // char = d = decrease selected bpm.
+    else if (event.keyCode === 68) { 
       seeq.isDownPressed = true;
-      seeq.keyboardPress = true;
     }
 
-     // char = i = information.
-    if (event.keyCode === 73) { 
+    // char = i = information.
+    else if (event.keyCode === 73) { 
+      seeq.info.innerHTML = this.infoDisplay('INFORMATION : show target informations.', "i")
       seeq.isShowInfo = true;
-      seeq.keyboardPress = true;
     }
 
-     // char = x = delete highlight.
-    if (event.keyCode === 88) { 
+    // char = x = delete highlight.
+    else if (event.keyCode === 88) { 
+      seeq.info.innerHTML = this.infoDisplay('DELETE : remove target highlight.')
       seeq.isDeletePressed = true;
-      seeq.keyboardPress = true;
     }
 
-    if (event.key === '>') { 
+    else if (event.key === '>') { 
+      seeq.info.innerHTML = this.infoDisplay('INCREASE : increase BPM++.')
       seeq.modSpeed(1); 
       event.preventDefault(); 
       return
     }
 
-    if (event.key === '<') { 
+    else if (event.key === '<') { 
+      seeq.info.innerHTML = this.infoDisplay('INCREASE : decrease BPM--.')
       seeq.modSpeed(-1); 
       event.preventDefault(); 
       return 
     }
+    else {
+      this.isKeyNotFound = true
+    }
+   
+  }
 
-    // if (event.key.length === 1) {
-    //   terminal.cursor.write(event.key)
-    //   terminal.update()
-    // }
+  this.infoDisplay = function( command, icon = "e" ){
+    seeq.info.classList.add("limit-regex")
+    this.isKeyNotFound = false
+    return `<div class="info-group"><lf>INFO</lf> | </div> <lft>${command}</lft><object type="image/svg+xml" data="src/media/icons/${icon}.svg" class="icons"></object>`
   }
 
   this.onKeyUp = function (event) {
-
-    seeq.isMutePressed = false;
-    seeq.isUpPressed = false;
-    seeq.isDownPressed = false;
-    seeq.keyboardPress = false;
-    seeq.isDeletePressed = false;
-    seeq.isShowInfo = false;
-    seeq.isReversedCursorPressed = false;
-    if (seeq.searchValue == "") {
+    
+    if(seeq.isInfoActived){ 
+      return 
+    } else if (!this.isKeyNotFound) {
+      seeq.isMutePressed = false;
+      seeq.isUpPressed = false;
+      seeq.isDownPressed = false;
+      seeq.keyboardPress = false;
+      seeq.isDeletePressed = false;
+      seeq.isShowInfo = false;
+      seeq.isReversedCursorPressed = false;
+  
       seeq.info.classList.remove("limit-regex")
       seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
     }
+    // for performance's sake, not to render DOM for unassigned key.
+    else { return }
   }
 
-  document.onkeydown = (event) => { this.onKeyDown(event) }
-  document.onkeyup = (event) => { this.onKeyUp(event) }
+  document.onkeydown = (event) => { 
+    // prevent repeated DOM rendering, when hold the keys.
+    if( this.down ) return;
+    this.down = true
+    seeq.keyboardPress = true;
+    this.onKeyDown(event) 
+  }
+  document.onkeyup = (event) => { 
+    this.down = false
+    this.onKeyUp(event) 
+  }
 }
 
 module.exports = Keyboard

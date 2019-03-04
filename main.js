@@ -17,7 +17,6 @@ function createWindow () {
     width: 694, 
     height: 580, 
     // resizable: false,
-    // transparent: true,
     // movable: true
     frame: process.platform !== 'darwin',
     skipTaskbar: process.platform === 'darwin',
@@ -36,7 +35,7 @@ function createWindow () {
     mainWindow = null
   })
 }
-
+// app.disableHardwareAcceleration();
 app.on('ready', function (){
   createWindow()
 

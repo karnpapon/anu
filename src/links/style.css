@@ -1,5 +1,7 @@
 :root {
   --main-bg-color: #e6e6e6;
+  --trigger-color: rgb(62, 251, 0);
+  --reverse-target: #f287ff;
   --clock: 200ms;
 }
 
@@ -9,11 +11,17 @@ body {
   margin: 0;
 }
 
+
 *{box-sizing: border-box; }
 body p{font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
 /* div.header{ margin-bottom: 15px; } */
+
+.icons{
+  width: 20px;
+  height: 20px;
+}
 
 div button{
   border: 1px solid !important;
@@ -22,7 +30,7 @@ div button{
 
 .hltr{
   /* background-color: black !important; */
-  transition: 100ms;
+  transition: all 100ms ease-out;
   /* color: black; */
 }
 .hltr:hover{
@@ -56,13 +64,21 @@ div button{
 
 .limit-regex{
   border: 1px solid;
+  padding: 0px 5px;
+}
+
+.limit-info{
+  border: 1px solid;
+  padding: 10px 5px;
 }
 
 .info-group{
-  width: 255px;
+  width: auto;
+  display: flex;
 }
 .operator-group{
-  width: 360px;
+  width: 100%;
+  display: flex;
 }
 
 .dashed-line-info{
@@ -75,15 +91,28 @@ div button{
 lf{
   font-family: 'input_sans_condensed_bold';
   font-size:12px;
-  margin: auto;
+  display: flex;
+  margin-right: 5px;
+  align-items: center;
+}
+
+lf p{ 
+  margin: 0;
+  align-items: center;
+  display: flex;
 }
 
 lft{
-  /* width: 55px; */
+  width: 100%;
+  text-align: center;
   font-family: 'input_sans_condensed_regular';
   font-size:12px;  
   margin-left: 10px;
+  display: flex;
+  justify-content: center;
 }
+
+lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 
 .ltf-operator{
   width: 55px;
@@ -91,7 +120,7 @@ lft{
 
 .logo-seeq{
   background-color: black !important;
-  color: rgb(62, 251, 0);
+  color: var( --trigger-color );
   /* box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);   */
 }
 
@@ -116,19 +145,21 @@ lft{
 }
 
 .reverse-target{ 
-  background-color:rgb(82, 255, 255) !important ;
+  background-color: var(--reverse-target) !important ;
+  color: var(--reverse-target);
   transition: 100ms;
 }
 
 
 .trigger{
-  background-color: rgb(62, 251, 0)  !important;
+  background-color: var( --trigger-color )  !important;
   transition: all .2s ease;
 }
 
 .selection-trigger{
-  background-color: black !important;
-  color: black;
+  background-color: var( --trigger-color ) !important;
+  color: var( --trigger-color );
+  box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
 }
 
 
@@ -195,7 +226,7 @@ button:active{
 }
 
 div button:focus{ outline: none;}
-div button:hover{ cursor: pointer; background-color: rgb(62, 251, 0);}
+div button:hover{ cursor: pointer; background-color: var( --trigger-color );}
 div button:active{ cursor: pointer; background-color: black; color: white;}
 .control-wrapper{ display: flex; justify-content: space-between; padding-bottom: 10px;}
 .control-info{ 
@@ -262,6 +293,38 @@ div input{
   border: 1px solid !important; 
 }
 
+.input-note{
+  border: unset !important;
+  width: 100%;
+  display: flex;
+  margin-left: 5px;
+}
+
+.note-add{
+  flex: 3;
+}
+
+.info {
+  width: 100%;
+}
+
+.show{
+  display: block;
+}
+
+.info-header{
+  width: 30%;
+}
+
+.info-input{ 
+  width: 100%;
+  display: flex;
+}
+
+.send-midi{
+
+}
+
 span.current-active{ background: black; color: white;}
 
 /* sq{background: black;} */
@@ -273,7 +336,7 @@ mark {
   /* -moz-box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
   /* box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); */
   /* background: rgb(0, 60, 255) !important; */
-  background-color: rgb(62, 251, 0) !important;
+  background-color: var( --trigger-color ) !important;
 }
 mark.current { 
   background: rgb(255, 62, 168) !important;
