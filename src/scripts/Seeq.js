@@ -409,8 +409,14 @@ function Seeq(){
                 if (seeq.isShowInfo){
                   let addNote, 
                   note = seeq.cursor[seeq.selectIndex].note === undefined? "":seeq.cursor[seeq.selectIndex].note,
+                  octave = seeq.cursor[seeq.selectIndex].octave === undefined? "":seeq.cursor[seeq.selectIndex].octave,
                   length = seeq.cursor[seeq.selectIndex].length === undefined? "":seeq.cursor[seeq.selectIndex].length,
                   velocity = seeq.cursor[seeq.selectIndex].velocity === undefined? "":seeq.cursor[seeq.selectIndex].velocity
+
+                  var noteWithOct = [];
+                  for (var i = 0; i < note.length; i++) {
+                    noteWithOct.push(`${ note[i] }${ octave[i]}`)
+                  }
 
                   if (seeq.isActive){
                     seeq.isInfoActived = true
@@ -422,7 +428,7 @@ function Seeq(){
                         <form id="info" class="info-input">
                           <lf> 
                             <p>NOTE:</p>
-                            <input id="addnote" class="input-note" type="text" value=${note}>
+                            <input id="addnote" class="input-note" type="text" value=${noteWithOct}>
                           </lf>
                           <lf> 
                             <p>LENGTH:</p>
@@ -451,7 +457,7 @@ function Seeq(){
 
                     noteAndOct.forEach(item => {
                       noteOnly.push(item[0])
-                      octOnly.push(item[1])
+                      octOnly.push(parseInt( item[1] ))
                     })
 
                     seeq.cursor[seeq.selectIndex].note = noteOnly
