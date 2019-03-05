@@ -71,8 +71,17 @@ function Sequencer(){
     this.clock = CONVERTED_BPM
   }
 
+  this.setBPMdisplay = function(  ){
+    seeq.bpmNumber.innerHTML =  seeq.clock().bpm
+  }
+
   this.setCounterDisplay = function(){
     seeq.currentNumber.innerHTML = this.beatRatio
+  }
+
+  this.setCPUUsageDisplay = function(v){
+    let trimmedData = v.toFixed(2)
+    seeq.cpuUsage.innerHTML = trimmedData + " " + "%"
   }
   
   this.setTotalLenghtCounterDisplay = function(){
@@ -168,7 +177,7 @@ function Sequencer(){
             if (seeq.matchedPositionLength == 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 seeq.sendOsc()
-                this.midiNoteOn(index + 1, cursor.note, cursor.length, undefined)
+                this.midiNoteOn(index + 1, cursor.octave, cursor.note, cursor.velocity, cursor.length)
                 seeq.getHighlight[index].classList.add("selection-trigger")
               } else {
                 seeq.getHighlight[index].classList.remove("selection-trigger")
@@ -252,8 +261,8 @@ function Sequencer(){
       }
   }
 
-  this.midiNoteOn = function(chan = 0, note = this.getRandomInt(0,6), noteLength = 7, oct = 4){
-    seeq.midi.send({ channel: chan,octave: oct, note ,velocity: 100,length: noteLength })
+  this.midiNoteOn = function(channel = 0, octave = 4, note = this.getRandomInt(0,6),velocity = 100, length = 7){
+    seeq.midi.send({ channel ,octave, note ,velocity ,length })
     seeq.midi.run()
     seeq.midi.clear()
   }

@@ -31,6 +31,7 @@ function Seeq(){
   this.content
   this.currentNumber
   this.totalNumber
+  this.cpuUsage
 
   // operation.
   this.keyboardPress = false
@@ -97,6 +98,7 @@ function Seeq(){
     note: "",
     length: "",
     velocity: "",
+    octave: "",
     reverse: false
   }]
   this.selectIndex
@@ -171,14 +173,15 @@ function Seeq(){
                   <b>blank : </b>
                 </div>
               </div>
-              <div>
-                <p id="bpm">120</p>
+              <div class="performance-details">
+                <p data-ctrl="bpm">120</p>
                 <p data-ctrl="current">4</p> 
                 <p data-ctrl="total">--</p>
-                <p data-ctrl="total">--</p>
+                <p data-ctrl="cpu">--</p>
               </div>
             </div>
             <div class="counter">
+              <p>>>></p>
               <button data-ctrl="add">+</button>
               <button data-ctrl="subtract">-</button>
             </div>
@@ -215,8 +218,10 @@ function Seeq(){
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
     this.logo = document.querySelector("div[data-logo='seeq']")
     var context = document.querySelector("p.masking")
+    seeq.bpmNumber = document.querySelector("p[data-ctrl='bpm']")
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
+    seeq.cpuUsage = document.querySelector("p[data-ctrl='cpu']")
     seeq.info = document.querySelector("div[data-ctrl='information']")
     seeq.content = new Mark(context)
     seeq.logoSeeq = new Mark( this.logo )
@@ -440,10 +445,20 @@ function Seeq(){
                   addVelocity.addEventListener("input", function(e){ velocity = this.value })
                   document.querySelector('form.info-input').addEventListener('submit', function (e) {
                     e.preventDefault();
-                    seeq.cursor[seeq.selectIndex].note = note
+                    let noteAndOct = seeq.splitNoteAndOctave(note)
+                    let noteOnly = []
+                    let octOnly = []
+
+                    noteAndOct.forEach(item => {
+                      noteOnly.push(item[0])
+                      octOnly.push(item[1])
+                    })
+
+                    seeq.cursor[seeq.selectIndex].note = noteOnly
+                    seeq.cursor[seeq.selectIndex].octave = octOnly
                     seeq.cursor[seeq.selectIndex].length = length
                     seeq.cursor[seeq.selectIndex].velocity = velocity
-                    // console.log("seeq.cursor", seeq.cursor[seeq.selectIndex])
+                    
                   });
                   } else {
                     seeq.info.classList.remove("limit-regex")
@@ -571,10 +586,6 @@ function Seeq(){
     // seeq.data.updateWithCursor(this.textLineBuffers)
   }
 
-  this.setBPMdisplay = function( msg ){
-    this.bpm = document.getElementById("bpm")
-    this.bpm.innerHTML = "<b>" + msg + "</b>" + " " + "bpm"
-  }
   
   this.textConvertor = function(){
     var target = new RegExp(seeq.searchValue, "gi")
@@ -750,6 +761,15 @@ function Seeq(){
     this.seq.increment()
   }
 
+  this.splitNoteAndOctave = function(inputText) {
+    var output = [];
+    var json = inputText.split(',');
+    json.forEach(function (item) {
+        output.push(item.split(/(\d+)/).filter(Boolean));
+    });
+    return output;
+  }
+
   this.updateMark = function(value, markType){
     if(markType == 'normal'){
       seeq.content.unmark({
@@ -815,7 +835,7 @@ function Seeq(){
     if (this.clock().canSetBpm()) {
       this.setSpeed(this.clock().getBpm() + mod)
     }
-    this.setBPMdisplay(bpm) 
+    seeq.seq.setBPMdisplay(bpm) 
   }
 
   

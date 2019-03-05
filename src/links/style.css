@@ -284,9 +284,14 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 
 .counter{ 
   display: flex; 
-  width: 50px;
+  width: 100%;
   justify-content: space-between;
 }
+
+.counter p{ margin: 0; margin-right: 5px;}
+
+
+.performance-details p{ font-size: 11px;}
 
 .tempo-details{ 
   display: flex; 
