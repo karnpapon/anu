@@ -115,48 +115,77 @@ function Seeq(){
 
   this.start = function(){
     this.wrapper_el.innerHTML += `
-      <div class="header-wrapper">
-      <div class="header">
-        <div data-logo="seeq" class="title">seeq</div>
-        <input data-fetch="fetch" placeholder="seeking for text..">
-        <button data-gettext="gettext"> Enter </button>
-      </div>
-      <div class="header">
-        <div class="title">find:</div>
-        <input type="search" placeholder="">
-        <button data-search="next">next</button>
-        <button data-search="prev">prev</button>
-      </div>
-    </div>
-    <div class="control-wrapper">
-      <div class="header">
-        <div class="title">RegExp:</div>
-        <input type="search-regex" placeholder="">
-        <button data-ctrl="add">+</button>
-        <button data-ctrl="subtract">-</button>
-      </div>
-      <div class="control-info">
-      <div class="control-panel">
-        <div class="title">Control:</div>
-        <div>
-          <button data-ctrl="set">set</button>
-          <button data-ctrl="run">run</button>
-          <button data-ctrl="rev">rev</button>
-          <button data-ctrl="stop">stop</button>
-          <button data-ctrl="notation-mode">mode</button>
-        </div>
-        </div>
-        <div class="tempo">
-          <p id="bpm"><b>120</b> bpm</p>
-          <div class="counter">
-            <p data-ctrl="current">-</p>
-            /
-            <p data-ctrl="total">--</p>
+      <div class="controller-wrapper">
+        <div class="header-wrapper">
+          <div class="header">
+            <div data-logo="seeq" class="title">seeq</div>
+            <input data-fetch="fetch" placeholder="" class="input-control">
+            <button data-gettext="gettext"> Enter </button>
+          </div>
+          <div class="header">
+            <div class="title">RegExp:</div>
+            <input type="search-regex" placeholder="" class="input-regex">
           </div>
         </div>
+          
+        <div class="header-wrapper">
+
+          <div class="header">
+            <div class="title">find:</div>
+            <div class="normal-search">
+              <input type="search" placeholder="" class="input-control">
+              <button data-search="next">next</button>
+              <button data-search="prev">prev</button>
+            </div>
+          </div>
+          
+          <div class="control-info">
+          <div class="control-panel">
+            <div class="title">Control:</div>
+            <div class="control-btn">
+              <button data-ctrl="set">set</button>
+              <button data-ctrl="run">run</button>
+              <button data-ctrl="rev">rev</button>
+              <button data-ctrl="stop">stop</button>
+              <button data-ctrl="notation-mode">mode</button>
+            </div>
+            </div>
+            
+          </div>
+        </div>
+        <div class="header-line"></div>
+        <div class="header-wrapper flex-col">
+          <div class="tempo">
+            <div class="tempo-details">
+              <div>
+                <div class="tempo-details">
+                  <b>bpm : </b>
+                </div>
+                <div class="tempo-details">
+                  <b>ratio : </b>
+                </div>
+                <div class="tempo-details">
+                  <b>total : </b> 
+                </div>
+                <div class="tempo-details">
+                  <b>blank : </b>
+                </div>
+              </div>
+              <div>
+                <p id="bpm">120</p>
+                <p data-ctrl="current">4</p> 
+                <p data-ctrl="total">--</p>
+                <p data-ctrl="total">--</p>
+              </div>
+            </div>
+            <div class="counter">
+              <button data-ctrl="add">+</button>
+              <button data-ctrl="subtract">-</button>
+            </div>
+          </div> 
+        </div>
       </div>
-      </div>
-    <div data-ctrl="information" class="limit">|---------------------------------------------------------------------------------------------------|</div> 
+      <div data-ctrl="information" class="limit">|---------------------------------------------------------------------------------------------------|</div> 
     `;
 
     this.data.build()
@@ -668,6 +697,7 @@ function Seeq(){
         method: "get",
         url: seeq.url + seeq.fetchSearchInput + seeq.urlEnd,
         responseType: "json"}).then( function(response){
+
           var { pages } = response.data.query
           seeq.extract
           Object.keys(pages).map(function(field){
@@ -692,6 +722,8 @@ function Seeq(){
             seeq.isGettingData = false
             seeq.data.loading.style.display = 'none'  
           }
+        }).catch(function(error){
+          seeq.data.update(error)
         })
   }
 

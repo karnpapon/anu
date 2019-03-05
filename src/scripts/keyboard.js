@@ -76,7 +76,7 @@ function Keyboard() {
   this.infoDisplay = function( command, icon = "e" ){
     seeq.info.classList.add("limit-regex")
     this.isKeyNotFound = false
-    return `<div class="info-group"><lf>INFO</lf> | </div> <lft>${command}</lft><object type="image/svg+xml" data="src/media/icons/${icon}.svg" class="icons"></object>`
+    return `<div class="info-group"><lf>INFO</lf> | </div> <lft>${command}</lft><object type="image/svg+xml" data="media/icons/${icon}.svg" class="icons"></object>`
   }
 
   this.onKeyUp = function (event) {

@@ -218,12 +218,50 @@ button:active{
   transition: 0s linear;
 }
 
+.wrapper-control{
+  display: flex;
+  flex-direction: column;
+}
+
 .header-wrapper{ 
   display: flex; 
-  height: 100%;
+  flex-direction: column;
+  height: 85px;
+  flex: 3;
   padding-bottom: 5px;
   justify-content: space-between;
 }
+
+.header-wrapper:nth-child(2){ padding-left: 10px;}
+
+.header-line{ 
+  margin-top: 5px;
+  height: 75%;
+  border-right: 1px solid;
+  display: flex; 
+  flex: 0.15;
+  flex-direction: column;
+}
+
+.controller-wrapper{ 
+  display: flex; 
+  height: 110px;
+}
+.control-btn{ 
+  /* display: flex; */
+  width: 100%;
+  /* justify-content: space-between; */
+}
+.control-panel{     
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: inherit;
+}
+
+.input-control{ width: 100px}
+.input-regex{ width: 151px}
 
 div button:focus{ outline: none;}
 div button:hover{ cursor: pointer; background-color: var( --trigger-color );}
@@ -234,14 +272,28 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  width: 260px;
+  /* width: 260px; */
   justify-content: space-between;
 }
-.control-info p{ margin: 0;text-align: right;}
+.control-info p{ 
+  margin: 0;
+  justify-content: space-between;
+  display: flex;
+  text-align: right;
+}
+
 .counter{ 
   display: flex; 
-  justify-content: flex-end;
+  width: 50px;
+  justify-content: space-between;
 }
+
+.tempo-details{ 
+  display: flex; 
+  width: 100%;
+  justify-content: space-between;
+}
+.tempo-details p{ margin: 0; }
 
 appwrapper{ 
   display: flex;
@@ -270,20 +322,28 @@ app {
 
 .btn-show{  display: block; }
 .btn-hide{  display: none; }
-.control-panel{     
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: inherit;
-}
+
 .operator{font: 400 11px system-ui;  }
 .tempo{ 
   font: 400 11px system-ui; 
-  width: 55px ;
+  width: 100%;
+  padding-left: 10px;
   height: 100%;
   justify-content: inherit;
   display: flex;
+  align-items: flex-end;
   flex-direction: column;
+}
+
+.normal-search{
+  width: 100%;
+  height: auto; 
+}
+
+.flex-col{ 
+  flex: 1.25;
+  align-items: flex-end;
+  text-align: end; 
 }
 
 div button.control-btn:hover{ border:1px solid black;}

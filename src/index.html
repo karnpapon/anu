@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="src/links/style.css">
-    <link rel="stylesheet" href="src/links/fonts.css">
-    <script src="node_modules/mark.js/dist/mark.min.js"></script>
-    <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
-    <script src="node_modules/TextHighlighter/src/TextHighlighter.js"></script>
+    <link rel="stylesheet" href="links/style.css">
+    <link rel="stylesheet" href="links/fonts.css">
+    <script src="../node_modules/mark.js/dist/mark.min.js"></script>
+    <script src="../node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="../node_modules/TextHighlighter/src/TextHighlighter.js"></script>
     <style>
       ::selection {
         background: yellow;
@@ -16,7 +16,7 @@
   </head>
   <body>
     <script>
-        const Seeq = require('/Users/gingliu/Desktop/allaboutcode/Seeq/src/scripts/Seeq')
+        const Seeq = require('./scripts/Seeq.js')
         const {dialog,app} = require('electron').remote;
 
         const fs = require('fs');
