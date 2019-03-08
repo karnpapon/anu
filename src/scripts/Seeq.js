@@ -95,10 +95,11 @@ function Seeq(){
     isMuted: false,
     up: 0,
     down: 0,
-    note: "",
-    length: "",
-    velocity: "",
-    octave: "",
+    note: ["C"],
+    length: 16,
+    velocity: 100,
+    octave: "3",
+    counter: 0,
     reverse: false
   }]
   this.selectIndex
@@ -170,7 +171,7 @@ function Seeq(){
                   <b>total : </b> 
                 </div>
                 <div class="tempo-details">
-                  <b>blank : </b>
+                  <b>cpu : </b>
                 </div>
               </div>
               <div class="performance-details">
@@ -398,7 +399,7 @@ function Seeq(){
                     target.classList.add("reverse-target")
                     seeq.cursor[seeq.selectIndex].reverse = true
                     seeq.cursor[seeq.selectIndex].offsetReverse = true
-
+                    seeq.cursor[seeq.selectIndex].counter = 0
                   } else {
                     target.classList.remove("reverse-target")
                     seeq.cursor[seeq.selectIndex].reverse = false 
@@ -479,7 +480,7 @@ function Seeq(){
                   seeq.removeHighlightsEl(seeq.selectIndex)
                   seeq.data.hltr.removeHighlights(mutation.target);
                   seeq.sortingIndex()
-                  seeq.getHighlightAfterSelect() //sorting highlight element.
+                  seeq.getHighlightElement() //sorting highlight element.
                 }
               }
               else {
@@ -564,9 +565,16 @@ function Seeq(){
   this.addSequencer = function(){
     this.cursor.push({ 
       position: this.startPos,
+      offsetReverse: false,
       isMuted: false,
-      up: 1,
-      down: 1
+      up: 0,
+      down: 0,
+      note: ["C"],
+      length: 16,
+      velocity: 100,
+      octave: "3",
+      counter: 0,
+      reverse: false
     })
     this.sortingIndex()
   }
@@ -620,8 +628,6 @@ function Seeq(){
 
   this.addCursorWhenSelectRange = function(){
     this.addSequencer()
-    // this.seq.set()
-    // this.findMatchedPosition()
   }
 
   this.update = function(markType, modeContent, target ){
@@ -806,7 +812,7 @@ function Seeq(){
     }
   }
 
-  this.getHighlightAfterSelect = function(){
+  this.getHighlightElement = function(){
     var data = seeq.data
     this.getHighlight = data.hltr.getHighlights(data.selectedText)
   }

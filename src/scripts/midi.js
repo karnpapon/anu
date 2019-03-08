@@ -40,6 +40,21 @@ function Midi() {
   // Midi
 
   this.send = function ({ channel, octave, note, velocity, length }) {
+    let noteNumber = []
+    let convertedNote 
+    // if( note.length > 1){
+    //   note.forEach( item => {
+    //     convertedNote = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'].indexOf( item )
+    //     noteNumber.push(convertedNote)
+    //   })
+    // } else {
+    //   noteNumber = 0
+    // }
+
+    convertedNote = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'].indexOf( note )
+
+    console.log("convertNote = ", note)
+
     let msg = Object.assign({}, { channel, octave, note, velocity, length })
     this.stack.push(msg)
   }

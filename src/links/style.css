@@ -3,6 +3,7 @@
   --trigger-color: rgb(62, 251, 0);
   --reverse-target: #f287ff;
   --clock: 200ms;
+  --hl-color: rgb(255, 255, 123);
 }
 
 body {
@@ -76,6 +77,25 @@ div button{
   width: auto;
   display: flex;
 }
+
+.info-color{ 
+  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  padding-right: 20px;
+}
+
+.reverse{ background-color: #f287ff; }
+.mute{ background-color: #a5a5a5; }
+.midiout{ background-color: var(--hl-color); border: 1px solid; }
+.delete { border: 1px solid; }
+
+.info-icon-and-color{
+  display: flex;
+  width: 55px;
+  justify-content: space-between;
+}
+
 .operator-group{
   width: 100%;
   display: flex;
@@ -235,11 +255,9 @@ button:active{
 .header-wrapper:nth-child(2){ padding-left: 10px;}
 
 .header-line{ 
-  margin-top: 5px;
   height: 75%;
   border-right: 1px solid;
   display: flex; 
-  flex: 0.15;
   flex-direction: column;
 }
 

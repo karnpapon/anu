@@ -30,7 +30,7 @@ function Data( ){
           seeq.addCursorWhenSelectRange()
         }
         seeq.seq.selectedTextArea()
-        seeq.getHighlightAfterSelect()
+        seeq.getHighlightElement()
       }
     });
 
@@ -59,7 +59,7 @@ function Data( ){
 
     this.update = function(txt){
       this.dataText = txt
-      var limitedChar = 1500
+      var limitedChar = 1400
       if(this.dataText && this.dataText.length){
         if( this.dataText.length > limitedChar ){
           var trimmedText = this.dataText.substring(0, limitedChar - 100 )

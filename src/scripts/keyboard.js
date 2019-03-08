@@ -10,7 +10,7 @@ function Keyboard() {
 
     // char = m
     if (event.keyCode === 77) { 
-      seeq.info.innerHTML = this.infoDisplay('MUTE : mute target highlight.')
+      seeq.info.innerHTML = this.infoDisplay('MUTE : mute target highlight.','mute', "e")
       seeq.isMutePressed = true;
     }
 
@@ -28,7 +28,7 @@ function Keyboard() {
 
     // char = r = reverse selected.
     else if (event.keyCode === 82) {
-      seeq.info.innerHTML = this.infoDisplay('REVERSE : reverse step.')
+      seeq.info.innerHTML = this.infoDisplay('REVERSE : reverse step.', 'reverse', "e")
       seeq.isReversedCursorPressed = true;
     }
 
@@ -44,13 +44,13 @@ function Keyboard() {
 
     // char = i = information.
     else if (event.keyCode === 73) { 
-      seeq.info.innerHTML = this.infoDisplay('INFORMATION : show target informations.', "i")
+      seeq.info.innerHTML = this.infoDisplay('INFORMATION : show target informations.','midiout', "i")
       seeq.isShowInfo = true;
     }
 
     // char = x = delete highlight.
     else if (event.keyCode === 88) { 
-      seeq.info.innerHTML = this.infoDisplay('DELETE : remove target highlight.')
+      seeq.info.innerHTML = this.infoDisplay('DELETE : remove target highlight.','delete', 'i')
       seeq.isDeletePressed = true;
     }
 
@@ -73,10 +73,19 @@ function Keyboard() {
    
   }
 
-  this.infoDisplay = function( command, icon = "e" ){
+  this.infoDisplay = function( command, color, icon = "e" ){
     seeq.info.classList.add("limit-regex")
     this.isKeyNotFound = false
-    return `<div class="info-group"><lf>INFO</lf> | </div> <lft>${command}</lft><object type="image/svg+xml" data="media/icons/${icon}.svg" class="icons"></object>`
+    return `
+      <div class="info-group">
+        <lf>INFO</lf> | 
+      </div> 
+      <lft>${command}</lft>
+      <div class="info-icon-and-color">
+        <div class="info-color ${color}"></div>
+        <object type="image/svg+xml" data="media/icons/${icon}.svg" class="icons"></object>
+      </div>
+    `
   }
 
   this.onKeyUp = function (event) {

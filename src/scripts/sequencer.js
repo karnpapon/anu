@@ -165,20 +165,31 @@ function Sequencer(){
 
   this.trigger = function(){
 
-    let cursorAmount = seeq.cursor.length
+    let reverseCounter
+    let counterIndex
 
     if( seeq.searchValue !== ""){
-
       if(seeq.isSelectDrag){
         seeq.cursor.forEach((cursor, index, array) => {
           if (!cursor.isMuted) {
-
             // trigger letters.
             if (seeq.matchedPositionLength == 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
+                if( cursor.reverse){
+                  reverseCounter = ( cursor.note.length - 1 ) - cursor.counter
+                  if( reverseCounter < 0) { // reset reversed counter.
+                    reverseCounter = cursor.note.length - 1
+                    cursor.counter = 0
+                  }
+                  counterIndex = reverseCounter
+                } else {
+                  cursor.counter % cursor.note.length == 0? cursor.counter = 0:cursor.counter
+                  counterIndex = cursor.counter
+                }
                 seeq.sendOsc()
-                this.midiNoteOn(index + 1, cursor.octave, cursor.note, cursor.velocity, cursor.length)
+                this.midiNoteOn(index + 1, cursor.octave, cursor.note[counterIndex], cursor.velocity, cursor.length)
                 seeq.getHighlight[index].classList.add("selection-trigger")
+                cursor.note.length > 1? cursor.counter++:cursor.counter
               } else {
                 seeq.getHighlight[index].classList.remove("selection-trigger")
               }
@@ -206,7 +217,7 @@ function Sequencer(){
             if (seeq.matchedPositionLength == 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 seeq.sendOsc()
-                this.midiNoteOn(index + 1, cursor.note, undefined, undefined)
+                this.midiNoteOn(index + 1, undefined, undefined, undefined)
                 seeq.data.el.classList.add("trigger")
               }
               else {
@@ -261,7 +272,7 @@ function Sequencer(){
       }
   }
 
-  this.midiNoteOn = function(channel = 0, octave = 4, note = this.getRandomInt(0,6),velocity = 100, length = 7){
+  this.midiNoteOn = function(channel = 0, octave = 4, note = this.getRandomInt(0,11),velocity = 100, length = 7){
     seeq.midi.send({ channel ,octave, note ,velocity ,length })
     seeq.midi.run()
     seeq.midi.clear()
