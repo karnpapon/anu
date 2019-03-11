@@ -176,6 +176,11 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
   transition: all .2s ease;
 }
 
+.re-trigger{
+  background-color: rgb(8, 8, 8)  !important;
+  transition:  all .2s ease;
+}
+
 .selection-trigger{
   background-color: var( --trigger-color ) !important;
   color: var( --trigger-color );
@@ -194,6 +199,7 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
   font-family: 'input_mono_light';
   position: absolute;
   height: 350px;
+  width: 100%;
   z-index: 5;
   pointer-events: none;
 }

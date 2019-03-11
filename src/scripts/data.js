@@ -107,6 +107,13 @@ function Data( ){
       this.maskText.innerHTML = ""
       this.selectedText.innerHTML = ""
     }
+
+
+    this.selectedText.addEventListener( 'dblclick', function(event) {  
+      event.preventDefault();  
+      event.stopPropagation(); 
+    },  true //capturing phase!!
+    );
 }
 
 module.exports = Data

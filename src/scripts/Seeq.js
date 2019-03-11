@@ -43,6 +43,7 @@ function Seeq(){
   this.isDeletePressed = false
   this.isShowInfo = false
   this.isInfoActived = false
+  this.isRetriggered = false
 
   this.isActive = false
 
@@ -370,9 +371,10 @@ function Seeq(){
       this.observeCallback = function(mutationsList, observer) {
         for(var mutation of mutationsList) {
           if (mutation.type == 'childList' && mutation.target.nodeName == 'SPAN' ) {
-            mutation.target.addEventListener("click", function(e){
+
+            mutation.target.addEventListener("mousedown", function(){
               seeq.isActive = !seeq.isActive
-              let indexTarget, target
+              let indexTarget, targetHighlight, targetCursor
 
               seeq.getHighlight.forEach( ( el, index, arr ) => {
                 if( el.dataset.timestamp == mutation.target.dataset.timestamp){
@@ -380,39 +382,81 @@ function Seeq(){
                 }
               })
 
-              target = seeq.getHighlight[seeq.selectIndex]
+              targetHighlight = seeq.getHighlight[seeq.selectIndex]
+              targetCursor = seeq.cursor[seeq.selectIndex]
+
+              if(seeq.isRetriggered){
+                targetHighlight.classList.add("re-trigger")
+              }
+
+            })
+
+            mutation.target.addEventListener("mouseup", function(){
+              seeq.isActive = !seeq.isActive
+              let indexTarget, targetHighlight, targetCursor
+
+              seeq.getHighlight.forEach( ( el, index, arr ) => {
+                if( el.dataset.timestamp == mutation.target.dataset.timestamp){
+                  seeq.selectIndex = index
+                }
+              })
+
+              targetHighlight = seeq.getHighlight[seeq.selectIndex]
+              targetCursor = seeq.cursor[seeq.selectIndex]
+
+              if(seeq.isRetriggered){
+                targetHighlight.classList.remove("re-trigger")
+              }
+
+            })
+
+
+            mutation.target.addEventListener("click", function(e){
+              seeq.isActive = !seeq.isActive
+              let indexTarget, targetHighlight, targetCursor
+
+              seeq.getHighlight.forEach( ( el, index, arr ) => {
+                if( el.dataset.timestamp == mutation.target.dataset.timestamp){
+                  seeq.selectIndex = index
+                }
+              })
+
+              targetHighlight = seeq.getHighlight[seeq.selectIndex]
+              targetCursor = seeq.cursor[seeq.selectIndex]
 
               // when keyboard is pressed,then operates.
               if (seeq.keyboardPress ){
                 if(seeq.isMutePressed){
                   if (seeq.isActive){
-                    target.classList.add("mute-target")
-                    seeq.cursor[seeq.selectIndex].isMuted = true
+                    targetHighlight.classList.add("mute-target")
+                    targetCursor.isMuted = true
                   } else {
-                    target.classList.remove("mute-target")
-                    seeq.cursor[seeq.selectIndex].isMuted = false
+                    targetHighlight.classList.remove("mute-target")
+                    targetCursor.isMuted = false
                   }
                 } 
                 
                 if (seeq.isReversedCursorPressed){
                   if (seeq.isActive){
-                    target.classList.add("reverse-target")
-                    seeq.cursor[seeq.selectIndex].reverse = true
-                    seeq.cursor[seeq.selectIndex].offsetReverse = true
-                    seeq.cursor[seeq.selectIndex].counter = 0
+                    targetHighlight.classList.add("reverse-target")
+                    targetCursor.reverse = true
+                    targetCursor.offsetReverse = true
+                    targetCursor.counter = 0
                   } else {
-                    target.classList.remove("reverse-target")
-                    seeq.cursor[seeq.selectIndex].reverse = false 
-                    seeq.cursor[seeq.selectIndex].offsetReverse = false
+                    targetHighlight.classList.remove("reverse-target")
+                    targetCursor.reverse = false 
+                    targetCursor.offsetReverse = false
                   }
                 }
 
+              
+
                 if (seeq.isShowInfo){
                   let addNote, 
-                  note = seeq.cursor[seeq.selectIndex].note === undefined? "":seeq.cursor[seeq.selectIndex].note,
-                  octave = seeq.cursor[seeq.selectIndex].octave === undefined? "":seeq.cursor[seeq.selectIndex].octave,
-                  length = seeq.cursor[seeq.selectIndex].length === undefined? "":seeq.cursor[seeq.selectIndex].length,
-                  velocity = seeq.cursor[seeq.selectIndex].velocity === undefined? "":seeq.cursor[seeq.selectIndex].velocity
+                  note = targetCursor.note === undefined? "":targetCursor.note,
+                  octave = targetCursor.octave === undefined? "":targetCursor.octave,
+                  length = targetCursor.length === undefined? "":targetCursor.length,
+                  velocity = targetCursor.velocity === undefined? "":targetCursor.velocity
 
                   var noteWithOct = [];
                   for (var i = 0; i < note.length; i++) {
@@ -422,7 +466,7 @@ function Seeq(){
                   if (seeq.isActive){
                     seeq.isInfoActived = true
                     seeq.info.classList.add("limit-regex")
-                    target.classList.add("select-highlight")
+                    targetHighlight.classList.add("select-highlight")
                     seeq.info.innerHTML = `
                       <div class="operator-group info"> 
                         <lf class="info-header">MIDI OUTPUT |</lf> 
@@ -461,15 +505,15 @@ function Seeq(){
                       octOnly.push(parseInt( item[1] ))
                     })
 
-                    seeq.cursor[seeq.selectIndex].note = noteOnly
-                    seeq.cursor[seeq.selectIndex].octave = octOnly
-                    seeq.cursor[seeq.selectIndex].length = length
-                    seeq.cursor[seeq.selectIndex].velocity = velocity
+                    targetCursor.note = noteOnly
+                    targetCursor.octave = octOnly
+                    targetCursor.length = length
+                    targetCursor.velocity = velocity
                     
                   });
                   } else {
                     seeq.info.classList.remove("limit-regex")
-                    target.classList.remove("select-highlight")
+                    targetHighlight.classList.remove("select-highlight")
                     seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
                     seeq.isInfoActived = false;
                     seeq.isShowInfo = false;

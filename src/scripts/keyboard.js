@@ -48,6 +48,12 @@ function Keyboard() {
       seeq.isShowInfo = true;
     }
 
+    // char = t = re-trigger.
+    else if (event.keyCode === 84) { 
+      seeq.info.innerHTML = this.infoDisplay('INFORMATION : re-trigger.','midiout', "i")
+      seeq.isRetriggered = true;
+    }
+
     // char = x = delete highlight.
     else if (event.keyCode === 88) { 
       seeq.info.innerHTML = this.infoDisplay('DELETE : remove target highlight.','delete', 'i')
@@ -100,6 +106,7 @@ function Keyboard() {
       seeq.isDeletePressed = false;
       seeq.isShowInfo = false;
       seeq.isReversedCursorPressed = false;
+      seeq.isRetriggered = false;
   
       seeq.info.classList.remove("limit-regex")
       seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"

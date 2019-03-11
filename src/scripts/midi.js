@@ -53,9 +53,7 @@ function Midi() {
 
     convertedNote = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'].indexOf( note )
 
-    console.log("convertNote = ", note)
-
-    let msg = Object.assign({}, { channel, octave, note, velocity, length })
+    let msg = Object.assign({}, { channel, octave, note: convertedNote, velocity, length })
     this.stack.push(msg)
   }
 
