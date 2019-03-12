@@ -1,34 +1,28 @@
 {
-  "name": "seeq-custom-sequencer",
+  "name": "Seeq",
   "version": "1.0.0",
   "description": "custom sequencer",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "reInstall": "rm -rf node_modules && rm -rf package-lock.json && npm install"
+    "reInstall": "rm -rf node_modules && rm -rf package-lock.json && npm install",
+    "clean": "rm -r ~/Desktop/Seeq-darwin-x64/ ; echo 'cleaned build location'",
+    "build_osx": "electron-packager . Seeq --platform=darwin --arch=x64 --out ~/Desktop/ --overwrite ; echo 'Built for OSX'"
   },
   "repository": "",
   "keywords": [
     "Electron"
   ],
-  "author": "seeq",
+  "author": "Karnpapon Boonput",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^4.0.4",
-    "mark.js": "^8.11.1"
+    "electron-packager": "^13.1.1",
+    "electron-rebuild": "^1.8.4"
   },
   "dependencies": {
     "TextHighlighter": "https://github.com/h1u2i3/texthighlighter.git",
-    "abletonlink": "^0.0.7",
     "axios": "^0.18.0",
-    "chalk": "^2.4.2",
-    "electron-rebuild": "^1.8.4",
-    "electron-reload": "^1.4.0",
-    "express": "^4.16.4",
-    "ip": "^1.1.5",
-    "os-utils": "0.0.14",
-    "osc-js": "^2.0.2",
-    "socket.io": "^2.2.0",
-    "webmidi": "^2.3.2"
+    "mark.js": "^8.11.1"
   }
 }

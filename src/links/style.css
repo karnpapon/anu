@@ -177,7 +177,8 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 }
 
 .re-trigger{
-  background-color: rgb(8, 8, 8)  !important;
+  background-color: rgb(224, 48, 17)  !important;
+  color: rgb(224, 48, 17);
   transition:  all .2s ease;
 }
 

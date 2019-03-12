@@ -79,10 +79,10 @@ function Sequencer(){
     seeq.currentNumber.innerHTML = this.beatRatio
   }
 
-  this.setCPUUsageDisplay = function(v){
-    let trimmedData = v.toFixed(2)
-    seeq.cpuUsage.innerHTML = trimmedData + " " + "%"
-  }
+  // this.setCPUUsageDisplay = function(v){
+  //   let trimmedData = v.toFixed(2)
+  //   seeq.cpuUsage.innerHTML = trimmedData + " " + "%"
+  // }
   
   this.setTotalLenghtCounterDisplay = function(){
     seeq.totalNumber.innerHTML = seeq.data.text.innerText.length
@@ -186,8 +186,8 @@ function Sequencer(){
                   cursor.counter % cursor.note.length == 0? cursor.counter = 0:cursor.counter
                   counterIndex = cursor.counter
                 }
-                seeq.sendOsc()
-                this.midiNoteOn(index + 1, cursor.octave, cursor.note[counterIndex], cursor.velocity, cursor.length)
+                // seeq.sendOsc()
+                this.midiNoteOn(cursor.channel, cursor.octave[counterIndex], cursor.note[counterIndex], cursor.velocity, cursor.length)
                 seeq.getHighlight[index].classList.add("selection-trigger")
                 cursor.note.length > 1? cursor.counter++:cursor.counter
               } else {
@@ -198,7 +198,7 @@ function Sequencer(){
             // trigger words.
             else if (seeq.matchedPositionLength > 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                seeq.sendOsc()
+                // seeq.sendOsc()
                 this.midiNoteOn(index + 1)
                 seeq.getHighlight[index].classList.add("selection-trigger")
               } else {
@@ -216,7 +216,7 @@ function Sequencer(){
             // trigger letters.
             if (seeq.matchedPositionLength == 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                seeq.sendOsc()
+                // seeq.sendOsc()
                 this.midiNoteOn(index + 1, undefined, undefined, undefined)
                 seeq.data.el.classList.add("trigger")
               }
@@ -231,7 +231,7 @@ function Sequencer(){
             else if (seeq.matchedPositionLength > 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 seeq.data.el.classList.add("trigger")
-                seeq.sendOsc()
+                // seeq.sendOsc()
                 this.midiNoteOn(index + 1)
               } else {
                 if (seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {

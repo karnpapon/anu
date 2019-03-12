@@ -101,6 +101,7 @@ function Seeq(){
     velocity: 100,
     octave: "3",
     counter: 0,
+    channel: 0,
     reverse: false
   }]
   this.selectIndex
@@ -373,7 +374,6 @@ function Seeq(){
           if (mutation.type == 'childList' && mutation.target.nodeName == 'SPAN' ) {
 
             mutation.target.addEventListener("mousedown", function(){
-              seeq.isActive = !seeq.isActive
               let indexTarget, targetHighlight, targetCursor
 
               seeq.getHighlight.forEach( ( el, index, arr ) => {
@@ -387,12 +387,12 @@ function Seeq(){
 
               if(seeq.isRetriggered){
                 targetHighlight.classList.add("re-trigger")
+                targetCursor.position = 40
               }
 
             })
 
             mutation.target.addEventListener("mouseup", function(){
-              seeq.isActive = !seeq.isActive
               let indexTarget, targetHighlight, targetCursor
 
               seeq.getHighlight.forEach( ( el, index, arr ) => {
@@ -452,11 +452,12 @@ function Seeq(){
               
 
                 if (seeq.isShowInfo){
-                  let addNote, 
+                  let addNote, addLength, addVelocity, addChannel,
                   note = targetCursor.note === undefined? "":targetCursor.note,
                   octave = targetCursor.octave === undefined? "":targetCursor.octave,
                   length = targetCursor.length === undefined? "":targetCursor.length,
-                  velocity = targetCursor.velocity === undefined? "":targetCursor.velocity
+                  velocity = targetCursor.velocity === undefined? "":targetCursor.velocity,
+                  ch = targetCursor.channel === undefined? "": targetCursor.channel
 
                   var noteWithOct = [];
                   for (var i = 0; i < note.length; i++) {
@@ -483,6 +484,10 @@ function Seeq(){
                             <p>VEL:</p>
                             <input id="addvelocity" class="input-note" type="text" value=${velocity}>
                           </lf>
+                          <lf> 
+                            <p>CHAN:</p>
+                            <input id="addchannel" class="input-note" type="text" value=${ch}>
+                          </lf>
                         </form>
                       </div> 
                       <button type="submit" value="Submit" form="info" class="send-midi">send</button>
@@ -490,13 +495,20 @@ function Seeq(){
                   addNote = document.getElementById('addnote')
                   addLength = document.getElementById('addlength')
                   addVelocity = document.getElementById('addvelocity')
+                  addChannel = document.getElementById('addchannel')
 
                   addNote.addEventListener("input", function(e){ note = this.value })
                   addLength.addEventListener("input", function(e){ length = this.value })
                   addVelocity.addEventListener("input", function(e){ velocity = this.value })
+                  addChannel.addEventListener("input", function(e){ ch = this.value })
                   document.querySelector('form.info-input').addEventListener('submit', function (e) {
                     e.preventDefault();
-                    let noteAndOct = seeq.splitNoteAndOctave(note)
+                    let noteAndOct
+                    if (note.indexOf(',') > -1) { 
+                      noteAndOct = seeq.splitArrayNoteAndOctave(note)
+                    } else {
+                      noteAndOct = seeq.splitSingleNoteAndOctave(noteWithOct)
+                    }
                     let noteOnly = []
                     let octOnly = []
 
@@ -509,6 +521,7 @@ function Seeq(){
                     targetCursor.octave = octOnly
                     targetCursor.length = length
                     targetCursor.velocity = velocity
+                    targetCursor.channel = parseInt( ch )
                     
                   });
                   } else {
@@ -618,6 +631,7 @@ function Seeq(){
       velocity: 100,
       octave: "3",
       counter: 0,
+      channel: 0,
       reverse: false
     })
     this.sortingIndex()
@@ -713,8 +727,8 @@ function Seeq(){
 
   this.sendOsc = function(){
     // re-render to get new value everytime.
-    var message = new OSC.Message('/ding', Math.random());  
-    osc.send(message)
+    // var message = new OSC.Message('/ding', Math.random());  
+    // osc.send(message)
   }
 
   this.findMatchedPosition = function(){
@@ -817,13 +831,19 @@ function Seeq(){
     this.seq.increment()
   }
 
-  this.splitNoteAndOctave = function(inputText) {
+  this.splitArrayNoteAndOctave = function(inputText) {
     var output = [];
     var json = inputText.split(',');
     json.forEach(function (item) {
         output.push(item.split(/(\d+)/).filter(Boolean));
     });
     return output;
+  }
+
+  this.splitSingleNoteAndOctave = function(note){
+    var output = []
+    output.push(note[0].split(/(\d+)/).filter(Boolean));
+    return output
   }
 
   this.updateMark = function(value, markType){

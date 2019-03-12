@@ -4,13 +4,15 @@
     <link rel="stylesheet" href="links/style.css">
     <link rel="stylesheet" href="links/fonts.css">
     <script src="../node_modules/mark.js/dist/mark.min.js"></script>
-    <script src="../node_modules/socket.io-client/dist/socket.io.js"></script>
+    <!-- <script src="../node_modules/socket.io-client/dist/socket.io.js"></script> -->
     <script src="../node_modules/TextHighlighter/src/TextHighlighter.js"></script>
     <style>
       ::selection {
         background: yellow;
+        /* WebKit/Blink Browsers */
       }
     </style>
+
     <meta charset="UTF-8">
     <title>Letter Sequencer</title>
   </head>
@@ -20,23 +22,23 @@
         const {dialog,app} = require('electron').remote;
 
         const fs = require('fs');
-        const os 	= require('os-utils');
-        const OSC = require('osc-js')
+        // const os 	= require('os-utils');
+        // const OSC = require('osc-js')
         const axios = require('axios');
-        var socket = io('http://localhost:3000');
+        // var socket = io('http://localhost:3000');
 
         
-        const options = { send: { port: 8000 } }
-        const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
+        // const options = { send: { port: 8000 } }
+        // const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
         var seeq = new Seeq();
 
        
         seeq.start();
-        os.cpuUsage(function(v){
-          let cpu = setInterval(() => {
-            seeq.seq.setCPUUsageDisplay(v)
-          }, 1000);
-        });
+        // os.cpuUsage(function(v){
+        //   let cpu = setInterval(() => {
+        //     seeq.seq.setCPUUsageDisplay(v)
+        //   }, 1000);
+        // });
         // socket.on('beat', function (data) {
         //   const { beat, bpm } = data
         //   if(beat % 4 == 0){
