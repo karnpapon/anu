@@ -295,12 +295,7 @@ function Sequencer(){
   this.stop = function(){
     clearTimeout(this.timer)
     clearTimeout(this.triggerFreeModeClock)
-    seeq.cursor = [{
-      position: 0,
-      isMuted: false,
-      up: 0,
-      down: 0
-    }]
+    seeq.cursor = seeq.reset()
     seeq.data.el.classList.remove("trigger")
     // this.isSync = false
     seeq.isFreeModeAutoPlay = false
@@ -308,6 +303,7 @@ function Sequencer(){
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []
     seeq.searchValue = ""
+    seeq.isSelectDrag = false
     this.set()
   }
   

@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "TextHighlighter": "https://github.com/h1u2i3/texthighlighter.git",
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "mark.js": "^8.11.1"
   }
 }

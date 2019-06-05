@@ -569,6 +569,25 @@ function Seeq(){
     })
   }
 
+  this.reset = function(){
+    let reset = [{
+      position: 0,
+      offsetReverse: false,
+      isMuted: false,
+      up: 0,
+      down: 0,
+      note: ["C"],
+      length: 16,
+      velocity: 100,
+      octave: "3",
+      counter: 0,
+      channel: 0,
+      reverse: false
+    }]
+    return reset 
+  }
+
+
   this.clear = function(){
     this.isPlaying = false
     this.seq.stop()
