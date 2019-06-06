@@ -108,8 +108,7 @@ function Keyboard() {
       seeq.isReversedCursorPressed = false;
       seeq.isRetriggered = false;
   
-      seeq.info.classList.remove("limit-regex")
-      seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+      seeq.resetInfoBar()
     }
     // for performance's sake, not to render DOM for unassigned key.
     else { return }

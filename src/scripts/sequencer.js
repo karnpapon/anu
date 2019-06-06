@@ -248,7 +248,26 @@ function Sequencer(){
 
   this.trigger2 = function() {
     let clock = seeq.clock()
-    this.midiNoteOn(0, 12, 16, this.getRandomInt(0, 6)) 
+    let i, index
+    let {
+      note,
+      length,
+      velocity,
+      octave,
+      channel, 
+      counter,
+    } = seeq.triggerCursor
+   
+    if( octave.length > 1){
+      i = octave.length
+      // offset index when click `nextBtn` to start from 0 not 1.
+      let offsetCounter = counter - 1
+      index = offsetCounter % i
+    } else {
+      index = 0
+    }
+    
+    this.midiNoteOn(channel, octave[index], note[index], velocity, length) 
     seeq.el.classList.add("trigger-free-mode")
     setTimeout(() => {
       seeq.el.classList.remove("trigger-free-mode")
@@ -296,6 +315,7 @@ function Sequencer(){
     clearTimeout(this.timer)
     clearTimeout(this.triggerFreeModeClock)
     seeq.cursor = seeq.reset()
+    seeq.resetInfoBar()
     seeq.data.el.classList.remove("trigger")
     // this.isSync = false
     seeq.isFreeModeAutoPlay = false

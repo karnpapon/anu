@@ -256,7 +256,12 @@ button:active{
   height: 85px;
   flex: 3;
   padding-bottom: 5px;
+  margin-right: 20px;
   justify-content: space-between;
+}
+
+.header-wrapper-status{
+  margin-right: 0;
 }
 
 .header-wrapper:nth-child(2){ padding-left: 10px;}
@@ -273,9 +278,9 @@ button:active{
   height: 110px;
 }
 .control-btn{ 
-  /* display: flex; */
+  display: flex;
   width: 100%;
-  /* justify-content: space-between; */
+  justify-content: space-between;
 }
 .control-panel{     
   height: 100%;
@@ -286,7 +291,26 @@ button:active{
 }
 
 .input-control{ width: 100px}
+.input-control-2 { width: 90px; margin-right: 5px;}
 .input-regex{ width: 151px}
+
+[data-ctrl="add"]{ 
+  border-top: 1px solid black !important;
+  border-bottom: 1px solid black !important;
+  border-left: 1px solid black !important;
+  border-right: unset !important;
+}
+
+[data-ctrl="subtract"]{ 
+  border-top: 1px solid black !important;
+  border-bottom: 1px solid black !important;
+  border-left: 1px solid black !important;
+  border-right: 1px solid black !important;
+}
+
+[data-search="cfg"] :active{ 
+  background-color: black !important;
+}
 
 div button:focus{ outline: none;}
 div button:hover{ cursor: pointer; background-color: var( --trigger-color );}
@@ -309,11 +333,16 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 
 .counter{ 
   display: flex; 
-  width: 100%;
+  /* width: 100%; */
   justify-content: space-between;
 }
 
 .counter p{ margin: 0; margin-right: 5px;}
+
+.toggle-btn{
+  background-color: black;
+  color: white;
+}
 
 
 .performance-details p{ font-size: 11px;}
@@ -368,6 +397,7 @@ app {
 .normal-search{
   width: 100%;
   height: auto; 
+  display: flex;
 }
 
 .flex-col{ 

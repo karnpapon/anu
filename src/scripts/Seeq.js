@@ -46,6 +46,7 @@ function Seeq(){
   this.isRetriggered = false
 
   this.isActive = false
+  this.isConfigToggle = false
 
   this.targetMute
   
@@ -104,6 +105,15 @@ function Seeq(){
     channel: 0,
     reverse: false
   }]
+
+  this.triggerCursor = {
+    note: ["C"],
+    length: 3,
+    velocity: 100,
+    octave: "4",
+    channel: 0, 
+    counter: 0
+  }
   this.selectIndex
 
   document.body.appendChild(this.appWrapper);
@@ -138,9 +148,12 @@ function Seeq(){
           <div class="header">
             <div class="title">find:</div>
             <div class="normal-search">
-              <input type="search" placeholder="" class="input-control">
-              <button data-search="next">next</button>
-              <button data-search="prev">prev</button>
+              <input type="search" placeholder="" class="input-control-2">
+              <div class="control-btn">
+                <button data-search="next">nxt</button>
+                <button data-search="prev">prv</button>
+                <button data-search="cfg">cfg</button>
+              </div>
             </div>
           </div>
           
@@ -159,7 +172,7 @@ function Seeq(){
           </div>
         </div>
         <div class="header-line"></div>
-        <div class="header-wrapper flex-col">
+        <div class="header-wrapper flex-col header-wrapper-status">
           <div class="tempo">
             <div class="tempo-details">
               <div>
@@ -185,8 +198,10 @@ function Seeq(){
             </div>
             <div class="counter">
               <p>>>></p>
-              <button data-ctrl="add">+</button>
-              <button data-ctrl="subtract">-</button>
+              <div class="control-btn">
+                <button data-ctrl="add">+</button>
+                <button data-ctrl="subtract">-</button>
+              </div>
             </div>
           </div> 
         </div>
@@ -209,6 +224,7 @@ function Seeq(){
     this.clearBtn = document.querySelector("button[data-search='clear']")
     this.prevBtn = document.querySelector("button[data-search='prev']")
     this.nextBtn = document.querySelector("button[data-search='next']")
+    this.configBtn = document.querySelector("button[data-search='cfg']")
     this.inputFetch = document.querySelector("input[data-fetch='fetch']")
     this.getText = document.querySelector("button[data-gettext='gettext']")
     this.setBtn = document.querySelector("button[data-ctrl='set']")
@@ -304,6 +320,7 @@ function Seeq(){
           // reset cursor to top.
           seeq.currentIndex = 0;
         }
+        seeq.triggerCursor['counter'] += 1
         seeq.isFreeModeAutoPlay = true
         seeq.jump()
       })
@@ -318,6 +335,20 @@ function Seeq(){
         }
         seeq.isFreeModeAutoPlay = false
         seeq.jump();
+      })
+
+      this.configBtn.addEventListener("click", function(){
+
+        let targetCursor
+        targetCursor = seeq.triggerCursor
+        seeq.isConfigToggle = !seeq.isConfigToggle
+        this.classList.toggle("toggle-btn")
+
+        if(seeq.isConfigToggle){
+          targetCursor = seeq.setMidiConfig(targetCursor)
+        } else {
+          seeq.resetInfoBar()
+        }
       })
 
       this.getText.addEventListener("click",function(){ 
@@ -449,85 +480,14 @@ function Seeq(){
                   }
                 }
 
-              
-
                 if (seeq.isShowInfo){
-                  let addNote, addLength, addVelocity, addChannel,
-                  note = targetCursor.note === undefined? "":targetCursor.note,
-                  octave = targetCursor.octave === undefined? "":targetCursor.octave,
-                  length = targetCursor.length === undefined? "":targetCursor.length,
-                  velocity = targetCursor.velocity === undefined? "":targetCursor.velocity,
-                  ch = targetCursor.channel === undefined? "": targetCursor.channel
-
-                  var noteWithOct = [];
-                  for (var i = 0; i < note.length; i++) {
-                    noteWithOct.push(`${ note[i] }${ octave[i]}`)
-                  }
-
                   if (seeq.isActive){
                     seeq.isInfoActived = true
-                    seeq.info.classList.add("limit-regex")
                     targetHighlight.classList.add("select-highlight")
-                    seeq.info.innerHTML = `
-                      <div class="operator-group info"> 
-                        <lf class="info-header">MIDI OUTPUT |</lf> 
-                        <form id="info" class="info-input">
-                          <lf> 
-                            <p>NOTE:</p>
-                            <input id="addnote" class="input-note" type="text" value=${noteWithOct}>
-                          </lf>
-                          <lf> 
-                            <p>LENGTH:</p>
-                            <input id="addlength" class="input-note" type="text" value=${length}>
-                          </lf>
-                          <lf> 
-                            <p>VEL:</p>
-                            <input id="addvelocity" class="input-note" type="text" value=${velocity}>
-                          </lf>
-                          <lf> 
-                            <p>CHAN:</p>
-                            <input id="addchannel" class="input-note" type="text" value=${ch}>
-                          </lf>
-                        </form>
-                      </div> 
-                      <button type="submit" value="Submit" form="info" class="send-midi">send</button>
-                  `
-                  addNote = document.getElementById('addnote')
-                  addLength = document.getElementById('addlength')
-                  addVelocity = document.getElementById('addvelocity')
-                  addChannel = document.getElementById('addchannel')
-
-                  addNote.addEventListener("input", function(e){ note = this.value })
-                  addLength.addEventListener("input", function(e){ length = this.value })
-                  addVelocity.addEventListener("input", function(e){ velocity = this.value })
-                  addChannel.addEventListener("input", function(e){ ch = this.value })
-                  document.querySelector('form.info-input').addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    let noteAndOct
-                    if (note.indexOf(',') > -1) { 
-                      noteAndOct = seeq.splitArrayNoteAndOctave(note)
-                    } else {
-                      noteAndOct = seeq.splitSingleNoteAndOctave(noteWithOct)
-                    }
-                    let noteOnly = []
-                    let octOnly = []
-
-                    noteAndOct.forEach(item => {
-                      noteOnly.push(item[0])
-                      octOnly.push(parseInt( item[1] ))
-                    })
-
-                    targetCursor.note = noteOnly
-                    targetCursor.octave = octOnly
-                    targetCursor.length = length
-                    targetCursor.velocity = velocity
-                    targetCursor.channel = parseInt( ch )
-                    
-                  });
+                    targetCursor = seeq.setMidiConfig(targetCursor)
                   } else {
-                    seeq.info.classList.remove("limit-regex")
                     targetHighlight.classList.remove("select-highlight")
-                    seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+                    seeq.resetInfoBar()
                     seeq.isInfoActived = false;
                     seeq.isShowInfo = false;
                   }
@@ -587,6 +547,11 @@ function Seeq(){
     return reset 
   }
 
+  this.resetInfoBar = function(){
+    seeq.info.classList.remove("limit-regex")
+    seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+  }
+
 
   this.clear = function(){
     this.isPlaying = false
@@ -636,6 +601,81 @@ function Seeq(){
 
   this.toggleIsSearchModeChanged = function(){
     this.isSearchModeChanged = !this.isSearchModeChanged
+  }
+
+  this.setMidiConfig = function(midiConfig){
+    let addNote, addLength, addVelocity, addChannel,
+    note = midiConfig.note === undefined? "":midiConfig.note,
+    octave = midiConfig.octave === undefined? "":midiConfig.octave,
+    length = midiConfig.length === undefined? "":midiConfig.length,
+    velocity = midiConfig.velocity === undefined? "":midiConfig.velocity,
+    ch = midiConfig.channel === undefined? "": midiConfig.channel
+
+    var noteWithOct = [];
+    for (var i = 0; i < note.length; i++) {
+      noteWithOct.push(`${ note[i] }${ octave[i]}`)
+    }
+
+    seeq.info.classList.add("limit-regex")
+    seeq.info.innerHTML = `
+      <div class="operator-group info"> 
+        <lf class="info-header">MIDI CONFIG |</lf> 
+        <form id="info" class="info-input">
+          <lf> 
+            <p>NOTE:</p>
+            <input id="addnote" class="input-note" type="text" value=${noteWithOct}>
+          </lf>
+          <lf> 
+            <p>LENGTH:</p>
+            <input id="addlength" class="input-note" type="text" value=${length}>
+          </lf>
+          <lf> 
+            <p>VEL:</p>
+            <input id="addvelocity" class="input-note" type="text" value=${velocity}>
+          </lf>
+          <lf> 
+            <p>CHAN:</p>
+            <input id="addchannel" class="input-note" type="text" value=${ch}>
+          </lf>
+        </form>
+      </div> 
+      <button type="submit" value="Submit" form="info" class="send-midi">send</button>
+    `
+    addNote = document.getElementById('addnote')
+    addLength = document.getElementById('addlength')
+    addVelocity = document.getElementById('addvelocity')
+    addChannel = document.getElementById('addchannel')
+
+    addNote.addEventListener("input", function(e){ note = this.value })
+    addLength.addEventListener("input", function(e){ length = this.value })
+    addVelocity.addEventListener("input", function(e){ velocity = this.value })
+    addChannel.addEventListener("input", function(e){ ch = this.value })
+    document.querySelector('form.info-input').addEventListener('submit', function (e) {
+      e.preventDefault();
+      let noteAndOct
+      if (note.indexOf(',') > -1) { 
+        noteAndOct = seeq.splitArrayNoteAndOctave(note)
+      } else {
+        noteAndOct = seeq.splitSingleNoteAndOctave(noteWithOct)
+      }
+      let noteOnly = []
+      let octOnly = []
+
+      noteAndOct.forEach(item => {
+        noteOnly.push(item[0])
+        octOnly.push(parseInt( item[1] ))
+      })
+
+      midiConfig.note = noteOnly
+      midiConfig.octave = octOnly
+      midiConfig.length = length
+      midiConfig.velocity = velocity
+      midiConfig.channel = parseInt( ch )
+
+      seeq.triggerCursor['counter'] = 0
+    })
+
+    return midiConfig
   }
 
   this.addSequencer = function(){

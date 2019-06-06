@@ -51,7 +51,7 @@ function Midi() {
     //   noteNumber = 0
     // }
 
-    console.log("channel", channel)
+    // console.log("channel", channel)
 
     convertedNote = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'].indexOf( note )
 
