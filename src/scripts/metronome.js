@@ -40,10 +40,10 @@ function Metronome(){
       // for displaying tick.
       this.notesInQueue.push( { note: beatNumber, time: time } );
   
-      if ( (this.noteResolution==1) && (beatNumber%2))
-          return; // we're not playing non-8th 16th notes
-      if ( (this.noteResolution==2) && (beatNumber%4))
-          return; // we're not playing non-quarter 8th notes
+      // if ( (this.noteResolution==1) && (beatNumber%2))
+      //     return; // we're not playing non-8th 16th notes
+      // if ( (this.noteResolution==2) && (beatNumber%4))
+      //     return; // we're not playing non-quarter 8th notes
   
       // create an oscillator
       var osc = this.audioContext.createOscillator();
@@ -84,9 +84,9 @@ function Metronome(){
         this.unlocked = true;
       }
   
-      this.isPlaying = !this.isPlaying;
+      seeq.isPlaying = !seeq.isPlaying;
   
-      if (this.isPlaying) {
+      if (seeq.isPlaying) {
           this.current16thNote = 0;
           this.nextNoteTime = this.audioContext.currentTime;
           window.parent.postMessage("start", '*')

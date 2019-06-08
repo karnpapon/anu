@@ -176,8 +176,8 @@ function Seeq(){
               <button data-ctrl="set">set</button>
               <button data-ctrl="run">run</button>
               <button data-ctrl="rev">rev</button>
-              <button data-ctrl="stop">stop</button>
-              <button data-ctrl="notation-mode">mode</button>
+              <button data-ctrl="clear">clear</button>
+              <button data-ctrl="nudge">nudge</button>
             </div>
             </div>
             
@@ -233,7 +233,6 @@ function Seeq(){
   document.addEventListener("DOMContentLoaded", function() {
     this.searchInput = document.querySelector("input[type='search']")
     this.searchRegExp = document.querySelector("input[type='search-regex']")
-    this.clearBtn = document.querySelector("button[data-search='clear']")
     this.prevBtn = document.querySelector("button[data-search='prev']")
     this.nextBtn = document.querySelector("button[data-search='next']")
     this.configBtn = document.querySelector("button[data-search='cfg']")
@@ -241,11 +240,12 @@ function Seeq(){
     this.getText = document.querySelector("button[data-gettext='gettext']")
     this.setBtn = document.querySelector("button[data-ctrl='set']")
     this.runStep = document.querySelector("button[data-ctrl='run']")
-    this.stopBtn = document.querySelector("button[data-ctrl='stop']")
+    this.clearBtn = document.querySelector("button[data-ctrl='clear']")
+    this.nudgeBtn = document.querySelector("button[data-ctrl='nudge']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
     this.addBtn = document.querySelector("button[data-ctrl='add']")
     this.subtractBtn = document.querySelector("button[data-ctrl='subtract']")
-    this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
+    // this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
     this.logo = document.querySelector("div[data-logo='seeq']")
     var context = document.querySelector("p.masking")
@@ -387,13 +387,17 @@ function Seeq(){
       })
 
       this.runStep.addEventListener("click", function(){
-        seeq.metronome.play()
+        // seeq.metronome.play()
         seeq.play()
       })
 
 
-      this.stopBtn.addEventListener("click", function(){
+      this.clearBtn.addEventListener("click", function(){
        seeq.clear()
+      })
+
+      this.nudgeBtn.addEventListener("click", function(){
+       seeq.nudge()
       })
 
       this.revBtn.addEventListener("click", function () {
@@ -414,12 +418,12 @@ function Seeq(){
         seeq.seq.setCounterDisplay()
       })
 
-      this.notationMode.addEventListener("click", function(){
-        // separated search mode from toggle mode 
-        // to avoid messing up when cursor is actived.
-        seeq.toggleIsSearchModeChanged() 
-        seeq.textConvertor()
-      })
+      // this.notationMode.addEventListener("click", function(){
+      //   // separated search mode from toggle mode 
+      //   // to avoid messing up when cursor is actived.
+      //   seeq.toggleIsSearchModeChanged() 
+      //   seeq.textConvertor()
+      // })
 
       // observing when Highlight elements inserted into DOM.
       // handle add/remove/mute/unmute highlight.
@@ -584,6 +588,11 @@ function Seeq(){
     this.content.unmark()
   }
 
+  this.nudge = function(){
+    this.isPlaying = false
+    this.seq.nudged()
+  }
+
   this.removeHighlightsEl = function(index){
     this.matchedSelectPosition.splice(index, 1)
     this.selectAreaLength.splice(index, 1)
@@ -694,7 +703,6 @@ function Seeq(){
       midiConfig.length = length
       midiConfig.velocity = velocity
       midiConfig.channel = parseInt( ch )
-
       seeq.triggerCursor['counter'] = 0
     })
 
@@ -896,7 +904,7 @@ function Seeq(){
   }
 
   this.play = function(){
-    this.isPlaying = true 
+    // this.isPlaying = true 
     this.isReverse = false
 
     // remove operator class if it's actived.

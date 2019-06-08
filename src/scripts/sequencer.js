@@ -18,7 +18,6 @@ function Sequencer(){
   this.targetHighlight
   this.isMuted = false
   this.syncFreeMode = false
-  this.clockCounter = 0
   this.isClockSync = false
   this.triggerFreeModeClock = null
   this.beatRatio = 4
@@ -321,13 +320,27 @@ function Sequencer(){
     seeq.data.el.classList.remove("trigger")
     // this.isSync = false
     seeq.isFreeModeAutoPlay = false
-    this.clockCounter = 0
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []
     seeq.searchValue = ""
     seeq.isTextSelected = false
     this.set()
     window.parent.postMessage("stop", '*')
+  }
+
+  this.nudged = function(){
+    clearTimeout(this.timer)
+    this.resetSelectedRange()
+    seeq.resetInfoBar()
+    seeq.data.el.classList.remove("trigger")
+    this.set()
+    window.parent.postMessage("stop", '*') 
+  }
+
+  this.resetSelectedRange = function(){
+    seeq.cursor.forEach((cursor, index, array) => { 
+      array[index].position = seeq.matchedSelectPosition[index]
+    })
   }
   
 }
