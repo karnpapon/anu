@@ -6,6 +6,9 @@ function Seeq(){
   const Clock = require('./clock')
   const IO = require('./io')
   const Keyboard = require('./keyboard')
+  const Metronome = require('./metronome')
+  // const MetronomeWorker = require('./metronomeworker')
+  
 
   this.data = new Data
   this.io = new IO(this)
@@ -13,7 +16,13 @@ function Seeq(){
   this.seq = new Sequencer()
   this.keyboard = new Keyboard(this)
   this.clocks = [new Clock(120)] 
+  this.metronome = new Metronome()
+  // this.metronomeWorker = new MetronomeWorker()
   this.selectedClock = 0
+
+  this.timerID=null;
+  this.interval=100;
+  this.audioContext = null
 
   this.appWrapper = document.createElement("appwrapper")
   this.el = document.createElement("app");
@@ -81,7 +90,7 @@ function Seeq(){
   this.lines = ""
   this.textLineBuffers = ""
 
-  this.isSelectDrag = false
+  this.isTextSelected = false
   this.isReverse = false
   this.isGettingData = false
 
@@ -245,6 +254,8 @@ function Seeq(){
     seeq.content = new Mark(context)
     seeq.logoSeeq = new Mark( this.logo )
 
+    // seeq.audioContext = new AudioContext()
+    seeq.metronome.init()
    
     this.inputFetch.focus()
     this.inputFetch.addEventListener("input", function(){
@@ -367,6 +378,7 @@ function Seeq(){
       })
 
       this.runStep.addEventListener("click", function(){
+        seeq.metronome.play()
         seeq.play()
       })
 
@@ -592,9 +604,9 @@ function Seeq(){
         this.startPos = match.index
         this.matchedSelectPosition.push( this.startPos )
       }
-      this.isSelectDrag = true
+      this.isTextSelected = true
     } else {
-      this.isSelectDrag = false
+      this.isTextSelected = false
     }
     this.selectAreaLength.push(this.startPos + length)
   }
@@ -885,9 +897,9 @@ function Seeq(){
     this.cursor.forEach( cursor => cursor.reverse = false)
 
     // avoiding speeded up increment.
-    clearTimeout(seeq.seq.timer)
+    // clearTimeout(seeq.seq.timer)
     this.findMatchedPosition()
-    this.seq.increment()
+    // this.seq.increment()
   }
 
   this.splitArrayNoteAndOctave = function(inputText) {
@@ -945,18 +957,18 @@ function Seeq(){
     return this.clocks[this.selectedClock]
   }
 
-  this.nextClock = function () {
-    const previousClock = this.clock()
-    if (previousClock) {
-      previousClock.setRunning(false)
-      previousClock.setCallback(() => { })
-    }
-    this.selectedClock = (this.selectedClock + 1) % this.clocks.length
-    this.clock().setRunning(!this.isPaused)
-    this.clock().setCallback(() => this.run())
+  // this.nextClock = function () {
+  //   const previousClock = this.clock()
+  //   if (previousClock) {
+  //     previousClock.setRunning(false)
+  //     previousClock.setCallback(() => { })
+  //   }
+  //   this.selectedClock = (this.selectedClock + 1) % this.clocks.length
+  //   this.clock().setRunning(!this.isPaused)
+  //   this.clock().setCallback(() => this.run())
 
-    // this.update()
-  }
+  //   // this.update()
+  // }
 
   this.setSpeed = function (bpm) {
     if (this.clock().canSetBpm()) {

@@ -96,7 +96,7 @@ function Sequencer(){
 
   this.setSelectLoopRange = function(){
     // limited sequence within select range.
-    if( !seeq.isSelectDrag ) { return }
+    if( !seeq.isTextSelected ) { return }
     seeq.cursor.forEach( ( cursor, index, array ) => {
       let cursorPosition, offsetReverseCursor
       // reversed position compensation.
@@ -124,20 +124,22 @@ function Sequencer(){
 
   this.increment = function(){
 
-    var length = seeq.data.text.innerText.length
-    // boundary.
-    seeq.cursor.forEach( ( cursor, index, array ) => {
-      if( cursor.position > length-1){
-        array[index].position = 0
-      } else if ( seeq.isReverse && cursor.position < 0){
-        array[index].position = length - 1
-      }
-      this.set() 
-    })
-
+    if( !seeq.isTextSelected ) { 
+      var length = seeq.data.text.innerText.length
+      // boundary.
+      seeq.cursor.forEach( ( cursor, index, array ) => {
+        if( cursor.position > length-1){
+          array[index].position = 0
+        } else if ( seeq.isReverse && cursor.position < 0){
+          array[index].position = length - 1
+        }
+        this.set() 
+      })
+    }
+    this.set() 
     this.counting()
     this.setSelectLoopRange()
-    this.run()
+    // this.run()
     this.trigger()
   }
 
@@ -169,7 +171,7 @@ function Sequencer(){
     let counterIndex
 
     if( seeq.searchValue !== ""){
-      if(seeq.isSelectDrag){
+      if(seeq.isTextSelected){
         seeq.cursor.forEach((cursor, index, array) => {
           if (!cursor.isMuted) {
             // trigger letters.
@@ -323,8 +325,9 @@ function Sequencer(){
     seeq.selectAreaLength = []
     seeq.matchedSelectPosition = []
     seeq.searchValue = ""
-    seeq.isSelectDrag = false
+    seeq.isTextSelected = false
     this.set()
+    window.parent.postMessage("stop", '*')
   }
   
 }
