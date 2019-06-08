@@ -15,14 +15,17 @@ function Seeq(){
   this.midi = new Midi()
   this.seq = new Sequencer()
   this.keyboard = new Keyboard(this)
-  this.clocks = [new Clock(120)] 
+  this.masterClock = [new Clock(120)] 
   this.metronome = new Metronome()
   // this.metronomeWorker = new MetronomeWorker()
   this.selectedClock = 0
 
+  this.bpmNumber
+  this.metronomeBtn
   this.timerID=null;
   this.interval=100;
   this.audioContext = null
+  this.isBPMtoggle = false
 
   this.appWrapper = document.createElement("appwrapper")
   this.el = document.createElement("app");
@@ -199,15 +202,15 @@ function Seeq(){
                 </div>
               </div>
               <div class="performance-details">
-                <p data-ctrl="bpm">120</p>
-                <p data-ctrl="current">4</p> 
+                <p class="init-bpm" data-ctrl="bpm">120</p>
+                <p data-ctrl="current">16th</p> 
                 <p data-ctrl="total">--</p>
                 <p data-ctrl="cpu">--</p>
               </div>
             </div>
             <div class="counter">
-              <p>>>></p>
-              <div class="control-btn">
+              <button data-ctrl="metronome">*</button>
+              <div class="control-btn wdth-auto">
                 <button data-ctrl="add">+</button>
                 <button data-ctrl="subtract">-</button>
               </div>
@@ -247,6 +250,7 @@ function Seeq(){
     this.logo = document.querySelector("div[data-logo='seeq']")
     var context = document.querySelector("p.masking")
     seeq.bpmNumber = document.querySelector("p[data-ctrl='bpm']")
+    seeq.metronomeBtn = document.querySelector("button[data-ctrl='metronome']")
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
     seeq.cpuUsage = document.querySelector("p[data-ctrl='cpu']")
@@ -348,6 +352,11 @@ function Seeq(){
         seeq.jump();
       })
 
+      seeq.metronomeBtn.addEventListener("click", function(){
+        seeq.isBPMtoggle = !seeq.isBPMtoggle 
+        seeq.metronomeBtn.classList.toggle("toggle-btn") 
+      })
+
       this.configBtn.addEventListener("click", function(){
 
         let targetCursor
@@ -395,11 +404,13 @@ function Seeq(){
       })
 
       this.addBtn.addEventListener("click", function(){
-        seeq.seq.beatRatio += 1
+        // seeq.seq.beatRatio += 1
+        seeq.modSpeed(1); 
         seeq.seq.setCounterDisplay()
       })
       this.subtractBtn.addEventListener("click", function(){
-        seeq.seq.beatRatio -= 1
+        // seeq.seq.beatRatio -= 1
+        seeq.modSpeed(-1); 
         seeq.seq.setCounterDisplay()
       })
 
@@ -792,7 +803,7 @@ function Seeq(){
       }
       // this.sendOsc() 
       // seeq.isFreeModeAutoPlay = true
-      seeq.seq.trigger2()
+      seeq.seq.triggerOnClick()
     }
   }
 
@@ -954,7 +965,7 @@ function Seeq(){
   
 
   this.clock = function () {
-    return this.clocks[this.selectedClock]
+    return this.masterClock[this.selectedClock]
   }
 
   // this.nextClock = function () {
@@ -963,7 +974,7 @@ function Seeq(){
   //     previousClock.setRunning(false)
   //     previousClock.setCallback(() => { })
   //   }
-  //   this.selectedClock = (this.selectedClock + 1) % this.clocks.length
+  //   this.selectedClock = (this.selectedClock + 1) % this.masterClock.length
   //   this.clock().setRunning(!this.isPaused)
   //   this.clock().setCallback(() => this.run())
 

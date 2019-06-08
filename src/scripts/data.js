@@ -59,7 +59,7 @@ function Data( ){
 
     this.update = function(txt){
       this.dataText = txt
-      var limitedChar = 1400
+      var limitedChar = 1000
       if(this.dataText && this.dataText.length){
         if( this.dataText.length > limitedChar ){
           var trimmedText = this.dataText.substring(0, limitedChar - 100 )

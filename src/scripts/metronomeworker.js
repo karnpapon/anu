@@ -6,7 +6,7 @@ function MetronomeWorker(){
 		
 	window.addEventListener('message', e => {
 		if (e.data=="start") {
-			console.log("starting");
+			// console.log("starting");
 			this.timerID=setInterval(function(){window.parent.postMessage("tick", '*');},this.interval)
 		}
 		else if (e.data.interval) {
@@ -19,7 +19,7 @@ function MetronomeWorker(){
 			}
 		}
 		else if (e.data=="stop") {
-			console.log("stopping");
+			// console.log("stopping");
 			clearInterval(this.timerID);
 			this.timerID=null;
 		}

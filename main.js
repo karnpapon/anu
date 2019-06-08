@@ -1,8 +1,8 @@
 const {app, BrowserWindow} = require('electron')
 // require('electron-reload')(__dirname);
-// const Server = require('./server');
-// const options = require('./options');
-// const server = new Server(options);
+const Server = require('./server');
+const options = require('./options');
+const server = new Server(options);
 const url = require('url')
 const path = require('path')
 
@@ -40,12 +40,12 @@ function createWindow () {
 app.on('ready', function (){
   createWindow()
 
-  // server.start();
+  server.start();
   // server.hello();
 })
 
 app.on('window-all-closed', () => {
-  // server.stop();
+  server.stop();
 
   if (process.platform !== 'darwin') {
     app.quit();

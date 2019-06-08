@@ -25,7 +25,7 @@ function Metronome(){
     
     this.nextNote = function()  {
         // Advance current note and time by a 16th note...
-        var secondsPerBeat = 60.0 / this.tempo;    // Notice this picks up the CURRENT 
+        var secondsPerBeat = 60.0 / seeq.clock();    // Notice this picks up the CURRENT 
                                               // tempo value to calculate beat length.
         this.nextNoteTime += 0.25 * secondsPerBeat;    // Add beat length to last beat time
     
@@ -47,13 +47,19 @@ function Metronome(){
   
       // create an oscillator
       var osc = this.audioContext.createOscillator();
-      osc.connect( this.audioContext.destination );
+      let gain = this.audioContext.createGain();
+
+      gain.gain.value = seeq.isBPMtoggle? 0.125:0
+
+      osc.connect(gain);
+      gain.connect(this.audioContext.destination);
+
       if (beatNumber % 16 === 0)    // beat 0 == high pitch
-          osc.frequency.value = 880.0;
+        osc.frequency.value = 880.0;
       else if (beatNumber % 4 === 0 )    // quarter notes = medium pitch
-          osc.frequency.value = 440.0;
+        osc.frequency.value = 440.0;
       else                        // other 16th notes = low pitch
-          osc.frequency.value = 220.0;
+        osc.frequency.value = 220.0;
   
       osc.start( time );
       osc.stop( time + this.noteLength );
@@ -96,14 +102,21 @@ function Metronome(){
         self.notesInQueue.splice(0,1);   // remove note from queue
       }
   
-      // We only need to draw if the note has moved.
       if (this.last16thNoteDrawn != currentNote) {
-          console.log("tick!!!!")
-          seeq.seq.increment()
-          this.last16thNoteDrawn = currentNote;
+        seeq.seq.increment()
+        // self.showBPM(this.last16thNoteDrawn)
+        this.last16thNoteDrawn = currentNote;
       }
     
       window.requestAnimationFrame(seeq.metronome.draw);
+    }
+
+    this.showBPM = function(beat){
+        if(beat % 4){
+          seeq.bpmNumber.classList.remove("bpm-active") 
+        } else {
+          seeq.bpmNumber.classList.add("bpm-active")
+        }
     }
     
     this.init = function(){

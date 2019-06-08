@@ -82,9 +82,9 @@ class MidiClock {
     const iter = midiAccess.inputs.values()
     // console.log("iterrr = ", iter)
     for (let i = iter.next(); i && !i.done; i = iter.next()) {
-      seeq.clocks.push(new WrappedClock(i.value))
+      seeq.masterClock.push(new WrappedClock(i.value))
     }
-    // console.log("midi clocks = ", seeq.clocks)
+    // console.log("midi masterClock = ", seeq.masterClock)
   }
 }
 

@@ -282,6 +282,11 @@ button:active{
   width: 100%;
   justify-content: space-between;
 }
+
+.wdth-auto{
+  width: auto;
+}
+
 .control-panel{     
   height: 100%;
   width: 100%;
@@ -333,7 +338,7 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 
 .counter{ 
   display: flex; 
-  /* width: 100%; */
+  width: 100%;
   justify-content: space-between;
 }
 
@@ -342,6 +347,14 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 .toggle-btn{
   background-color: black;
   color: white;
+}
+
+.bpm-active{
+  visibility: hidden;
+}
+
+.init-bpm{
+  display: block;
 }
 
 
@@ -471,7 +484,7 @@ div input:focus{ outline: none;}
   margin-top: 12px;
   transition: all .2s ease-out;
 }
-.content p{white-space: pre-wrap; margin-top: 0;}
+.content p{white-space: pre-wrap; margin-top: 0; line-height: 20px;}
 /* .content p{
   word-break: break-all;
   word-wrap: break-word;

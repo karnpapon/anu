@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="links/style.css">
     <link rel="stylesheet" href="links/fonts.css">
     <script src="../node_modules/mark.js/dist/mark.min.js"></script>
-    <!-- <script src="../node_modules/socket.io-client/dist/socket.io.js"></script> -->
+    <script src="../node_modules/socket.io-client/dist/socket.io.js"></script>
     <script src="../node_modules/TextHighlighter/src/TextHighlighter.js"></script>
     <style>
       ::selection {
@@ -25,7 +25,7 @@
         // const os 	= require('os-utils');
         // const OSC = require('osc-js')
         const axios = require('axios');
-        // var socket = io('http://localhost:3000');
+        var socket = io('http://localhost:3000');
 
         
         // const options = { send: { port: 8000 } }
@@ -38,15 +38,16 @@
         //     seeq.seq.setCPUUsageDisplay(v)
         //   }, 1000);
         // });
-        // socket.on('beat', function (data) {
-        //   const { beat, bpm } = data
-        //   if(beat % 4 == 0){
-        //     seeq.seq.connect( data )
-        //     if( seeq.isPlaying ){
-        //       seeq.seq.countIn( beat )
-        //     }
-        //   }
-        // }); 
+        socket.on('beat', function (data) {
+          const { beat, bpm } = data
+          if(beat % 4 == 0){
+            // seeq.seq.connect( data )
+            // if( seeq.isPlaying ){
+            //   seeq.seq.countIn( beat )
+            // }
+            console.log("beat from Ableton", beat)
+          }
+        }); 
 
         // socket.on('bpmchange', function(data){
         //   const { bpm } = data

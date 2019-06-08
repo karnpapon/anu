@@ -248,7 +248,7 @@ function Sequencer(){
     }
   }
 
-  this.trigger2 = function() {
+  this.triggerOnClick = function() {
     let clock = seeq.clock()
     let i, index
     let {
@@ -277,21 +277,21 @@ function Sequencer(){
   }
 
 
-  this.triggerFreeMode = function(){
+  // this.triggerFreeMode = function(){
 
-    let self = this
-    let clock = seeq.clock()
+  //   let self = this
+  //   let clock = seeq.clock()
 
-      if( seeq.isFreeModeAutoPlay){
-        this.midiNoteOn(0, 12 ,16, this.getRandomInt(0, 6))
-        seeq.el.classList.add("trigger-free-mode")
-        setTimeout(() => {
-          seeq.el.classList.remove("trigger-free-mode") 
-        }, clock.bpm);
-      } else {
-        return
-      }
-  }
+  //     if( seeq.isFreeModeAutoPlay){
+  //       this.midiNoteOn(0, 12 ,16, this.getRandomInt(0, 6))
+  //       seeq.el.classList.add("trigger-free-mode")
+  //       setTimeout(() => {
+  //         seeq.el.classList.remove("trigger-free-mode") 
+  //       }, clock.bpm);
+  //     } else {
+  //       return
+  //     }
+  // }
 
   this.midiNoteOn = function(channel = 0, octave = 4, note = this.getRandomInt(0,11),velocity = 100, length = 7){
     seeq.midi.send({ channel ,octave, note ,velocity ,length })
@@ -315,7 +315,7 @@ function Sequencer(){
 
   this.stop = function(){
     clearTimeout(this.timer)
-    clearTimeout(this.triggerFreeModeClock)
+    // clearTimeout(this.triggerFreeModeClock)
     seeq.cursor = seeq.reset()
     seeq.resetInfoBar()
     seeq.data.el.classList.remove("trigger")
