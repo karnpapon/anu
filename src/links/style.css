@@ -299,14 +299,14 @@ button:active{
 .input-control-2 { width: 90px; margin-right: 5px;}
 .input-regex{ width: 151px}
 
-[data-ctrl="add"]{ 
+[data-ctrl="subtract"]{ 
   border-top: 1px solid black !important;
   border-bottom: 1px solid black !important;
   border-left: 1px solid black !important;
   border-right: unset !important;
 }
 
-[data-ctrl="subtract"]{ 
+[data-ctrl="add"]{ 
   border-top: 1px solid black !important;
   border-bottom: 1px solid black !important;
   border-left: 1px solid black !important;

@@ -87,7 +87,7 @@ function Sequencer(){
     seeq.totalNumber.innerHTML = seeq.data.text.innerText.length
   }
 
-  this.selectedTextArea = function(){
+  this.selectedRangeStartIndex = function(){
     seeq.cursor.forEach( ( cursor, index, array ) => {
       array[index].position = seeq.matchedSelectPosition[index]
     })
@@ -107,10 +107,10 @@ function Sequencer(){
         offsetReverseCursor = 0
       }
 
-      if( cursorPosition > seeq.selectAreaLength[index] - 1){
+      if( cursorPosition > seeq.selectedRangeLength[index] - 1){
         array[index].position = seeq.matchedSelectPosition[index]
       } else if ( cursorPosition < seeq.matchedSelectPosition[index]){
-        array[index].position  = seeq.selectAreaLength[index] - 1 +  offsetReverseCursor
+        array[index].position  = seeq.selectedRangeLength[index] - 1 +  offsetReverseCursor
       }
     })
   }
@@ -320,7 +320,7 @@ function Sequencer(){
     seeq.data.el.classList.remove("trigger")
     // this.isSync = false
     seeq.isFreeModeAutoPlay = false
-    seeq.selectAreaLength = []
+    seeq.selectedRangeLength = []
     seeq.matchedSelectPosition = []
     seeq.searchValue = ""
     seeq.isTextSelected = false

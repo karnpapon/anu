@@ -59,6 +59,7 @@ function Seeq(){
 
   this.isActive = false
   this.isConfigToggle = false
+  this.isLinkToggle = false
 
   this.targetMute
   
@@ -80,7 +81,11 @@ function Seeq(){
   this.notation = ""
   this.textSelect = ""
   this.matchedSelectPosition = []
-  this.selectAreaLength = []
+  this.selectedRangeLength = []
+  this.textBuffers = ""
+
+
+  this.ranges = [];
   
 
   this.searchValue = ""
@@ -173,7 +178,7 @@ function Seeq(){
           <div class="control-panel">
             <div class="title">Control:</div>
             <div class="control-btn">
-              <button data-ctrl="set">set</button>
+              <button data-ctrl="link">link</button>
               <button data-ctrl="run">run</button>
               <button data-ctrl="rev">rev</button>
               <button data-ctrl="clear">clear</button>
@@ -211,8 +216,8 @@ function Seeq(){
             <div class="counter">
               <button data-ctrl="metronome">*</button>
               <div class="control-btn wdth-auto">
-                <button data-ctrl="add">+</button>
-                <button data-ctrl="subtract">-</button>
+              <button data-ctrl="subtract">-</button>
+              <button data-ctrl="add">+</button>
               </div>
             </div>
           </div> 
@@ -222,13 +227,27 @@ function Seeq(){
     `;
 
     this.data.build()
-    this.io.start()
+    // this.io.start()
     setTimeout(seeq.show,200)
   }
 
-  this.show = function(){
+  this.show = function () {
     seeq.el.style.opacity = 1;
   }
+
+  socket.on('beat', function (data) {
+    const { beat, bpm } = data
+
+    // set clock source from Ableton.
+    if (beat % 4 == 0 && bpm != seeq.clock().getBpm()) {
+      seeq.clock().setBpm(bpm)
+    }
+
+    if (beat % 4 == 0 && !seeq.isPlaying && seeq.isLinkToggle ) {
+      seeq.play()
+      seeq.metronome.play()
+    }
+  });
 
   document.addEventListener("DOMContentLoaded", function() {
     this.searchInput = document.querySelector("input[type='search']")
@@ -237,9 +256,10 @@ function Seeq(){
     this.nextBtn = document.querySelector("button[data-search='next']")
     this.configBtn = document.querySelector("button[data-search='cfg']")
     this.inputFetch = document.querySelector("input[data-fetch='fetch']")
-    this.getText = document.querySelector("button[data-gettext='gettext']")
-    this.setBtn = document.querySelector("button[data-ctrl='set']")
-    this.runStep = document.querySelector("button[data-ctrl='run']")
+    this.getTextBtn = document.querySelector("button[data-gettext='gettext']")
+    // this.setBtn = document.querySelector("button[data-ctrl='set']")
+    this.linkBtn = document.querySelector("button[data-ctrl='link']")
+    this.runBtn = document.querySelector("button[data-ctrl='run']")
     this.clearBtn = document.querySelector("button[data-ctrl='clear']")
     this.nudgeBtn = document.querySelector("button[data-ctrl='nudge']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
@@ -260,6 +280,9 @@ function Seeq(){
 
     // seeq.audioContext = new AudioContext()
     seeq.metronome.init()
+    seeq.fetch()
+  
+    console.log("socket before", socket)
    
     this.inputFetch.focus()
     this.inputFetch.addEventListener("input", function(){
@@ -371,22 +394,30 @@ function Seeq(){
         }
       })
 
-      this.getText.addEventListener("click",function(){ 
+      this.getTextBtn.addEventListener("click",function(){ 
         seeq.data.clear()
-        if( seeq.fetchSearchInput !== ""){
-          seeq.isGettingData = true
-          seeq.getData()
+        seeq.fetch()
+      })
+
+      // this.setBtn.addEventListener("click", function(){
+      //   seeq.setCursor()
+      //   seeq.seq.setCounterDisplay()
+      // })
+
+      this.linkBtn.addEventListener("click", function(){
+        seeq.isLinkToggle = !seeq.isLinkToggle
+        this.classList.toggle("toggle-btn")
+
+        if (seeq.isLinkToggle) {
+          socket.connect(0)
         } else {
-          seeq.data.update('no input value...')
+          socket.disconnect(0);
         }
+        console.log("socket post", socket)
+       
       })
 
-      this.setBtn.addEventListener("click", function(){
-        seeq.setCursor()
-        seeq.seq.setCounterDisplay()
-      })
-
-      this.runStep.addEventListener("click", function(){
+      this.runBtn.addEventListener("click", function(){
         // seeq.metronome.play()
         seeq.play()
       })
@@ -401,10 +432,14 @@ function Seeq(){
       })
 
       this.revBtn.addEventListener("click", function () {
-        seeq.isReverse = true
+        seeq.isReverse = !seeq.isReverse
 
-        // refresh position avoiding messed up trigger.
-        seeq.findMatchedPosition()
+        if(seeq.isReverse){
+          // refresh position avoiding messed up trigger.
+          seeq.findMatchedPosition()
+        } else {
+          seeq.play()
+        }
       })
 
       this.addBtn.addEventListener("click", function(){
@@ -586,6 +621,7 @@ function Seeq(){
     this.data.hltr.removeHighlights();
     clearInterval(this.triggerTimer)
     this.content.unmark()
+    this.startFetch()
   }
 
   this.nudge = function(){
@@ -593,17 +629,31 @@ function Seeq(){
     this.seq.nudged()
   }
 
+  this.fetch = function(){
+    seeq.startFetch()
+
+    // disconnect at initial state (`linkBtn` is not actived).
+    // to handle clock freely, 
+    // otherwise it'll manage to adjust clock to Ableton clock.
+    // ( clock will keeping reset to the default, 120 BPM).
+    socket.disconnect(0)
+    seeq.setCursor()
+    seeq.play()
+    seeq.metronome.play()
+  }
+
   this.removeHighlightsEl = function(index){
     this.matchedSelectPosition.splice(index, 1)
-    this.selectAreaLength.splice(index, 1)
+    this.selectedRangeLength.splice(index, 1)
     this.cursor.splice(index, 1)
   }
 
   this.getSelectionText = function() {
     var text = "";
     var textCount = 0
+
     if (window.getSelection) {
-      text = window.getSelection().toString();
+      text = window.getSelection().toString()
     } else if (document.selection && document.selection.type != "Control") {
       text = document.selection.createRange().text;
     }
@@ -615,20 +665,21 @@ function Seeq(){
     var search = ""
     var match
     var length
-
+    
     if(this.textSelect !== ""){
       length = this.textSelect.length
+      // this.startPos = this.textBuffers.anchorOffset
       search = new RegExp(this.textSelect, "gi")
-      // this.matchedSelectPosition = []
       while (match = search.exec(searchText)) {
         this.startPos = match.index
         this.matchedSelectPosition.push( this.startPos )
       }
+      // this.matchedSelectPosition.push(this.startPos)
       this.isTextSelected = true
     } else {
       this.isTextSelected = false
     }
-    this.selectAreaLength.push(this.startPos + length)
+    this.selectedRangeLength.push(this.startPos + length)
   }
 
   this.toggleIsSearchModeChanged = function(){
@@ -729,7 +780,7 @@ function Seeq(){
   
   this.sortingIndex = function(){
     this.matchedSelectPosition.sort(function (a, b) { return a - b });
-    this.selectAreaLength.sort(function (a, b) { return a - b });
+    this.selectedRangeLength.sort(function (a, b) { return a - b });
     this.cursor.sort(function (a, b) { return a.position - b.position });
    
   }
@@ -860,6 +911,15 @@ function Seeq(){
     // console.log("match matchedPositionWithLength", this.matchedPositionWithLength)
   }
 
+  this.startFetch = function(){
+    if (seeq.fetchSearchInput !== "") {
+      seeq.isGettingData = true
+      seeq.getData()
+    } else {
+      seeq.data.update('please give me some input value...')
+    }
+  }
+
   this.getData = function () {
     if( this.isGettingData){
       seeq.data.loading.style.display = 'block' 
@@ -882,6 +942,7 @@ function Seeq(){
               seeq.seq.setTotalLenghtCounterDisplay()
               seeq.isGettingData = false
               seeq.data.loading.style.display = 'none'  
+             
               // seeq.extractLinesParagraph()
             } else {
               seeq.data.update("sorry, please try again..")
@@ -904,7 +965,7 @@ function Seeq(){
   }
 
   this.play = function(){
-    // this.isPlaying = true 
+    this.isPlaying = true 
     this.isReverse = false
 
     // remove operator class if it's actived.

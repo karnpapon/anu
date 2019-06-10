@@ -38,27 +38,8 @@
         //     seeq.seq.setCPUUsageDisplay(v)
         //   }, 1000);
         // });
-        socket.on('beat', function (data) {
-          const { beat, bpm } = data
-          if(beat % 4 == 0 && bpm != seeq.clock().getBpm()){
-            seeq.clock().setBpm(bpm)
-            // seeq.seq.connect( data )
-            // if( seeq.isPlaying ){
-            //   seeq.seq.countIn( beat )
-            // }
-          }
-
-          if(beat % 4 == 0 && !seeq.isPlaying){
-            seeq.metronome.play()
-            // seeq.play() 
-          }
-        }); 
-
-        // socket.on('bpmchange', function(data){
-        //   const { bpm } = data
-        //   seeq.setBPMdisplay(Math.round( bpm )) 
-        // })
-
+        
+        
     </script>
   </body>
 </html>

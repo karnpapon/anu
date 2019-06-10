@@ -22,14 +22,14 @@ function Data( ){
     this.hltr = new TextHighlighter(this.selectedText,{
       highlightedClass: 'hltr',
       onAfterHighlight: function(){
-        seeq.textSelect = seeq.getSelectionText()
+        // seeq.textSelect = seeq.getSelectionText()
         seeq.getSelectionTextPosition()
-        
+
         // start adding new cursor.
-        if (seeq.selectAreaLength.length > 1 ){
+        if (seeq.selectedRangeLength.length > 1 ){
           seeq.addCursorWhenSelectRange()
         }
-        seeq.seq.selectedTextArea()
+        seeq.seq.selectedRangeStartIndex()
         seeq.getHighlightElement()
       }
     });
@@ -89,9 +89,10 @@ function Data( ){
 
       this.selectedText.addEventListener("mousemove", function () {
         if (this.flag == 1) {
-          text = window.getSelection().toString();
+          seeq.textBuffers = window.getSelection()
+          seeq.textSelect = seeq.textBuffers.toString();
           seeq.info.classList.add("limit-regex")
-          seeq.info.innerHTML = `<div class="info-group"><lf>INFO</lf> | </div> <lft>STEP-LENGTH : <p>${text.length}</p> </lft>`
+          seeq.info.innerHTML = `<div class="info-group"><lf>INFO</lf> | </div> <lft>STEP-LENGTH : <p>${seeq.textSelect.length}</p> </lft>`
           }
       });
 

@@ -84,8 +84,6 @@ function Metronome(){
         this.unlocked = true;
       }
   
-      seeq.isPlaying = !seeq.isPlaying;
-  
       if (seeq.isPlaying) {
           this.current16thNote = 0;
           this.nextNoteTime = this.audioContext.currentTime;
