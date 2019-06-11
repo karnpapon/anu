@@ -61,7 +61,6 @@ function Midi() {
 
   this.set = function (data = this.stack, device) {
     const channel = convertChannel(data['channel'])
-    console.log("data", data)
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity']
     const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)

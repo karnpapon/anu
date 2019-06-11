@@ -83,6 +83,8 @@ function Seeq(){
   this.matchedSelectPosition = []
   this.selectedRangeLength = []
   this.textBuffers = ""
+  this.selectedIndexRef =""
+  this.filteredPos = ""
 
 
   this.ranges = [];
@@ -110,7 +112,7 @@ function Seeq(){
 
   this.cursor = [{
     position: 0,
-    offsetReverse: false,
+    isCursorOffsetReverse: false,
     isMuted: false,
     up: 0,
     down: 0,
@@ -179,7 +181,6 @@ function Seeq(){
             <div class="title">Control:</div>
             <div class="control-btn">
               <button data-ctrl="link">link</button>
-              <button data-ctrl="run">run</button>
               <button data-ctrl="rev">rev</button>
               <button data-ctrl="clear">clear</button>
               <button data-ctrl="nudge">nudge</button>
@@ -227,7 +228,7 @@ function Seeq(){
     `;
 
     this.data.build()
-    // this.io.start()
+    this.io.start()
     setTimeout(seeq.show,200)
   }
 
@@ -259,7 +260,7 @@ function Seeq(){
     this.getTextBtn = document.querySelector("button[data-gettext='gettext']")
     // this.setBtn = document.querySelector("button[data-ctrl='set']")
     this.linkBtn = document.querySelector("button[data-ctrl='link']")
-    this.runBtn = document.querySelector("button[data-ctrl='run']")
+    // this.runBtn = document.querySelector("button[data-ctrl='run']")
     this.clearBtn = document.querySelector("button[data-ctrl='clear']")
     this.nudgeBtn = document.querySelector("button[data-ctrl='nudge']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
@@ -282,8 +283,6 @@ function Seeq(){
     seeq.metronome.init()
     seeq.fetch()
   
-    console.log("socket before", socket)
-   
     this.inputFetch.focus()
     this.inputFetch.addEventListener("input", function(){
       seeq.fetchSearchInput = this.value;
@@ -413,14 +412,12 @@ function Seeq(){
         } else {
           socket.disconnect(0);
         }
-        console.log("socket post", socket)
-       
       })
 
-      this.runBtn.addEventListener("click", function(){
-        // seeq.metronome.play()
-        seeq.play()
-      })
+      // this.runBtn.addEventListener("click", function(){
+      //   // seeq.metronome.play()
+      //   seeq.play()
+      // })
 
 
       this.clearBtn.addEventListener("click", function(){
@@ -533,12 +530,12 @@ function Seeq(){
                   if (seeq.isActive){
                     targetHighlight.classList.add("reverse-target")
                     targetCursor.reverse = true
-                    targetCursor.offsetReverse = true
+                    targetCursor.isCursorOffsetReverse = true
                     targetCursor.counter = 0
                   } else {
                     targetHighlight.classList.remove("reverse-target")
                     targetCursor.reverse = false 
-                    targetCursor.offsetReverse = false
+                    targetCursor.isCursorOffsetReverse = false
                   }
                 }
 
@@ -594,7 +591,7 @@ function Seeq(){
   this.reset = function(){
     let reset = [{
       position: 0,
-      offsetReverse: false,
+      isCursorOffsetReverse: false,
       isMuted: false,
       up: 0,
       down: 0,
@@ -621,7 +618,7 @@ function Seeq(){
     this.data.hltr.removeHighlights();
     clearInterval(this.triggerTimer)
     this.content.unmark()
-    this.startFetch()
+    this.fetch()
   }
 
   this.nudge = function(){
@@ -637,7 +634,7 @@ function Seeq(){
     // otherwise it'll manage to adjust clock to Ableton clock.
     // ( clock will keeping reset to the default, 120 BPM).
     socket.disconnect(0)
-    seeq.setCursor()
+    // seeq.setCursor()
     seeq.play()
     seeq.metronome.play()
   }
@@ -665,21 +662,28 @@ function Seeq(){
     var search = ""
     var match
     var length
+    let indexBuffers = []
+    let matchedIndex 
+    let matched
     
     if(this.textSelect !== ""){
       length = this.textSelect.length
-      // this.startPos = this.textBuffers.anchorOffset
       search = new RegExp(this.textSelect, "gi")
       while (match = search.exec(searchText)) {
         this.startPos = match.index
-        this.matchedSelectPosition.push( this.startPos )
+        indexBuffers.push(this.startPos) 
       }
-      // this.matchedSelectPosition.push(this.startPos)
+      matchedIndex = indexBuffers.filter( idx => idx == seeq.textBuffers.anchorOffset)
+      this.filteredPos = matchedIndex.length > 0 ? matchedIndex[0] : indexBuffers[0]
+
+      this.matchedSelectPosition.push(this.filteredPos)
       this.isTextSelected = true
     } else {
       this.isTextSelected = false
     }
-    this.selectedRangeLength.push(this.startPos + length)
+    // console.log("textlen", length)
+    // console.log("this.startPos", this.startPos)
+    this.selectedRangeLength.push(this.filteredPos + length)
   }
 
   this.toggleIsSearchModeChanged = function(){
@@ -763,7 +767,7 @@ function Seeq(){
   this.addSequencer = function(){
     this.cursor.push({ 
       position: this.startPos,
-      offsetReverse: false,
+      isCursorOffsetReverse: false,
       isMuted: false,
       up: 0,
       down: 0,
@@ -795,7 +799,6 @@ function Seeq(){
       }
       this.textLineBuffers += "<br/>"
     }
-    // console.log("this.lines", this.lines)
     // seeq.data.updateWithCursor(this.textLineBuffers)
   }
 
@@ -908,7 +911,6 @@ function Seeq(){
     })
 
     this.matchedPositionWithLength.sort(function (a, b) { return a - b });
-    // console.log("match matchedPositionWithLength", this.matchedPositionWithLength)
   }
 
   this.startFetch = function(){
@@ -967,19 +969,18 @@ function Seeq(){
   this.play = function(){
     this.isPlaying = true 
     this.isReverse = false
+    this.findMatchedPosition()
 
     // remove operator class if it's actived.
-    if(this.getHighlight.length > 1){
-      this.getHighlight.forEach((el, index, arr) => {
-        el.classList.remove("reverse-target")
-      })
-    }
-    this.cursor.forEach( cursor => cursor.reverse = false)
+    // if(this.getHighlight.length > 1){
+    //   this.getHighlight.forEach((el, index, arr) => {
+    //     el.classList.remove("reverse-target")
+    //   })
+    // }
+    // this.cursor.forEach( cursor => cursor.reverse = false)
 
     // avoiding speeded up increment.
     // clearTimeout(seeq.seq.timer)
-    this.findMatchedPosition()
-    // this.seq.increment()
   }
 
   this.splitArrayNoteAndOctave = function(inputText) {

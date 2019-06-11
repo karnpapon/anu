@@ -36,7 +36,7 @@ function Sequencer(){
         offsetCursor = 36 * index
       }
 
-      let cursorPosition = cursor.offsetReverse? cursor.position - 2:cursor.position
+      let cursorPosition = cursor.isCursorOffsetReverse? cursor.position - 2:cursor.position
       
       // handle negative index to behave correctly.
       if( cursorPosition < 0 ){
@@ -57,17 +57,6 @@ function Sequencer(){
       // this.isCursorActived = true
     })
    
-  }
-
-
-  // connect with Ableton Link.
-  this.connect = function(data){
-    const { beat, bpm } = data
-    this.bpm = bpm
-    var CLOCK_DIVIDER = 2
-    var MS_PER_BEAT = 1000 * 60 / bpm
-    var CONVERTED_BPM = MS_PER_BEAT / CLOCK_DIVIDER
-    this.clock = CONVERTED_BPM
   }
 
   this.setBPMdisplay = function(  ){
@@ -93,13 +82,13 @@ function Sequencer(){
     })
   }
 
-  this.setSelectLoopRange = function(){
+  this.setSelectionRange = function(){
     // limited sequence within select range.
     if( !seeq.isTextSelected ) { return }
     seeq.cursor.forEach( ( cursor, index, array ) => {
       let cursorPosition, offsetReverseCursor
       // reversed position compensation.
-      if( cursor.offsetReverse){
+      if( cursor.isCursorOffsetReverse){
         cursorPosition = cursor.position - 2
         offsetReverseCursor = 2
       } else {
@@ -122,29 +111,28 @@ function Sequencer(){
   }
 
   this.increment = function(){
-
     if( !seeq.isTextSelected ) { 
-      var length = seeq.data.text.innerText.length
-      // boundary.
-      seeq.cursor.forEach( ( cursor, index, array ) => {
-        if( cursor.position > length-1){
-          array[index].position = 0
-        } else if ( seeq.isReverse && cursor.position < 0){
-          array[index].position = length - 1
-        }
-        this.set() 
-      })
+     this.setGlobalCursorWrap()
     }
     this.set() 
     this.counting()
-    this.setSelectLoopRange()
-    // this.run()
     this.trigger()
+    this.setSelectionRange()
+  }
+
+  this.setGlobalCursorWrap = function(){
+    var length = seeq.data.text.innerText.length
+    seeq.cursor.forEach((cursor, index, array) => {
+      if (cursor.position > length - 1) {
+        array[index].position = 0
+      } else if (seeq.isReverse && cursor.position < 0) {
+        array[index].position = length - 1
+      }
+    })
   }
 
   this.counting = function(){
     // increment | decrement.
-    // if(!this.isSync) { return }
     let offset = 1
     if(seeq.isReverse){
       seeq.cursor.forEach(target => target.position -= 1)
@@ -159,16 +147,10 @@ function Sequencer(){
     } 
   }
 
-  this.countIn = function( beat ){
-    if (this.counter != beat ){ this.isSync = true }
-    this.counter = beat
-  }
-
   this.trigger = function(){
 
     let reverseCounter
     let counterIndex
-
     if( seeq.searchValue !== ""){
       if(seeq.isTextSelected){
         seeq.cursor.forEach((cursor, index, array) => {
@@ -200,7 +182,7 @@ function Sequencer(){
             else if (seeq.matchedPositionLength > 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 // seeq.sendOsc()
-                this.midiNoteOn(index + 1)
+                this.midiNoteOn(index)
                 seeq.getHighlight[index].classList.add("selection-trigger")
               } else {
                 if (seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
@@ -213,12 +195,11 @@ function Sequencer(){
       } else {
         seeq.cursor.forEach((cursor, index, array) => {
           if (!cursor.isMuted) {
-
             // trigger letters.
             if (seeq.matchedPositionLength == 1) {
               if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 // seeq.sendOsc()
-                this.midiNoteOn(index + 1, undefined, undefined, undefined)
+                this.midiNoteOn(index, undefined, undefined, undefined)
                 seeq.data.el.classList.add("trigger")
               }
               else {
@@ -303,14 +284,13 @@ function Sequencer(){
     seeq.midi.clear()
   }
 
-  this.run = function(){
-    let self = this
-    this.timer = setTimeout( function(){
-      // self.triggerFreeMode()
-      self.increment()
-    }, (60000 / seeq.clock().bpm) / this.beatRatio )
-    
-  }
+  // this.run = function(){
+  //   let self = this
+  //   this.timer = setTimeout( function(){
+  //     // self.triggerFreeMode()
+  //     self.increment()
+  //   }, (60000 / seeq.clock().bpm) / this.beatRatio )
+  // }
 
   this.stop = function(){
     clearTimeout(this.timer)

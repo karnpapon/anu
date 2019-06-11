@@ -280,7 +280,18 @@ button:active{
 .control-btn{ 
   display: flex;
   width: 100%;
+  border: 1px solid black;
   justify-content: space-between;
+}
+
+.control-btn button{
+  border: unset !important;
+  border-left: 1px solid black !important;
+  width: 100%;
+}
+
+.control-btn button:nth-child(1){
+ border-left: unset !important; 
 }
 
 .wdth-auto{

@@ -90,6 +90,7 @@ function Data( ){
       this.selectedText.addEventListener("mousemove", function () {
         if (this.flag == 1) {
           seeq.textBuffers = window.getSelection()
+          seeq.selectedIndexRef = seeq.textBuffers.anchorOffset
           seeq.textSelect = seeq.textBuffers.toString();
           seeq.info.classList.add("limit-regex")
           seeq.info.innerHTML = `<div class="info-group"><lf>INFO</lf> | </div> <lft>STEP-LENGTH : <p>${seeq.textSelect.length}</p> </lft>`

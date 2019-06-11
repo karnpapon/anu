@@ -66,7 +66,7 @@ function Metronome(){
     }
     
     this.scheduler = function() {
-        // while there are notes that will need to play before the next interval, 
+      // while there are notes that will need to play before the next interval, 
       // schedule them and advance the pointer.
       while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime ) {
         this.scheduleNote( this.current16thNote, this.nextNoteTime );
