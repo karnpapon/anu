@@ -101,7 +101,7 @@ function Metronome(){
       }
   
       if (this.last16thNoteDrawn != currentNote) {
-        seeq.seq.increment()
+        seeq.seq.run()
         // self.showBPM(this.last16thNoteDrawn)
         this.last16thNoteDrawn = currentNote;
       }

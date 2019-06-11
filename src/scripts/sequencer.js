@@ -110,7 +110,7 @@ function Sequencer(){
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  this.increment = function(){
+  this.run = function(){
     if( !seeq.isTextSelected ) { 
      this.setGlobalCursorWrap()
     }
@@ -138,7 +138,10 @@ function Sequencer(){
       seeq.cursor.forEach(target => target.position -= 1)
     } else {
       seeq.cursor.forEach(( target, index, arr ) => { 
-        if( target.reverse){
+        if (target.isRetrigger) {
+          target.position += 0
+        } 
+        else if( target.reverse){
           target.position -= 1 
         } else {
           target.position += 1 
@@ -283,14 +286,6 @@ function Sequencer(){
     seeq.midi.noteOff()
     seeq.midi.clear()
   }
-
-  // this.run = function(){
-  //   let self = this
-  //   this.timer = setTimeout( function(){
-  //     // self.triggerFreeMode()
-  //     self.increment()
-  //   }, (60000 / seeq.clock().bpm) / this.beatRatio )
-  // }
 
   this.stop = function(){
     clearTimeout(this.timer)

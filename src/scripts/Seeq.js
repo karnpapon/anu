@@ -114,6 +114,7 @@ function Seeq(){
     position: 0,
     isCursorOffsetReverse: false,
     isMuted: false,
+    isRetrigger: false,
     up: 0,
     down: 0,
     note: ["C"],
@@ -477,8 +478,8 @@ function Seeq(){
 
               if(seeq.isRetriggered){
                 targetHighlight.classList.add("re-trigger")
-                targetCursor.position = 40
-              }
+                targetCursor.isRetrigger = true
+              } 
 
             })
 
@@ -495,6 +496,7 @@ function Seeq(){
               targetCursor = seeq.cursor[seeq.selectIndex]
 
               if(seeq.isRetriggered){
+                targetCursor.isRetrigger = false
                 targetHighlight.classList.remove("re-trigger")
               }
 
@@ -593,6 +595,7 @@ function Seeq(){
       position: 0,
       isCursorOffsetReverse: false,
       isMuted: false,
+      isRetrigger: false,
       up: 0,
       down: 0,
       note: ["C"],
@@ -769,6 +772,7 @@ function Seeq(){
       position: this.startPos,
       isCursorOffsetReverse: false,
       isMuted: false,
+      isRetrigger: false,
       up: 0,
       down: 0,
       note: ["C"],
@@ -924,7 +928,8 @@ function Seeq(){
 
   this.getData = function () {
     if( this.isGettingData){
-      seeq.data.loading.style.display = 'block' 
+      // seeq.data.loading.style.display = 'block' 
+      seeq.data.loading.classList.add("loading")
     }
     axios({
         method: "get",
@@ -943,18 +948,21 @@ function Seeq(){
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
               seeq.isGettingData = false
-              seeq.data.loading.style.display = 'none'  
+              // seeq.data.loading.style.display = 'none'  
+              seeq.data.loading.classList.remove("loading")
              
               // seeq.extractLinesParagraph()
             } else {
               seeq.data.update("sorry, please try again..")
               seeq.isGettingData = false
-              seeq.data.loading.style.display = 'none'  
+              // seeq.data.loading.style.display = 'none' 
+              seeq.data.loading.classList.remove("loading") 
             }
           } else {
             seeq.data.update("no result found..")
             seeq.isGettingData = false
-            seeq.data.loading.style.display = 'none'  
+            // seeq.data.loading.style.display = 'none'  
+            seeq.data.loading.classList.remove("loading")
           }
         }).catch(function(error){
           seeq.data.update(error)
