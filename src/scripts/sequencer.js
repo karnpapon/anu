@@ -197,32 +197,30 @@ function Sequencer(){
         })
       } else {
         seeq.cursor.forEach((cursor, index, array) => {
-          if (!cursor.isMuted) {
-            // trigger letters.
-            if (seeq.matchedPositionLength == 1) {
-              if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                // seeq.sendOsc()
-                this.midiNoteOn(index, undefined, undefined, undefined)
-                seeq.data.el.classList.add("trigger")
-              }
-              else {
-                if( seeq.data.el.classList.contains('trigger')){
-                  seeq.data.el.classList.remove("trigger")
-                }
+          // trigger letters.
+          if (seeq.matchedPositionLength == 1) {
+            if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
+              // seeq.sendOsc()
+              this.midiNoteOn(0)
+              seeq.data.el.classList.add("trigger")
+            }
+            else {
+              if( seeq.data.el.classList.contains('trigger')){
+                seeq.data.el.classList.remove("trigger")
               }
             }
+          }
 
-            // trigger words.
-            else if (seeq.matchedPositionLength > 1) {
-              if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                seeq.data.el.classList.add("trigger")
-                // seeq.sendOsc()
-                this.midiNoteOn(index + 1)
-              } else {
-                if (seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
-                  seeq.data.el.classList.remove("trigger")
-                  // this.midiNoteOff()
-                }
+          // trigger words.
+          else if (seeq.matchedPositionLength > 1) {
+            if (seeq.matchedPosition.indexOf(cursor.position) !== (-1)) {
+              seeq.data.el.classList.add("trigger")
+              // seeq.sendOsc()
+              this.midiNoteOn(0)
+            } else {
+              if (seeq.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
+                seeq.data.el.classList.remove("trigger")
+                // this.midiNoteOff()
               }
             }
           }
@@ -260,22 +258,6 @@ function Sequencer(){
   }
 
 
-  // this.triggerFreeMode = function(){
-
-  //   let self = this
-  //   let clock = seeq.clock()
-
-  //     if( seeq.isFreeModeAutoPlay){
-  //       this.midiNoteOn(0, 12 ,16, this.getRandomInt(0, 6))
-  //       seeq.el.classList.add("trigger-free-mode")
-  //       setTimeout(() => {
-  //         seeq.el.classList.remove("trigger-free-mode") 
-  //       }, clock.bpm);
-  //     } else {
-  //       return
-  //     }
-  // }
-
   this.midiNoteOn = function(channel = 0, octave = 4, note = this.getRandomInt(0,11),velocity = 100, length = 7){
     seeq.midi.send({ channel ,octave, note ,velocity ,length })
     seeq.midi.run()
@@ -289,12 +271,9 @@ function Sequencer(){
 
   this.stop = function(){
     clearTimeout(this.timer)
-    // clearTimeout(this.triggerFreeModeClock)
     seeq.cursor = seeq.reset()
     seeq.resetInfoBar()
     seeq.data.el.classList.remove("trigger")
-    // this.isSync = false
-    seeq.isFreeModeAutoPlay = false
     seeq.selectedRangeLength = []
     seeq.matchedSelectPosition = []
     seeq.searchValue = ""
@@ -305,7 +284,12 @@ function Sequencer(){
 
   this.nudged = function(){
     clearTimeout(this.timer)
-    this.resetSelectedRange()
+    if(seeq.isTextSelected){
+      this.resetSelectedRange()
+    } else {
+      seeq.cursor = seeq.reset()
+    }
+    
     seeq.resetInfoBar()
     seeq.data.el.classList.remove("trigger")
     this.set()

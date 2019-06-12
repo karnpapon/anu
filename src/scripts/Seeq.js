@@ -746,10 +746,12 @@ function Seeq(){
       if (note.indexOf(',') > -1) { 
         noteAndOct = seeq.splitArrayNoteAndOctave(note)
       } else {
-        noteAndOct = seeq.splitSingleNoteAndOctave(noteWithOct)
+        noteAndOct = seeq.splitSingleNoteAndOctave(note)
       }
       let noteOnly = []
       let octOnly = []
+
+      console.log("noteAndOct", noteAndOct)
 
       noteAndOct.forEach(item => {
         noteOnly.push(item[0])
@@ -993,8 +995,8 @@ function Seeq(){
 
   this.splitArrayNoteAndOctave = function(inputText) {
     var output = [];
-    var json = inputText.split(',');
-    json.forEach(function (item) {
+    var arr = inputText.split(',');
+    arr.forEach(function (item) {
         output.push(item.split(/(\d+)/).filter(Boolean));
     });
     return output;
@@ -1002,7 +1004,7 @@ function Seeq(){
 
   this.splitSingleNoteAndOctave = function(note){
     var output = []
-    output.push(note[0].split(/(\d+)/).filter(Boolean));
+    output.push(note.split(/(\d+)/).filter(Boolean));
     return output
   }
 
