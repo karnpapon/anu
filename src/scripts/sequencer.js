@@ -2,30 +2,12 @@
 
 function Sequencer(){
 
-  this.currentIndex = 0
-  this.target
-  this.textSelectHighlight = ""
-  this.textBuffers = ""
   this.output = ""
-  this.outputLoop = ""
-  this.isCursorActived = false
-  this.timer = null
-  this.bpm = 120
-  this.counter = 0
-  this.isSync = false
-  this.clock =  100
-  this.offset = 0
-  this.targetHighlight
-  this.isMuted = false
-  this.syncFreeMode = false
-  this.isClockSync = false
-  this.triggerFreeModeClock = null
-  this.beatRatio = 4
+  this.beatRatio = '16th'
 
   this.set = function () {
 
     seeq.cursor.forEach((cursor, index) => {
-      // clearTimeout(this.timer)
       var self = this
       var offsetCursor = 0
       if (index == 0) {
@@ -270,7 +252,6 @@ function Sequencer(){
   }
 
   this.stop = function(){
-    clearTimeout(this.timer)
     seeq.cursor = seeq.reset()
     seeq.resetInfoBar()
     seeq.data.el.classList.remove("trigger")
@@ -283,7 +264,6 @@ function Sequencer(){
   }
 
   this.nudged = function(){
-    clearTimeout(this.timer)
     if(seeq.isTextSelected){
       this.resetSelectedRange()
     } else {

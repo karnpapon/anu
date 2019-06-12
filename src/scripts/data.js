@@ -53,10 +53,6 @@ function Data( ){
       this.el.appendChild(this.selectedText) 
     }
 
-    // this.updateWithCursor = function( data ){
-    //   this.text.innerHTML = data
-    // }
-
     this.update = function(txt){
       this.dataText = txt
       var limitedChar = 1000

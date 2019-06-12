@@ -176,10 +176,20 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
   transition: all .2s ease;
 }
 
+@keyframes blinking {
+  0%{
+    background-color: var( --trigger-color );
+  }
+  100%{
+    background-color: black;
+  }
+}
+
 .re-trigger{
   background-color: rgb(224, 48, 17)  !important;
   color: rgb(224, 48, 17);
   transition:  all .2s ease;
+  animation: blinking 0.2s infinite;
 }
 
 .selection-trigger{

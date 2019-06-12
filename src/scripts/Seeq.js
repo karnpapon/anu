@@ -1,5 +1,6 @@
 function Seeq(){
 
+  // components installation.
   const Data = require('./data')
   const Sequencer = require('./sequencer')
   const Midi = require('./midi')
@@ -7,8 +8,6 @@ function Seeq(){
   const IO = require('./io')
   const Keyboard = require('./keyboard')
   const Metronome = require('./metronome')
-  // const MetronomeWorker = require('./metronomeworker')
-  
 
   this.data = new Data
   this.io = new IO(this)
@@ -17,16 +16,12 @@ function Seeq(){
   this.keyboard = new Keyboard(this)
   this.masterClock = [new Clock(120)] 
   this.metronome = new Metronome()
-  // this.metronomeWorker = new MetronomeWorker()
   this.selectedClock = 0
 
-  this.bpmNumber
-  this.metronomeBtn
-  this.timerID=null;
-  this.interval=100;
-  this.audioContext = null
-  this.isBPMtoggle = false
+  // ------------------------------------
 
+  // DOM installation.
+  this.logoSeeq
   this.appWrapper = document.createElement("appwrapper")
   this.el = document.createElement("app");
   this.el.style.opacity = 0;
@@ -36,79 +31,70 @@ function Seeq(){
   this.wrapper_el.className = "wrapper-control"
   this.el.appendChild(this.wrapper_el)
   this.parentTarget = document.getElementsByClassName("wrapper-control")
+  document.body.appendChild(this.appWrapper);
 
+  // ------------------------------------
+
+  // Ajax Request Initialize.
   this.url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles="
   this.urlEnd = "&redirects=1"
 
-  this.content
-  this.currentNumber
-  this.totalNumber
-  this.cpuUsage
+  // Ajax Status.
+  this.isGettingData = false
 
-  // operation.
-  this.keyboardPress = false
-  this.isMutePressed = false
-  this.isUpPressed = false
-  this.isDownPressed = false
-  this.isMuted = false
-  this.isReversedCursorPressed = false
-  this.isDeletePressed = false
-  this.isShowInfo = false
-  this.isInfoActived = false
-  this.isRetriggered = false
+  // -----------------------------------
 
+  // Console operation.
   this.isActive = false
   this.isConfigToggle = false
   this.isLinkToggle = false
+  this.isReverse = false
+  this.isPlaying = false
+  this.isBPMtoggle = false
 
-  this.targetMute
-  
-  this.currentResult = []
+  // Console status display.
+  this.bpmNumber
+  this.metronomeBtn
+  this.currentNumber
+  this.totalNumber
+  this.cpuUsage
+  this.isInfoActived = false
+
+  // -----------------------------------
+
+  // marks.
+  this.content
   this.results = []
   this.currentClass = "current"
-  this.offsetTop = 50
-  this.currentIndex = 0
-  this.fetchSearchInput = ""
   this.txt = ""
   this.isSearchModeChanged = false
-  this.operator
+  this.matchedSymbol = "◊"
+  this.updateMarkType = "normal"
+  
+  // -----------------------------------
 
-  // text buffers
+  // Input. 
+  this.fetchSearchInput = ""
+  this.searchValue = ""
+
+  // -----------------------------------
+
+  // text buffers.
   this.extract = "" 
   this.switchText = ""
   this.fetchText = ""
-  this.textAfterFoundMatched = ""
   this.notation = ""
   this.textSelect = ""
-  this.matchedSelectPosition = []
-  this.selectedRangeLength = []
   this.textBuffers = ""
-  this.selectedIndexRef =""
-  this.filteredPos = ""
 
+  // -----------------------------------
 
-  this.ranges = [];
-  
-
-  this.searchValue = ""
-  this.updateMarkType = "normal"
-
-  this.matchedSymbol = "◊"
+  // Cursor.
+  this.currentIndex = 0
   this.startPos
-
-  // paragraph row detector
-  this.lines = ""
-  this.textLineBuffers = ""
-
-  this.isTextSelected = false
-  this.isReverse = false
-  this.isGettingData = false
-
   this.matchedPosition = []
   this.matchedPositionWithLength = []
   this.matchedPositionLength = 1
-  this.bpm = ""
-  this.logoSeeq
 
   this.cursor = [{
     position: 0,
@@ -131,23 +117,33 @@ function Seeq(){
     length: 3,
     velocity: 100,
     octave: "4",
-    channel: 0, 
+    channel: 0,
     counter: 0
   }
-  this.selectIndex
 
-  document.body.appendChild(this.appWrapper);
+  // -----------------------------------
 
-  this.observer 
-  this.observeConfig = { childList: true, subtree: true };
-  this.indexTarget
+  // paragraph row detector ( Disabled )
+  this.lines = ""
+  this.textLineBuffers = ""
 
-  this.isPlaying = false
+  // -----------------------------------
+
+  // Selection.
+  this.isTextSelected = false
   this.getHighlight = []
+  this.selectedIndexRef = ""
+  this.filteredPos = ""
+  this.matchedSelectPosition = []
+  this.selectedRangeLength = []
+  
+  // Observered Selection.
+  this.observer 
+  this.selectIndex
+  this.observeConfig = { childList: true, subtree: true };
 
-  this.triggerTimer
-  this.isFreeModeAutoPlay = false
-
+  // -----------------------------------
+ 
   this.start = function(){
     this.wrapper_el.innerHTML += `
       <div class="controller-wrapper">
@@ -280,7 +276,6 @@ function Seeq(){
     seeq.content = new Mark(context)
     seeq.logoSeeq = new Mark( this.logo )
 
-    // seeq.audioContext = new AudioContext()
     seeq.metronome.init()
     seeq.fetch()
   
@@ -359,7 +354,6 @@ function Seeq(){
           seeq.currentIndex = 0;
         }
         seeq.triggerCursor['counter'] += 1
-        seeq.isFreeModeAutoPlay = true
         seeq.jump()
       })
 
@@ -371,7 +365,6 @@ function Seeq(){
           // prevBtn case to get outbound top to show at to bottom.
           seeq.currentIndex = seeq.results.length - 1; 
         }
-        seeq.isFreeModeAutoPlay = false
         seeq.jump();
       })
 
@@ -459,13 +452,13 @@ function Seeq(){
       // })
 
       // observing when Highlight elements inserted into DOM.
-      // handle add/remove/mute/unmute highlight.
+      // handle operation on highlight.
       this.observeCallback = function(mutationsList, observer) {
         for(var mutation of mutationsList) {
           if (mutation.type == 'childList' && mutation.target.nodeName == 'SPAN' ) {
 
             mutation.target.addEventListener("mousedown", function(){
-              let indexTarget, targetHighlight, targetCursor
+              let targetHighlight, targetCursor
 
               seeq.getHighlight.forEach( ( el, index, arr ) => {
                 if( el.dataset.timestamp == mutation.target.dataset.timestamp){
@@ -476,7 +469,7 @@ function Seeq(){
               targetHighlight = seeq.getHighlight[seeq.selectIndex]
               targetCursor = seeq.cursor[seeq.selectIndex]
 
-              if(seeq.isRetriggered){
+              if(seeq.keyboard.isRetriggered){
                 targetHighlight.classList.add("re-trigger")
                 targetCursor.isRetrigger = true
               } 
@@ -484,7 +477,7 @@ function Seeq(){
             })
 
             mutation.target.addEventListener("mouseup", function(){
-              let indexTarget, targetHighlight, targetCursor
+              let targetHighlight, targetCursor
 
               seeq.getHighlight.forEach( ( el, index, arr ) => {
                 if( el.dataset.timestamp == mutation.target.dataset.timestamp){
@@ -495,7 +488,7 @@ function Seeq(){
               targetHighlight = seeq.getHighlight[seeq.selectIndex]
               targetCursor = seeq.cursor[seeq.selectIndex]
 
-              if(seeq.isRetriggered){
+              if(seeq.keyboard.isRetriggered){
                 targetCursor.isRetrigger = false
                 targetHighlight.classList.remove("re-trigger")
               }
@@ -505,7 +498,7 @@ function Seeq(){
 
             mutation.target.addEventListener("click", function(e){
               seeq.isActive = !seeq.isActive
-              let indexTarget, targetHighlight, targetCursor
+              let targetHighlight, targetCursor
 
               seeq.getHighlight.forEach( ( el, index, arr ) => {
                 if( el.dataset.timestamp == mutation.target.dataset.timestamp){
@@ -517,8 +510,8 @@ function Seeq(){
               targetCursor = seeq.cursor[seeq.selectIndex]
 
               // when keyboard is pressed,then operates.
-              if (seeq.keyboardPress ){
-                if(seeq.isMutePressed){
+              if (seeq.keyboard.keyboardPress ){
+                if (seeq.keyboard.isMutePressed){
                   if (seeq.isActive){
                     targetHighlight.classList.add("mute-target")
                     targetCursor.isMuted = true
@@ -528,7 +521,7 @@ function Seeq(){
                   }
                 } 
                 
-                if (seeq.isReversedCursorPressed){
+                if (seeq.keyboard.isReversedCursorPressed){
                   if (seeq.isActive){
                     targetHighlight.classList.add("reverse-target")
                     targetCursor.reverse = true
@@ -541,7 +534,7 @@ function Seeq(){
                   }
                 }
 
-                if (seeq.isShowInfo){
+                if (seeq.keyboard.isShowInfo){
                   if (seeq.isActive){
                     seeq.isInfoActived = true
                     targetHighlight.classList.add("select-highlight")
@@ -550,19 +543,22 @@ function Seeq(){
                     targetHighlight.classList.remove("select-highlight")
                     seeq.resetInfoBar()
                     seeq.isInfoActived = false;
-                    seeq.isShowInfo = false;
+                    seeq.keyboard.isShowInfo = false;
                   }
                 }
 
-                if (seeq.isDeletePressed){
+                if (seeq.keyboard.isDeletePressed){
                   seeq.removeHighlightsEl(seeq.selectIndex)
                   seeq.data.hltr.removeHighlights(mutation.target);
-                  seeq.sortingIndex()
-                  seeq.getHighlightElement() //sorting highlight element.
+                  if (seeq.selectedRangeLength.length > 0){
+                    seeq.sortingIndex()
+                    seeq.getHighlightElement() //sorting highlight element.
+                  } else {
+                    seeq.clear()
+                  }
                 }
               }
               else {
-                
               
               }
             })
@@ -619,7 +615,6 @@ function Seeq(){
     this.isPlaying = false
     this.seq.stop()
     this.data.hltr.removeHighlights();
-    clearInterval(this.triggerTimer)
     this.content.unmark()
     this.fetch()
   }
@@ -637,7 +632,7 @@ function Seeq(){
     // otherwise it'll manage to adjust clock to Ableton clock.
     // ( clock will keeping reset to the default, 120 BPM).
     socket.disconnect(0)
-    // seeq.setCursor()
+    seeq.setCursor()
     seeq.play()
     seeq.metronome.play()
   }
@@ -684,8 +679,6 @@ function Seeq(){
     } else {
       this.isTextSelected = false
     }
-    // console.log("textlen", length)
-    // console.log("this.startPos", this.startPos)
     this.selectedRangeLength.push(this.filteredPos + length)
   }
 
@@ -750,8 +743,6 @@ function Seeq(){
       }
       let noteOnly = []
       let octOnly = []
-
-      console.log("noteAndOct", noteAndOct)
 
       noteAndOct.forEach(item => {
         noteOnly.push(item[0])
@@ -870,7 +861,6 @@ function Seeq(){
         seeq.results[nextEl].classList.remove(this.currentClass);
       }
       // this.sendOsc() 
-      // seeq.isFreeModeAutoPlay = true
       seeq.seq.triggerOnClick()
     }
   }
@@ -980,17 +970,6 @@ function Seeq(){
     this.isPlaying = true 
     this.isReverse = false
     this.findMatchedPosition()
-
-    // remove operator class if it's actived.
-    // if(this.getHighlight.length > 1){
-    //   this.getHighlight.forEach((el, index, arr) => {
-    //     el.classList.remove("reverse-target")
-    //   })
-    // }
-    // this.cursor.forEach( cursor => cursor.reverse = false)
-
-    // avoiding speeded up increment.
-    // clearTimeout(seeq.seq.timer)
   }
 
   this.splitArrayNoteAndOctave = function(inputText) {

@@ -1,75 +1,84 @@
 'use strict'
 
-function Keyboard() {
+function Keyboard(parent) {
   this.locks = []
   this.history = ''
   this.down = false;
   this.isKeyNotFound = false;
+  this.keyboardPress = false
+  this.isMutePressed = false
+  this.isUpPressed = false
+  this.isDownPressed = false
+  this.isShowInfo = false
+  this.isMuted = false
+  this.isReversedCursorPressed = false
+  this.isDeletePressed = false
+  this.isRetriggered = false
 
   this.onKeyDown = function (event) {
 
     // char = m
     if (event.keyCode === 77) { 
-      seeq.info.innerHTML = this.infoDisplay('MUTE : mute target highlight.','mute', "e")
-      seeq.isMutePressed = true;
+      parent.info.innerHTML = this.infoDisplay('MUTE : mute target highlight.','mute', "e")
+      this.isMutePressed = true;
     }
 
     // char = spacebar
     else if (event.keyCode === 32) { 
-      seeq.info.innerHTML = this.infoDisplay('RUN : run sequencer.')
-      seeq.play()
+      parent.info.innerHTML = this.infoDisplay('RUN : run sequencer.')
+      parent.play()
     }
 
     // char = esc
     else if (event.keyCode === 27) { 
-      seeq.info.innerHTML = this.infoDisplay('STOP : stop sequencer.', "e")
-      seeq.clear()
+      parent.info.innerHTML = this.infoDisplay('STOP : stop sequencer.', "e")
+      parent.clear()
     }
 
     // char = r = reverse selected.
     else if (event.keyCode === 82) {
-      seeq.info.innerHTML = this.infoDisplay('REVERSE : reverse step.', 'reverse', "e")
-      seeq.isReversedCursorPressed = true;
+      parent.info.innerHTML = this.infoDisplay('REVERSE : reverse step.', 'reverse', "e")
+      this.isReversedCursorPressed = true;
     }
 
       // char = u = increase selected bpm.
     else if (event.keyCode === 85) { 
-      seeq.isUpPressed = true;
+      this.isUpPressed = true;
     }
 
     // char = d = decrease selected bpm.
     else if (event.keyCode === 68) { 
-      seeq.isDownPressed = true;
+      this.isDownPressed = true;
     }
 
     // char = i = information.
     else if (event.keyCode === 73) { 
-      seeq.info.innerHTML = this.infoDisplay('INFORMATION : show target informations.','midiout', "i")
-      seeq.isShowInfo = true;
+      parent.info.innerHTML = this.infoDisplay('INFORMATION : show target informations.','midiout', "i")
+      this.isShowInfo = true;
     }
 
     // char = t = re-trigger.
     else if (event.keyCode === 84) { 
-      seeq.info.innerHTML = this.infoDisplay('INFORMATION : re-trigger.','midiout', "i")
-      seeq.isRetriggered = true;
+      parent.info.innerHTML = this.infoDisplay('INFORMATION : re-trigger.','midiout', "i")
+      this.isRetriggered = true;
     }
 
     // char = x = delete highlight.
     else if (event.keyCode === 88) { 
-      seeq.info.innerHTML = this.infoDisplay('DELETE : remove target highlight.','delete', 'i')
-      seeq.isDeletePressed = true;
+      parent.info.innerHTML = this.infoDisplay('DELETE : remove target highlight.','delete', 'i')
+      this.isDeletePressed = true;
     }
 
     else if (event.key === '>') { 
-      seeq.info.innerHTML = this.infoDisplay('INCREASE : increase BPM++.')
-      seeq.modSpeed(1); 
+      parent.info.innerHTML = this.infoDisplay('INCREASE : increase BPM++.')
+      parent.modSpeed(1); 
       event.preventDefault(); 
       return
     }
 
     else if (event.key === '<') { 
-      seeq.info.innerHTML = this.infoDisplay('INCREASE : decrease BPM--.')
-      seeq.modSpeed(-1); 
+      parent.info.innerHTML = this.infoDisplay('INCREASE : decrease BPM--.')
+      parent.modSpeed(-1); 
       event.preventDefault(); 
       return 
     }
@@ -80,7 +89,7 @@ function Keyboard() {
   }
 
   this.infoDisplay = function( command, color, icon = "e" ){
-    seeq.info.classList.add("limit-regex")
+    parent.info.classList.add("limit-regex")
     this.isKeyNotFound = false
     return `
       <div class="info-group">
@@ -96,19 +105,19 @@ function Keyboard() {
 
   this.onKeyUp = function (event) {
     
-    if(seeq.isInfoActived){ 
+    if (parent.isInfoActived){ 
       return 
     } else if (!this.isKeyNotFound) {
-      seeq.isMutePressed = false;
-      seeq.isUpPressed = false;
-      seeq.isDownPressed = false;
-      seeq.keyboardPress = false;
-      seeq.isDeletePressed = false;
-      seeq.isShowInfo = false;
-      seeq.isReversedCursorPressed = false;
-      seeq.isRetriggered = false;
+      this.isMutePressed = false;
+      this.isUpPressed = false;
+      this.isDownPressed = false;
+      this.keyboardPress = false;
+      this.isDeletePressed = false;
+      this.isShowInfo = false;
+      this.isReversedCursorPressed = false;
+      this.isRetriggered = false;
   
-      seeq.resetInfoBar()
+      parent.resetInfoBar()
     }
     // for performance's sake, not to render DOM for unassigned key.
     else { return }
@@ -118,7 +127,7 @@ function Keyboard() {
     // prevent repeated DOM rendering, when hold the keys.
     if( this.down ) return;
     this.down = true
-    seeq.keyboardPress = true;
+    this.keyboardPress = true;
     this.onKeyDown(event) 
   }
   document.onkeyup = (event) => { 

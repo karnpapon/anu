@@ -63,7 +63,7 @@ function Midi() {
     const channel = convertChannel(data['channel'])
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity']
-    const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
+    const length = window.performance.now() + convertLength(data['length'], seeq.clock().bpm)
 
     if (!device) { console.warn('No midi device!'); return }
     device.send([channel[0], note, velocity]) 
@@ -75,7 +75,7 @@ function Midi() {
   //   const channel = convertChannel(data['channel'])
   //   const note = convertNote(data['octave'], data['note'])
   //   const velocity = data['velocity']
-  //   const length = window.performance.now() + convertLength(data['length'], seeq.seq.bpm)
+  //   const length = window.performance.now() + convertLength(data['length'], seeq.clock())
 
   //   if (!device) { console.warn('No midi device!'); return }
   //   device.send([channel[1], note, velocity]) 
