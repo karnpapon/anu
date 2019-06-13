@@ -81,6 +81,7 @@ function Data( ){
       var text = ""
       this.selectedText.addEventListener("mousedown", function () {
         this.flag = 1
+        seeq.isConfigToggle = false
       });
 
       this.selectedText.addEventListener("mousemove", function () {
@@ -88,15 +89,17 @@ function Data( ){
           seeq.textBuffers = window.getSelection()
           seeq.selectedIndexRef = seeq.textBuffers.anchorOffset
           seeq.textSelect = seeq.textBuffers.toString();
-          seeq.info.classList.add("limit-regex")
-          seeq.info.innerHTML = `<div class="info-group"><lf>INFO</lf> | </div> <lft>STEP-LENGTH : <p>${seeq.textSelect.length}</p> </lft>`
+          seeq.info.style.opacity = 0
+          seeq.keyboard.infoShow()
+          seeq.keyboard.keyDisplayElCmd.innerText = `STEP-LENGTH : ${seeq.textSelect.length}`
           }
       });
 
       this.selectedText.addEventListener("mouseup", function () {
         this.flag = 0
-        seeq.info.classList.remove("limit-regex")
-        seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+        seeq.keyboard.infoHide()
+        seeq.info.style.opacity = 1
+        // seeq.info.innerHTML = seeq.infoDetails()
       }); 
     }
 

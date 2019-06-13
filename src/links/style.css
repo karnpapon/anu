@@ -14,7 +14,7 @@ body {
 
 
 *{box-sizing: border-box; }
-body p{font-size:12px}
+body p{font-family: 'input_mono_regular'; font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
 /* div.header{ margin-bottom: 15px; } */
@@ -57,15 +57,17 @@ div button{
 .limit{
   width:534px;
   height: 40px;
+  position: absolute;
   word-wrap: break-word;
   display: flex;
   align-items: center;
+  font-size: 12px;
+  font-family: 'input_mono_regular';
   justify-content: center;
-}
-
-.limit-regex{
   border: 1px solid;
-  padding: 0px 5px;
+  padding: 10px 5px;
+  margin-top: 10px;
+  /* transition: all .2s ease-in; */
 }
 
 .limit-info{
@@ -73,9 +75,36 @@ div button{
   padding: 10px 5px;
 }
 
+#info-bar{
+  position: inherit;
+  height: 60px;
+}
+
+.info-wrapper{
+  width:534px;
+  height: 40px;
+  word-wrap: break-word;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-family: 'input_mono_regular';
+  justify-content: center;
+  border: 1px solid;
+  padding: 10px 5px;
+  margin-top: 10px;
+}
+
+.info-hide{
+  opacity: 0;
+  pointer-events: none;
+}
+
 .info-group{
   width: auto;
   display: flex;
+  margin-right: auto;
+  margin-left: 10px;
 }
 
 .info-color{ 
@@ -83,6 +112,26 @@ div button{
   width: 20px;
   height: 20px;
   padding-right: 20px;
+}
+
+.info-opr8-title{
+  width: 100%;
+  text-align: center;
+}
+
+.info-midi-conf{
+  width: inherit;
+  position: absolute;
+  /* opacity: 0; */
+  display: flex;
+  padding: 10px;
+}
+
+.info-opr8-wrapper{
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .reverse{ background-color: #f287ff; }
@@ -131,6 +180,8 @@ lft{
   display: flex;
   justify-content: center;
 }
+
+
 
 lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 
@@ -405,6 +456,27 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 
 .init-bpm{
   display: block;
+}
+
+.textfx{
+  width: 230px;
+  font-size: 1em;
+  margin-left: 10px;
+  display: flex;
+  /* text-align: left; */
+  /* justify-content: center;  */
+  /* margin-right: auto; */
+}
+
+.default-info{
+  width: 200px;
+  height: 23px;
+  font-size: 1em;
+  margin-left: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-right: 10px;
 }
 
 

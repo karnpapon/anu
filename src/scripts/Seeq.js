@@ -12,7 +12,7 @@ function Seeq(){
   this.data = new Data
   this.io = new IO(this)
   this.midi = new Midi()
-  this.seq = new Sequencer()
+  this.seq = new Sequencer(this)
   this.keyboard = new Keyboard(this)
   this.masterClock = [new Clock(120)] 
   this.metronome = new Metronome()
@@ -31,6 +31,7 @@ function Seeq(){
   this.wrapper_el.className = "wrapper-control"
   this.el.appendChild(this.wrapper_el)
   this.parentTarget = document.getElementsByClassName("wrapper-control")
+  this.infoBar
   document.body.appendChild(this.appWrapper);
 
   // ------------------------------------
@@ -60,6 +61,8 @@ function Seeq(){
   this.cpuUsage
   this.isInfoActived = false
 
+  this.devBtn
+
   // -----------------------------------
 
   // marks.
@@ -76,6 +79,7 @@ function Seeq(){
   // Input. 
   this.fetchSearchInput = ""
   this.searchValue = ""
+  this.isRegExpSearching = false
 
   // -----------------------------------
 
@@ -136,6 +140,7 @@ function Seeq(){
   this.filteredPos = ""
   this.matchedSelectPosition = []
   this.selectedRangeLength = []
+  this.baffles = []
   
   // Observered Selection.
   this.observer 
@@ -181,6 +186,7 @@ function Seeq(){
               <button data-ctrl="rev">rev</button>
               <button data-ctrl="clear">clear</button>
               <button data-ctrl="nudge">nudge</button>
+              <button data-ctrl="dev">dev</button>
             </div>
             </div>
             
@@ -221,10 +227,18 @@ function Seeq(){
           </div> 
         </div>
       </div>
-      <div data-ctrl="information" class="limit">|---------------------------------------------------------------------------------------------------|</div> 
+      <div id="info-bar">
+        <div data-ctrl="information" class="limit">
+          <div class="textfx">seeq | livecoding environtment </div>
+        </div> 
+      </div>
     `;
 
+    this.infoBar = document.getElementById("info-bar")
+    this.info = document.querySelector("div[data-ctrl='information']")
+
     this.data.build()
+    this.keyboard.build()
     this.io.start()
     setTimeout(seeq.show,200)
   }
@@ -272,12 +286,18 @@ function Seeq(){
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
     seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
     seeq.cpuUsage = document.querySelector("p[data-ctrl='cpu']")
-    seeq.info = document.querySelector("div[data-ctrl='information']")
+    
+    seeq.textFX = document.getElementsByClassName('textfx')
     seeq.content = new Mark(context)
     seeq.logoSeeq = new Mark( this.logo )
 
     seeq.metronome.init()
     seeq.fetch()
+
+    seeq.baffles = baffle('.textfx', {
+      characters: ' ░▒█▓█></',
+      speed: 50
+    });
   
     this.inputFetch.focus()
     this.inputFetch.addEventListener("input", function(){
@@ -317,6 +337,8 @@ function Seeq(){
 
       this.searchRegExp.addEventListener("input", function() {
         let targetRegExp
+
+        seeq.isRegExpSearching = !seeq.isRegExpSearching
         
         let displayText = this.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         seeq.searchValue = this.value
@@ -335,8 +357,10 @@ function Seeq(){
                   seeq.matchedPositionWithLength = []
                   seeq.matchType = "regex"
                   seeq.findMatchedPosition()
-                  seeq.info.classList.add("limit-regex")
-                  seeq.info.innerHTML = `<lf>/${displayText}/gi</lf>`
+                  // seeq.info.classList.add("limit-regex")
+                  seeq.info.style.opacity = 0
+                  seeq.keyboard.infoShow()
+                  seeq.keyboard.keyDisplayElCmd.innerHTML = `<lf>/${displayText}/gi</lf>`
                 }
               }
             });
@@ -378,12 +402,16 @@ function Seeq(){
         let targetCursor
         targetCursor = seeq.triggerCursor
         seeq.isConfigToggle = !seeq.isConfigToggle
-        this.classList.toggle("toggle-btn")
-
+        
         if(seeq.isConfigToggle){
+          this.classList.add("toggle-btn")
+          seeq.keyboard.infoShow()
           targetCursor = seeq.setMidiConfig(targetCursor)
+          seeq.info.style.opacity = 0
         } else {
-          seeq.resetInfoBar()
+          seeq.info.style.opacity = 1
+          this.classList.remove("toggle-btn")
+          seeq.keyboard.infoHide()
         }
       })
 
@@ -407,6 +435,8 @@ function Seeq(){
           socket.disconnect(0);
         }
       })
+
+      
 
       // this.runBtn.addEventListener("click", function(){
       //   // seeq.metronome.play()
@@ -537,13 +567,16 @@ function Seeq(){
                 if (seeq.keyboard.isShowInfo){
                   if (seeq.isActive){
                     seeq.isInfoActived = true
+                    seeq.keyboard.infoOpr8Hide()
+                    seeq.keyboard.infoMidiShow()
                     targetHighlight.classList.add("select-highlight")
                     targetCursor = seeq.setMidiConfig(targetCursor)
                   } else {
+                    seeq.keyboard.infoMidiHide()
                     targetHighlight.classList.remove("select-highlight")
-                    seeq.resetInfoBar()
                     seeq.isInfoActived = false;
                     seeq.keyboard.isShowInfo = false;
+                    seeq.keyboard.infoOpr8Show()
                   }
                 }
 
@@ -606,8 +639,7 @@ function Seeq(){
   }
 
   this.resetInfoBar = function(){
-    seeq.info.classList.remove("limit-regex")
-    seeq.info.innerHTML = "|---------------------------------------------------------------------------------------------------|"
+    seeq.info.innerHTML = seeq.infoDetails()
   }
 
 
@@ -699,8 +731,8 @@ function Seeq(){
       noteWithOct.push(`${ note[i] }${ octave[i]}`)
     }
 
-    seeq.info.classList.add("limit-regex")
-    seeq.info.innerHTML = `
+    // seeq.info.classList.add("limit-regex")
+    seeq.keyboard.kbInfoMidiConfig.innerHTML = `
       <div class="operator-group info"> 
         <lf class="info-header">MIDI CONFIG |</lf> 
         <form id="info" class="info-input">
@@ -966,6 +998,11 @@ function Seeq(){
     // seeq.jump()
   }
 
+  this.textBaffleFX = function(){
+    // seeq.baffles.start();
+    seeq.baffles.reveal(1000);
+  }
+
   this.play = function(){
     this.isPlaying = true 
     this.isReverse = false
@@ -1015,6 +1052,10 @@ function Seeq(){
         }
       });
     }
+  }
+
+  this.infoDetails = function(){
+    return `<div class="textfx">seeq | livecoding environtment </div>`
   }
 
   this.getHighlightElement = function(){

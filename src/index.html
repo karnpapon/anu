@@ -11,15 +11,19 @@
         background: yellow;
         /* WebKit/Blink Browsers */
       }
+
+      #devtools { display: none; }
     </style>
 
     <meta charset="UTF-8">
     <title>Letter Sequencer</title>
   </head>
   <body>
+    <webview id="devtools"></webview>
     <script>
         const Seeq = require('./scripts/Seeq.js')
         const {dialog,app} = require('electron').remote;
+        const baffle = require('baffle');
 
         const fs = require('fs');
         // const os 	= require('os-utils');
@@ -38,8 +42,16 @@
         //     seeq.seq.setCPUUsageDisplay(v)
         //   }, 1000);
         // });
-        
-        
+        const browserView = document.body
+        var browser
+        var devBtn
+          var devtoolsView = document.getElementById('devtools')
+          browserView.addEventListener('DOMContentLoaded', () => {
+            browser = browserView.getWebContents()
+            browser.setDevToolsWebContents(devtoolsView.getWebContents())
+            browser.openDevTools()
+            devBtn = document.querySelector("button[data-ctrl='dev']")
+          }) 
     </script>
   </body>
 </html>

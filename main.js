@@ -7,9 +7,19 @@ const url = require('url')
 const path = require('path')
 
 let mainWindow
+let devtools = null
 
 app.inspect = function(){
   app.win.toggleDevTools();
+}
+
+function createDevTools(){
+  devtools = new BrowserWindow({
+    frame: false, 
+    backgroundColor: '#0000',
+  })
+  mainWindow.webContents.setDevToolsWebContents(devtools.webContents)
+  mainWindow.webContents.openDevTools({ mode: 'detach' })
 }
 
 function createWindow () {
@@ -28,7 +38,7 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   // mainWindow.setBackgroundColor("#CBCBCB")
   // mainWindow.setOpacity(0.78)
 
@@ -39,6 +49,7 @@ function createWindow () {
 
 app.on('ready', function (){
   createWindow()
+  createDevTools()
 
   server.start();
   // server.hello();
