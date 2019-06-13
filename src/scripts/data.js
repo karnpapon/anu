@@ -97,7 +97,7 @@ function Data( ){
 
       this.selectedText.addEventListener("mouseup", function () {
         this.flag = 0
-        seeq.keyboard.infoHide()
+        seeq.keyboard.isShowInfoPressed ? seeq.keyboard.infoShow():seeq.keyboard.infoHide()
         seeq.info.style.opacity = 1
         // seeq.info.innerHTML = seeq.infoDetails()
       }); 

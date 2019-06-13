@@ -92,6 +92,7 @@ div button{
   justify-content: center;
   border: 1px solid;
   padding: 10px 5px;
+  opacity: 1;
   margin-top: 10px;
 }
 
@@ -519,7 +520,8 @@ app {
 
 .operator{font: 400 11px system-ui;  }
 .tempo{ 
-  font: 400 11px system-ui; 
+  font-family: 'input_mono_regular'; 
+  font-size: 11px;
   width: 100%;
   padding-left: 10px;
   height: 100%;

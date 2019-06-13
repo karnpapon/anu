@@ -257,7 +257,7 @@ function Sequencer(app){
 
   this.stop = function(){
     app.cursor = app.reset()
-    app.resetInfoBar()
+    // app.resetInfoBar()
     app.data.el.classList.remove("trigger")
     app.selectedRangeLength = []
     app.matchedSelectPosition = []
@@ -274,7 +274,7 @@ function Sequencer(app){
       app.cursor = app.reset()
     }
     
-    app.resetInfoBar()
+    // app.resetInfoBar()
     app.data.el.classList.remove("trigger")
     this.set()
     window.parent.postMessage("stop", '*') 

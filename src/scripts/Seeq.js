@@ -59,7 +59,7 @@ function Seeq(){
   this.currentNumber
   this.totalNumber
   this.cpuUsage
-  this.isInfoActived = false
+  this.isInfoToggleOpened = false
 
   this.devBtn
 
@@ -154,7 +154,7 @@ function Seeq(){
       <div class="controller-wrapper">
         <div class="header-wrapper">
           <div class="header">
-            <div data-logo="seeq" class="title">seeq</div>
+            <div data-logo="seeq" class="title">input</div>
             <input data-fetch="fetch" placeholder="" class="input-control">
             <button data-gettext="gettext"> Enter </button>
           </div>
@@ -198,16 +198,16 @@ function Seeq(){
             <div class="tempo-details">
               <div>
                 <div class="tempo-details">
-                  <b>bpm : </b>
+                  <b>BPM : </b>
                 </div>
                 <div class="tempo-details">
-                  <b>ratio : </b>
+                  <b>TME : </b>
                 </div>
                 <div class="tempo-details">
-                  <b>total : </b> 
+                  <b>LEN : </b> 
                 </div>
                 <div class="tempo-details">
-                  <b>cpu : </b>
+                  <b>CPU : </b>
                 </div>
               </div>
               <div class="performance-details">
@@ -338,7 +338,7 @@ function Seeq(){
       this.searchRegExp.addEventListener("input", function() {
         let targetRegExp
 
-        seeq.isRegExpSearching = !seeq.isRegExpSearching
+        seeq.isRegExpSearching = true
         
         let displayText = this.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         seeq.searchValue = this.value
@@ -360,7 +360,8 @@ function Seeq(){
                   // seeq.info.classList.add("limit-regex")
                   seeq.info.style.opacity = 0
                   seeq.keyboard.infoShow()
-                  seeq.keyboard.keyDisplayElCmd.innerHTML = `<lf>/${displayText}/gi</lf>`
+                  seeq.keyboard.keyDisplayElCmd.innerHTML = `/${displayText}/gi`
+                  seeq.keyboard.kbInfoOperatorIcon.innerHTML = ""
                 }
               }
             });
@@ -405,13 +406,17 @@ function Seeq(){
         
         if(seeq.isConfigToggle){
           this.classList.add("toggle-btn")
+          seeq.keyboard.infoOpr8Hide()
+          seeq.keyboard.infoMidiShow()
           seeq.keyboard.infoShow()
-          targetCursor = seeq.setMidiConfig(targetCursor)
           seeq.info.style.opacity = 0
+          targetCursor = seeq.setMidiConfig(targetCursor)
         } else {
-          seeq.info.style.opacity = 1
-          this.classList.remove("toggle-btn")
           seeq.keyboard.infoHide()
+          seeq.info.style.opacity = 1
+          seeq.keyboard.infoMidiHide()
+          this.classList.remove("toggle-btn")
+          seeq.keyboard.infoOpr8Show()
         }
       })
 
@@ -541,6 +546,8 @@ function Seeq(){
 
               // when keyboard is pressed,then operates.
               if (seeq.keyboard.keyboardPress ){
+
+                // keys "m", muted.
                 if (seeq.keyboard.isMutePressed){
                   if (seeq.isActive){
                     targetHighlight.classList.add("mute-target")
@@ -550,7 +557,8 @@ function Seeq(){
                     targetCursor.isMuted = false
                   }
                 } 
-                
+
+                // keys "r", reverse
                 if (seeq.keyboard.isReversedCursorPressed){
                   if (seeq.isActive){
                     targetHighlight.classList.add("reverse-target")
@@ -564,22 +572,25 @@ function Seeq(){
                   }
                 }
 
-                if (seeq.keyboard.isShowInfo){
+                // keys "i", midi config.
+                if (seeq.keyboard.isShowInfoPressed){
                   if (seeq.isActive){
-                    seeq.isInfoActived = true
+                    seeq.isInfoToggleOpened = true
                     seeq.keyboard.infoOpr8Hide()
                     seeq.keyboard.infoMidiShow()
+                    seeq.info.style.opacity = 0
                     targetHighlight.classList.add("select-highlight")
                     targetCursor = seeq.setMidiConfig(targetCursor)
                   } else {
                     seeq.keyboard.infoMidiHide()
                     targetHighlight.classList.remove("select-highlight")
-                    seeq.isInfoActived = false;
-                    seeq.keyboard.isShowInfo = false;
+                    seeq.isInfoToggleOpened = false;
+                    seeq.keyboard.isShowInfoPressed = false;
                     seeq.keyboard.infoOpr8Show()
                   }
                 }
 
+                // keys "x", delete.
                 if (seeq.keyboard.isDeletePressed){
                   seeq.removeHighlightsEl(seeq.selectIndex)
                   seeq.data.hltr.removeHighlights(mutation.target);
@@ -638,9 +649,9 @@ function Seeq(){
     return reset 
   }
 
-  this.resetInfoBar = function(){
-    seeq.info.innerHTML = seeq.infoDetails()
-  }
+  // this.resetInfoBar = function(){
+  //   seeq.info.innerHTML = seeq.infoDetails()
+  // }
 
 
   this.clear = function(){

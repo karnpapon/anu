@@ -9,7 +9,7 @@ function Keyboard(app) {
   this.isMutePressed = false
   this.isUpPressed = false
   this.isDownPressed = false
-  this.isShowInfo = false
+  this.isShowInfoPressed = false
   this.isMuted = false
   this.isReversedCursorPressed = false
   this.isDeletePressed = false
@@ -86,7 +86,7 @@ function Keyboard(app) {
     // char = i = information.
     else if (event.keyCode === 73) { 
       this.infoDisplay('INFORMATION : show target informations.', 'midiout', "i")
-      this.isShowInfo = true;
+      this.isShowInfoPressed = true;
     }
 
     // char = t = re-trigger.
@@ -154,7 +154,7 @@ function Keyboard(app) {
 
   this.onKeyUp = function (event) {
     
-    if (app.isInfoActived){ 
+    if (app.isInfoToggleOpened){ 
       return 
     } else if (!this.isKeyNotFound) {
       this.isMutePressed = false;
@@ -162,7 +162,7 @@ function Keyboard(app) {
       this.isDownPressed = false;
       this.keyboardPress = false;
       this.isDeletePressed = false;
-      this.isShowInfo = false;
+      this.isShowInfoPressed = false;
       this.isReversedCursorPressed = false;
       this.isRetriggered = false;
   
@@ -176,6 +176,7 @@ function Keyboard(app) {
 
   document.onkeydown = (event) => { 
     // prevent repeated DOM rendering, when hold the keys.
+    app.isRegExpSearching = false
     if (this.down || event.keyCode === 91 ) return;
     this.down = true
     this.keyboardPress = true;
@@ -184,7 +185,14 @@ function Keyboard(app) {
   }
   document.onkeyup = (event) => { 
     this.down = false
-    app.info.style.opacity = 1
+
+    // hold open only when midi config is actived.
+    // otherwise info display bar will close only when release a key.
+    app.info.style.opacity = seeq.isConfigToggle 
+    || seeq.isInfoToggleOpened 
+    || seeq.isRegExpSearching? 
+    0:1
+
     this.onKeyUp(event) 
   }
 }
