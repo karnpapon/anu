@@ -17,9 +17,15 @@ function createDevTools(){
   devtools = new BrowserWindow({
     frame: false, 
     backgroundColor: '#0000',
+    width: 270,
+    height: 580, 
   })
   mainWindow.webContents.setDevToolsWebContents(devtools.webContents)
   mainWindow.webContents.openDevTools({ mode: 'detach' })
+  mainWindow.webContents.once('did-finish-load', function () {
+    var windowBounds = mainWindow.getBounds();
+    devtools.setPosition(windowBounds.x + windowBounds.width, windowBounds.y);
+  });
 }
 
 function createWindow () {
@@ -38,7 +44,6 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
-  // mainWindow.webContents.openDevTools()
   // mainWindow.setBackgroundColor("#CBCBCB")
   // mainWindow.setOpacity(0.78)
 
@@ -50,9 +55,7 @@ function createWindow () {
 app.on('ready', function (){
   createWindow()
   createDevTools()
-
   server.start();
-  // server.hello();
 })
 
 app.on('window-all-closed', () => {

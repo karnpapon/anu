@@ -3,7 +3,7 @@
   --trigger-color: rgb(62, 251, 0);
   --reverse-target: #f287ff;
   --clock: 200ms;
-  --hl-color: rgb(255, 255, 123);
+  --hl-color: rgb(255, 200, 0);
 }
 
 body {
@@ -30,8 +30,8 @@ div button{
 }
 
 .hltr{
-  /* background-color: black !important; */
-  transition: all 100ms ease-out;
+  background-color: var(--hl-color) !important;
+  transition: all 150ms ease-out;
   /* color: black; */
 }
 .hltr:hover{
@@ -43,7 +43,7 @@ div button{
   box-shadow:inset 0px 0px 0px 2px rgb(0, 0, 0);
 }
 
-.masking{
+.marked-text{
   font-family: 'input_mono_thin'; 
   font-size:12px;
   color: var(--main-bg-color);
@@ -258,12 +258,13 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
   transition: 100ms;
 }
 
-.no-masking{
-  font-family: 'input_mono_light';
+.cursor-text{
+  font-family: 'input_mono_regular';
   position: absolute;
   height: 350px;
   width: 100%;
   z-index: 5;
+  color: #212121;
   pointer-events: none;
 }
 
@@ -276,7 +277,7 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
   pointer-events: none;
 }
 
-.for-select-text{
+.highlighted-text{
   font-family: 'input_mono_light';
   position: absolute;
   top: 0;

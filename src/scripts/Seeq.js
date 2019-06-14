@@ -3,7 +3,6 @@ function Seeq(){
   // components installation.
   const Data = require('./data')
   const Sequencer = require('./sequencer')
-  const Midi = require('./midi')
   const Clock = require('./clock')
   const IO = require('./io')
   const Keyboard = require('./keyboard')
@@ -11,7 +10,6 @@ function Seeq(){
 
   this.data = new Data
   this.io = new IO(this)
-  this.midi = new Midi()
   this.seq = new Sequencer(this)
   this.keyboard = new Keyboard(this)
   this.masterClock = [new Clock(120)] 
@@ -31,7 +29,7 @@ function Seeq(){
   this.wrapper_el.className = "wrapper-control"
   this.el.appendChild(this.wrapper_el)
   this.parentTarget = document.getElementsByClassName("wrapper-control")
-  this.infoBar
+  this.infoDisplay
   document.body.appendChild(this.appWrapper);
 
   // ------------------------------------
@@ -113,7 +111,8 @@ function Seeq(){
     octave: "3",
     counter: 0,
     channel: 0,
-    reverse: false
+    reverse: false,
+    UDP: "D3F"
   }]
 
   this.triggerCursor = {
@@ -122,7 +121,8 @@ function Seeq(){
     velocity: 100,
     octave: "4",
     channel: 0,
-    counter: 0
+    counter: 0,
+    UDP: "73C"
   }
 
   // -----------------------------------
@@ -234,7 +234,7 @@ function Seeq(){
       </div>
     `;
 
-    this.infoBar = document.getElementById("info-bar")
+    this.infoDisplay = document.getElementById("info-bar")
     this.info = document.querySelector("div[data-ctrl='information']")
 
     this.data.build()
@@ -247,20 +247,6 @@ function Seeq(){
     seeq.el.style.opacity = 1;
   }
 
-  socket.on('beat', function (data) {
-    const { beat, bpm } = data
-
-    // set clock source from Ableton.
-    if (beat % 4 == 0 && bpm != seeq.clock().getBpm()) {
-      seeq.clock().setBpm(bpm)
-    }
-
-    if (beat % 4 == 0 && !seeq.isPlaying && seeq.isLinkToggle ) {
-      seeq.play()
-      seeq.metronome.play()
-    }
-  });
-
   document.addEventListener("DOMContentLoaded", function() {
     this.searchInput = document.querySelector("input[type='search']")
     this.searchRegExp = document.querySelector("input[type='search-regex']")
@@ -269,9 +255,7 @@ function Seeq(){
     this.configBtn = document.querySelector("button[data-search='cfg']")
     this.inputFetch = document.querySelector("input[data-fetch='fetch']")
     this.getTextBtn = document.querySelector("button[data-gettext='gettext']")
-    // this.setBtn = document.querySelector("button[data-ctrl='set']")
     this.linkBtn = document.querySelector("button[data-ctrl='link']")
-    // this.runBtn = document.querySelector("button[data-ctrl='run']")
     this.clearBtn = document.querySelector("button[data-ctrl='clear']")
     this.nudgeBtn = document.querySelector("button[data-ctrl='nudge']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
@@ -280,7 +264,7 @@ function Seeq(){
     // this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
     // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
     this.logo = document.querySelector("div[data-logo='seeq']")
-    var context = document.querySelector("p.masking")
+    var context = document.querySelector("p.marked-text")
     seeq.bpmNumber = document.querySelector("p[data-ctrl='bpm']")
     seeq.metronomeBtn = document.querySelector("button[data-ctrl='metronome']")
     seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
@@ -425,11 +409,6 @@ function Seeq(){
         seeq.fetch()
       })
 
-      // this.setBtn.addEventListener("click", function(){
-      //   seeq.setCursor()
-      //   seeq.seq.setCounterDisplay()
-      // })
-
       this.linkBtn.addEventListener("click", function(){
         seeq.isLinkToggle = !seeq.isLinkToggle
         this.classList.toggle("toggle-btn")
@@ -440,14 +419,6 @@ function Seeq(){
           socket.disconnect(0);
         }
       })
-
-      
-
-      // this.runBtn.addEventListener("click", function(){
-      //   // seeq.metronome.play()
-      //   seeq.play()
-      // })
-
 
       this.clearBtn.addEventListener("click", function(){
        seeq.clear()
@@ -581,6 +552,7 @@ function Seeq(){
                     seeq.info.style.opacity = 0
                     targetHighlight.classList.add("select-highlight")
                     targetCursor = seeq.setMidiConfig(targetCursor)
+                    console.log("target cursor", targetCursor)
                   } else {
                     seeq.keyboard.infoMidiHide()
                     targetHighlight.classList.remove("select-highlight")
@@ -611,7 +583,7 @@ function Seeq(){
       };
       
       this.observer = new MutationObserver(this.observeCallback); 
-      this.observer.observe(seeq.data.selectedText, seeq.observeConfig);
+      this.observer.observe(seeq.data.highlightedText, seeq.observeConfig);
 
       // this.extractLines.addEventListener("click", function(){
       //   seeq.extractLinesParagraph()
@@ -630,7 +602,7 @@ function Seeq(){
     })
   }
 
-  this.reset = function(){
+  this.retrieveCursor = function(){
     let reset = [{
       position: 0,
       isCursorOffsetReverse: false,
@@ -644,13 +616,14 @@ function Seeq(){
       octave: "3",
       counter: 0,
       channel: 0,
-      reverse: false
+      reverse: false,
+      UDP: "D3F"
     }]
     return reset 
   }
 
   // this.resetInfoBar = function(){
-  //   seeq.info.innerHTML = seeq.infoDetails()
+  //   seeq.info.innerHTML = seeq.retrieveInfoDisplay()
   // }
 
 
@@ -699,7 +672,7 @@ function Seeq(){
   }
 
   this.getSelectionTextPosition = function(){
-    var searchText = seeq.data.text.innerText
+    var searchText = seeq.data.cursorText.innerText
     var search = ""
     var match
     var length
@@ -797,6 +770,7 @@ function Seeq(){
       midiConfig.length = length
       midiConfig.velocity = velocity
       midiConfig.channel = parseInt( ch )
+      midiConfig.UDP = `${ch}${octOnly[0]}${noteOnly[0]}`
       seeq.triggerCursor['counter'] = 0
     })
 
@@ -804,21 +778,8 @@ function Seeq(){
   }
 
   this.addSequencer = function(){
-    this.cursor.push({ 
-      position: this.startPos,
-      isCursorOffsetReverse: false,
-      isMuted: false,
-      isRetrigger: false,
-      up: 0,
-      down: 0,
-      note: ["C"],
-      length: 16,
-      velocity: 100,
-      octave: "3",
-      counter: 0,
-      channel: 0,
-      reverse: false
-    })
+    let newCursor = this.retrieveCursor()
+    this.cursor.push(newCursor[0])
     this.sortingIndex()
   }
   
@@ -848,9 +809,9 @@ function Seeq(){
    
     // turn matched letter/words into symbols
     if( seeq.searchValue !== ""){
-      this.notation = seeq.data.text.innerText.replace(target, this.matchedSymbol)
+      this.notation = seeq.data.cursorText.innerText.replace(target, this.matchedSymbol)
     } else {
-      this.notation = seeq.data.text.innerText
+      this.notation = seeq.data.cursorText.innerText
     }
 
    
@@ -916,7 +877,7 @@ function Seeq(){
 
   this.findMatchedPosition = function(){
     // find position to trigger events.
-    var searchText = seeq.data.text.innerText
+    var searchText = seeq.data.cursorText.innerText
     var search = new RegExp(this.searchValue,"gi")
     var match
     let length = this.searchValue.length
@@ -978,7 +939,7 @@ function Seeq(){
           })
           if(response){
             if (seeq.extract.extract){
-              seeq.data.update(seeq.extract.extract)
+              seeq.data.update(seeq.extract.extract.toUpperCase())
 
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
@@ -1010,7 +971,6 @@ function Seeq(){
   }
 
   this.textBaffleFX = function(){
-    // seeq.baffles.start();
     seeq.baffles.reveal(1000);
   }
 
@@ -1065,32 +1025,19 @@ function Seeq(){
     }
   }
 
-  this.infoDetails = function(){
+  this.retrieveInfoDisplay = function(){
     return `<div class="textfx">seeq | livecoding environtment </div>`
   }
 
   this.getHighlightElement = function(){
     var data = seeq.data
-    this.getHighlight = data.hltr.getHighlights(data.selectedText)
+    this.getHighlight = data.hltr.getHighlights(data.highlightedText)
   }
   
 
   this.clock = function () {
     return this.masterClock[this.selectedClock]
   }
-
-  // this.nextClock = function () {
-  //   const previousClock = this.clock()
-  //   if (previousClock) {
-  //     previousClock.setRunning(false)
-  //     previousClock.setCallback(() => { })
-  //   }
-  //   this.selectedClock = (this.selectedClock + 1) % this.masterClock.length
-  //   this.clock().setRunning(!this.isPaused)
-  //   this.clock().setCallback(() => this.run())
-
-  //   // this.update()
-  // }
 
   this.setSpeed = function (bpm) {
     if (this.clock().canSetBpm()) {

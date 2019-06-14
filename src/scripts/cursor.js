@@ -17,7 +17,7 @@ class Cursor {
     this.reverse = false
   }
 
-  reset() {
+  retrieveCursor() {
     let reset = [{
       position: 0,
       isCursorOffsetReverse: false,

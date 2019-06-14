@@ -5,21 +5,21 @@ function Data( ){
 
     // const lineWrapDetector = require('../libs/lineWrapDetector')
     this.el = document.createElement("div")
-    this.text = document.createElement("p")
+    this.cursorText = document.createElement("p")
     this.loading = document.createElement("div")
     this.flag = 0
 
     // this layer only for displaying mark.
-    this.maskText = document.createElement("p") 
+    this.markedText = document.createElement("p") 
     
     // this layer only for text's selection ( hihger z-index child's issue workaround).
-    this.selectedText = document.createElement("p")
+    this.highlightedText = document.createElement("p")
 
     this.textBuffers = ""
     this.getHighlight
 
     // multiple highlighter.
-    this.hltr = new TextHighlighter(this.selectedText,{
+    this.hltr = new TextHighlighter(this.highlightedText,{
       highlightedClass: 'hltr',
       onAfterHighlight: function(){
         // seeq.textSelect = seeq.getSelectionText()
@@ -36,21 +36,20 @@ function Data( ){
 
     this.build = function(){
       this.el.classList.add("content")
-      this.maskText.classList.add("masking")
-      this.text.classList.add("no-masking")
-      // this.loading.classList.add("loading")
-      this.selectedText.classList.add("for-select-text")
+      this.markedText.classList.add("marked-text")
+      this.cursorText.classList.add("cursor-text")
+      this.highlightedText.classList.add("highlighted-text")
       this.el.appendChild(this.loading)
-      this.el.appendChild(this.text)
-      this.el.appendChild(this.maskText)
-      this.el.appendChild(this.selectedText)
+      this.el.appendChild(this.cursorText)
+      this.el.appendChild(this.markedText)
+      this.el.appendChild(this.highlightedText)
       seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
     }
 
     this.refresh = function(){
-      this.el.appendChild(this.text) 
-      this.el.appendChild(this.maskText) 
-      this.el.appendChild(this.selectedText) 
+      this.el.appendChild(this.cursorText) 
+      this.el.appendChild(this.markedText) 
+      this.el.appendChild(this.highlightedText) 
     }
 
     this.update = function(txt){
@@ -66,12 +65,12 @@ function Data( ){
         }
       }
 
-      this.maskText.innerText = this.textBuffers
-      this.text.innerText = this.textBuffers
-      this.selectedText.innerText = this.textBuffers 
+      this.markedText.innerText = this.textBuffers
+      this.cursorText.innerText = this.textBuffers
+      this.highlightedText.innerText = this.textBuffers 
 
       // paragraph row detector.
-      // seeq.lines = lineWrapDetector.getLines(this.text);
+      // seeq.lines = lineWrapDetector.getLines(this.cursorText);
       // console.log("this.lines", seeq.lines)
 
       this.textCounter()
@@ -79,12 +78,12 @@ function Data( ){
 
     this.textCounter = function(){
       var text = ""
-      this.selectedText.addEventListener("mousedown", function () {
+      this.highlightedText.addEventListener("mousedown", function () {
         this.flag = 1
         seeq.isConfigToggle = false
       });
 
-      this.selectedText.addEventListener("mousemove", function () {
+      this.highlightedText.addEventListener("mousemove", function () {
         if (this.flag == 1) {
           seeq.textBuffers = window.getSelection()
           seeq.selectedIndexRef = seeq.textBuffers.anchorOffset
@@ -95,22 +94,22 @@ function Data( ){
           }
       });
 
-      this.selectedText.addEventListener("mouseup", function () {
+      this.highlightedText.addEventListener("mouseup", function () {
         this.flag = 0
         seeq.keyboard.isShowInfoPressed ? seeq.keyboard.infoShow():seeq.keyboard.infoHide()
         seeq.info.style.opacity = 1
-        // seeq.info.innerHTML = seeq.infoDetails()
+        // seeq.info.innerHTML = seeq.retrieveInfoDisplay()
       }); 
     }
 
     this.clear = function(){
-      this.text.innerHTML = ""
-      this.maskText.innerHTML = ""
-      this.selectedText.innerHTML = ""
+      this.cursorText.innerHTML = ""
+      this.markedText.innerHTML = ""
+      this.highlightedText.innerHTML = ""
     }
 
 
-    this.selectedText.addEventListener( 'dblclick', function(event) {  
+    this.highlightedText.addEventListener( 'dblclick', function(event) {  
       event.preventDefault();  
       event.stopPropagation(); 
     },  true //capturing phase!!

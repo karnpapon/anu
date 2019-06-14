@@ -11,10 +11,10 @@ function Sequencer(app){
       var self = this
       var offsetCursor = 0
       if (index == 0) {
-        this.outputType = app.data.text.innerText
+        this.outputType = app.data.cursorText.innerText
         offsetCursor = 0
       } else {
-        this.outputType = app.data.text.innerHTML
+        this.outputType = app.data.cursorText.innerHTML
         offsetCursor = 36 * index
       }
 
@@ -35,7 +35,7 @@ function Sequencer(app){
         this.outputType.substr(cursorPosition + 1 + offsetCursor) 
       }
      
-      app.data.text.innerHTML = this.output
+      app.data.cursorText.innerHTML = this.output
       // this.isCursorActived = true
     })
    
@@ -55,7 +55,7 @@ function Sequencer(app){
   // }
   
   this.setTotalLenghtCounterDisplay = function(){
-    app.totalNumber.innerHTML = app.data.text.innerText.length
+    app.totalNumber.innerHTML = app.data.cursorText.innerText.length
   }
 
   this.selectedRangeStartIndex = function(){
@@ -103,7 +103,7 @@ function Sequencer(app){
   }
 
   this.setGlobalCursorWrap = function(){
-    var length = app.data.text.innerText.length
+    var length = app.data.cursorText.innerText.length
     app.cursor.forEach((cursor, index, array) => {
       if (cursor.position > length - 1) {
         array[index].position = 0
@@ -156,11 +156,14 @@ function Sequencer(app){
                 }
                 // app.sendOsc()
                 this.midiNoteOn(cursor.channel, cursor.octave[counterIndex], cursor.note[counterIndex], cursor.velocity, cursor.length)
+                this.udpSend(cursor.UDP)
                 app.textBaffleFX()
                 app.getHighlight[index].classList.add("selection-trigger")
+                app.info.classList.add("trigger")
                 cursor.note.length > 1? cursor.counter++:cursor.counter
               } else {
                 app.getHighlight[index].classList.remove("selection-trigger")
+                app.info.classList.remove("trigger")
               }
             }
 
@@ -170,10 +173,12 @@ function Sequencer(app){
                 // app.sendOsc()
                 this.midiNoteOn(index)
                 app.textBaffleFX()
+                app.info.classList.add("trigger")
                 app.getHighlight[index].classList.add("selection-trigger")
               } else {
                 if (app.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
                   app.getHighlight[index].classList.remove("selection-trigger")
+                  app.info.classList.remove("trigger")
                 }
               }
             }
@@ -186,6 +191,7 @@ function Sequencer(app){
             if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
               // app.sendOsc()
               this.midiNoteOn(0)
+              this.udpSend(cursor.UDP)
               app.textBaffleFX()
               app.info.classList.add("trigger")
             }
@@ -225,6 +231,7 @@ function Sequencer(app){
       octave,
       channel, 
       counter,
+      UDP
     } = app.triggerCursor
    
     if( octave.length > 1){
@@ -237,26 +244,33 @@ function Sequencer(app){
     }
     
     this.midiNoteOn(channel, octave[index], note[index], velocity, length) 
+    this.udpSend(UDP) 
     app.el.classList.add("trigger-free-mode")
     setTimeout(() => {
       app.el.classList.remove("trigger-free-mode")
     }, clock.bpm);
   }
 
+  this.udpSend = function(msg){
+    app.io.udp.send(msg)
+    app.io.udp.run()
+    app.io.udp.clear()
+  }
+
 
   this.midiNoteOn = function(channel = 0, octave = 4, note = this.getRandomInt(0,11),velocity = 100, length = 7){
-    app.midi.send({ channel ,octave, note ,velocity ,length })
-    app.midi.run()
-    app.midi.clear()
+    app.io.midi.send({ channel ,octave, note ,velocity ,length })
+    app.io.midi.run()
+    app.io.midi.clear()
   }
 
   this.midiNoteOff = function(){
-    app.midi.noteOff()
-    app.midi.clear()
+    app.io.midi.noteOff()
+    app.io.midi.clear()
   }
 
   this.stop = function(){
-    app.cursor = app.reset()
+    app.cursor = app.retrieveCursor()
     // app.resetInfoBar()
     app.data.el.classList.remove("trigger")
     app.selectedRangeLength = []
@@ -271,7 +285,7 @@ function Sequencer(app){
     if(app.isTextSelected){
       this.resetSelectedRange()
     } else {
-      app.cursor = app.reset()
+      app.cursor = app.retrieveCursor()
     }
     
     // app.resetInfoBar()

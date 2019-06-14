@@ -1,18 +1,18 @@
 'use strict'
 
 
-const MidiClock = require('./midiclock')
+// const MidiClock = require('./midiclock')
 
-function Midi() {
+function Midi(app) {
   this.index = 0
   this.devices = []
   this.stack = []
-  this.clock = new MidiClock(seeq)
+  // this.clock = new MidiClock(seeq)
 
   this.start = function () {
     console.info('Starting Midi..')
     this.setup()
-    this.clock.start()
+    // this.clock.start()
   }
 
   this.clear = function () {
@@ -63,7 +63,7 @@ function Midi() {
     const channel = convertChannel(data['channel'])
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity']
-    const length = window.performance.now() + convertLength(data['length'], seeq.clock().bpm)
+    const length = window.performance.now() + convertLength(data['length'], app.clock().bpm)
 
     if (!device) { console.warn('No midi device!'); return }
     device.send([channel[0], note, velocity]) 
@@ -124,9 +124,9 @@ function Midi() {
   this.access = function (midiAccess) {
     const iter = midiAccess.outputs.values()
     for (let i = iter.next(); i && !i.done; i = iter.next()) {
-      seeq.midi.devices.push(i.value)
+      app.io.midi.devices.push(i.value)
     }
-    seeq.midi.select(0)
+    app.io.midi.select(0)
   }
 
   this.toString = function () {

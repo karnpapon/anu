@@ -42,7 +42,7 @@ function Keyboard(app) {
     this.kbInfoOperatorWrapper.appendChild(this.kbInfoOperator)
     this.el.appendChild(this.kbInfoOperatorWrapper)
     this.el.appendChild(this.kbInfoMidiConfig)
-    app.infoBar.appendChild(this.el)
+    app.infoDisplay.appendChild(this.el)
 
     this.infoHide()
   }
