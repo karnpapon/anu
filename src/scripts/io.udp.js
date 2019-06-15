@@ -75,6 +75,7 @@ function UDP(app) {
     // set clock source from Ableton.
     if (beat % 4 == 0 && bpm != app.clock().getBpm()) {
       app.clock().setBpm(bpm)
+      app.seq.setBPMdisplay(bpm) 
     }
 
     if (beat % 4 == 0 && !app.isPlaying && app.isLinkToggle) {

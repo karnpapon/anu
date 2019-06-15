@@ -36,7 +36,6 @@ function Sequencer(app){
       }
      
       app.data.cursorText.innerHTML = this.output
-      // this.isCursorActived = true
     })
    
   }
@@ -86,12 +85,6 @@ function Sequencer(app){
     })
   }
 
-  this.getRandomInt = function(min, max) {
-    var min = Math.ceil(min);
-    var max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   this.run = function(){
     if( !app.isTextSelected ) { 
      this.setGlobalCursorWrap()
@@ -134,8 +127,6 @@ function Sequencer(app){
 
   this.trigger = function(){
 
-    let reverseCounter
-    let counterIndex
     if( app.searchValue !== ""){
       if(app.isTextSelected){
         app.cursor.forEach((cursor, index, array) => {
@@ -143,21 +134,7 @@ function Sequencer(app){
             // trigger letters.
             if (app.matchedPositionLength == 1) {
               if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                if( cursor.reverse){
-                  reverseCounter = ( cursor.note.length - 1 ) - cursor.counter
-                  if( reverseCounter < 0) { // reset reversed counter.
-                    reverseCounter = cursor.note.length - 1
-                    cursor.counter = 0
-                  }
-                  counterIndex = reverseCounter
-                } else {
-                  cursor.counter % cursor.note.length == 0? cursor.counter = 0:cursor.counter
-                  counterIndex = cursor.counter
-                }
-                // app.sendOsc()
-                this.midiNoteOn(cursor.channel, cursor.octave[counterIndex], cursor.note[counterIndex], cursor.velocity, cursor.length)
-                this.udpSend(cursor.UDP[counterIndex])
-                app.textBaffleFX()
+                this.outputMsg(cursor)
                 app.getHighlight[index].classList.add("selection-trigger")
                 app.info.classList.add("trigger")
                 cursor.note.length > 1? cursor.counter++:cursor.counter
@@ -170,9 +147,7 @@ function Sequencer(app){
             // trigger words.
             else if (app.matchedPositionLength > 1) {
               if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                // app.sendOsc()
-                this.midiNoteOn(index)
-                app.textBaffleFX()
+                this.outputMsg(cursor)
                 app.info.classList.add("trigger")
                 app.getHighlight[index].classList.add("selection-trigger")
               } else {
@@ -189,10 +164,7 @@ function Sequencer(app){
           // trigger letters.
           if (app.matchedPositionLength == 1) {
             if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
-              // app.sendOsc()
-              this.midiNoteOn(0)
-              this.udpSend(cursor.UDP)
-              app.textBaffleFX()
+              this.outputMsg(cursor)
               app.info.classList.add("trigger")
             }
             else {
@@ -205,9 +177,7 @@ function Sequencer(app){
           // trigger words.
           else if (app.matchedPositionLength > 1) {
             if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
-              // app.sendOsc()
-              this.midiNoteOn(0)
-              app.textBaffleFX()
+              this.outputMsg(cursor)
               app.info.classList.add("trigger")
             } else {
               // if (app.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
@@ -219,6 +189,30 @@ function Sequencer(app){
         })
       }
     }
+  }
+
+  this.getCursorIndex = function(cursor){
+    let reverseCounter, counterIndex
+    if (cursor.reverse) {
+      reverseCounter = (cursor.note.length - 1) - cursor.counter
+      if (reverseCounter < 0) { // reset reversed counter.
+        reverseCounter = cursor.note.length - 1
+        cursor.counter = 0
+      }
+      counterIndex = reverseCounter
+    } else {
+      cursor.counter % cursor.note.length == 0 ? cursor.counter = 0 : cursor.counter
+      counterIndex = cursor.counter
+    }
+
+    return counterIndex
+  }
+
+  this.outputMsg =  function(cursor){
+    let counterIndex = this.getCursorIndex(cursor)
+    this.midiNoteOn(cursor.channel, cursor.octave[counterIndex], cursor.note[counterIndex], cursor.velocity, cursor.length)
+    app.isUDPToggled ? this.udpSend(cursor.UDP[counterIndex]):()=> console.log("udp is not toggled!")
+    app.textBaffleFX()
   }
 
   this.triggerOnClick = function() {
@@ -258,7 +252,7 @@ function Sequencer(app){
   }
 
 
-  this.midiNoteOn = function(channel = 0, octave = 4, note = this.getRandomInt(0,11),velocity = 100, length = 7){
+  this.midiNoteOn = function(channel = 0, octave = 4, note = getRandomInt(0,11),velocity = 100, length = 7){
     app.io.midi.send({ channel ,octave, note ,velocity ,length })
     app.io.midi.run()
     app.io.midi.clear()
@@ -298,6 +292,12 @@ function Sequencer(app){
     app.cursor.forEach((cursor, index, array) => { 
       array[index].position = app.matchedSelectPosition[index]
     })
+  }
+
+  function getRandomInt(min, max) {
+    var min = Math.ceil(min);
+    var max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
   
 }

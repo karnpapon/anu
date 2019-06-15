@@ -47,6 +47,7 @@ function Seeq(){
   this.isActive = false
   this.isConfigToggle = false
   this.isLinkToggle = false
+  this.isUDPToggled = false
   this.isReverse = false
   this.isPlaying = false
   this.isBPMtoggle = false
@@ -183,10 +184,11 @@ function Seeq(){
             <div class="title">Control:</div>
             <div class="control-btn">
               <button data-ctrl="link">link</button>
+              <button data-ctrl="udp">udp</button>
+              <button data-ctrl="dev">dev</button>
               <button data-ctrl="rev">rev</button>
               <button data-ctrl="clear">clear</button>
               <button data-ctrl="nudge">nudge</button>
-              <button data-ctrl="dev">dev</button>
             </div>
             </div>
             
@@ -258,6 +260,7 @@ function Seeq(){
     this.linkBtn = document.querySelector("button[data-ctrl='link']")
     this.clearBtn = document.querySelector("button[data-ctrl='clear']")
     this.nudgeBtn = document.querySelector("button[data-ctrl='nudge']")
+    this.udpBtn = document.querySelector("button[data-ctrl='udp']")
     this.revBtn = document.querySelector("button[data-ctrl='rev']")
     this.addBtn = document.querySelector("button[data-ctrl='add']")
     this.subtractBtn = document.querySelector("button[data-ctrl='subtract']")
@@ -419,6 +422,11 @@ function Seeq(){
           socket.disconnect(0);
         }
       })
+
+    this.udpBtn.addEventListener("click", function () {
+      seeq.isUDPToggled = !seeq.isUDPToggled
+      this.classList.toggle("toggle-btn")
+    })
 
       this.clearBtn.addEventListener("click", function(){
        seeq.clear()
@@ -764,17 +772,24 @@ function Seeq(){
         octOnly.push(parseInt( item[1] ))
       })
 
-      let convertedChan = seeq.convertChannel(parseInt(ch))
-
+      
       outputMsg.note = noteOnly
       outputMsg.octave = octOnly
       outputMsg.length = length
       outputMsg.velocity = velocity
       outputMsg.channel = parseInt( ch )
-
+      
+      // UDP.
+      let convertedChan = seeq.getUdpChannel(parseInt(ch))
+      let udpNote = []
       outputMsg.UDP = []
+
+      for (var i = 0; i < noteOnly.length; i++) {
+        udpNote.push(seeq.getUdpNote(noteOnly[i]))
+      }
+
       for(var i = 0; i< noteOnly.length; i++){
-        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${noteOnly[i]}` )
+        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${udpNote[i]}` )
       }
 
       seeq.triggerCursor['counter'] = 0
@@ -1060,7 +1075,34 @@ function Seeq(){
     seeq.seq.setBPMdisplay(bpm) 
   }
 
-  this.convertChannel = function(ch){
+  this.getUdpNote = function(note){
+    let udpNote
+    if (note.length == 2) {
+      switch (note) {
+        case 'Db':
+          udpNote = 'c'
+          break;
+        case 'Eb':
+          udpNote = 'F'
+          break;
+        case 'Gb':
+          udpNote = 'f'
+          break;
+        case 'Ab':
+          udpNote = 'g'
+          break;
+        case 'Bb':
+          udpNote = 'a'
+          break;
+      }
+    } else if (note.length == 1) {
+      udpNote = note
+    }
+    console.log("getUdpNote", udpNote)
+    return udpNote
+  }
+
+  this.getUdpChannel = function(ch){
     let convertedChan
     if (ch > 9){
       switch (ch) {
