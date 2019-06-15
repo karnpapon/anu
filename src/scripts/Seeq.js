@@ -112,7 +112,7 @@ function Seeq(){
     counter: 0,
     channel: 0,
     reverse: false,
-    UDP: "D3F"
+    UDP: ["D3C"]
   }]
 
   this.triggerCursor = {
@@ -122,7 +122,7 @@ function Seeq(){
     octave: "4",
     channel: 0,
     counter: 0,
-    UDP: "73C"
+    UDP: ["73C"]
   }
 
   // -----------------------------------
@@ -394,7 +394,7 @@ function Seeq(){
           seeq.keyboard.infoMidiShow()
           seeq.keyboard.infoShow()
           seeq.info.style.opacity = 0
-          targetCursor = seeq.setMidiConfig(targetCursor)
+          targetCursor = seeq.setOutputMsg(targetCursor)
         } else {
           seeq.keyboard.infoHide()
           seeq.info.style.opacity = 1
@@ -551,7 +551,7 @@ function Seeq(){
                     seeq.keyboard.infoMidiShow()
                     seeq.info.style.opacity = 0
                     targetHighlight.classList.add("select-highlight")
-                    targetCursor = seeq.setMidiConfig(targetCursor)
+                    targetCursor = seeq.setOutputMsg(targetCursor)
                     console.log("target cursor", targetCursor)
                   } else {
                     seeq.keyboard.infoMidiHide()
@@ -617,7 +617,7 @@ function Seeq(){
       counter: 0,
       channel: 0,
       reverse: false,
-      UDP: "D3F"
+      UDP: ["D3C"]
     }]
     return reset 
   }
@@ -702,20 +702,19 @@ function Seeq(){
     this.isSearchModeChanged = !this.isSearchModeChanged
   }
 
-  this.setMidiConfig = function(midiConfig){
+  this.setOutputMsg = function(outputMsg){
     let addNote, addLength, addVelocity, addChannel,
-    note = midiConfig.note === undefined? "":midiConfig.note,
-    octave = midiConfig.octave === undefined? "":midiConfig.octave,
-    length = midiConfig.length === undefined? "":midiConfig.length,
-    velocity = midiConfig.velocity === undefined? "":midiConfig.velocity,
-    ch = midiConfig.channel === undefined? "": midiConfig.channel
+    note = outputMsg.note === undefined? "":outputMsg.note,
+    octave = outputMsg.octave === undefined? "":outputMsg.octave,
+    length = outputMsg.length === undefined? "":outputMsg.length,
+    velocity = outputMsg.velocity === undefined? "":outputMsg.velocity,
+    ch = outputMsg.channel === undefined? "": outputMsg.channel
 
     var noteWithOct = [];
     for (var i = 0; i < note.length; i++) {
       noteWithOct.push(`${ note[i] }${ octave[i]}`)
     }
 
-    // seeq.info.classList.add("limit-regex")
     seeq.keyboard.kbInfoMidiConfig.innerHTML = `
       <div class="operator-group info"> 
         <lf class="info-header">MIDI CONFIG |</lf> 
@@ -765,16 +764,23 @@ function Seeq(){
         octOnly.push(parseInt( item[1] ))
       })
 
-      midiConfig.note = noteOnly
-      midiConfig.octave = octOnly
-      midiConfig.length = length
-      midiConfig.velocity = velocity
-      midiConfig.channel = parseInt( ch )
-      midiConfig.UDP = `${ch}${octOnly[0]}${noteOnly[0]}`
+      let convertedChan = seeq.convertChannel(parseInt(ch))
+
+      outputMsg.note = noteOnly
+      outputMsg.octave = octOnly
+      outputMsg.length = length
+      outputMsg.velocity = velocity
+      outputMsg.channel = parseInt( ch )
+
+      outputMsg.UDP = []
+      for(var i = 0; i< noteOnly.length; i++){
+        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${noteOnly[i]}` )
+      }
+
       seeq.triggerCursor['counter'] = 0
     })
 
-    return midiConfig
+    return outputMsg
   }
 
   this.addSequencer = function(){
@@ -1052,6 +1058,35 @@ function Seeq(){
       this.setSpeed(this.clock().getBpm() + mod)
     }
     seeq.seq.setBPMdisplay(bpm) 
+  }
+
+  this.convertChannel = function(ch){
+    let convertedChan
+    if (ch > 9){
+      switch (ch) {
+        case 10:
+          convertedChan = 'A'
+          break;
+        case 11:
+          convertedChan = 'B'
+          break;
+        case 12:
+          convertedChan = 'C'
+          break;
+        case 13:
+          convertedChan = 'D'
+          break;
+        case 14:
+          convertedChan = 'E'
+          break;
+        case 15:
+          convertedChan = 'F'
+          break;
+      }
+    } else {
+      convertedChan = ch
+    }
+    return convertedChan
   }
 
   

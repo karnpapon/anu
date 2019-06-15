@@ -156,7 +156,7 @@ function Sequencer(app){
                 }
                 // app.sendOsc()
                 this.midiNoteOn(cursor.channel, cursor.octave[counterIndex], cursor.note[counterIndex], cursor.velocity, cursor.length)
-                this.udpSend(cursor.UDP)
+                this.udpSend(cursor.UDP[counterIndex])
                 app.textBaffleFX()
                 app.getHighlight[index].classList.add("selection-trigger")
                 app.info.classList.add("trigger")
