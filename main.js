@@ -13,10 +13,12 @@ app.inspect = function(){
   app.win.toggleDevTools();
 }
 
+
 function createDevTools(){
   devtools = new BrowserWindow({
     frame: false, 
-    backgroundColor: '#0000',
+    backgroundColor: '#000000',
+    hasShadow: false,
     width: 270,
     height: 580, 
   })
@@ -34,6 +36,7 @@ function createWindow () {
     height: 580, 
     // resizable: false,
     frame: false,
+    hasShadow: false,
     // movable: true
     // frame: process.platform !== 'darwin',
     // skipTaskbar: process.platform === 'darwin',
@@ -44,6 +47,8 @@ function createWindow () {
     protocol: 'file:',
     slashes: true
   }))
+
+  mainWindow.setPosition(170,120)
   // mainWindow.setBackgroundColor("#CBCBCB")
   // mainWindow.setOpacity(0.78)
 

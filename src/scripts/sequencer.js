@@ -209,7 +209,13 @@ function Sequencer(app){
 
   this.outputMsg =  function(cursor){
     let counterIndex = this.getCursorIndex(cursor)
-    this.midiNoteOn(cursor.channel, cursor.octave[counterIndex], cursor.note[counterIndex], cursor.velocity[counterIndex], cursor.length[counterIndex])
+    this.midiNoteOn(
+      cursor.channel, 
+      cursor.octave[counterIndex], 
+      cursor.note[counterIndex], 
+      cursor.velocity[counterIndex], 
+      cursor.length[counterIndex]
+    )
     app.isUDPToggled ? this.udpSend(cursor.UDP[counterIndex]):()=> console.log("udp is not toggled!")
     app.textBaffleFX()
   }

@@ -12,9 +12,12 @@ const isChar = (c) => {
   return c.length === 1 && c.match(/[A-Z]/i);
 }
 
+const clamp = (v, min, max) => { return v < min ? min : v > max ? max : v } 
+
 exports.getRandomInt = getRandomInt
 exports.scale = scale
 exports.isChar = isChar
+exports.clamp = clamp
 
 
 const $ = id => document.getElementById(id);

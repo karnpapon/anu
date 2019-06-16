@@ -9,7 +9,7 @@ function Seeq(){
   const IO = require('./io')
   const Keys = require('./keys')
   const Metronome = require('./metronome')
-  const { $, el, qs, scale, isChar } = require('./utils')
+  const { $, el, qs, scale, isChar, clamp } = require('./utils')
 
   this.data = new Data(this)
   this.io = new IO(this)
@@ -114,7 +114,7 @@ function Seeq(){
     velocity: "",
     octave: "",
     counter: 0,
-    channel: 0,
+    channel: "",
     reverse: false,
     UDP: ["D3C"]
   }]
@@ -124,7 +124,7 @@ function Seeq(){
     length: "",
     velocity: "",
     octave: "",
-    channel: 0,
+    channel: "",
     counter: 0,
     UDP: ["73C"]
   }
@@ -624,7 +624,7 @@ function Seeq(){
       velocity: "",
       octave: "",
       counter: 0,
-      channel: 0,
+      channel: "",
       reverse: false,
       UDP: ["D3C"]
     }]
@@ -1148,9 +1148,6 @@ function Seeq(){
     }
     return itobase36
   }
-
-  
-  function clamp (v, min, max) { return v < min ? min : v > max ? max : v } 
 }
 
 module.exports = Seeq
