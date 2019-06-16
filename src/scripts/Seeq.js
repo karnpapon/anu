@@ -758,12 +758,25 @@ function Seeq(){
     addChannel.addEventListener("input", function(e){ ch = this.value })
     qs('form.info-input').addEventListener('submit', function (e) {
       e.preventDefault();
-      let noteAndOct
+      let noteAndOct, len = [], vel = []
       if (note.indexOf(',') > -1) { 
         noteAndOct = seeq.splitArrayNoteAndOctave(note)
       } else {
         noteAndOct = seeq.splitSingleNoteAndOctave(note)
       }
+
+      if (length.indexOf(',') > -1) { 
+        len = length.split(',')
+      } else {
+        len.push(length)
+      }
+
+      if (velocity.indexOf(',') > -1) { 
+        vel = velocity.split(',')
+      } else {
+        vel.push(velocity)
+      }
+
       let noteOnly = []
       let octOnly = []
 
@@ -775,24 +788,28 @@ function Seeq(){
       
       outputMsg.note = noteOnly
       outputMsg.octave = octOnly
-      outputMsg.length = parseInt( length )
+      outputMsg.length = parseInt( len )
       outputMsg.velocity = parseInt( velocity )
       outputMsg.channel = parseInt( ch )
       
       // UDP adapter.
       let convertedChan = seeq.getUdpValue(parseInt(ch))
-      let convertedLen = seeq.getUdpValue(parseInt( length ))
-      let convertedVelocity = seeq.getUDPvalFrom127(parseInt(velocity))
+      // let convertedVelocity = seeq.getUDPvalFrom127(parseInt(velocity))
+      // let convertedLen = seeq.getUdpValue(parseInt( length ))
 
       let udpNote = []
+      let udpLength = []
+      let udpVelocity = []
       outputMsg.UDP = []
 
       for (var i = 0; i < noteOnly.length; i++) {
+        udpLength.push(seeq.getUdpValue(parseInt(len[i])))
         udpNote.push(seeq.getUdpNote(noteOnly[i]))
+        udpVelocity.push(seeq.getUDPvalFrom127(parseInt(vel[i])))
       }
 
       for(var i = 0; i< noteOnly.length; i++){
-        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${udpNote[i]}${convertedVelocity}${convertedLen}` )
+        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${udpNote[i]}${udpVelocity[i]}${udpLength[i]}` )
       }
 
       console.log("UDP msg", outputMsg.UDP)
