@@ -2,6 +2,8 @@
 
 function Sequencer(app){
 
+  const { getRandomInt } = require('./utils')
+
   this.output = ""
   this.beatRatio = '16th'
 
@@ -135,12 +137,10 @@ function Sequencer(app){
             if (app.matchedPositionLength == 1) {
               if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 this.outputMsg(cursor)
-                app.getHighlight[index].classList.add("selection-trigger")
-                app.info.classList.add("trigger")
+                this.addTriggerClass(index)
                 cursor.note.length > 1? cursor.counter++:cursor.counter
               } else {
-                app.getHighlight[index].classList.remove("selection-trigger")
-                app.info.classList.remove("trigger")
+                this.removeTriggerClass(index)
               }
             }
 
@@ -148,8 +148,7 @@ function Sequencer(app){
             else if (app.matchedPositionLength > 1) {
               if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
                 this.outputMsg(cursor)
-                app.info.classList.add("trigger")
-                app.getHighlight[index].classList.add("selection-trigger")
+                this.addTriggerClass(index)
               } else {
                 if (app.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
                   app.getHighlight[index].classList.remove("selection-trigger")
@@ -165,7 +164,7 @@ function Sequencer(app){
           if (app.matchedPositionLength == 1) {
             if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
               this.outputMsg(cursor)
-              app.info.classList.add("trigger")
+              this.addTriggerClass()
             }
             else {
               if( app.info.classList.contains('trigger')){
@@ -178,7 +177,7 @@ function Sequencer(app){
           else if (app.matchedPositionLength > 1) {
             if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
               this.outputMsg(cursor)
-              app.info.classList.add("trigger")
+              this.addTriggerClass()
             } else {
               // if (app.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
               //   app.data.el.classList.remove("trigger")
@@ -213,6 +212,17 @@ function Sequencer(app){
     this.midiNoteOn(cursor.channel, cursor.octave[counterIndex], cursor.note[counterIndex], cursor.velocity, cursor.length)
     app.isUDPToggled ? this.udpSend(cursor.UDP[counterIndex]):()=> console.log("udp is not toggled!")
     app.textBaffleFX()
+  }
+
+
+  this.addTriggerClass = function(targetIndex){
+    app.info.classList.add("trigger")
+    app.isTextSelected? app.getHighlight[targetIndex].classList.add("selection-trigger"):() =>{}
+  }
+
+  this.removeTriggerClass = function(targetIndex){
+    app.isTextSelected? app.getHighlight[targetIndex].classList.remove("selection-trigger"): () => {}
+    app.info.classList.remove("trigger")
   }
 
   this.triggerOnClick = function() {
@@ -293,13 +303,6 @@ function Sequencer(app){
       array[index].position = app.matchedSelectPosition[index]
     })
   }
-
-  function getRandomInt(min, max) {
-    var min = Math.ceil(min);
-    var max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-  
 }
 
 module.exports = Sequencer

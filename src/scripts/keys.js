@@ -1,6 +1,9 @@
 'use strict'
 
-function Keyboard(app) {
+function Keys(app) {
+
+  const { el } = require('./utils')
+
   this.locks = []
   this.history = ''
   this.down = false;
@@ -14,15 +17,15 @@ function Keyboard(app) {
   this.isReversedCursorPressed = false
   this.isDeletePressed = false
   this.isRetriggered = false
-  this.el = document.createElement("div")
-  this.keyDisplay = document.createElement("div")
-  this.keyDisplayElCmd = document.createElement("div")
-  this.kbInfoTitle = document.createElement("lf")
-  this.kbInfoOperator = document.createElement("div")
-  this.kbInfoMidiConfig = document.createElement("div")
-  this.kbInfoOperatorColor = document.createElement("div")
-  this.kbInfoOperatorIcon = document.createElement("object")
-  this.kbInfoOperatorWrapper = document.createElement("div")
+  this.el = el("div")
+  this.keyDisplay = el("div")
+  this.keyDisplayElCmd = el("div")
+  this.kbInfoTitle = el("lf")
+  this.kbInfoOperator = el("div")
+  this.kbInfoMidiConfig = el("div")
+  this.kbInfoOperatorColor = el("div")
+  this.kbInfoOperatorIcon = el("object")
+  this.kbInfoOperatorWrapper = el("div")
   this.kbInfoTitle.innerText = "INFO"
   
   this.build = function(){
@@ -197,4 +200,4 @@ function Keyboard(app) {
   }
 }
 
-module.exports = Keyboard
+module.exports = Keys

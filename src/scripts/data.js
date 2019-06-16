@@ -1,19 +1,20 @@
 'use strict'
 
+function Data(app){
 
-function Data( ){
+    const { el } = require('./utils')
 
     // const lineWrapDetector = require('../libs/lineWrapDetector')
-    this.el = document.createElement("div")
-    this.cursorText = document.createElement("p")
-    this.loading = document.createElement("div")
+    this.el = el("div")
+    this.cursorText = el("p")
+    this.loading = el("div")
     this.flag = 0
 
     // this layer only for displaying mark.
-    this.markedText = document.createElement("p") 
+    this.markedText = el("p") 
     
     // this layer only for text's selection ( hihger z-index child's issue workaround).
-    this.highlightedText = document.createElement("p")
+    this.highlightedText = el("p")
 
     this.textBuffers = ""
     this.getHighlight
@@ -22,15 +23,15 @@ function Data( ){
     this.hltr = new TextHighlighter(this.highlightedText,{
       highlightedClass: 'hltr',
       onAfterHighlight: function(){
-        // seeq.textSelect = seeq.getSelectionText()
-        seeq.getSelectionTextPosition()
+        // app.textSelect = app.getSelectionText()
+        app.getSelectionTextPosition()
 
         // start adding new cursor.
-        if (seeq.selectedRangeLength.length > 1 ){
-          seeq.addCursorWhenSelectRange()
+        if (app.selectedRangeLength.length > 1 ){
+          app.addCursorWhenSelectRange()
         }
-        seeq.seq.selectedRangeStartIndex()
-        seeq.getHighlightElement()
+        app.seq.selectedRangeStartIndex()
+        app.getHighlightElement()
       }
     });
 
@@ -43,7 +44,7 @@ function Data( ){
       this.el.appendChild(this.cursorText)
       this.el.appendChild(this.markedText)
       this.el.appendChild(this.highlightedText)
-      seeq.el.insertBefore(this.el,seeq.parentTarget.nextSibling)
+      app.el.insertBefore(this.el,app.parentTarget.nextSibling)
     }
 
     this.refresh = function(){
@@ -70,8 +71,8 @@ function Data( ){
       this.highlightedText.innerText = this.textBuffers 
 
       // paragraph row detector.
-      // seeq.lines = lineWrapDetector.getLines(this.cursorText);
-      // console.log("this.lines", seeq.lines)
+      // app.lines = lineWrapDetector.getLines(this.cursorText);
+      // console.log("this.lines", app.lines)
 
       this.textCounter()
     }
@@ -80,25 +81,25 @@ function Data( ){
       var text = ""
       this.highlightedText.addEventListener("mousedown", function () {
         this.flag = 1
-        seeq.isConfigToggle = false
+        app.isConfigToggle = false
       });
 
       this.highlightedText.addEventListener("mousemove", function () {
         if (this.flag == 1) {
-          seeq.textBuffers = window.getSelection()
-          seeq.selectedIndexRef = seeq.textBuffers.anchorOffset
-          seeq.textSelect = seeq.textBuffers.toString();
-          seeq.info.style.opacity = 0
-          seeq.keyboard.infoShow()
-          seeq.keyboard.keyDisplayElCmd.innerText = `STEP-LENGTH : ${seeq.textSelect.length}`
+          app.textBuffers = window.getSelection()
+          app.selectedIndexRef = app.textBuffers.anchorOffset
+          app.textSelect = app.textBuffers.toString();
+          app.info.style.opacity = 0
+          app.keys.infoShow()
+          app.keys.keyDisplayElCmd.innerText = `STEP-LENGTH : ${app.textSelect.length}`
           }
       });
 
       this.highlightedText.addEventListener("mouseup", function () {
         this.flag = 0
-        seeq.keyboard.isShowInfoPressed ? seeq.keyboard.infoShow():seeq.keyboard.infoHide()
-        seeq.info.style.opacity = 1
-        // seeq.info.innerHTML = seeq.retrieveInfoDisplay()
+        app.keys.isShowInfoPressed ? app.keys.infoShow():app.keys.infoHide()
+        app.info.style.opacity = 1
+        // app.info.innerHTML = app.retrieveInfoDisplay()
       }); 
     }
 

@@ -1,17 +1,20 @@
-function Seeq(){
 
+
+function Seeq(){
+  
   // components installation.
   const Data = require('./data')
   const Sequencer = require('./sequencer')
   const Clock = require('./clock')
   const IO = require('./io')
-  const Keyboard = require('./keyboard')
+  const Keys = require('./keys')
   const Metronome = require('./metronome')
+  const { $, el, qs, scale, isChar } = require('./utils')
 
-  this.data = new Data
+  this.data = new Data(this)
   this.io = new IO(this)
   this.seq = new Sequencer(this)
-  this.keyboard = new Keyboard(this)
+  this.keys = new Keys(this)
   this.masterClock = [new Clock(120)] 
   this.metronome = new Metronome()
   this.selectedClock = 0
@@ -20,12 +23,12 @@ function Seeq(){
 
   // DOM installation.
   this.logoSeeq
-  this.appWrapper = document.createElement("appwrapper")
-  this.el = document.createElement("app");
+  this.appWrapper = el("appwrapper")
+  this.el = el("app");
   this.el.style.opacity = 0;
   this.el.id = "seeq";
   this.appWrapper.appendChild(this.el)
-  this.wrapper_el = document.createElement("div")
+  this.wrapper_el = el("div")
   this.wrapper_el.className = "wrapper-control"
   this.el.appendChild(this.wrapper_el)
   this.parentTarget = document.getElementsByClassName("wrapper-control")
@@ -106,10 +109,10 @@ function Seeq(){
     isRetrigger: false,
     up: 0,
     down: 0,
-    note: ["C"],
-    length: 16,
-    velocity: 100,
-    octave: "3",
+    note: [],
+    length: "",
+    velocity: "",
+    octave: "",
     counter: 0,
     channel: 0,
     reverse: false,
@@ -117,10 +120,10 @@ function Seeq(){
   }]
 
   this.triggerCursor = {
-    note: ["C"],
-    length: 3,
-    velocity: 100,
-    octave: "4",
+    note: [],
+    length: "",
+    velocity: "",
+    octave: "",
     channel: 0,
     counter: 0,
     UDP: ["73C"]
@@ -236,11 +239,11 @@ function Seeq(){
       </div>
     `;
 
-    this.infoDisplay = document.getElementById("info-bar")
-    this.info = document.querySelector("div[data-ctrl='information']")
+    this.infoDisplay = $("info-bar")
+    this.info = qs("div[data-ctrl='information']")
 
     this.data.build()
-    this.keyboard.build()
+    this.keys.build()
     this.io.start()
     setTimeout(seeq.show,200)
   }
@@ -250,29 +253,29 @@ function Seeq(){
   }
 
   document.addEventListener("DOMContentLoaded", function() {
-    this.searchInput = document.querySelector("input[type='search']")
-    this.searchRegExp = document.querySelector("input[type='search-regex']")
-    this.prevBtn = document.querySelector("button[data-search='prev']")
-    this.nextBtn = document.querySelector("button[data-search='next']")
-    this.configBtn = document.querySelector("button[data-search='cfg']")
-    this.inputFetch = document.querySelector("input[data-fetch='fetch']")
-    this.getTextBtn = document.querySelector("button[data-gettext='gettext']")
-    this.linkBtn = document.querySelector("button[data-ctrl='link']")
-    this.clearBtn = document.querySelector("button[data-ctrl='clear']")
-    this.nudgeBtn = document.querySelector("button[data-ctrl='nudge']")
-    this.udpBtn = document.querySelector("button[data-ctrl='udp']")
-    this.revBtn = document.querySelector("button[data-ctrl='rev']")
-    this.addBtn = document.querySelector("button[data-ctrl='add']")
-    this.subtractBtn = document.querySelector("button[data-ctrl='subtract']")
-    // this.notationMode = document.querySelector("button[data-ctrl='notation-mode']")
-    // this.extractLines = document.querySelector("button[data-ctrl='extract-line']")
-    this.logo = document.querySelector("div[data-logo='seeq']")
-    var context = document.querySelector("p.marked-text")
-    seeq.bpmNumber = document.querySelector("p[data-ctrl='bpm']")
-    seeq.metronomeBtn = document.querySelector("button[data-ctrl='metronome']")
-    seeq.currentNumber = document.querySelector("p[data-ctrl='current']")
-    seeq.totalNumber = document.querySelector("p[data-ctrl='total']")
-    seeq.cpuUsage = document.querySelector("p[data-ctrl='cpu']")
+    this.searchInput = qs("input[type='search']")
+    this.searchRegExp = qs("input[type='search-regex']")
+    this.prevBtn = qs("button[data-search='prev']")
+    this.nextBtn = qs("button[data-search='next']")
+    this.configBtn = qs("button[data-search='cfg']")
+    this.inputFetch = qs("input[data-fetch='fetch']")
+    this.getTextBtn = qs("button[data-gettext='gettext']")
+    this.linkBtn = qs("button[data-ctrl='link']")
+    this.clearBtn = qs("button[data-ctrl='clear']")
+    this.nudgeBtn = qs("button[data-ctrl='nudge']")
+    this.udpBtn = qs("button[data-ctrl='udp']")
+    this.revBtn = qs("button[data-ctrl='rev']")
+    this.addBtn = qs("button[data-ctrl='add']")
+    this.subtractBtn = qs("button[data-ctrl='subtract']")
+    // this.notationMode = qs("button[data-ctrl='notation-mode']")
+    // this.extractLines = qs("button[data-ctrl='extract-line']")
+    this.logo = qs("div[data-logo='seeq']")
+    var context = qs("p.marked-text")
+    seeq.bpmNumber = qs("p[data-ctrl='bpm']")
+    seeq.metronomeBtn = qs("button[data-ctrl='metronome']")
+    seeq.currentNumber = qs("p[data-ctrl='current']")
+    seeq.totalNumber = qs("p[data-ctrl='total']")
+    seeq.cpuUsage = qs("p[data-ctrl='cpu']")
     
     seeq.textFX = document.getElementsByClassName('textfx')
     seeq.content = new Mark(context)
@@ -313,13 +316,13 @@ function Seeq(){
         });
         seeq.updateMarkType = "normal"
 
-        seeq.logoSeeq.unmark({
-          done: function(){
-            seeq.logoSeeq.mark(seeq.searchValue, {
-              className: "logo-seeq"
-            })
-          }
-        })
+        // seeq.logoSeeq.unmark({
+        //   done: function(){
+        //     seeq.logoSeeq.mark(seeq.searchValue, {
+        //       className: "logo-seeq"
+        //     })
+        //   }
+        // })
       });
 
       this.searchRegExp.addEventListener("input", function() {
@@ -344,11 +347,10 @@ function Seeq(){
                   seeq.matchedPositionWithLength = []
                   seeq.matchType = "regex"
                   seeq.findMatchedPosition()
-                  // seeq.info.classList.add("limit-regex")
                   seeq.info.style.opacity = 0
-                  seeq.keyboard.infoShow()
-                  seeq.keyboard.keyDisplayElCmd.innerHTML = `/${displayText}/gi`
-                  seeq.keyboard.kbInfoOperatorIcon.innerHTML = ""
+                  seeq.keys.infoShow()
+                  seeq.keys.keyDisplayElCmd.innerHTML = `/${displayText}/gi`
+                  seeq.keys.kbInfoOperatorIcon.innerHTML = ""
                 }
               }
             });
@@ -393,17 +395,17 @@ function Seeq(){
         
         if(seeq.isConfigToggle){
           this.classList.add("toggle-btn")
-          seeq.keyboard.infoOpr8Hide()
-          seeq.keyboard.infoMidiShow()
-          seeq.keyboard.infoShow()
+          seeq.keys.infoOpr8Hide()
+          seeq.keys.infoMidiShow()
+          seeq.keys.infoShow()
           seeq.info.style.opacity = 0
           targetCursor = seeq.setOutputMsg(targetCursor)
         } else {
-          seeq.keyboard.infoHide()
+          seeq.keys.infoHide()
           seeq.info.style.opacity = 1
-          seeq.keyboard.infoMidiHide()
+          seeq.keys.infoMidiHide()
           this.classList.remove("toggle-btn")
-          seeq.keyboard.infoOpr8Show()
+          seeq.keys.infoOpr8Show()
         }
       })
 
@@ -483,7 +485,7 @@ function Seeq(){
               targetHighlight = seeq.getHighlight[seeq.selectIndex]
               targetCursor = seeq.cursor[seeq.selectIndex]
 
-              if(seeq.keyboard.isRetriggered){
+              if(seeq.keys.isRetriggered){
                 targetHighlight.classList.add("re-trigger")
                 targetCursor.isRetrigger = true
               } 
@@ -502,7 +504,7 @@ function Seeq(){
               targetHighlight = seeq.getHighlight[seeq.selectIndex]
               targetCursor = seeq.cursor[seeq.selectIndex]
 
-              if(seeq.keyboard.isRetriggered){
+              if(seeq.keys.isRetriggered){
                 targetCursor.isRetrigger = false
                 targetHighlight.classList.remove("re-trigger")
               }
@@ -523,11 +525,11 @@ function Seeq(){
               targetHighlight = seeq.getHighlight[seeq.selectIndex]
               targetCursor = seeq.cursor[seeq.selectIndex]
 
-              // when keyboard is pressed,then operates.
-              if (seeq.keyboard.keyboardPress ){
+              // when keys is pressed,then operates.
+              if (seeq.keys.keyboardPress ){
 
                 // keys "m", muted.
-                if (seeq.keyboard.isMutePressed){
+                if (seeq.keys.isMutePressed){
                   if (seeq.isActive){
                     targetHighlight.classList.add("mute-target")
                     targetCursor.isMuted = true
@@ -538,7 +540,7 @@ function Seeq(){
                 } 
 
                 // keys "r", reverse
-                if (seeq.keyboard.isReversedCursorPressed){
+                if (seeq.keys.isReversedCursorPressed){
                   if (seeq.isActive){
                     targetHighlight.classList.add("reverse-target")
                     targetCursor.reverse = true
@@ -552,26 +554,25 @@ function Seeq(){
                 }
 
                 // keys "i", midi config.
-                if (seeq.keyboard.isShowInfoPressed){
+                if (seeq.keys.isShowInfoPressed){
                   if (seeq.isActive){
                     seeq.isInfoToggleOpened = true
-                    seeq.keyboard.infoOpr8Hide()
-                    seeq.keyboard.infoMidiShow()
+                    seeq.keys.infoOpr8Hide()
+                    seeq.keys.infoMidiShow()
                     seeq.info.style.opacity = 0
                     targetHighlight.classList.add("select-highlight")
                     targetCursor = seeq.setOutputMsg(targetCursor)
-                    console.log("target cursor", targetCursor)
                   } else {
-                    seeq.keyboard.infoMidiHide()
+                    seeq.keys.infoMidiHide()
                     targetHighlight.classList.remove("select-highlight")
                     seeq.isInfoToggleOpened = false;
-                    seeq.keyboard.isShowInfoPressed = false;
-                    seeq.keyboard.infoOpr8Show()
+                    seeq.keys.isShowInfoPressed = false;
+                    seeq.keys.infoOpr8Show()
                   }
                 }
 
                 // keys "x", delete.
-                if (seeq.keyboard.isDeletePressed){
+                if (seeq.keys.isDeletePressed){
                   seeq.removeHighlightsEl(seeq.selectIndex)
                   seeq.data.hltr.removeHighlights(mutation.target);
                   if (seeq.selectedRangeLength.length > 0){
@@ -618,10 +619,10 @@ function Seeq(){
       isRetrigger: false,
       up: 0,
       down: 0,
-      note: ["C"],
-      length: 16,
-      velocity: 100,
-      octave: "3",
+      note: [],
+      length: "",
+      velocity: "",
+      octave: "",
       counter: 0,
       channel: 0,
       reverse: false,
@@ -669,7 +670,6 @@ function Seeq(){
 
   this.getSelectionText = function() {
     var text = "";
-    var textCount = 0
 
     if (window.getSelection) {
       text = window.getSelection().toString()
@@ -723,7 +723,7 @@ function Seeq(){
       noteWithOct.push(`${ note[i] }${ octave[i]}`)
     }
 
-    seeq.keyboard.kbInfoMidiConfig.innerHTML = `
+    seeq.keys.kbInfoMidiConfig.innerHTML = `
       <div class="operator-group info"> 
         <lf class="info-header">MIDI CONFIG |</lf> 
         <form id="info" class="info-input">
@@ -747,16 +747,16 @@ function Seeq(){
       </div> 
       <button type="submit" value="Submit" form="info" class="send-midi">send</button>
     `
-    addNote = document.getElementById('addnote')
-    addLength = document.getElementById('addlength')
-    addVelocity = document.getElementById('addvelocity')
-    addChannel = document.getElementById('addchannel')
+    addNote = $('addnote')
+    addLength = $('addlength')
+    addVelocity = $('addvelocity')
+    addChannel = $('addchannel')
 
     addNote.addEventListener("input", function(e){ note = this.value })
     addLength.addEventListener("input", function(e){ length = this.value })
     addVelocity.addEventListener("input", function(e){ velocity = this.value })
     addChannel.addEventListener("input", function(e){ ch = this.value })
-    document.querySelector('form.info-input').addEventListener('submit', function (e) {
+    qs('form.info-input').addEventListener('submit', function (e) {
       e.preventDefault();
       let noteAndOct
       if (note.indexOf(',') > -1) { 
@@ -775,12 +775,15 @@ function Seeq(){
       
       outputMsg.note = noteOnly
       outputMsg.octave = octOnly
-      outputMsg.length = length
-      outputMsg.velocity = velocity
+      outputMsg.length = parseInt( length )
+      outputMsg.velocity = parseInt( velocity )
       outputMsg.channel = parseInt( ch )
       
-      // UDP.
-      let convertedChan = seeq.getUdpChannel(parseInt(ch))
+      // UDP adapter.
+      let convertedChan = seeq.getUdpValue(parseInt(ch))
+      let convertedLen = seeq.getUdpValue(parseInt( length ))
+      let convertedVelocity = seeq.getUDPvalFrom127(parseInt(velocity))
+
       let udpNote = []
       outputMsg.UDP = []
 
@@ -789,8 +792,10 @@ function Seeq(){
       }
 
       for(var i = 0; i< noteOnly.length; i++){
-        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${udpNote[i]}` )
+        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${udpNote[i]}${convertedVelocity}${convertedLen}` )
       }
+
+      console.log("UDP msg", outputMsg.UDP)
 
       seeq.triggerCursor['counter'] = 0
     })
@@ -939,7 +944,7 @@ function Seeq(){
       seeq.isGettingData = true
       seeq.getData()
     } else {
-      seeq.data.update('please give me some input value...')
+      seeq.data.update('please give some input value...')
     }
   }
 
@@ -961,24 +966,19 @@ function Seeq(){
           if(response){
             if (seeq.extract.extract){
               seeq.data.update(seeq.extract.extract.toUpperCase())
-
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
               seeq.isGettingData = false
-              // seeq.data.loading.style.display = 'none'  
               seeq.data.loading.classList.remove("loading")
-             
               // seeq.extractLinesParagraph()
             } else {
               seeq.data.update("sorry, please try again..")
               seeq.isGettingData = false
-              // seeq.data.loading.style.display = 'none' 
               seeq.data.loading.classList.remove("loading") 
             }
           } else {
             seeq.data.update("no result found..")
             seeq.isGettingData = false
-            // seeq.data.loading.style.display = 'none'  
             seeq.data.loading.classList.remove("loading")
           }
         }).catch(function(error){
@@ -988,7 +988,6 @@ function Seeq(){
 
   this.setCursor = function(){
     this.seq.set()
-    // seeq.jump()
   }
 
   this.textBaffleFX = function(){
@@ -1098,37 +1097,39 @@ function Seeq(){
     } else if (note.length == 1) {
       udpNote = note
     }
-    console.log("getUdpNote", udpNote)
     return udpNote
   }
 
-  this.getUdpChannel = function(ch){
-    let convertedChan
-    if (ch > 9){
-      switch (ch) {
-        case 10:
-          convertedChan = 'A'
-          break;
-        case 11:
-          convertedChan = 'B'
-          break;
-        case 12:
-          convertedChan = 'C'
-          break;
-        case 13:
-          convertedChan = 'D'
-          break;
-        case 14:
-          convertedChan = 'E'
-          break;
-        case 15:
-          convertedChan = 'F'
-          break;
-      }
+  this.getUdpValue = function(val){
+    let conversion, mapRange
+    if (val > 9 && val < 17){
+      mapRange = val - 10 
+      conversion = String.fromCharCode(65 + mapRange ); 
+    } else if ( val < 9 && val > (-1) ) {
+      conversion = val
     } else {
-      convertedChan = ch
+      conversion = 'D' //fallback.
     }
-    return convertedChan
+    return conversion
+  }
+
+  this.getUDPvalFrom127 = function(val){
+    let limit = 36
+    let mapTo36 = Math.floor( scale(val, 0,127,0, limit - 1) )
+    let mapToCharRange, temp, itobase36
+    if(mapTo36 > 9 && mapTo36 < limit){
+      mapToCharRange = mapTo36 - 10
+      temp = String.fromCharCode(65 + mapToCharRange );
+
+      // limit to only Char range 
+      // range from 37 ~ 131 = A - Z.
+      itobase36 = isChar(temp)? temp : mapTo36
+    } else if ( mapTo36 < 9) {
+      itobase36 = mapTo36
+    } else {
+      itobase36 = 'D' //fallback.
+    }
+    return itobase36
   }
 
   
