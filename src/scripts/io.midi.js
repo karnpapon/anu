@@ -25,18 +25,6 @@ function Midi(app) {
     }
   }
 
-  // this.noteOn = function () {
-  //   for (const id in this.stack) {
-  //     this.set(this.stack[id], this.device())
-  //   }
-  // }
-
-  // this.noteOff = function(){
-  //   for (const id in this.stack) {
-  //     this.setOff(this.stack[id], this.device())
-  //   }
-  // }
-
   // Midi
 
   this.send = function ({ channel, octave, note, velocity, length }) {

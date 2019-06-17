@@ -806,13 +806,13 @@ function Seeq(){
   this.addSequencer = function(){
     let newCursor = this.retrieveCursor()
     this.cursor.push(newCursor[0])
-    // this.sortingIndex()
+    this.sortingIndex()
   }
   
   this.sortingIndex = function(){
     this.matchedSelectPosition.sort(function (a, b) { return a - b });
     this.selectedRangeLength.sort(function (a, b) { return a - b });
-    this.cursor.sort(function (a, b) { return a.position - b.position });
+    // this.cursor.sort(function (a, b) { return a.position - b.position });
    
   }
 
@@ -857,6 +857,7 @@ function Seeq(){
 
   this.addCursorWhenSelectRange = function(){
     this.addSequencer()
+    seeq.seq.selectedRangeStartIndex()
   }
 
   this.update = function(markType, modeContent, target ){

@@ -65,7 +65,6 @@ function Sequencer(app){
   }
 
   this.setSelectionRange = function(cursor, index, array){
-    // limited sequence within select range.
     if( !app.isTextSelected ) { return }
       let cursorPosition, offsetReverseCursor
 
@@ -128,35 +127,32 @@ function Sequencer(app){
 
     if( app.searchValue !== ""){
       if(app.isTextSelected){
-        // app.cursor.forEach((cursor, index, array) => {
-          if (!cursor.isMuted) {
-            // trigger letters.
-            if (app.matchedPositionLength == 1) {
-              if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                this.outputMsg(cursor)
-                this.addTriggerClass(index)
-                cursor.note.length > 1? cursor.counter++:cursor.counter
-              } else {
-                this.removeTriggerClass(index)
-              }
+        if (!cursor.isMuted) {
+          // trigger letters.
+          if (app.matchedPositionLength == 1) {
+            if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
+              this.outputMsg(cursor)
+              this.addTriggerClass(index)
+              cursor.note.length > 1? cursor.counter++:cursor.counter
+            } else {
+              this.removeTriggerClass(index)
             }
+          }
 
-            // trigger words.
-            else if (app.matchedPositionLength > 1) {
-              if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
-                this.outputMsg(cursor)
-                this.addTriggerClass(index)
-              } else {
-                if (app.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
-                  app.getHighlight[index].classList.remove("selection-trigger")
-                  app.info.classList.remove("trigger")
-                }
+          // trigger words.
+          else if (app.matchedPositionLength > 1) {
+            if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
+              this.outputMsg(cursor)
+              this.addTriggerClass(index)
+            } else {
+              if (app.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
+                app.getHighlight[index].classList.remove("selection-trigger")
+                app.info.classList.remove("trigger")
               }
             }
           }
-        // })
+        }
       } else {
-        // app.cursor.forEach((cursor, index, array) => {
           // trigger letters.
           if (app.matchedPositionLength == 1) {
             if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
@@ -182,7 +178,6 @@ function Sequencer(app){
               // }
             }
           }
-        // })
       }
     }
   }
@@ -205,15 +200,17 @@ function Sequencer(app){
   }
 
   this.outputMsg =  function(cursor){
-    let counterIndex = this.getCursorIndex(cursor)
+    let i = this.getCursorIndex(cursor)
     this.midiNoteOn(
       cursor.channel, 
-      cursor.octave[counterIndex], 
-      cursor.note[counterIndex], 
-      cursor.velocity[counterIndex], 
-      cursor.length[counterIndex]
+      cursor.octave[i], 
+      cursor.note[i], 
+      cursor.velocity[i], 
+      cursor.length[i]
     )
-    app.isUDPToggled ? this.udpSend(cursor.UDP[counterIndex]):()=> {}
+    app.isUDPToggled ? this.udpSend(cursor.UDP[i]):()=> {}
+    app.io.run()
+    app.io.clear()
     app.textBaffleFX()
   }
 
@@ -260,15 +257,15 @@ function Sequencer(app){
 
   this.udpSend = function(msg){
     app.io.udp.send(msg)
-    app.io.udp.run()
-    app.io.udp.clear()
+    // app.io.udp.run()
+    // app.io.udp.clear()
   }
 
 
   this.midiNoteOn = function(channel = 0, octave = 4, note = getRandomInt(0,11),velocity = 100, length = 7){
     app.io.midi.send({ channel ,octave, note ,velocity ,length })
-    app.io.midi.run()
-    app.io.midi.clear()
+    // app.io.midi.run()
+    // app.io.midi.clear()
   }
 
   this.midiNoteOff = function(){
@@ -297,7 +294,7 @@ function Sequencer(app){
     
     // app.resetInfoBar()
     app.data.el.classList.remove("trigger")
-    this.set()
+    // this.set()
     window.parent.postMessage("stop", '*') 
   }
 

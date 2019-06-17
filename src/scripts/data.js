@@ -22,11 +22,9 @@ function Data(app){
         // app.textSelect = app.getSelectionText()
         app.getSelectionTextPosition()
 
-        // start adding new cursor.
         if (app.selectedRangeLength.length > 1 ){
           app.addCursorWhenSelectRange()
         }
-        app.seq.selectedRangeStartIndex()
         app.getHighlightElement()
       }
     });
@@ -95,7 +93,6 @@ function Data(app){
         this.flag = 0
         app.keys.isShowInfoPressed ? app.keys.infoShow():app.keys.infoHide()
         app.info.style.opacity = 1
-        // app.info.innerHTML = app.retrieveInfoDisplay()
       }); 
     }
 
