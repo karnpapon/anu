@@ -9,11 +9,7 @@ function Data(app){
     this.cursorText = el("p")
     this.loading = el("div")
     this.flag = 0
-
-    // this layer only for displaying mark.
     this.markedText = el("p") 
-    
-    // this layer only for text's selection ( hihger z-index child's issue workaround).
     this.highlightedText = el("p")
 
     this.textBuffers = ""

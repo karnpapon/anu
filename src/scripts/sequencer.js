@@ -7,10 +7,9 @@ function Sequencer(app){
   this.output = ""
   this.beatRatio = '16th'
 
-  this.set = function () {
+  this.set = function (cursor, index) {
 
-    app.cursor.forEach((cursor, index) => {
-      var self = this
+    // app.cursor.forEach((cursor, index) => {
       var offsetCursor = 0
       if (index == 0) {
         this.outputType = app.data.cursorText.innerText
@@ -38,7 +37,7 @@ function Sequencer(app){
       }
      
       app.data.cursorText.innerHTML = this.output
-    })
+    // })
    
   }
 
@@ -65,11 +64,11 @@ function Sequencer(app){
     })
   }
 
-  this.setSelectionRange = function(){
+  this.setSelectionRange = function(cursor, index, array){
     // limited sequence within select range.
     if( !app.isTextSelected ) { return }
-    app.cursor.forEach( ( cursor, index, array ) => {
       let cursorPosition, offsetReverseCursor
+
       // reversed position compensation.
       if( cursor.isCursorOffsetReverse){
         cursorPosition = cursor.position - 2
@@ -84,37 +83,36 @@ function Sequencer(app){
       } else if ( cursorPosition < app.matchedSelectPosition[index]){
         array[index].position  = app.selectedRangeLength[index] - 1 +  offsetReverseCursor
       }
-    })
   }
 
   this.run = function(){
-    if( !app.isTextSelected ) { 
-     this.setGlobalCursorWrap()
-    }
-    this.set() 
-    this.counting()
-    this.trigger()
-    this.setSelectionRange()
+    app.cursor.forEach((cursor, index, array) => {
+      if( !app.isTextSelected ) { 
+        this.setGlobalCursorWrap(cursor, index, array)
+      }
+      this.set(cursor, index) 
+      this.counting(cursor)
+      this.trigger(cursor, index, array)
+      this.setSelectionRange(cursor, index, array)
+
+    })
   }
 
-  this.setGlobalCursorWrap = function(){
+  this.setGlobalCursorWrap = function(cursor, index, array){
     var length = app.data.cursorText.innerText.length
-    app.cursor.forEach((cursor, index, array) => {
       if (cursor.position > length - 1) {
         array[index].position = 0
       } else if (app.isReverse && cursor.position < 0) {
         array[index].position = length - 1
       }
-    })
   }
 
-  this.counting = function(){
+  this.counting = function(target){
     // increment | decrement.
     let offset = 1
     if(app.isReverse){
-      app.cursor.forEach(target => target.position -= 1)
+      target => target.position -= 1
     } else {
-      app.cursor.forEach(( target, index, arr ) => { 
         if (target.isRetrigger) {
           target.position += 0
         } 
@@ -123,15 +121,14 @@ function Sequencer(app){
         } else {
           target.position += 1 
         }
-      }) 
     } 
   }
 
-  this.trigger = function(){
+  this.trigger = function(cursor, index, array){
 
     if( app.searchValue !== ""){
       if(app.isTextSelected){
-        app.cursor.forEach((cursor, index, array) => {
+        // app.cursor.forEach((cursor, index, array) => {
           if (!cursor.isMuted) {
             // trigger letters.
             if (app.matchedPositionLength == 1) {
@@ -157,9 +154,9 @@ function Sequencer(app){
               }
             }
           }
-        })
+        // })
       } else {
-        app.cursor.forEach((cursor, index, array) => {
+        // app.cursor.forEach((cursor, index, array) => {
           // trigger letters.
           if (app.matchedPositionLength == 1) {
             if (app.matchedPosition.indexOf(cursor.position) !== (-1)) {
@@ -185,7 +182,7 @@ function Sequencer(app){
               // }
             }
           }
-        })
+        // })
       }
     }
   }
@@ -216,7 +213,7 @@ function Sequencer(app){
       cursor.velocity[counterIndex], 
       cursor.length[counterIndex]
     )
-    app.isUDPToggled ? this.udpSend(cursor.UDP[counterIndex]):()=> console.log("udp is not toggled!")
+    app.isUDPToggled ? this.udpSend(cursor.UDP[counterIndex]):()=> {}
     app.textBaffleFX()
   }
 
@@ -287,7 +284,7 @@ function Sequencer(app){
     app.matchedSelectPosition = []
     app.searchValue = ""
     app.isTextSelected = false
-    this.set()
+    this.set(app.cursor, 0)
     window.parent.postMessage("stop", '*')
   }
 

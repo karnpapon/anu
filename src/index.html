@@ -44,13 +44,11 @@
         // });
         const browserView = document.body
         var browser
-        var devBtn
           var devtoolsView = document.getElementById('devtools')
           browserView.addEventListener('DOMContentLoaded', () => {
             browser = browserView.getWebContents()
             browser.setDevToolsWebContents(devtoolsView.getWebContents())
             browser.openDevTools()
-            devBtn = document.querySelector("button[data-ctrl='dev']")
           }) 
     </script>
   </body>

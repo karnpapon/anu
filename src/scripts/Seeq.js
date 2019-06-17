@@ -188,7 +188,6 @@ function Seeq(){
             <div class="control-btn">
               <button data-ctrl="link">link</button>
               <button data-ctrl="udp">udp</button>
-              <button data-ctrl="dev">dev</button>
               <button data-ctrl="rev">rev</button>
               <button data-ctrl="clear">clear</button>
               <button data-ctrl="nudge">nudge</button>
@@ -281,6 +280,7 @@ function Seeq(){
     seeq.content = new Mark(context)
     seeq.logoSeeq = new Mark( this.logo )
 
+    // seeq.setCursor(seeq.cursor, 0)
     seeq.metronome.init()
     seeq.fetch()
 
@@ -657,7 +657,7 @@ function Seeq(){
     // otherwise it'll manage to adjust clock to Ableton clock.
     // ( clock will keeping reset to the default, 120 BPM).
     socket.disconnect(0)
-    seeq.setCursor()
+    // seeq.setCursor(this.cursor[0], 0)
     seeq.play()
     seeq.metronome.play()
   }
@@ -686,7 +686,6 @@ function Seeq(){
     var length
     let indexBuffers = []
     let matchedIndex 
-    let matched
     
     if(this.textSelect !== ""){
       length = this.textSelect.length
@@ -756,26 +755,13 @@ function Seeq(){
     addLength.addEventListener("input", function(e){ length = this.value })
     addVelocity.addEventListener("input", function(e){ velocity = this.value })
     addChannel.addEventListener("input", function(e){ ch = this.value })
+
     qs('form.info-input').addEventListener('submit', function (e) {
       e.preventDefault();
       let noteAndOct, len = [], vel = []
-      if (note.indexOf(',') > -1) { 
-        noteAndOct = seeq.splitArrayNoteAndOctave(note)
-      } else {
-        noteAndOct = seeq.splitSingleNoteAndOctave(note)
-      }
-
-      if (length.indexOf(',') > -1) { 
-        len = length.split(',')
-      } else {
-        len.push(length)
-      }
-
-      if (velocity.indexOf(',') > -1) { 
-        vel = velocity.split(',')
-      } else {
-        vel.push(velocity)
-      }
+      noteAndOct = seeq.parser(note, 'note')
+      len = seeq.parser(length, 'length')
+      vel = seeq.parser(velocity, 'velocity')
 
       let noteOnly = []
       let octOnly = []
@@ -785,7 +771,6 @@ function Seeq(){
         octOnly.push(parseInt( item[1] ))
       })
 
-      
       outputMsg.note = noteOnly
       outputMsg.octave = octOnly
       outputMsg.length = parseInt( len )
@@ -794,8 +779,6 @@ function Seeq(){
       
       // UDP adapter.
       let convertedChan = seeq.getUdpValue(parseInt(ch))
-      // let convertedVelocity = seeq.getUDPvalFrom127(parseInt(velocity))
-      // let convertedLen = seeq.getUdpValue(parseInt( length ))
 
       let udpNote = []
       let udpLength = []
@@ -823,7 +806,7 @@ function Seeq(){
   this.addSequencer = function(){
     let newCursor = this.retrieveCursor()
     this.cursor.push(newCursor[0])
-    this.sortingIndex()
+    // this.sortingIndex()
   }
   
   this.sortingIndex = function(){
@@ -833,18 +816,18 @@ function Seeq(){
    
   }
 
-  this.extractLinesParagraph = function(){
-    // make eachline has linebreak 
-    // before converting letters into dashes.
-    for(var i=0; i< this.lines.length; i++){
-      for(var j=0; j<this.lines[i].length; j++){
-        this.textLineBuffers += this.lines[i][j].innerText
-        this.textLineBuffers += " "
-      }
-      this.textLineBuffers += "<br/>"
-    }
-    // seeq.data.updateWithCursor(this.textLineBuffers)
-  }
+  // this.extractLinesParagraph = function(){
+  //   // make eachline has linebreak 
+  //   // before converting letters into dashes.
+  //   for(var i=0; i< this.lines.length; i++){
+  //     for(var j=0; j<this.lines[i].length; j++){
+  //       this.textLineBuffers += this.lines[i][j].innerText
+  //       this.textLineBuffers += " "
+  //     }
+  //     this.textLineBuffers += "<br/>"
+  //   }
+  //   // seeq.data.updateWithCursor(this.textLineBuffers)
+  // }
 
   
   this.textConvertor = function(){
@@ -982,7 +965,7 @@ function Seeq(){
           })
           if(response){
             if (seeq.extract.extract){
-              seeq.data.update(seeq.extract.extract.toUpperCase())
+              seeq.data.update(seeq.extract.extract)
               // move total length here to avoid re-render every counting.
               seeq.seq.setTotalLenghtCounterDisplay()
               seeq.isGettingData = false
@@ -1030,6 +1013,25 @@ function Seeq(){
     var output = []
     output.push(note.split(/(\d+)/).filter(Boolean));
     return output
+  }
+
+  this.parser = function( item, type ){
+    let res = []
+    if(type == 'note'){
+      if (item.indexOf(',') > -1) { 
+        res = this.splitArrayNoteAndOctave(item)
+      } else {
+        res = this.splitSingleNoteAndOctave(item)
+      }
+    } else {
+      if (item.indexOf(',') > -1) { 
+        res = item.split(',')
+      } else {
+        res.push(item)
+      }
+    }
+
+    return res
   }
 
   this.updateMark = function(value, markType){
