@@ -1,4 +1,4 @@
-function Metronome(){
+function Metronome(app){
 
     // implementation from https://github.com/cwilso/metronome.
     const Worker = require('./metronomeworker')
@@ -25,7 +25,7 @@ function Metronome(){
     
     this.nextNote = function()  {
         // Advance current note and time by a 16th note...
-        var secondsPerBeat = 60.0 / seeq.clock();    // Notice this picks up the CURRENT 
+        var secondsPerBeat = 60.0 / app.clock();    // Notice this picks up the CURRENT 
                                               // tempo value to calculate beat length.
         this.nextNoteTime += 0.25 * secondsPerBeat;    // Add beat length to last beat time
     
@@ -49,7 +49,7 @@ function Metronome(){
       var osc = this.audioContext.createOscillator();
       let gain = this.audioContext.createGain();
 
-      gain.gain.value = seeq.isBPMtoggle? 0.125:0
+      gain.gain.value = app.isBPMtoggle? 0.125:0
 
       osc.connect(gain);
       gain.connect(this.audioContext.destination);
@@ -84,7 +84,7 @@ function Metronome(){
         this.unlocked = true;
       }
   
-      if (seeq.isPlaying) {
+      if (app.isPlaying) {
           this.current16thNote = 0;
           this.nextNoteTime = this.audioContext.currentTime;
           window.parent.postMessage("start", '*')
@@ -92,28 +92,28 @@ function Metronome(){
     }
 
     this.draw = function() {
-      let self = seeq.metronome
+      let self = app.metronome
       var currentNote = this.last16thNoteDrawn;
-      var currentTime = seeq.metronome.audioContext.currentTime;
+      var currentTime = app.metronome.audioContext.currentTime;
       while (self.notesInQueue.length && self.notesInQueue[0].time < currentTime) {
         currentNote = self.notesInQueue[0].note;
         self.notesInQueue.splice(0,1);   // remove note from queue
       }
   
       if (this.last16thNoteDrawn != currentNote) {
-        seeq.seq.run()
+        app.seq.run()
         // self.showBPM(this.last16thNoteDrawn)
         this.last16thNoteDrawn = currentNote;
       }
     
-      window.requestAnimationFrame(seeq.metronome.draw);
+      window.requestAnimationFrame(app.metronome.draw);
     }
 
     this.showBPM = function(beat){
         if(beat % 4){
-          seeq.bpmNumber.classList.remove("bpm-active") 
+          app.bpmNumber.classList.remove("bpm-active") 
         } else {
-          seeq.bpmNumber.classList.add("bpm-active")
+          app.bpmNumber.classList.add("bpm-active")
         }
     }
     
@@ -127,7 +127,7 @@ function Metronome(){
     
         onmessage = function(e) {
             if (e.data == "tick") {
-                seeq.metronome.scheduler();
+                app.metronome.scheduler();
             } else { console.log("message: " + e.data)}
         }
         window.parent.postMessage({ "interval": this.lookahead }, '*')

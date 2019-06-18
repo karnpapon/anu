@@ -8,7 +8,6 @@ function UDP(app) {
   this.options = { default: 49161 }
 
   this.start = function () {
-    console.info('UDP Starting..')
     this.select()
   }
 

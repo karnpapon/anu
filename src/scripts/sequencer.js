@@ -110,7 +110,7 @@ function Sequencer(app){
     // increment | decrement.
     let offset = 1
     if(app.isReverse){
-      target => target.position -= 1
+      target.position -= 1
     } else {
         if (target.isRetrigger) {
           target.position += 0
@@ -206,7 +206,7 @@ function Sequencer(app){
       cursor.octave[i], 
       cursor.note[i], 
       cursor.velocity[i], 
-      cursor.length[i]
+      cursor.notelength[i]
     )
     app.isUDPToggled ? this.udpSend(cursor.UDP[i]):()=> {}
     app.io.run()
@@ -230,7 +230,7 @@ function Sequencer(app){
     let i, index
     let {
       note,
-      length,
+      notelength,
       velocity,
       octave,
       channel, 
@@ -247,7 +247,7 @@ function Sequencer(app){
       index = 0
     }
     
-    this.midiNoteOn(channel, octave[index], note[index], velocity, length) 
+    this.midiNoteOn(channel, octave[index], note[index], velocity, notelength) 
     this.udpSend(UDP) 
     app.el.classList.add("trigger-free-mode")
     setTimeout(() => {
@@ -281,8 +281,11 @@ function Sequencer(app){
     app.matchedSelectPosition = []
     app.searchValue = ""
     app.isTextSelected = false
-    this.set(app.cursor, 0)
-    window.parent.postMessage("stop", '*')
+    // this.set(app.cursor, 0)
+
+    if (app.isLinkToggle){
+      window.parent.postMessage("stop", '*')
+    }
   }
 
   this.nudged = function(){
@@ -292,10 +295,11 @@ function Sequencer(app){
       app.cursor = app.retrieveCursor()
     }
     
-    // app.resetInfoBar()
     app.data.el.classList.remove("trigger")
-    // this.set()
-    window.parent.postMessage("stop", '*') 
+    // this.set(app.cursor, 0)
+    if (app.isLinkToggle) {
+      window.parent.postMessage("stop", '*')
+    }
   }
 
   this.resetSelectedRange = function(){

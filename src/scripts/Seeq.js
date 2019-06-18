@@ -16,7 +16,7 @@ function Seeq(){
   this.seq = new Sequencer(this)
   this.keys = new Keys(this)
   this.masterClock = [new Clock(120)] 
-  this.metronome = new Metronome()
+  this.metronome = new Metronome(this)
   this.selectedClock = 0
 
   // ------------------------------------
@@ -110,9 +110,9 @@ function Seeq(){
     up: 0,
     down: 0,
     note: [],
-    length: "",
-    velocity: "",
-    octave: "",
+    notelength: [],
+    velocity: [],
+    octave: [],
     counter: 0,
     channel: "",
     reverse: false,
@@ -121,7 +121,7 @@ function Seeq(){
 
   this.triggerCursor = {
     note: [],
-    length: "",
+    notelength: "",
     velocity: "",
     octave: "",
     channel: "",
@@ -399,7 +399,7 @@ function Seeq(){
           seeq.keys.infoMidiShow()
           seeq.keys.infoShow()
           seeq.info.style.opacity = 0
-          targetCursor = seeq.setOutputMsg(targetCursor)
+          seeq.setOutputMsg(targetCursor)
         } else {
           seeq.keys.infoHide()
           seeq.info.style.opacity = 1
@@ -411,11 +411,12 @@ function Seeq(){
 
       this.getTextBtn.addEventListener("click",function(){ 
         seeq.data.clear()
-        seeq.fetch()
+        seeq.fetchWithoutDisconnect()
       })
 
       this.linkBtn.addEventListener("click", function(){
         seeq.isLinkToggle = !seeq.isLinkToggle
+        seeq.isPlaying = true
         this.classList.toggle("toggle-btn")
 
         if (seeq.isLinkToggle) {
@@ -561,7 +562,7 @@ function Seeq(){
                     seeq.keys.infoMidiShow()
                     seeq.info.style.opacity = 0
                     targetHighlight.classList.add("select-highlight")
-                    targetCursor = seeq.setOutputMsg(targetCursor)
+                    seeq.setOutputMsg(targetCursor)
                   } else {
                     seeq.keys.infoMidiHide()
                     targetHighlight.classList.remove("select-highlight")
@@ -620,9 +621,9 @@ function Seeq(){
       up: 0,
       down: 0,
       note: [],
-      length: "",
-      velocity: "",
-      octave: "",
+      notelength: [],
+      velocity: [],
+      octave: [],
       counter: 0,
       channel: "",
       reverse: false,
@@ -641,7 +642,7 @@ function Seeq(){
     this.seq.stop()
     this.data.hltr.removeHighlights();
     this.content.unmark()
-    this.fetch()
+    this.fetchWithoutDisconnect()
   }
 
   this.nudge = function(){
@@ -649,17 +650,21 @@ function Seeq(){
     this.seq.nudged()
   }
 
+  this.fetchWithoutDisconnect = function(){
+    this.startFetch()
+  }
+
   this.fetch = function(){
-    seeq.startFetch()
+    this.startFetch()
 
     // disconnect at initial state (`linkBtn` is not actived).
     // to handle clock freely, 
     // otherwise it'll manage to adjust clock to Ableton clock.
     // ( clock will keeping reset to the default, 120 BPM).
     socket.disconnect(0)
-    // seeq.setCursor(this.cursor[0], 0)
-    seeq.play()
-    seeq.metronome.play()
+    // this.setCursor(this.cursor[0], 0)
+    this.play()
+    this.metronome.play()
   }
 
   this.removeHighlightsEl = function(index){
@@ -711,35 +716,40 @@ function Seeq(){
 
   this.setOutputMsg = function(outputMsg){
     let addNote, addLength, addVelocity, addChannel,
-    note = outputMsg.note === undefined? "":outputMsg.note,
-    octave = outputMsg.octave === undefined? "":outputMsg.octave,
-    length = outputMsg.length === undefined? "":outputMsg.length,
-    velocity = outputMsg.velocity === undefined? "":outputMsg.velocity,
-    ch = outputMsg.channel === undefined? "": outputMsg.channel
+    note = outputMsg.note? outputMsg.note:"",
+    octave = outputMsg.octave? outputMsg.octave:"",
+    length = outputMsg.notelength? outputMsg.notelength:"",
+    velocity = outputMsg.velocity? outputMsg.velocity:"",
+    ch = outputMsg.channel? outputMsg.channel:""
 
     var noteWithOct = [];
+    
     for (var i = 0; i < note.length; i++) {
       noteWithOct.push(`${ note[i] }${ octave[i]}`)
     }
 
+    let notes = noteWithOct.join()
+    let lengths = length.join()
+    let velocities = velocity.join()
+
     seeq.keys.kbInfoMidiConfig.innerHTML = `
       <div class="operator-group info"> 
-        <lf class="info-header">MIDI CONFIG |</lf> 
+        <lf class="info-header">MIDI |</lf> 
         <form id="info" class="info-input">
           <lf> 
-            <p>NOTE:</p>
-            <input id="addnote" class="input-note" type="text" value=${noteWithOct}>
+            <p>NTE:</p>
+            <input id="addnote" class="input-note" type="text" value=${notes}>
           </lf>
           <lf> 
-            <p>LENGTH:</p>
-            <input id="addlength" class="input-note" type="text" value=${length}>
+            <p>LEN:</p>
+            <input id="addlength" class="input-note" type="text" value=${lengths}>
           </lf>
           <lf> 
             <p>VEL:</p>
-            <input id="addvelocity" class="input-note" type="text" value=${velocity}>
+            <input id="addvelocity" class="input-note" type="text" value=${velocities}>
           </lf>
           <lf> 
-            <p>CHAN:</p>
+            <p>CHN:</p>
             <input id="addchannel" class="input-note" type="text" value=${ch}>
           </lf>
         </form>
@@ -750,18 +760,24 @@ function Seeq(){
     addLength = $('addlength')
     addVelocity = $('addvelocity')
     addChannel = $('addchannel')
-
-    addNote.addEventListener("input", function(e){ note = this.value })
-    addLength.addEventListener("input", function(e){ length = this.value })
-    addVelocity.addEventListener("input", function(e){ velocity = this.value })
+    
+    addNote.addEventListener("input", function (e) { notes = this.value })
+    addLength.addEventListener("input", function (e) { lengths = this.value })
+    addVelocity.addEventListener("input", function (e) { velocities = this.value })
     addChannel.addEventListener("input", function(e){ ch = this.value })
 
     qs('form.info-input').addEventListener('submit', function (e) {
+
       e.preventDefault();
-      let noteAndOct, len = [], vel = []
-      noteAndOct = seeq.parser(note, 'note')
-      len = seeq.parser(length, 'length')
-      vel = seeq.parser(velocity, 'velocity')
+
+      // -----------------------------------------------
+      // data transformation section--------------------
+
+      let noteAndOct = [], len = [], vel = []
+
+      noteAndOct = seeq.parser(notes, 'note')
+      len = seeq.parser(lengths, 'length')
+      vel = seeq.parser(velocities, 'velocity') 
 
       let noteOnly = []
       let octOnly = []
@@ -771,19 +787,24 @@ function Seeq(){
         octOnly.push(parseInt( item[1] ))
       })
 
+      // -----------------------------------------------
+      // MIDI section-----------------------------------
+
       outputMsg.note = noteOnly
       outputMsg.octave = octOnly
-      outputMsg.length = parseInt( len )
-      outputMsg.velocity = parseInt( velocity )
-      outputMsg.channel = parseInt( ch )
-      
-      // UDP adapter.
+      outputMsg.notelength = len 
+      outputMsg.velocity = vel
+      outputMsg.channel = ch
+
+      // -----------------------------------------------
+      // UDP section------------------------------------
+
       let convertedChan = seeq.getUdpValue(parseInt(ch))
 
       let udpNote = []
       let udpLength = []
       let udpVelocity = []
-      outputMsg.UDP = []
+      outputMsg.UDP = [] //clear first.
 
       for (var i = 0; i < noteOnly.length; i++) {
         udpLength.push(seeq.getUdpValue(parseInt(len[i])))
@@ -797,10 +818,12 @@ function Seeq(){
 
       console.log("UDP msg", outputMsg.UDP)
 
+      // -----------------------------------------------
+
       seeq.triggerCursor['counter'] = 0
     })
 
-    return outputMsg
+    // return outputMsg
   }
 
   this.addSequencer = function(){
