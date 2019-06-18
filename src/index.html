@@ -9,7 +9,6 @@
     <style>
       ::selection {
         background: var(--hl-color); 
-        /* WebKit/Blink Browsers */
       }
 
       #devtools { display: none; }
@@ -26,10 +25,10 @@
         const baffle = require('baffle');
 
         const fs = require('fs');
-        // const os 	= require('os-utils');
-        // const OSC = require('osc-js')
         const axios = require('axios');
         var socket = io('http://localhost:3000');
+        // const os 	= require('os-utils');
+        // const OSC = require('osc-js')
 
         
         // const options = { send: { port: 8000 } }
@@ -42,6 +41,15 @@
         //     seeq.seq.setCPUUsageDisplay(v)
         //   }, 1000);
         // });
+
+        // prevent dblclick selection.
+        document.addEventListener('mousedown', function (event) {
+            if (event.detail > 1) {
+              event.preventDefault();
+            }
+        }, false);
+
+        // frameless devtool.
         const browserView = document.body
         var browser
           var devtoolsView = document.getElementById('devtools')
