@@ -2,30 +2,35 @@
 
 const Midi = require('./io.midi')
 const Udp = require('./io.udp')
+const OSC = require('./io.osc')
 
 function IO(app) {
   this.ip = '127.0.0.1'
   this.midi = new Midi(app)
   this.udp = new Udp(app)
+  this.osc = new OSC(app)
 
   this.start = function () {
     this.clear()
     this.midi.start()
     this.udp.start()
+    this.osc.start()
   }
 
   this.clear = function () {
     this.midi.clear()
     this.udp.clear()
+    this.osc.clear()
   }
 
   this.run = function () {
     this.midi.run()
     this.udp.run()
+    this.osc.run()
   }
 
   this.length = function () {
-    return this.midi.stack.length + this.udp.stack.length
+    return this.midi.stack.length + this.udp.stack.length + this.osc.stack.length
   }
 
   this.setIp = function (addr = '127.0.0.1') {

@@ -17,6 +17,7 @@ function Keys(app) {
   this.isReversedCursorPressed = false
   this.isDeletePressed = false
   this.isRetriggered = false
+  this.isOscPressed = false
   this.el = el("div")
   this.keyDisplay = el("div")
   this.keyDisplayElCmd = el("div")
@@ -68,6 +69,11 @@ function Keys(app) {
     else if (event.keyCode === 27) { 
       this.infoDisplay('STOP : stop sequencer.', "e")
       app.clear()
+    }
+
+    // char = osc
+    else if (event.keyCode === 79) { 
+      this.infoDisplay('OSC : osc message.', "o")
     }
 
     // char = r = reverse selected.

@@ -174,7 +174,6 @@ function Sequencer(app){
             } else {
               // if (app.matchedPositionWithLength.indexOf(cursor.position) == (-1)) {
               //   app.data.el.classList.remove("trigger")
-              //   // this.midiNoteOff()
               // }
             }
           }
@@ -208,6 +207,7 @@ function Sequencer(app){
       cursor.velocity[i], 
       cursor.notelength[i]
     )
+    app.io.osc.send('/' + cursor.OSC.path, cursor.OSC.msg)
     app.isUDPToggled ? this.udpSend(cursor.UDP[i]):()=> {}
     app.io.run()
     app.io.clear()
@@ -257,31 +257,20 @@ function Sequencer(app){
 
   this.udpSend = function(msg){
     app.io.udp.send(msg)
-    // app.io.udp.run()
-    // app.io.udp.clear()
   }
 
 
   this.midiNoteOn = function(channel = 0, octave = 4, note = getRandomInt(0,11),velocity = 100, length = 7){
     app.io.midi.send({ channel ,octave, note ,velocity ,length })
-    // app.io.midi.run()
-    // app.io.midi.clear()
-  }
-
-  this.midiNoteOff = function(){
-    app.io.midi.noteOff()
-    app.io.midi.clear()
   }
 
   this.stop = function(){
     app.cursor = app.retrieveCursor()
-    // app.resetInfoBar()
     app.data.el.classList.remove("trigger")
     app.selectedRangeLength = []
     app.matchedSelectPosition = []
     app.searchValue = ""
     app.isTextSelected = false
-    // this.set(app.cursor, 0)
 
     if (app.isLinkToggle){
       window.parent.postMessage("stop", '*')

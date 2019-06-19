@@ -1,5 +1,3 @@
-
-
 function Seeq(){
   
   // components installation.
@@ -116,7 +114,11 @@ function Seeq(){
     counter: 0,
     channel: "",
     reverse: false,
-    UDP: ["D3C"]
+    UDP: ["D3C"],
+    OSC: {
+      path: "play2",
+      msg: "sound bd"
+    }
   }]
 
   this.triggerCursor = {
@@ -627,7 +629,11 @@ function Seeq(){
       counter: 0,
       channel: "",
       reverse: false,
-      UDP: ["D3C"]
+      UDP: ["D3C"],
+      OSC: {
+        path: "play2",
+        msg: "sound bd"
+      }
     }]
     return reset 
   }
