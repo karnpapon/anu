@@ -45,7 +45,6 @@ function Midi(app) {
     if (!device) { console.warn('No midi device!'); return }
     device.send([channel[0], note, velocity]) 
     device.send([channel[1], note, velocity], length)
-    // this.handleNoteOn(device.send([channel[0], note, velocity]))
   }
 
   // this.setOff = function (data = this.stack, device) {

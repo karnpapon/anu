@@ -23,7 +23,7 @@ function Keys(app) {
   this.keyDisplayElCmd = el("div")
   this.kbInfoTitle = el("lf")
   this.kbInfoOperator = el("div")
-  this.kbInfoMidiConfig = el("div")
+  this.infoInputConfig = el("div")
   this.kbInfoOperatorColor = el("div")
   this.kbInfoOperatorIcon = el("object")
   this.kbInfoOperatorWrapper = el("div")
@@ -33,7 +33,7 @@ function Keys(app) {
     this.el.classList.add("info-wrapper")
     this.keyDisplay.classList.add("info-group")
     this.kbInfoOperator.classList.add("info-icon-and-color")
-    this.kbInfoMidiConfig.classList.add("info-midi-conf")
+    this.infoInputConfig.classList.add("info-input-conf")
     this.kbInfoOperatorColor.classList.add("info-color")
     this.keyDisplayElCmd.classList.add("info-opr8-title")
     this.kbInfoOperatorWrapper.classList.add("info-opr8-wrapper")
@@ -45,7 +45,7 @@ function Keys(app) {
     this.kbInfoOperatorWrapper.appendChild(this.keyDisplayElCmd)
     this.kbInfoOperatorWrapper.appendChild(this.kbInfoOperator)
     this.el.appendChild(this.kbInfoOperatorWrapper)
-    this.el.appendChild(this.kbInfoMidiConfig)
+    this.el.appendChild(this.infoInputConfig)
     app.infoDisplay.appendChild(this.el)
 
     this.infoHide()
@@ -74,6 +74,7 @@ function Keys(app) {
     // char = osc
     else if (event.keyCode === 79) { 
       this.infoDisplay('OSC : osc message.', "o")
+      this.isOscPressed = true
     }
 
     // char = r = reverse selected.
@@ -137,12 +138,12 @@ function Keys(app) {
     this.kbInfoOperatorIcon.setAttribute('data', `media/icons/${icon}.svg`);
   }
 
-  this.infoMidiHide = function(){
-    this.kbInfoMidiConfig.classList.add("info-hide")
+  this.infoInputHide = function(){
+    this.infoInputConfig.classList.add("info-hide")
   }
 
-  this.infoMidiShow = function () {
-    this.kbInfoMidiConfig.classList.remove("info-hide") 
+  this.infoInputShow = function () {
+    this.infoInputConfig.classList.remove("info-hide") 
   }
 
   this.infoShow = function(){
@@ -172,6 +173,7 @@ function Keys(app) {
       this.keyboardPress = false;
       this.isDeletePressed = false;
       this.isShowInfoPressed = false;
+      this.isOscPressed = false;
       this.isReversedCursorPressed = false;
       this.isRetriggered = false;
   
@@ -184,7 +186,7 @@ function Keys(app) {
   }
 
   document.onkeydown = (event) => { 
-    // prevent repeated DOM rendering, when hold the keys.
+    // prevent DOM re-rendering, when hold the keys.
     app.isRegExpSearching = false
     if (this.down || event.keyCode === 91 ) return;
     this.down = true

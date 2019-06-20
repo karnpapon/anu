@@ -120,7 +120,7 @@ div button{
   text-align: center;
 }
 
-.info-midi-conf{
+.info-input-conf{
   width: inherit;
   position: absolute;
   /* opacity: 0; */
@@ -164,6 +164,7 @@ lf{
   display: flex;
   margin-right: 5px;
   align-items: center;
+  width: 100%;
 }
 
 lf p{ 
@@ -581,6 +582,17 @@ div input{
 
 .send-midi{
 
+}
+
+.input-osc{
+  border: unset !important;
+  width: 100%;
+  display: flex;
+  margin-left: 5px;
+}
+
+.send-osc{
+  
 }
 
 span.current-active{ background: black; color: white;}

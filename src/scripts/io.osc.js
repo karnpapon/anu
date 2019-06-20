@@ -5,7 +5,15 @@ const osc = require('node-osc')
 function Osc (app) {
   this.stack = []
   this.port = null
-  this.options = { default: 49162, tidalCycles: 6010, superCollider: 57120, sonicPi: 4559 }
+  this.counter = 0
+
+  // TODO make this configurable.
+  this.options = { 
+    default: 49162, 
+    tidalCycles: 6010, 
+    superCollider: 57120, 
+    sonicPi: 4559 
+  }
 
   this.start = function () {
     console.info('OSC', 'Starting..')
@@ -31,13 +39,31 @@ function Osc (app) {
     if (!this.client) { console.warn('OSC', 'Unavailable client'); return }
     if (!msg) { console.warn('OSC', 'Empty message'); return }
     const oscMsg = new osc.Message(path)
-    var convertedMsg = msg.split(" ")
-    convertedMsg.forEach(( item, index ) => {
+    var formattedMsg = this.formatter(msg)
+    formattedMsg.forEach(( item, index ) => {
+      Array.isArray(item) ?
+      oscMsg.append(item[this.counter % item.length]):
       oscMsg.append(item)
     })
+    this.counter++  // TODO: should reset after submit `send`
     this.client.send(oscMsg, (err) => {
       if (err) { console.warn(err) }
     })
+  }
+
+  this.formatter = function( msg ){
+    var noBracketArr = msg.replace(/[\])}[{(]/g, ''); 
+    var splittedArr = noBracketArr.split(" ")
+    var formattedArr = []
+
+    splittedArr.forEach(( item, index ) => {
+      if (index == 1 || index == 3) {
+        formattedArr.push(item.split(",") )
+      } else {
+        formattedArr.push(item)
+      }
+    })
+    return formattedArr
   }
 
   this.select = function (port = this.options.superCollider) {

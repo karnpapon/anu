@@ -1,5 +1,8 @@
 function Seeq(){
   
+
+  const { getRandomInt } = require('./utils')
+
   // components installation.
   const Data = require('./data')
   const Sequencer = require('./sequencer')
@@ -49,6 +52,7 @@ function Seeq(){
   this.isConfigToggle = false
   this.isLinkToggle = false
   this.isUDPToggled = false
+  this.isOSCToggled = false
   this.isReverse = false
   this.isPlaying = false
   this.isBPMtoggle = false
@@ -117,7 +121,7 @@ function Seeq(){
     UDP: ["D3C"],
     OSC: {
       path: "play2",
-      msg: "sound bd"
+      msg: "s [dr] n [22,11,4,5,6,12]"
     }
   }]
 
@@ -190,6 +194,7 @@ function Seeq(){
             <div class="control-btn">
               <button data-ctrl="link">link</button>
               <button data-ctrl="udp">udp</button>
+              <button data-ctrl="osc">osc</button>
               <button data-ctrl="rev">rev</button>
               <button data-ctrl="clear">clear</button>
               <button data-ctrl="nudge">nudge</button>
@@ -265,6 +270,7 @@ function Seeq(){
     this.clearBtn = qs("button[data-ctrl='clear']")
     this.nudgeBtn = qs("button[data-ctrl='nudge']")
     this.udpBtn = qs("button[data-ctrl='udp']")
+    this.oscBtn = qs("button[data-ctrl='osc']")
     this.revBtn = qs("button[data-ctrl='rev']")
     this.addBtn = qs("button[data-ctrl='add']")
     this.subtractBtn = qs("button[data-ctrl='subtract']")
@@ -398,14 +404,14 @@ function Seeq(){
         if(seeq.isConfigToggle){
           this.classList.add("toggle-btn")
           seeq.keys.infoOpr8Hide()
-          seeq.keys.infoMidiShow()
+          seeq.keys.infoInputShow()
           seeq.keys.infoShow()
           seeq.info.style.opacity = 0
           seeq.setOutputMsg(targetCursor)
         } else {
           seeq.keys.infoHide()
           seeq.info.style.opacity = 1
-          seeq.keys.infoMidiHide()
+          seeq.keys.infoInputHide()
           this.classList.remove("toggle-btn")
           seeq.keys.infoOpr8Show()
         }
@@ -428,10 +434,15 @@ function Seeq(){
         }
       })
 
-    this.udpBtn.addEventListener("click", function () {
-      seeq.isUDPToggled = !seeq.isUDPToggled
-      this.classList.toggle("toggle-btn")
-    })
+      this.udpBtn.addEventListener("click", function () {
+        seeq.isUDPToggled = !seeq.isUDPToggled
+        this.classList.toggle("toggle-btn")
+      })
+
+      this.oscBtn.addEventListener("click", function () {
+        seeq.isOSCToggled = !seeq.isOSCToggled
+        this.classList.toggle("toggle-btn")
+      })
 
       this.clearBtn.addEventListener("click", function(){
        seeq.clear()
@@ -561,12 +572,31 @@ function Seeq(){
                   if (seeq.isActive){
                     seeq.isInfoToggleOpened = true
                     seeq.keys.infoOpr8Hide()
-                    seeq.keys.infoMidiShow()
+                    seeq.keys.infoInputShow()
                     seeq.info.style.opacity = 0
                     targetHighlight.classList.add("select-highlight")
                     seeq.setOutputMsg(targetCursor)
                   } else {
-                    seeq.keys.infoMidiHide()
+                    seeq.keys.infoInputHide()
+                    targetHighlight.classList.remove("select-highlight")
+                    seeq.isInfoToggleOpened = false;
+                    seeq.keys.isShowInfoPressed = false;
+                    seeq.keys.infoOpr8Show()
+                  }
+                }
+
+                if (seeq.keys.isOscPressed){
+                  if (seeq.isActive){
+                    seeq.isInfoToggleOpened = true
+                    seeq.keys.infoOpr8Hide()
+                    seeq.keys.infoInputShow()
+                    seeq.keys.infoShow()
+                    seeq.info.style.opacity = 0
+                    targetHighlight.classList.add("select-highlight")
+                    seeq.sendOSC(targetCursor.OSC)
+                  } else {
+                    seeq.keys.infoInputHide()
+                    seeq.keys.infoHide()
                     targetHighlight.classList.remove("select-highlight")
                     seeq.isInfoToggleOpened = false;
                     seeq.keys.isShowInfoPressed = false;
@@ -632,7 +662,7 @@ function Seeq(){
       UDP: ["D3C"],
       OSC: {
         path: "play2",
-        msg: "sound bd"
+        msg: "s [dr,sd,bd] n [12,6,9]"
       }
     }]
     return reset 
@@ -720,6 +750,30 @@ function Seeq(){
     this.isSearchModeChanged = !this.isSearchModeChanged
   }
 
+  this.sendOSC = function(osc){
+    let osc_input
+    seeq.keys.infoInputConfig.innerHTML = `
+      <div class="operator-group info"> 
+        <lf class="info-header">OSC |</lf> 
+        <form id="info-osc" class="info-input">
+          <lf> 
+            <p>MSG:</p>
+            <input id="addosc" class="input-osc" type="text" value=${JSON.stringify( osc.msg )}>
+          </lf>
+        </form>
+      </div> 
+      <button type="submit" value="Submit" form="info-osc" class="send-osc">send</button>
+    ` 
+
+    addOsc = $('addosc')
+    addOsc.addEventListener("input", function (e) { osc_input = this.value })
+
+    qs('form.info-input').addEventListener('submit', function (e) {
+      e.preventDefault(); 
+      osc.msg = osc_input
+    })
+  }
+
   this.setOutputMsg = function(outputMsg){
     let addNote, addLength, addVelocity, addChannel,
     note = outputMsg.note? outputMsg.note:"",
@@ -738,7 +792,7 @@ function Seeq(){
     let lengths = length.join()
     let velocities = velocity.join()
 
-    seeq.keys.kbInfoMidiConfig.innerHTML = `
+    seeq.keys.infoInputConfig.innerHTML = `
       <div class="operator-group info"> 
         <lf class="info-header">MIDI |</lf> 
         <form id="info" class="info-input">
@@ -925,11 +979,11 @@ function Seeq(){
     }
   }
 
-  this.sendOsc = function(){
-    // re-render to get new value everytime.
-    // var message = new OSC.Message('/ding', Math.random());  
-    // osc.send(message)
-  }
+  // this.sendOsc = function(){
+  //   // re-render to get new value everytime.
+  //   // var message = new OSC.Message('/ding', Math.random());  
+  //   // osc.send(message)
+  // }
 
   this.findMatchedPosition = function(){
     // find position to trigger events.
