@@ -31,20 +31,20 @@ function Data(app){
 
     this.build = function(){
       this.el.classList.add("content")
-      this.markedText.classList.add("marked-text")
-      this.cursorText.classList.add("cursor-text")
-      this.highlightedText.classList.add("highlighted-text")
+      // this.markedText.classList.add("marked-text")
+      // this.cursorText.classList.add("cursor-text")
+      // this.highlightedText.classList.add("highlighted-text")
       this.el.appendChild(this.loading)
-      this.el.appendChild(this.cursorText)
-      this.el.appendChild(this.markedText)
-      this.el.appendChild(this.highlightedText)
+      // this.el.appendChild(this.cursorText)
+      // this.el.appendChild(this.markedText)
+      // this.el.appendChild(this.highlightedText)
       app.el.insertBefore(this.el,app.parentTarget.nextSibling)
     }
 
     this.refresh = function(){
-      this.el.appendChild(this.cursorText) 
-      this.el.appendChild(this.markedText) 
-      this.el.appendChild(this.highlightedText) 
+      // this.el.appendChild(this.cursorText) 
+      // this.el.appendChild(this.markedText) 
+      // this.el.appendChild(this.highlightedText) 
     }
 
     this.update = function(txt){
@@ -60,9 +60,9 @@ function Data(app){
         }
       }
 
-      this.markedText.innerText = this.textBuffers
-      this.cursorText.innerText = this.textBuffers
-      this.highlightedText.innerText = this.textBuffers 
+      // this.markedText.innerText = this.textBuffers
+      // this.cursorText.innerText = this.textBuffers
+      // this.highlightedText.innerText = this.textBuffers 
 
       // paragraph row detector.
       // app.lines = lineWrapDetector.getLines(this.cursorText);

@@ -12,8 +12,53 @@ body {
   margin: 0;
 }
 
+/* body{
+  overflow: hidden;
+  -webkit-app-region: drag;
+  transition: background-color 500ms;
+  background-size: cover;
+  background: var(--main-bg-color) !important;
+  background-position: center center;
+  max-height: calc(100% - 60px);
+  box-sizing: border-box; 
+} */
 
-*{box-sizing: border-box; }
+canvas { 
+  display: block;
+  white-space: pre;
+  /* font-size: 16px; */
+  /* line-height: 10px;  */
+  text-transform: uppercase; 
+  width:300px; -webkit-app-region: drag; 
+  opacity: 0; 
+  transition: opacity 1000ms
+}
+canvas.ready { opacity: 1 }
+
+
+*{
+  box-sizing: border-box; 
+  -webkit-font-smoothing: antialiased;
+}
+
+/* *{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  text-decoration: none;
+  font-weight: inherit;
+  font-style: inherit;
+  color: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  list-style: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+} */
+
 body p{font-family: 'input_mono_regular'; font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
@@ -55,7 +100,7 @@ div button{
 }
 
 .limit{
-  width:534px;
+  width:530px;
   height: 40px;
   position: absolute;
   word-wrap: break-word;
@@ -513,7 +558,7 @@ app {
   height: 480px; 
   position: relative; 
   opacity:0; 
-  width:calc(100% - 60px); 
+  width:calc(100% - 50px); 
   transition: all .2s ease;
 }
 
@@ -618,6 +663,7 @@ div input:focus{ outline: none;}
   /* margin-top: 30px; */
   overflow: hidden;
   position: inherit;
+  /* height: 100%; */
   margin-top: 12px;
   transition: all .2s ease-out;
 }

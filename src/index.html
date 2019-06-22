@@ -21,6 +21,7 @@
     <webview id="devtools"></webview>
     <script>
         const Seeq = require('./scripts/Seeq.js')
+        const Terminal = require('./scripts/terminal.js')
         const {dialog,app} = require('electron').remote;
         const baffle = require('baffle');
 
@@ -34,8 +35,16 @@
         // const options = { send: { port: 8000 } }
         // const osc = new OSC({ plugin: new OSC.DatagramPlugin(options) })
         var seeq = new Seeq();
-       
+        var terminal = new Terminal
+        window.terminal = terminal // global availability for e.g. udp
+
         seeq.start();
+        terminal.install(seeq.data.el)
+
+        window.addEventListener('load', () => { 
+          terminal.start(); 
+        })
+       
         // os.cpuUsage(function(v){
         //   let cpu = setInterval(() => {
         //     seeq.seq.setCPUUsageDisplay(v)
@@ -43,21 +52,21 @@
         // });
 
         // prevent dblclick selection.
-        document.addEventListener('mousedown', function (event) {
-            if (event.detail > 1) {
-              event.preventDefault();
-            }
-        }, false);
+        // document.addEventListener('mousedown', function (event) {
+        //     if (event.detail > 1) {
+        //       event.preventDefault();
+        //     }
+        // }, false);
 
         // frameless devtool.
-        const browserView = document.body
-        var browser
-          var devtoolsView = document.getElementById('devtools')
-          browserView.addEventListener('DOMContentLoaded', () => {
-            browser = browserView.getWebContents()
-            browser.setDevToolsWebContents(devtoolsView.getWebContents())
-            browser.openDevTools()
-          }) 
+        // const browserView = document.body
+        // var browser
+        //   var devtoolsView = document.getElementById('devtools')
+        //   browserView.addEventListener('DOMContentLoaded', () => {
+        //     browser = browserView.getWebContents()
+        //     browser.setDevToolsWebContents(devtoolsView.getWebContents())
+        //     browser.openDevTools()
+        //   }) 
     </script>
   </body>
 </html>
