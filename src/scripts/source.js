@@ -9,7 +9,7 @@ function Source (terminal) {
   this.queue = []
 
   this.start = function () {
-    this.increment()
+    // this.increment()
     this.new()
   }
 
@@ -23,6 +23,13 @@ function Source (terminal) {
     terminal.cursor.reset()
     // terminal.clock.play()
   }
+
+  this.run = function () {
+    if (!this.queue || this.queue.length < terminal.seequencer.f || !this.queue[terminal.seequencer.f]) { return }
+    terminal.commander.trigger(this.queue[terminal.seequencer.f])
+  }
+
+  /* #region */
 
   // this.open = function () {
   //   console.log('Source', 'Open a file..')
@@ -99,11 +106,9 @@ function Source (terminal) {
   //   }
   // }
 
-  this.run = function () {
-    if (!this.queue || this.queue.length < terminal.seequencer.f || !this.queue[terminal.seequencer.f]) { return }
-    terminal.commander.trigger(this.queue[terminal.seequencer.f])
-  }
+  /* #endregion*/
 
+  /* #region */
   // this.load = function (data) {
   //   const lines = data.split('\n').map((line) => { return clean(line) })
   //   const w = lines[0].length
@@ -168,31 +173,36 @@ function Source (terminal) {
   //   this.read(this.recall('active'))
   // }
 
-  this.remember = function (key, val) {
-    if (!key || !val) { return }
-    console.log('Source', `Remember: ${key}=${val}`)
-    localStorage.setItem(key, val)
-  }
+  /* #endregion */
 
-  this.recall = function (key) {
-    if (!key) { return }
-    if (localStorage.hasOwnProperty(key)) {
-      console.log('Source', `Recall: ${key}`)
-      return localStorage.getItem(key)
-    }
-  }
+  /* #region */
+  // this.remember = function (key, val) {
+  //   if (!key || !val) { return }
+  //   console.log('Source', `Remember: ${key}=${val}`)
+  //   localStorage.setItem(key, val)
+  // }
 
-  this.forget = function (key) {
-    if (!key) { return }
-    console.log('Source', `Forget: ${key}`)
-    localStorage.removeItem(key)
-  }
+  // this.recall = function (key) {
+  //   if (!key) { return }
+  //   if (localStorage.hasOwnProperty(key)) {
+  //     console.log('Source', `Recall: ${key}`)
+  //     return localStorage.getItem(key)
+  //   }
+  // }
 
-  this.increment = function () {
-    const val = this.recall('session')
-    this.remember('session', isNaN(val) ? 1 : parseInt(val) + 1)
-  }
+  // this.forget = function (key) {
+  //   if (!key) { return }
+  //   console.log('Source', `Forget: ${key}`)
+  //   localStorage.removeItem(key)
+  // }
 
+  // this.increment = function () {
+  //   const val = this.recall('session')
+  //   this.remember('session', isNaN(val) ? 1 : parseInt(val) + 1)
+  // }
+  /* #endregion */
+
+  /* #region */
   // Converters
 
   // this.generate = function (seequencer = terminal.seequencer) {
@@ -231,6 +241,7 @@ function Source (terminal) {
   //   }
   //   return c
   // }
+  /* #endregion */
 }
 
 

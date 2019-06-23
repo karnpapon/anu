@@ -22,6 +22,10 @@ function Cursor(terminal) {
     terminal.update()
   }
 
+  this.overlapChecker = function(){
+    const block = this.getBlock()
+  }
+
   /* #region fold */
   // this.moveTo = function (x, y) {
   //   if (isNaN(x) || isNaN(y)) { return }
@@ -172,18 +176,18 @@ function Cursor(terminal) {
   /* #region fold */
   // Block
 
-  // this.getBlock = function () {
-  //   const rect = this.toRect()
-  //   const block = []
-  //   for (let _y = rect.y; _y < rect.y + rect.h; _y++) {
-  //     const line = []
-  //     for (let _x = rect.x; _x < rect.x + rect.w; _x++) {
-  //       line.push(terminal.seequencer.glyphAt(_x, _y))
-  //     }
-  //     block.push(line)
-  //   }
-  //   return block
-  // }
+  this.getBlock = function () {
+    const rect = this.toRect()
+    const block = []
+    for (let _y = rect.y; _y < rect.y + rect.h; _y++) {
+      const line = []
+      for (let _x = rect.x; _x < rect.x + rect.w; _x++) {
+        block.push({x: _x, y: _y })
+      }
+      // block.push(line)
+    }
+    return block
+  }
 
   // this.writeBlock = function (block, overlap = false) {
   //   if (!block || block.length === 0) { return }

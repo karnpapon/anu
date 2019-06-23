@@ -80,6 +80,7 @@ function Seequencer(terminal){
     // if (!library[g.toLowerCase()]) { return }
     // const passive = g === g.toUpperCase()
     // return new library[g.toLowerCase()](this, x, y, passive)
+    // return g
   }
 
   this.operate = function (operators) {
@@ -87,9 +88,9 @@ function Seequencer(terminal){
     for (const id in operators) {
       const operator = operators[id]
       if (this.lockAt(operator.x, operator.y)) { continue }
-      if (operator.passive || operator.hasNeighbor('*')) {
-        operator.run()
-      }
+      // if (operator.passive || operator.hasNeighbor('*')) {
+      //   operator.run()
+      // }
     }
   }
 
@@ -128,6 +129,11 @@ function Seequencer(terminal){
 
   this.inBounds = function (x, y) {
     return Number.isInteger(x) && Number.isInteger(y) && x >= 0 && x < this.w && y >= 0 && y < this.h
+  }
+
+  this.inBlock = function(x,y){
+    let block = terminal.cursor.getBlock()
+    return  block.some( b => b.x == x && b.y == y)
   }
 
   this.isAllowed = function (g) {
@@ -173,6 +179,7 @@ function Seequencer(terminal){
   this.valueIn = function (key) {
     return this.variables[key]
   }
+
 
   // Tools
 

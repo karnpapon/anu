@@ -335,35 +335,37 @@ function Seeq(){
 
       this.searchRegExp.addEventListener("input", function() {
         let targetRegExp
-
         seeq.isRegExpSearching = true
-        
         let displayText = this.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         seeq.searchValue = this.value
-        targetRegExp = new RegExp(seeq.searchValue, "gi")
+        targetRegExp = new RegExp(seeq.searchValue, "gi") //TODO: make flag configurable.
+        seeq.getMatchedPosition() //TODO: return value instead.
 
-        seeq.content.unmark({
-          done: function( ) {
-            seeq.content.markRegExp(targetRegExp, {
-              done: function() {
-                seeq.results = document.getElementsByTagName("mark");
-                // seeq.currentIndex = 0;
-                // seeq.jump();
-                if(seeq.searchValue !== ""){
-                  // clear position every searching.
-                  seeq.matchedPosition = [] 
-                  seeq.matchedPositionWithLength = []
-                  seeq.matchType = "regex"
-                  seeq.findMatchedPosition()
-                  seeq.info.style.opacity = 0
-                  seeq.keys.infoShow()
-                  seeq.keys.keyDisplayElCmd.innerHTML = `/${displayText}/gi`
-                  seeq.keys.kbInfoOperatorIcon.innerHTML = ""
-                }
-              }
-            });
-          }
-        });
+        
+        /*#region*/
+        // seeq.content.unmark({
+        //   done: function( ) {
+        //     seeq.content.markRegExp(targetRegExp, {
+        //       done: function() {
+        //         seeq.results = document.getElementsByTagName("mark");
+        //         // seeq.currentIndex = 0;
+        //         // seeq.jump();
+        //         if(seeq.searchValue !== ""){
+        //           // clear position every searching.
+        //           seeq.matchedPosition = [] 
+        //           seeq.matchedPositionWithLength = []
+        //           seeq.matchType = "regex"
+        //           seeq.findMatchedPosition()
+        //           seeq.info.style.opacity = 0
+        //           seeq.keys.infoShow()
+        //           seeq.keys.keyDisplayElCmd.innerHTML = `/${displayText}/gi`
+        //           seeq.keys.kbInfoOperatorIcon.innerHTML = ""
+        //         }
+        //       }
+        //     });
+        //   }
+        // });
+       /*#endregion*/ 
         seeq.updateMarkType = "regex"
       });
 
@@ -984,6 +986,43 @@ function Seeq(){
   //   // var message = new OSC.Message('/ding', Math.random());  
   //   // osc.send(message)
   // }
+
+  this.getMatchedPosition = function(){
+    // find position to trigger events.
+    var searchText = terminal.dataMockup
+    var search = new RegExp(this.searchValue,"gi")
+    var match
+    let length = this.searchValue.length
+    let buffers = []
+
+    this.matchedPosition = []
+    this.matchedPositionWithLength = []
+    
+    if( this.searchValue !== ""){
+      // if search value = letter.
+      while( match = search.exec(searchText)){
+        this.matchedPosition.push({
+          index: match.index, 
+          len: match.length == 2? match[0].length:0 
+        })
+      } 
+
+      // if search value = word.
+      if (this.searchValue.length > 1 && this.updateMarkType !== "regex") {
+        this.matchedPositionLength = length - 1
+      } else {
+        this.matchedPositionLength = 1
+      }
+    }
+    
+    Array.from( new Array(length)).map((len, index) => { 
+      this.matchedPosition.map( pos => 
+        this.matchedPositionWithLength.push(pos + index ) 
+      )
+    })
+
+    this.matchedPositionWithLength.sort(function (a, b) { return a - b });
+  }
 
   this.findMatchedPosition = function(){
     // find position to trigger events.

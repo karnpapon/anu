@@ -20,14 +20,10 @@ function Terminal () {
   // this.history = new History()
   // this.controller = new Controller()
 
-  this.dataMockup = `Extratone is basically a form of extreme sound art,”
-explains a London-based artist and Slime City label owner who has identified himself as Rick.
-He operates under various aliases, like Zara Skumshot and Skat Injector.
-“It’s not about pounding kicks, but kicks so fast they have morphed into a tonal beast.
-they’ve mutated into a whole different animal. A natural process of evolution.
-It reminds me at times of such genres as harsh noise and HWN in places depending on production.
-The production of course is more varied and peppered with additional elements such as synths and sampling.
-That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-based label Legs Akimbo Records, an imprint that wound down operations indefinitely on December 31, 2017. “It can be a very rewarding, but also a very harsh experience. You will find both extreme, ear-bleeding distortion and sublimely clean, intricate sound design within the extratone scene. It’s far more diverse than, say, the standard Frenchcore sound.`
+  this.dataMockup = `Extratone is basically a form of extreme sound art,”explains a London-based artist and Slime City label owner who has identified himself as Rick.
+He operates under various aliases, like Zara Skumshot and Skat Injector.“It’s not about pounding kicks, but kicks so fast they have morphed into a tonal beast.
+they’ve mutated into a whole different animal. A natural process of evolution.It reminds me at times of such genres as harsh noise and HWN in places depending on production.
+The production of course is more varied and peppered with additional elements such as synths and sampling.That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-based label Legs Akimbo Records, an imprint that wound down operations indefinitely on December 31, 2017. “It can be a very rewarding, but also a very harsh experience. You will find both extreme, ear-bleeding distortion and sublimely clean, intricate sound design within the extratone scene. It’s far more diverse than, say, the standard Frenchcore sound.`
 
   // Themes
   this.theme = new Theme({ 
@@ -37,7 +33,7 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
     f_low: '#000000', 
     f_inv: '#000000', 
     b_high: '#eeeeee', 
-    b_med: '#72dec2', 
+    b_med: '#3EFB00', 
     b_low: '#444444', 
     b_inv: '#ffb545' 
   })
@@ -46,11 +42,10 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
   this.context = this.el.getContext('2d')
 
   // Settings
+  this.isStepRun = false
+  this.stepCursor = {x: 0, y: 0}
   this.grid = { w: 8, h: 8 }
-  this.tile = {
-    w: 7,
-    h: 14
-  }
+  this.tile = { w: 7, h: 14 }
   this.scale = window.devicePixelRatio
   this.hardmode = true
   this.guide = false
@@ -67,9 +62,10 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
     // this.history.bind(this.seequencer, 's')
     // this.history.record(this.seequencer.s)
     // this.clock.start()
-    this.update()
     this.el.className = 'ready'
     this.dataInstall()
+    this.update()
+   
     // this.toggleGuide(this.reqGuide() === true)
   }
 
@@ -84,6 +80,33 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
     }
   }
 
+  this.match = function(){
+    let p = []
+    seeq.matchedPosition.forEach(pos => { 
+      // words matching.
+      if(pos.len > 0){
+        let len = 0
+        for(var i=0; i<pos.len;i++){
+          p.push(terminal.seequencer.posAt(pos.index + len)) 
+          len++
+        }
+      } else {
+        // letter matching.
+        p.push(terminal.seequencer.posAt(pos.index))
+      }
+    })
+
+    p.forEach( ( item, i ) =>  {
+      let g = terminal.seequencer.glyphAt(item.x, item.y)
+      // if overlapped position found draw other sprite style.
+      if(this.seequencer.inBlock(item.x, item.y)){
+        terminal.drawSprite(item.x,item.y,g, 3)
+      } else {
+        terminal.drawSprite(item.x,item.y,g, 0)
+      }
+    })
+  }
+
   this.run = function () {
     // this.io.clear()
     this.clock.run()
@@ -91,13 +114,15 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
     this.seequencer.run()
     // this.io.run()
     this.update()
+    this.runStepCursor()
   }
-
+  
   this.update = function () {
     if (document.hidden === true) { return }
     this.clear()
     // this.ports = this.findPorts()
     this.drawProgram()
+    this.match()
     // this.drawInterface()
     // this.drawGuide()
   }
@@ -221,7 +246,7 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
   this.makeStyle = function (x, y, glyph, selection) {
     const isLocked = this.seequencer.lockAt(x, y)
     // const port = this.ports[this.seequencer.indexAt(x, y)]
-    if (this.isSelection(x, y)) { return 4 }
+    if (this.isSelection(x, y)) { return 4}
     // if (!port && glyph === '.' && isLocked === false && this.hardmode === true) { return this.isLocals(x, y) === true ? 9 : 7 }
     // if (selection === glyph && isLocked === false && selection !== '.') { return 6 }
     // if (glyph === '*' && isLocked === false) { return 6 }
@@ -231,15 +256,15 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
   }
 
   this.makeTheme = function (type) {
-    // Operator
+    // match.
     if (type === 0) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
     // Haste
-    if (type === 1) { return { fg: this.theme.active.b_inv } }
+    if (type === 1) { return { bg: this.theme.active.b_inv } }
     // Input
     if (type === 2) { return { fg: this.theme.active.b_high } }
-    // Output
-    if (type === 3) { return { bg: this.theme.active.b_high, fg: this.theme.active.f_low } }
-    // Selected
+    // step cursor
+    if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
+    // cursor
     if (type === 4) { return { bg: this.theme.active.b_inv, fg: this.theme.active.f_inv } }
     // Locked
     if (type === 5) { return { fg: this.theme.active.f_med } }
@@ -269,6 +294,23 @@ That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-bas
         const style = this.makeStyle(x, y, glyph, selection)
         this.drawSprite(x, y, glyph, style)
       }
+    }
+  }
+
+  this.runStepCursor = function(){
+    this.isStepRun = !terminal.seequencer.isPaused
+    if( this.isStepRun){
+      if(!terminal.clock.isPaused){ this.stepCursorBoundary()}
+      this.drawSprite(this.stepCursor.x, this.stepCursor.y, this.seequencer.glyphAt(this.stepCursor.x, this.stepCursor.y), 3) 
+    }
+  }
+
+  this.stepCursorBoundary = function(){
+    if(this.seequencer.f % this.seequencer.w === 0 && this.seequencer.f !== 0){
+      this.stepCursor.x = 0
+      this.stepCursor.y++
+    } else {
+      this.stepCursor.x++
     }
   }
 
