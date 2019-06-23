@@ -22,10 +22,6 @@ function Cursor(terminal) {
     terminal.update()
   }
 
-  this.overlapChecker = function(){
-    const block = this.getBlock()
-  }
-
   /* #region fold */
   // this.moveTo = function (x, y) {
   //   if (isNaN(x) || isNaN(y)) { return }

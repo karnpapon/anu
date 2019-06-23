@@ -30,6 +30,10 @@ function Seequencer(terminal){
     this.replace(new Array((this.h * this.w) + 1).join('.'))
   }
 
+  this.resetFrameToRange = function(){
+    this.f = 0 + terminal.cursor.x - 1
+  }
+
   this.load = function (w, h, s, f = 0) {
     this.w = w
     this.h = h
@@ -134,6 +138,18 @@ function Seequencer(terminal){
   this.inBlock = function(x,y){
     let block = terminal.cursor.getBlock()
     return  block.some( b => b.x == x && b.y == y)
+  }
+
+  this.inMark = function(x,y){
+    let p = []
+    seeq.matchedPosition.forEach(pos => { 
+      let len = 0
+      for(var i=0; i<pos.len;i++){
+        p.push(terminal.seequencer.posAt(pos.index + len)) 
+        len++
+      }
+    })
+    return  p.some( b => b.x == x && b.y == y)
   }
 
   this.isAllowed = function (g) {

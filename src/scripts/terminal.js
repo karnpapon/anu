@@ -31,11 +31,11 @@ The production of course is more varied and peppered with additional elements su
     f_high: '#ffffff', 
     f_med: '#777777', 
     f_low: '#000000', 
-    f_inv: '#000000', 
+    f_inv: '#6550FF', 
     b_high: '#eeeeee', 
     b_med: '#3EFB00', 
     b_low: '#444444', 
-    b_inv: '#ffb545' 
+    b_inv: '#4ACBFF' 
   })
 
   this.el = document.createElement('canvas')
@@ -43,7 +43,8 @@ The production of course is more varied and peppered with additional elements su
 
   // Settings
   this.isStepRun = false
-  this.stepCursor = {x: 0, y: 0}
+  this.isSelected = false
+  this.stepCursor = {x: 0, y: 0, counter: 0}
   this.grid = { w: 8, h: 8 }
   this.tile = { w: 7, h: 14 }
   this.scale = window.devicePixelRatio
@@ -98,9 +99,8 @@ The production of course is more varied and peppered with additional elements su
 
     p.forEach( ( item, i ) =>  {
       let g = terminal.seequencer.glyphAt(item.x, item.y)
-      // if overlapped position found draw other sprite style.
       if(this.seequencer.inBlock(item.x, item.y)){
-        terminal.drawSprite(item.x,item.y,g, 3)
+        terminal.drawSprite(item.x,item.y,g, 8)
       } else {
         terminal.drawSprite(item.x,item.y,g, 0)
       }
@@ -265,15 +265,15 @@ The production of course is more varied and peppered with additional elements su
     // step cursor
     if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
     // cursor
-    if (type === 4) { return { bg: this.theme.active.b_inv, fg: this.theme.active.f_inv } }
-    // Locked
-    if (type === 5) { return { fg: this.theme.active.f_med } }
+    if (type === 4) { return { bg: this.theme.active.b_inv, fg: this.theme.active.f_low } }
+    // Mark Step inverse.
+    if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
     // Reader
     if (type === 6) { return { fg: this.theme.active.b_inv } }
     // Invisible
     if (type === 7) { return {} }
-    // Reader
-    if (type === 8) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
+    // Block select.
+    if (type === 8) { return { bg: this.theme.active.f_inv, fg: this.theme.active.f_high } }
     // Reader+Background
     if (type === 10) { return { bg: this.theme.active.background, fg: this.theme.active.f_high } }
     // Default
@@ -298,20 +298,42 @@ The production of course is more varied and peppered with additional elements su
   }
 
   this.runStepCursor = function(){
-    this.isStepRun = !terminal.seequencer.isPaused
+    this.isStepRun = !this.seequencer.isPaused
     if( this.isStepRun){
-      if(!terminal.clock.isPaused){ this.stepCursorBoundary()}
-      this.drawSprite(this.stepCursor.x, this.stepCursor.y, this.seequencer.glyphAt(this.stepCursor.x, this.stepCursor.y), 3) 
+      if(!this.clock.isPaused){ this.stepCursorBoundary()}
+      this.drawSprite(
+        this.stepCursor.x, 
+        this.stepCursor.y, 
+        this.seequencer.glyphAt(this.stepCursor.x, this.stepCursor.y),
+        this.seequencer.inMark(this.stepCursor.x, this.stepCursor.y)? 5:10 
+      ) 
     }
   }
 
   this.stepCursorBoundary = function(){
-    if(this.seequencer.f % this.seequencer.w === 0 && this.seequencer.f !== 0){
-      this.stepCursor.x = 0
-      this.stepCursor.y++
-    } else {
-      this.stepCursor.x++
+    // global cursor
+    if( !this.isSelected){
+      if(this.seequencer.f % this.seequencer.w === 0 && this.seequencer.f !== 0){
+        this.stepCursor.x = 0
+        this.stepCursor.y++
+      } else {
+        this.stepCursor.x++
+      }
+    } else { // range cursor.
+      if(this.stepCursor.x > ( this.cursor.x + this.cursor.w - 2 ) || this.cursor.x > this.stepCursor.x ){
+        this.stepCursor.x = this.cursor.x
+        this.stepCursor.y = this.cursor.h > 1? this.cursor.y + this.stepCursor.counter % this.cursor.h:this.cursor.y
+        this.stepCursor.counter++
+      }else {
+        this.stepCursor.x++
+      }
     }
+  }
+
+  this.stepCursorBoundaryRange = function(){
+    this.seequencer.resetFrameToRange()
+    this.stepCursor.x = this.cursor.x - 1
+    this.stepCursor.y = this.cursor.y
   }
 
   /* #region unused */
@@ -361,12 +383,13 @@ The production of course is more varied and peppered with additional elements su
   // }
   /* #endregion*/
 
-  this.drawSprite = function (x, y, g, type) {
+  this.drawSprite = function (x, y, g, type, stroke = false) {
     const theme = this.makeTheme(type)
     if (theme.bg) {
       const bgrect = { x: x * this.tile.w * this.scale, y: (y) * this.tile.h * this.scale, w: this.tile.w * this.scale, h: this.tile.h * this.scale }
       this.context.fillStyle = theme.bg
       this.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
+      stroke? this.context.strokeRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h):""
     }
     if (theme.fg) {
       const fgrect = { x: (x + 0.5) * this.tile.w * this.scale, y: (y + 1) * this.tile.h * this.scale, w: this.tile.w * this.scale, h: this.tile.h * this.scale }

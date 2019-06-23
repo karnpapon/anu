@@ -156,6 +156,12 @@ function Commander (terminal) {
     if (event.keyCode === 37) { this.onArrowLeft(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
     if (event.keyCode === 39) { this.onArrowRight(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
 
+    if (event.shiftKey && event.keyCode === 13) { 
+      terminal.stepCursorBoundaryRange() 
+      terminal.isSelected = !terminal.isSelected; 
+      return 
+    }
+
     // if (event.keyCode === 9) { terminal.toggleHardmode(); event.preventDefault(); return }
 
     // if (event.metaKey) { return }
@@ -211,11 +217,11 @@ function Commander (terminal) {
 
   this.onArrowDown = function (mod = false, skip = false) {
     // Navigate History
-    if (this.isActive === true) {
-      this.historyIndex += this.historyIndex < this.history.length ? 1 : 0
-      this.start(this.history[this.historyIndex])
-      return
-    }
+    // if (this.isActive === true) {
+    //   this.historyIndex += this.historyIndex < this.history.length ? 1 : 0
+    //   this.start(this.history[this.historyIndex])
+    //   return
+    // }
     const leap = skip ? terminal.grid.h : 1
     // terminal.toggleGuide(false)
     if (mod) {
