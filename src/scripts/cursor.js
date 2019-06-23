@@ -149,10 +149,10 @@ function Cursor(terminal) {
   }
 
   this.trigger = function () {
-    const operator = terminal.seequencer.operatorAt(this.x, this.y)
-    if (!operator) { console.warn('Cursor', 'Nothing to trigger.'); return }
-    console.log('Cursor', 'Trigger: ' + operator.name)
-    operator.run(true)
+    // const operator = terminal.seequencer.operatorAt(this.x, this.y)
+    // if (!operator) { console.warn('Cursor', 'Nothing to trigger.'); return }
+    // console.log('Cursor', 'Trigger: ' + operator.name)
+    // operator.run(true)
   }
 
   this.toggleMode = function (val) {

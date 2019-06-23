@@ -98,24 +98,24 @@ function Commander (terminal) {
 
   this.run = function () {
     const tool = this.isActive === true ? 'commander' : 'cursor'
-    // terminal[tool].trigger()
+    terminal[tool].trigger()
     terminal.update()
   }
 
   /*#region */
 
-  // this.trigger = function (msg = this.query, touch = true) {
-  //   const cmd = `${msg}`.split(':')[0].toLowerCase()
-  //   const val = `${msg}`.substr(cmd.length + 1)
-  //   if (!this.actives[cmd]) { console.warn('Commander', `Unknown message: ${msg}`); this.stop(); return }
-  //   console.info('Commander', msg)
-  //   this.actives[cmd](new Param(val), true)
-  //   if (touch === true) {
-  //     this.history.push(msg)
-  //     this.historyIndex = this.history.length
-  //     this.stop()
-  //   }
-  // }
+  this.trigger = function (msg = this.query, touch = true) {
+    // const cmd = `${msg}`.split(':')[0].toLowerCase()
+    // const val = `${msg}`.substr(cmd.length + 1)
+    // if (!this.actives[cmd]) { console.warn('Commander', `Unknown message: ${msg}`); this.stop(); return }
+    console.info('Commander trigger', msg)
+    // this.actives[cmd](new Param(val), true)
+    // if (touch === true) {
+    //   this.history.push(msg)
+    //   this.historyIndex = this.history.length
+    //   this.stop()
+    // }
+  }
 
   // this.preview = function (msg = this.query) {
   //   const cmd = `${msg}`.split(':')[0].toLowerCase()

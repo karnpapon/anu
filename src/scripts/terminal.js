@@ -27,21 +27,23 @@ The production of course is more varied and peppered with additional elements su
 
   // Themes
   this.theme = new Theme({ 
-    background: '#000000', 
-    f_high: '#ffffff', 
-    f_med: '#777777', 
-    f_low: '#000000', 
-    f_inv: '#6550FF', 
-    b_high: '#eeeeee', 
-    b_med: '#3EFB00', 
-    b_low: '#444444', 
-    b_inv: '#4ACBFF' 
+    background: '#000000', //black
+    f_high: '#ffffff',  //almost white
+    f_med: '#FFC500', // grey
+    f_low: '#000000',  //black
+    f_inv: '#D1FF00', // purple-ish
+    b_high: '#eeeeee', //grey-white.
+    b_med: '#3EFB00',  // green
+    b_low: '#C2B7E0', // grey-black
+    b_inv: '#69DA44'  // selection
   })
 
   this.el = document.createElement('canvas')
   this.context = this.el.getContext('2d')
 
   // Settings
+  this.p = []
+  this.prevRegExInput = ""
   this.isStepRun = false
   this.isSelected = false
   this.stepCursor = {x: 0, y: 0, counter: 0}
@@ -70,43 +72,6 @@ The production of course is more varied and peppered with additional elements su
     // this.toggleGuide(this.reqGuide() === true)
   }
 
-  this.dataInstall = function(){
-    for (var i = 0; i < this.dataMockup.length; i++) {
-      terminal.cursor.write(this.dataMockup.charAt(i))
-      terminal.cursor.x++
-      if(terminal.cursor.x % this.seequencer.w === 0){
-        terminal.cursor.x = 0
-        terminal.cursor.y++ 
-      }
-    }
-  }
-
-  this.match = function(){
-    let p = []
-    seeq.matchedPosition.forEach(pos => { 
-      // words matching.
-      if(pos.len > 0){
-        let len = 0
-        for(var i=0; i<pos.len;i++){
-          p.push(terminal.seequencer.posAt(pos.index + len)) 
-          len++
-        }
-      } else {
-        // letter matching.
-        p.push(terminal.seequencer.posAt(pos.index))
-      }
-    })
-
-    p.forEach( ( item, i ) =>  {
-      let g = terminal.seequencer.glyphAt(item.x, item.y)
-      if(this.seequencer.inBlock(item.x, item.y)){
-        terminal.drawSprite(item.x,item.y,g, 8)
-      } else {
-        terminal.drawSprite(item.x,item.y,g, 0)
-      }
-    })
-  }
-
   this.run = function () {
     // this.io.clear()
     this.clock.run()
@@ -122,7 +87,7 @@ The production of course is more varied and peppered with additional elements su
     this.clear()
     // this.ports = this.findPorts()
     this.drawProgram()
-    this.match()
+    seeq.isRegExpSearching? this.match():() => {}
     // this.drawInterface()
     // this.drawGuide()
   }
@@ -135,6 +100,30 @@ The production of course is more varied and peppered with additional elements su
     this.grid.w = w
     this.grid.h = h
     this.update()
+  }
+
+  this.dataInstall = function () {
+    for (var i = 0; i < this.dataMockup.length; i++) {
+      terminal.cursor.write(this.dataMockup.charAt(i))
+      terminal.cursor.x++
+      if (terminal.cursor.x % this.seequencer.w === 0) {
+        terminal.cursor.x = 0
+        terminal.cursor.y++
+      }
+    }
+  }
+
+  this.match = function () {
+    let p = []
+
+    terminal.p.forEach((item, i) => {
+      let g = terminal.seequencer.glyphAt(item.x, item.y)
+      if (this.seequencer.inBlock(item.x, item.y)) {
+        terminal.drawSprite(item.x, item.y, g, 10)
+      } else {
+        terminal.drawSprite(item.x, item.y, g, 0)
+      }
+    })
   }
 
   /* #region unused */
@@ -190,6 +179,10 @@ The production of course is more varied and peppered with additional elements su
 
   this.isSelection = function (x, y) {
     return !!(x >= this.cursor.x && x < this.cursor.x + this.cursor.w && y >= this.cursor.y && y < this.cursor.y + this.cursor.h)
+  }
+
+  this.isTrigger = function(x,y){
+    return  this.p.some(pos => pos.x === x && pos.y === y)
   }
 
   this.isMarker = function (x, y) {
@@ -257,7 +250,7 @@ The production of course is more varied and peppered with additional elements su
 
   this.makeTheme = function (type) {
     // match.
-    if (type === 0) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
+    if (type === 0) { return { bg: this.theme.active.b_med, fg: this.theme.active.background } }
     // Haste
     if (type === 1) { return { bg: this.theme.active.b_inv } }
     // Input
@@ -265,7 +258,7 @@ The production of course is more varied and peppered with additional elements su
     // step cursor
     if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
     // cursor
-    if (type === 4) { return { bg: this.theme.active.b_inv, fg: this.theme.active.f_low } }
+    if (type === 4) { return { bg: this.theme.active.f_med, fg: this.theme.active.f_low } }
     // Mark Step inverse.
     if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
     // Reader
@@ -273,7 +266,7 @@ The production of course is more varied and peppered with additional elements su
     // Invisible
     if (type === 7) { return {} }
     // Block select.
-    if (type === 8) { return { bg: this.theme.active.f_inv, fg: this.theme.active.f_high } }
+    if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
     // Reader+Background
     if (type === 10) { return { bg: this.theme.active.background, fg: this.theme.active.f_high } }
     // Default
@@ -305,8 +298,22 @@ The production of course is more varied and peppered with additional elements su
         this.stepCursor.x, 
         this.stepCursor.y, 
         this.seequencer.glyphAt(this.stepCursor.x, this.stepCursor.y),
-        this.seequencer.inMark(this.stepCursor.x, this.stepCursor.y)? 5:10 
-      ) 
+        // this.seequencer.inMark(this.stepCursor.x, this.stepCursor.y)? 10:8
+        10
+      )
+      this.trigger()
+    }
+  }
+
+  this.trigger = function () {
+    if(this.isTrigger(this.stepCursor.x, this.stepCursor.y)){
+      const b = this.cursor.getBlock()
+      b.forEach( block => {
+        this.drawSprite(block.x, block.y, ".", 10) 
+      })
+      seeq.seq.addTriggerClass()
+    } else {
+      seeq.seq.removeTriggerClass()
     }
   }
 

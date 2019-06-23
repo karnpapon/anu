@@ -334,14 +334,9 @@ function Seeq(){
       });
 
       this.searchRegExp.addEventListener("input", function() {
-        let targetRegExp
         seeq.isRegExpSearching = true
-        let displayText = this.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         seeq.searchValue = this.value
-        targetRegExp = new RegExp(seeq.searchValue, "gi") //TODO: make flag configurable.
         seeq.getMatchedPosition() //TODO: return value instead.
-
-        
         /*#region*/
         // seeq.content.unmark({
         //   done: function( ) {
@@ -994,6 +989,7 @@ function Seeq(){
     var match
     let length = this.searchValue.length
     let buffers = []
+    terminal.p = []
 
     this.matchedPosition = []
     this.matchedPositionWithLength = []
@@ -1006,22 +1002,21 @@ function Seeq(){
           len: match.length == 2? match[0].length:0 
         })
       } 
-
-      // if search value = word.
-      if (this.searchValue.length > 1 && this.updateMarkType !== "regex") {
-        this.matchedPositionLength = length - 1
-      } else {
-        this.matchedPositionLength = 1
-      }
     }
-    
-    Array.from( new Array(length)).map((len, index) => { 
-      this.matchedPosition.map( pos => 
-        this.matchedPositionWithLength.push(pos + index ) 
-      )
-    })
 
-    this.matchedPositionWithLength.sort(function (a, b) { return a - b });
+    if(this.matchedPosition){
+      seeq.matchedPosition.forEach(pos => {
+        if (pos.len > 0) {
+          let len = 0
+          for (var i = 0; i < pos.len; i++) {
+            terminal.p.push(terminal.seequencer.posAt(pos.index + len))
+            len++
+          }
+        } else {
+          terminal.p.push(terminal.seequencer.posAt(pos.index))
+        }
+      })
+    }
   }
 
   this.findMatchedPosition = function(){
