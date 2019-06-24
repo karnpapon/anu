@@ -8,15 +8,14 @@ function Terminal () {
   const Cursor = require('./cursor')
   const Source = require('./source')
   const Clock = require('./clock')
-
-  // this.version = 141
-  // this.library = library
+  const StepCursor = require('./stepcursor')
 
   this.seequencer = new Seequencer(this)
   this.cursor = new Cursor(this)
   this.source = new Source(this)
   this.commander = new Commander(this)
   this.clock = new Clock(this)
+  this.stepcursor = new StepCursor(this)
   // this.history = new History()
   // this.controller = new Controller()
 
@@ -44,9 +43,6 @@ The production of course is more varied and peppered with additional elements su
   // Settings
   this.p = []
   this.prevRegExInput = ""
-  this.isStepRun = false
-  this.isSelected = false
-  this.stepCursor = {x: 0, y: 0, counter: 0}
   this.grid = { w: 8, h: 8 }
   this.tile = { w: 7, h: 14 }
   this.scale = window.devicePixelRatio
@@ -68,8 +64,6 @@ The production of course is more varied and peppered with additional elements su
     this.el.className = 'ready'
     this.dataInstall()
     this.update()
-   
-    // this.toggleGuide(this.reqGuide() === true)
   }
 
   this.run = function () {
@@ -79,17 +73,15 @@ The production of course is more varied and peppered with additional elements su
     this.seequencer.run()
     // this.io.run()
     this.update()
-    this.runStepCursor()
+    this.stepcursor.run()
   }
   
   this.update = function () {
     if (document.hidden === true) { return }
     this.clear()
-    // this.ports = this.findPorts()
     this.drawProgram()
+    // this.drawStroke()
     seeq.isRegExpSearching? this.match():() => {}
-    // this.drawInterface()
-    // this.drawGuide()
   }
 
   this.reset = function () {
@@ -104,18 +96,16 @@ The production of course is more varied and peppered with additional elements su
 
   this.dataInstall = function () {
     for (var i = 0; i < this.dataMockup.length; i++) {
-      terminal.cursor.write(this.dataMockup.charAt(i))
-      terminal.cursor.x++
-      if (terminal.cursor.x % this.seequencer.w === 0) {
-        terminal.cursor.x = 0
-        terminal.cursor.y++
+      this.cursor.write(this.dataMockup.charAt(i))
+      this.cursor.cursors[this.cursor.active].x++
+      if (this.cursor.cursors[this.cursor.active].x % this.seequencer.w === 0) {
+        this.cursor.cursors[this.cursor.active].x = 0
+        this.cursor.cursors[this.cursor.active].y++
       }
     }
   }
 
   this.match = function () {
-    let p = []
-
     terminal.p.forEach((item, i) => {
       let g = terminal.seequencer.glyphAt(item.x, item.y)
       if (this.seequencer.inBlock(item.x, item.y)) {
@@ -174,36 +164,32 @@ The production of course is more varied and peppered with additional elements su
   /* #endregion*/
 
   this.isCursor = function (x, y) {
-    return x === this.cursor.x && y === this.cursor.y
+    return x === this.cursor.cursors[this.cursor.active].x && y === this.cursor.cursors[this.cursor.active].y
   }
 
   this.isSelection = function (x, y) {
-    return !!(x >= this.cursor.x && x < this.cursor.x + this.cursor.w && y >= this.cursor.y && y < this.cursor.y + this.cursor.h)
-  }
-
-  this.isTrigger = function(x,y){
-    return  this.p.some(pos => pos.x === x && pos.y === y)
+    return !!(x >= this.cursor.cursors[this.cursor.active].x && x < this.cursor.cursors[this.cursor.active].x + this.cursor.cursors[this.cursor.active].w && y >= this.cursor.cursors[this.cursor.active].y && y < this.cursor.cursors[this.cursor.active].y + this.cursor.cursors[this.cursor.active].h)
   }
 
   this.isMarker = function (x, y) {
     return x % this.grid.w === 0 && y % this.grid.h === 0
   }
 
-  this.isNear = function (x, y) {
-    return x > (parseInt(this.cursor.x / this.grid.w) * this.grid.w) - 1 && x <= ((1 + parseInt(this.cursor.x / this.grid.w)) * this.grid.w) && y > (parseInt(this.cursor.y / this.grid.h) * this.grid.h) - 1 && y <= ((1 + parseInt(this.cursor.y / this.grid.h)) * this.grid.h)
-  }
+  // this.isNear = function (x, y) {
+  //   return x > (parseInt(this.cursor.x / this.grid.w) * this.grid.w) - 1 && x <= ((1 + parseInt(this.cursor.x / this.grid.w)) * this.grid.w) && y > (parseInt(this.cursor.y / this.grid.h) * this.grid.h) - 1 && y <= ((1 + parseInt(this.cursor.y / this.grid.h)) * this.grid.h)
+  // }
 
-  this.isAligned = function (x, y) {
-    return x === this.cursor.x || y === this.cursor.y
-  }
+  // this.isAligned = function (x, y) {
+  //   return x === this.cursor.x || y === this.cursor.y
+  // }
 
   this.isEdge = function (x, y) {
     return x === 0 || y === 0 || x === this.seequencer.w - 1 || y === this.seequencer.h - 1
   }
 
-  this.isLocals = function (x, y) {
-    return this.isNear(x, y) === true && (x % (this.grid.w / 4) === 0 && y % (this.grid.h / 4) === 0) === true
-  }
+  // this.isLocals = function (x, y) {
+  //   return this.isNear(x, y) === true && (x % (this.grid.w / 4) === 0 && y % (this.grid.h / 4) === 0) === true
+  // }
 
   /* #region unused */
   // this.portAt = function (x, y) {
@@ -231,7 +217,7 @@ The production of course is more varied and peppered with additional elements su
   this.makeGlyph = function (x, y) {
     const g = this.seequencer.glyphAt(x, y)
     if (g !== '.') { return g }
-    if (this.isCursor(x, y)) { return ' ' }
+    if (this.isCursor(x, y)) { return '+' }
     if (this.isMarker(x, y)) { return '+' }
     return g
   }
@@ -290,116 +276,52 @@ The production of course is more varied and peppered with additional elements su
     }
   }
 
-  this.runStepCursor = function(){
-    this.isStepRun = !this.seequencer.isPaused
-    if( this.isStepRun){
-      if(!this.clock.isPaused){ this.stepCursorBoundary()}
-      this.drawSprite(
-        this.stepCursor.x, 
-        this.stepCursor.y, 
-        this.seequencer.glyphAt(this.stepCursor.x, this.stepCursor.y),
-        // this.seequencer.inMark(this.stepCursor.x, this.stepCursor.y)? 10:8
-        10
-      )
-      this.trigger()
+  this.drawArea = function(){
+    const theme = this.makeTheme(4)
+    let rect = this.cursor.toRect()
+    const r = {
+      x: rect.x * this.scale * this.tile.w,
+      y: rect.y * this.scale * this.tile.h,
+      w: rect.w * this.scale * this.tile.w,
+      h: rect.h * this.scale * this.tile.h
     }
+    this.context.fillStyle = theme.bg
+    this.context.fillRect(r.x + 120, r.y, r.w, r.h) 
   }
 
-  this.trigger = function () {
-    if(this.isTrigger(this.stepCursor.x, this.stepCursor.y)){
-      const b = this.cursor.getBlock()
-      b.forEach( block => {
-        this.drawSprite(block.x, block.y, ".", 10) 
-      })
-      seeq.seq.addTriggerClass()
-    } else {
-      seeq.seq.removeTriggerClass()
+  this.drawStroke = function(){
+    let rect
+    rect = this.cursor.toRect()
+    const r = {
+      x: rect.x * this.scale * this.tile.w,
+      y: rect.y * this.scale * this.tile.h,
+      w: rect.w * this.scale * this.tile.w,
+      h: rect.h * this.scale * this.tile.h
     }
+    this.context.lineWidth = 1;
+    this.context.strokeStyle = this.theme.active.background
+    this.context.strokeRect(r.x, r.y, r.w, r.h)
   }
 
-  this.stepCursorBoundary = function(){
-    // global cursor
-    if( !this.isSelected){
-      if(this.seequencer.f % this.seequencer.w === 0 && this.seequencer.f !== 0){
-        this.stepCursor.x = 0
-        this.stepCursor.y++
-      } else {
-        this.stepCursor.x++
-      }
-    } else { // range cursor.
-      if(this.stepCursor.x > ( this.cursor.x + this.cursor.w - 2 ) || this.cursor.x > this.stepCursor.x ){
-        this.stepCursor.x = this.cursor.x
-        this.stepCursor.y = this.cursor.h > 1? this.cursor.y + this.stepCursor.counter % this.cursor.h:this.cursor.y
-        this.stepCursor.counter++
-      }else {
-        this.stepCursor.x++
-      }
-    }
-  }
-
-  this.stepCursorBoundaryRange = function(){
-    this.seequencer.resetFrameToRange()
-    this.stepCursor.x = this.cursor.x - 1
-    this.stepCursor.y = this.cursor.y
-  }
-
-  /* #region unused */
-  // this.drawInterface = function () {
-  //   const col = this.grid.w
-  //   const variables = Object.keys(this.seequencer.variables).join('')
-  //   const col1 = this.seequencer.h
-  //   const col2 = this.seequencer.h + 1
-
-    // console detail info section.
-    // if (this.commander.isActive === true) {
-      // this.write(`${this.commander.query}${this.seequencer.f % 2 === 0 ? '_' : ''}`, col * 0, this.seequencer.h + 1, this.grid.w * 2, 9)
-    // } else {
-      // this.write(`${this.cursor.x},${this.cursor.y}${this.cursor.mode === 1 ? '+' : ''}`, col * 0, this.seequencer.h + 1, this.grid.w, 9) // 0,0
-      // this.write(`${this.cursor.w}:${this.cursor.h}`, col * 1, this.seequencer.h + 1, this.grid.w, 9) // 1:1
-      // this.write(`${this.cursor.inspect()}`, col * 2, this.seequencer.h + 1, this.grid.w, 9) //empty
-      // this.write(`${this.seequencer.f}f${this.isPaused ? '*' : ''}`, col * 3, this.seequencer.h + 1, this.grid.w, 9) //0f
-    // }
-
-    // this.write(`${this.seequencer.w}x${this.seequencer.h}`, col * 0, this.seequencer.h, this.grid.w,9) // 64x33
-    // this.write(`${this.grid.w}/${this.grid.h}${this.tile.w !== 10 ? ' ' + (this.tile.w / 10).toFixed(1) : ''}`, col * 1, this.seequencer.h, this.grid.w,9) // 8/8
-    // this.write(`${this.source}`, col * 2, this.seequencer.h, this.grid.w, 9) // unsaved
-    // this.write(`${this.clock}`, col * 3, this.seequencer.h, this.grid.w, this.io.midi.inputIndex > -1 ? 3 : 2)
-
-    // if (this.seequencer.f < 15) {
-      // this.write(`${this.io.midi}`, col * 4, this.seequencer.h, this.grid.w * 2)
-      // this.write(`Version ${this.version}`, col * 4, this.seequencer.h + 1, this.grid.w * 2, 9)
-    // } else {
-      // this.write(`${this.io.inspect(this.grid.w)}`, col * 4, this.seequencer.h, this.grid.w)
-      // this.write(`${display(variables, this.seequencer.f, this.grid.w)}`, col * 4, this.seequencer.h + 1, this.grid.w, 9)
-    // }
-  // }
-
-  // this.drawGuide = function () {
-  //   if (this.guide !== true) { return }
-  //   const operators = Object.keys(this.library).filter((val) => { return isNaN(val) })
-  //   for (const id in operators) {
-  //     const key = operators[id]
-  //     const oper = new this.library[key]()
-  //     const text = oper.info
-  //     const frame = this.seequencer.h - 4
-  //     const x = (Math.floor(parseInt(id) / frame) * 32) + 2
-  //     const y = (parseInt(id) % frame) + 2
-  //     this.write(key, x, y, 99, 3)
-  //     this.write(text, x + 2, y, 99, 10)
-  //   }
-  // }
-  /* #endregion*/
-
-  this.drawSprite = function (x, y, g, type, stroke = false) {
+  this.drawSprite = function (x, y, g, type) {
     const theme = this.makeTheme(type)
     if (theme.bg) {
-      const bgrect = { x: x * this.tile.w * this.scale, y: (y) * this.tile.h * this.scale, w: this.tile.w * this.scale, h: this.tile.h * this.scale }
+      const bgrect = { 
+        x: x * this.tile.w * this.scale, 
+        y: (y) * this.tile.h * this.scale, 
+        w: this.tile.w * this.scale, 
+        h: this.tile.h * this.scale 
+      }
       this.context.fillStyle = theme.bg
       this.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-      stroke? this.context.strokeRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h):""
     }
     if (theme.fg) {
-      const fgrect = { x: (x + 0.5) * this.tile.w * this.scale, y: (y + 1) * this.tile.h * this.scale, w: this.tile.w * this.scale, h: this.tile.h * this.scale }
+      const fgrect = { 
+        x: (x + 0.5) * this.tile.w * this.scale, 
+        y: (y + 1) * this.tile.h * this.scale, 
+        w: this.tile.w * this.scale, 
+        h: this.tile.h * this.scale 
+      }
       this.context.fillStyle = theme.fg
       this.context.fillText(g, fgrect.x, fgrect.y)
     }
@@ -439,8 +361,8 @@ The production of course is more varied and peppered with additional elements su
     this.crop(tiles.w, tiles.h)
 
     // Keep cursor in bounds
-    if (this.cursor.x >= tiles.w) { this.cursor.x = tiles.w - 1 }
-    if (this.cursor.y >= tiles.h) { this.cursor.y = tiles.h - 1 }
+    if (this.cursor.cursors[this.cursor.active].x >= tiles.w) { this.cursor.cursors[this.cursor.active].x = tiles.w - 1 }
+    if (this.cursor.cursors[this.cursor.active].y >= tiles.h) { this.cursor.cursors[this.cursor.active].y = tiles.h - 1 }
 
     this.el.width = ( this.tile.w) * this.seequencer.w * this.scale
     this.el.height = (this.tile.h) * this.seequencer.h * this.scale

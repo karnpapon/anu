@@ -1,6 +1,4 @@
 function Seequencer(terminal){
-
-
   // const Library = require('./library')
 
   // this.library = new Library
@@ -30,8 +28,8 @@ function Seequencer(terminal){
     this.replace(new Array((this.h * this.w) + 1).join('.'))
   }
 
-  this.resetFrameToRange = function(){
-    this.f = 0 + terminal.cursor.x - 1
+  this.resetFrameToRange = function(cs){
+    this.f = 0 + cs.x - 1
   }
 
   this.load = function (w, h, s, f = 0) {

@@ -58,7 +58,8 @@ class Clock {
   }
 
   start() {
-    this.setRunning(true)
+    this.setTimer(120)
+    this.play()
   }
 
   play() {
@@ -83,6 +84,15 @@ class Clock {
     this.timer.onmessage = (event) => { terminal.run() }
   }
 
+  mod(mod = 0, animate = false) {
+  if (animate === true) {
+    this.set(null, this.speed.target + mod)
+  } else {
+    this.set(this.speed.value + mod, this.speed.value + mod, true)
+    terminal.update()
+  }
+}
+
   clearTimer() {
     if (this.timer) {
       this.timer.terminate()
@@ -90,8 +100,22 @@ class Clock {
     this.timer = null
   }
 
+  setFrame(f) {
+    if (isNaN(f)) { return }
+    terminal.orca.f = clamp(f, 0, 9999999)
+  }
+
+  resetFrame(){
+    terminal.orca.f = 0
+  }
+
   stop() {
-    this.setRunning(false)
+    if (this.isPaused) { console.warn('Already stopped'); return }
+    console.log('Clock', 'Stop')
+    // terminal.io.midi.silence()
+    this.isPaused = true
+    // if (this.isPuppet) { return console.warn('External Midi control') }
+    this.clearTimer()
   }
 
   toString() {

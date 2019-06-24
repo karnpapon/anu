@@ -1,41 +1,51 @@
 'use strict'
 
 function Cursor(terminal) {
-  this.x = 0
-  this.y = 0
-  this.w = 1
-  this.h = 1
   this.mode = 0
   this.block = []
+  this.active = 0
+  this.cursors = [{ x: 0, y: 0, w: 1, h:1}]
 
   this.move = function (x, y) {
+    let active = this.cursors[this.active]
     if (isNaN(x) || isNaN(y)) { return }
-    this.x = clamp(this.x + parseInt(x), 0, terminal.seequencer.w - 1)
-    this.y = clamp(this.y - parseInt(y), 0, terminal.seequencer.h - 1)
+    active.x = clamp(active.x + parseInt(x), 0, terminal.seequencer.w - 1)
+    active.y = clamp(active.y - parseInt(y), 0, terminal.seequencer.h - 1)
     terminal.update()
   }
 
   this.scale = function (x, y) {
+    let active = this.cursors[this.active] 
     if (isNaN(x) || isNaN(y)) { return }
-    this.w = clamp(this.w + parseInt(x), 1, terminal.seequencer.w - this.x)
-    this.h = clamp(this.h - parseInt(y), 1, terminal.seequencer.h - this.y)
+    active.w = clamp(active.w + parseInt(x), 1, terminal.seequencer.w -active.x)
+    active.h = clamp(active.h - parseInt(y), 1, terminal.seequencer.h -active.y)
     terminal.update()
+   
+  }
+
+  this.switch = function(index = 0){
+    if(this.cursors.length<2){ 
+        this.cursors.push({ x: 0, y: 0, w: 1, h: 1 })
+      }
+      this.active = index
   }
 
   /* #region fold */
-  // this.moveTo = function (x, y) {
-  //   if (isNaN(x) || isNaN(y)) { return }
-  //   this.x = clamp(parseInt(x), 0, terminal.seequencer.w - 1)
-  //   this.y = clamp(parseInt(y), 0, terminal.seequencer.h - 1)
-  //   terminal.update()
-  // }
+  this.moveTo = function (x, y) {
+    let active = this.cursors[this.active]  
+    if (isNaN(x) || isNaN(y)) { return }
+    active.x = clamp(parseInt(x), 0, terminal.seequencer.w - 1)
+    active.y = clamp(parseInt(y), 0, terminal.seequencer.h - 1)
+    terminal.update()
+  }
 
-  // this.scaleTo = function (w, h) {
-  //   if (isNaN(w) || isNaN(h)) { return }
-  //   this.w = clamp(parseInt(w), 1, terminal.seequencer.w - 1)
-  //   this.h = clamp(parseInt(h), 1, terminal.seequencer.h - 1)
-  //   terminal.update()
-  // }
+  this.scaleTo = function (w, h) {
+    let active = this.cursors[this.active] 
+    if (isNaN(w) || isNaN(h)) { return }
+    active.w = clamp(parseInt(w), 1, terminal.seequencer.w - 1)
+    active.h = clamp(parseInt(h), 1, terminal.seequencer.h - 1)
+    terminal.update()
+  }
 
   // this.resize = function (w, h) {
   //   if (isNaN(w) || isNaN(h)) { return }
@@ -104,62 +114,64 @@ function Cursor(terminal) {
 
   /* #endregion*/
 
-  this.select = function (x = this.x, y = this.y, w = this.w, h = this.h) {
+  this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
     this.moveTo(x, y)
     this.scaleTo(w, h)
     terminal.update()
   }
 
   this.reset = function (pos = false) {
+    let active = this.cursors[this.active]  
     if (pos) {
-      this.x = 0
-      this.y = 0
+      active.x = 0
+      active.y = 0
     }
     this.move(0, 0)
-    this.w = 1
-    this.h = 1
+    active.w = 1
+    active.h = 1
     this.mode = 0
   }
 
   this.read = function () {
-    return terminal.seequencer.glyphAt(this.x, this.y)
+    let active = this.cursors[this.active] 
+    return terminal.seequencer.glyphAt(active.x, active.y)
   }
 
   this.write = function (g) {
-    if (terminal.seequencer.write(this.x, this.y, g) && this.mode === 1) {
+    let active = this.cursors[this.active] 
+    if (terminal.seequencer.write(active.x, active.y, g) && this.mode === 1) {
       this.move(1, 0)
     }
-    // terminal.history.record(terminal.seequencer.s)
   }
 
-  this.erase = function () {
-    this.eraseBlock(this.x, this.y, this.w, this.h)
-    if (this.mode === 1) { this.move(-1, 0) }
-    terminal.history.record(terminal.seequencer.s)
-  }
+  // this.erase = function () {
+  //   this.eraseBlock(this.x, this.y, this.w, this.h)
+  //   if (this.mode === 1) { this.move(-1, 0) }
+  //   terminal.history.record(terminal.seequencer.s)
+  // }
 
-  this.find = function (str) {
-    const i = terminal.seequencer.s.indexOf(str)
-    if (i < 0) { return }
-    const pos = terminal.seequencer.posAt(i)
-    this.w = str.length
-    this.h = 1
-    this.x = pos.x
-    this.y = pos.y
-  }
+  // this.find = function (str) {
+  //   const i = terminal.seequencer.s.indexOf(str)
+  //   if (i < 0) { return }
+  //   const pos = terminal.seequencer.posAt(i)
+  //   this.w = str.length
+  //   this.h = 1
+  //   this.x = pos.x
+  //   this.y = pos.y
+  // }
 
-  this.trigger = function () {
+  // this.trigger = function () {
     // const operator = terminal.seequencer.operatorAt(this.x, this.y)
     // if (!operator) { console.warn('Cursor', 'Nothing to trigger.'); return }
     // console.log('Cursor', 'Trigger: ' + operator.name)
     // operator.run(true)
-  }
+  // }
 
-  this.toggleMode = function (val) {
-    this.w = 1
-    this.h = 1
-    this.mode = this.mode === 0 ? val : 0
-  }
+  // this.toggleMode = function (val) {
+  //   this.w = 1
+  //   this.h = 1
+  //   this.mode = this.mode === 0 ? val : 0
+  // }
 
   this.inspect = function (name = true, ports = false) {
     // if (this.w > 1 || this.h > 1) { return 'multi' }
@@ -173,14 +185,14 @@ function Cursor(terminal) {
   // Block
 
   this.getBlock = function () {
-    const rect = this.toRect()
+    let rect
+    rect = this.toRect()
     const block = []
     for (let _y = rect.y; _y < rect.y + rect.h; _y++) {
       const line = []
       for (let _x = rect.x; _x < rect.x + rect.w; _x++) {
         block.push({x: _x, y: _y })
       }
-      // block.push(line)
     }
     return block
   }
@@ -214,7 +226,7 @@ function Cursor(terminal) {
   /* #endregion*/
 
   this.toRect = function () {
-    return { x: this.x, y: this.y, w: this.w, h: this.h }
+    return { x: this.cursors[this.active].x, y: this.cursors[this.active].y, w: this.cursors[this.active].w, h: this.cursors[this.active].h }
   }
 
   function sense (s) { return s === s.toUpperCase() && s.toLowerCase() !== s.toUpperCase() }

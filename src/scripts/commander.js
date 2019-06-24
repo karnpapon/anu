@@ -108,7 +108,7 @@ function Commander (terminal) {
     // const cmd = `${msg}`.split(':')[0].toLowerCase()
     // const val = `${msg}`.substr(cmd.length + 1)
     // if (!this.actives[cmd]) { console.warn('Commander', `Unknown message: ${msg}`); this.stop(); return }
-    console.info('Commander trigger', msg)
+    // console.info('Commander trigger', msg)
     // this.actives[cmd](new Param(val), true)
     // if (touch === true) {
     //   this.history.push(msg)
@@ -131,11 +131,11 @@ function Commander (terminal) {
   this.onKeyDown = function (event) {
     /*#region */
     // Reset
-    // if ((event.metaKey || event.ctrlKey) && event.key === 'Backspace') {
-    //   terminal.reset()
-    //   event.preventDefault()
-    //   return
-    // }
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Backspace') {
+      terminal.reset()
+      event.preventDefault()
+      return
+    }
 
     // if (event.keyCode === 191 && (event.metaKey || event.ctrlKey)) { terminal.cursor.comment(); event.preventDefault(); return }
 
@@ -157,37 +157,57 @@ function Commander (terminal) {
     if (event.keyCode === 39) { this.onArrowRight(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
 
     if (event.shiftKey && event.keyCode === 13) { 
-      terminal.stepCursorBoundaryRange() 
-      terminal.isSelected = !terminal.isSelected; 
+      terminal.stepcursor.stepCursorBoundaryRange() 
+      terminal.stepcursor.isSelected = !terminal.stepcursor.isSelected; 
       return 
     }
 
-    // if (event.keyCode === 9) { terminal.toggleHardmode(); event.preventDefault(); return }
+    if (event.shiftKey && event.keyCode === 187) { 
+      terminal.stepcursor.add() 
+      return 
+    }
 
-    // if (event.metaKey) { return }
-    // if (event.ctrlKey) { return }
+    if (event.shiftKey && event.keyCode === 189) { 
+      terminal.stepcursor.remove() 
+      return 
+    }
 
-    if (event.key === ' ' && terminal.cursor.mode === 0) { terminal.clock.togglePlay(); event.preventDefault(); return }
+    if (event.keyCode === 49 && (event.metaKey || event.ctrlKey)) { 
+      terminal.cursor.switch(0); 
+      event.preventDefault(); 
+      return 
+    }
+
+    if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) { 
+      terminal.cursor.switch(1); 
+      event.preventDefault(); 
+      return 
+    }
+
+    if (event.metaKey) { return }
+    if (event.ctrlKey) { return }
+
+    if (event.key === ' ' ) { terminal.clock.togglePlay(); event.preventDefault(); return }
 
     /*#region */
     // if (event.key === ' ' && terminal.cursor.mode === 1) { terminal.cursor.move(1, 0); event.preventDefault(); return }
 
-    // if (event.key === 'Escape') { 
-    //     // terminal.toggleGuide(false); 
-    //     terminal.commander.stop(); 
-    //     terminal.clear(); 
-    //     terminal.isPaused = false; 
-    //     terminal.cursor.reset(); 
-    //     return 
-    // }
+    if (event.key === 'Escape') { 
+      // terminal.toggleGuide(false); 
+      terminal.commander.stop(); 
+      terminal.clear(); 
+      terminal.isPaused = false; 
+      terminal.cursor.reset(); 
+      return 
+    }
     // if (event.key === 'Backspace') { terminal[this.isActive === true ? 'commander' : 'cursor'].erase(); event.preventDefault(); return }
 
     // if (event.key === ']') { terminal.modGrid(1, 0); event.preventDefault(); return }
     // if (event.key === '[') { terminal.modGrid(-1, 0); event.preventDefault(); return }
     // if (event.key === '}') { terminal.modGrid(0, 1); event.preventDefault(); return }
     // if (event.key === '{') { terminal.modGrid(0, -1); event.preventDefault(); return }
-    // if (event.key === '>') { terminal.clock.mod(1); event.preventDefault(); return }
-    // if (event.key === '<') { terminal.clock.mod(-1); event.preventDefault(); return }
+    if (event.key === '>') { terminal.clock.mod(1); event.preventDefault(); return }
+    if (event.key === '<') { terminal.clock.mod(-1); event.preventDefault(); return }
 
     // Route key to Operator or Cursor
     // terminal[this.isActive === true ? 'commander' : 'cursor'].write(event.key)
@@ -195,7 +215,6 @@ function Commander (terminal) {
   }
 
   this.onKeyUp = function (event) {
-    // terminal.cursor.overlapChecker()
     terminal.update()
   }
 
