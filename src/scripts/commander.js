@@ -5,6 +5,10 @@ function Commander (terminal) {
   this.query = ''
   this.history = []
   this.historyIndex = 0
+  this.altFlag = false
+  this.tabFlag = false
+  this.switchFlag = false
+  this.switchCounter = 0
 
   /*#region*/
   // Library
@@ -117,13 +121,6 @@ function Commander (terminal) {
     // }
   }
 
-  // this.preview = function (msg = this.query) {
-  //   const cmd = `${msg}`.split(':')[0].toLowerCase()
-  //   const val = `${msg}`.substr(cmd.length + 1)
-  //   if (!this.passives[cmd]) { return }
-  //   this.passives[cmd](new Param(val), false)
-  // }
-
   /*#endregion */
 
   // Events
@@ -157,27 +154,48 @@ function Commander (terminal) {
     if (event.keyCode === 39) { this.onArrowRight(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
 
     if (event.shiftKey && event.keyCode === 13) { 
-      terminal.stepcursor.stepCursorBoundaryRange() 
-      terminal.stepcursor.isSelected = !terminal.stepcursor.isSelected; 
+      terminal.stepcounter.range() 
+      terminal.stepcounter.isSelected = !terminal.stepcounter.isSelected; 
       return 
     }
 
+    // add step.
     if (event.shiftKey && event.keyCode === 187) { 
       terminal.stepcursor.add() 
       return 
     }
 
+    // remove step
     if (event.shiftKey && event.keyCode === 189) { 
       terminal.stepcursor.remove() 
       return 
     }
 
-    if (event.keyCode === 49 && (event.metaKey || event.ctrlKey)) { 
-      terminal.cursor.switch(0); 
+    if (event.altKey) { 
+      this.altFlag = true
+      event.preventDefault(); 
+    }
+
+    // switch cursor.
+    if (event.keyCode === 9 && this.altFlag) { 
+      this.switchFlag = true
+      this.switchCounter += 1
       event.preventDefault(); 
       return 
     }
 
+    // new cursor.
+    if (event.keyCode === 78 && (event.metaKey || event.ctrlKey)) { 
+      terminal.globalIdx += 1
+      terminal.cursor.add(); 
+      terminal.stepcursor.add();
+      terminal.stepcounter.isSelected = true; 
+      terminal.stepcounter.range();
+      event.preventDefault(); 
+      return 
+    }
+
+    // switch cursor.
     if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) { 
       terminal.cursor.switch(1); 
       event.preventDefault(); 
@@ -202,10 +220,6 @@ function Commander (terminal) {
     }
     // if (event.key === 'Backspace') { terminal[this.isActive === true ? 'commander' : 'cursor'].erase(); event.preventDefault(); return }
 
-    // if (event.key === ']') { terminal.modGrid(1, 0); event.preventDefault(); return }
-    // if (event.key === '[') { terminal.modGrid(-1, 0); event.preventDefault(); return }
-    // if (event.key === '}') { terminal.modGrid(0, 1); event.preventDefault(); return }
-    // if (event.key === '{') { terminal.modGrid(0, -1); event.preventDefault(); return }
     if (event.key === '>') { terminal.clock.mod(1); event.preventDefault(); return }
     if (event.key === '<') { terminal.clock.mod(-1); event.preventDefault(); return }
 
@@ -215,6 +229,16 @@ function Commander (terminal) {
   }
 
   this.onKeyUp = function (event) {
+
+    if( this.switchFlag ){ 
+      if( this.switchFlag && this.altFlag){ 
+        terminal.cursor.switch(this.switchCounter % terminal.cursor.cursors.length)
+        this.altFlag = false
+      } else {
+        this.switchFlag = false
+      }
+    }
+    
     terminal.update()
   }
 

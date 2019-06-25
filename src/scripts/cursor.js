@@ -4,7 +4,7 @@ function Cursor(terminal) {
   this.mode = 0
   this.block = []
   this.active = 0
-  this.cursors = [{ x: 0, y: 0, w: 1, h:1}]
+  this.cursors = [{ x: 0, y: 0, w: 1, h:1, i: 0}]
 
   this.move = function (x, y) {
     let active = this.cursors[this.active]
@@ -17,17 +17,18 @@ function Cursor(terminal) {
   this.scale = function (x, y) {
     let active = this.cursors[this.active] 
     if (isNaN(x) || isNaN(y)) { return }
-    active.w = clamp(active.w + parseInt(x), 1, terminal.seequencer.w -active.x)
-    active.h = clamp(active.h - parseInt(y), 1, terminal.seequencer.h -active.y)
+    active.w = clamp(active.w + parseInt(x), 1, terminal.seequencer.w - active.x)
+    active.h = clamp(active.h - parseInt(y), 1, terminal.seequencer.h - active.y)
     terminal.update()
-   
   }
 
   this.switch = function(index = 0){
-    if(this.cursors.length<2){ 
-        this.cursors.push({ x: 0, y: 0, w: 1, h: 1 })
-      }
-      this.active = index
+    this.active = index
+  }
+
+  this.add = function(){
+    this.cursors.push({ x: 0, y: 0, w: 1, h: 1, i: terminal.globalIdx }) 
+    console.log("this.cursors", this.cursors)
   }
 
   /* #region fold */
@@ -185,17 +186,37 @@ function Cursor(terminal) {
   // Block
 
   this.getBlock = function () {
-    let rect
+    let rect = []
     rect = this.toRect()
     const block = []
-    for (let _y = rect.y; _y < rect.y + rect.h; _y++) {
-      const line = []
-      for (let _x = rect.x; _x < rect.x + rect.w; _x++) {
-        block.push({x: _x, y: _y })
+    rect.forEach( r => {
+      for (let _y = r.y; _y < r.y + r.h; _y++) {
+        const line = []
+        for (let _x = r.x; _x < r.x + r.w; _x++) {
+          block.push({x: _x, y: _y })
+        }
       }
-    }
+    })
     return block
   }
+
+  this.getBlockByIndex = function (idx) {
+    let rect = []
+    rect = this.toRect()
+    const block = []
+    rect.forEach( r => {
+      if( r.i === idx ){
+        for (let _y = r.y; _y < r.y + r.h; _y++) {
+          const line = []
+          for (let _x = r.x; _x < r.x + r.w; _x++) {
+            block.push({x: _x, y: _y })
+          }
+        }
+      }
+    })
+    return block
+  }
+
 
   // this.writeBlock = function (block, overlap = false) {
   //   if (!block || block.length === 0) { return }
@@ -226,7 +247,18 @@ function Cursor(terminal) {
   /* #endregion*/
 
   this.toRect = function () {
-    return { x: this.cursors[this.active].x, y: this.cursors[this.active].y, w: this.cursors[this.active].w, h: this.cursors[this.active].h }
+    let cursorArea = []
+    this.cursors.forEach( ( cs ) => {
+      cursorArea.push({ 
+        x: cs.x, 
+        y: cs.y, 
+        w: cs.w, 
+        h: cs.h,
+        i: cs.i
+      })
+    })
+
+    return cursorArea
   }
 
   function sense (s) { return s === s.toUpperCase() && s.toLowerCase() !== s.toUpperCase() }

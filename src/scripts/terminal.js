@@ -9,6 +9,7 @@ function Terminal () {
   const Source = require('./source')
   const Clock = require('./clock')
   const StepCursor = require('./stepcursor')
+  const StepCounter = require('./stepcounter')
 
   this.seequencer = new Seequencer(this)
   this.cursor = new Cursor(this)
@@ -16,8 +17,7 @@ function Terminal () {
   this.commander = new Commander(this)
   this.clock = new Clock(this)
   this.stepcursor = new StepCursor(this)
-  // this.history = new History()
-  // this.controller = new Controller()
+  this.stepcounter = new StepCounter(this)
 
   this.dataMockup = `Extratone is basically a form of extreme sound art,”explains a London-based artist and Slime City label owner who has identified himself as Rick.
 He operates under various aliases, like Zara Skumshot and Skat Injector.“It’s not about pounding kicks, but kicks so fast they have morphed into a tonal beast.
@@ -48,6 +48,7 @@ The production of course is more varied and peppered with additional elements su
   this.scale = window.devicePixelRatio
   this.hardmode = true
   this.guide = false
+  this.globalIdx = 0
 
   this.install = function (host) {
     host.appendChild(this.el)
@@ -58,29 +59,28 @@ The production of course is more varied and peppered with additional elements su
     this.theme.start()
     // this.io.start()
     this.source.start()
-    // this.history.bind(this.seequencer, 's')
-    // this.history.record(this.seequencer.s)
-    // this.clock.start()
-    this.el.className = 'ready'
+    this.clock.start()
     this.dataInstall()
     this.update()
+    this.el.className = 'ready'
   }
 
   this.run = function () {
     // this.io.clear()
+    // this.io.run()
     this.clock.run()
     this.source.run()
     this.seequencer.run()
-    // this.io.run()
+    this.stepcounter.run()
     this.update()
-    this.stepcursor.run()
   }
   
   this.update = function () {
     if (document.hidden === true) { return }
     this.clear()
     this.drawProgram()
-    // this.drawStroke()
+    this.stepcursor.run()
+    this.drawStroke()
     seeq.isRegExpSearching? this.match():() => {}
   }
 
@@ -109,7 +109,7 @@ The production of course is more varied and peppered with additional elements su
     terminal.p.forEach((item, i) => {
       let g = terminal.seequencer.glyphAt(item.x, item.y)
       if (this.seequencer.inBlock(item.x, item.y)) {
-        terminal.drawSprite(item.x, item.y, g, 10)
+        terminal.drawSprite(item.x, item.y, g, 0) // trigger background
       } else {
         terminal.drawSprite(item.x, item.y, g, 0)
       }
@@ -164,11 +164,11 @@ The production of course is more varied and peppered with additional elements su
   /* #endregion*/
 
   this.isCursor = function (x, y) {
-    return x === this.cursor.cursors[this.cursor.active].x && y === this.cursor.cursors[this.cursor.active].y
+    return this.cursor.cursors.some( cs => x === cs.x && y === cs.y)
   }
 
   this.isSelection = function (x, y) {
-    return !!(x >= this.cursor.cursors[this.cursor.active].x && x < this.cursor.cursors[this.cursor.active].x + this.cursor.cursors[this.cursor.active].w && y >= this.cursor.cursors[this.cursor.active].y && y < this.cursor.cursors[this.cursor.active].y + this.cursor.cursors[this.cursor.active].h)
+    return !!( this.cursor.cursors.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
 
   this.isMarker = function (x, y) {
@@ -215,21 +215,25 @@ The production of course is more varied and peppered with additional elements su
   // Interface
 
   this.makeGlyph = function (x, y) {
+    let cursor = this.cursor.cursors
     const g = this.seequencer.glyphAt(x, y)
     if (g !== '.') { return g }
-    if (this.isCursor(x, y)) { return '+' }
+    if (this.isCursor(x, y)) { 
+      for(const id in cursor ){ 
+        return cursor[id].i.toString() 
+      }}
     if (this.isMarker(x, y)) { return '+' }
     return g
   }
 
   this.makeStyle = function (x, y, glyph, selection) {
-    const isLocked = this.seequencer.lockAt(x, y)
+    // const isLocked = this.seequencer.lockAt(x, y)
     // const port = this.ports[this.seequencer.indexAt(x, y)]
+    if(this.isCursor(x,y)) { return 10 }
     if (this.isSelection(x, y)) { return 4}
     // if (!port && glyph === '.' && isLocked === false && this.hardmode === true) { return this.isLocals(x, y) === true ? 9 : 7 }
     // if (selection === glyph && isLocked === false && selection !== '.') { return 6 }
     // if (glyph === '*' && isLocked === false) { return 6 }
-    // if (port) { return port[2] }
     // if (isLocked === true) { return 5 }
     return 9
   }
@@ -237,23 +241,23 @@ The production of course is more varied and peppered with additional elements su
   this.makeTheme = function (type) {
     // match.
     if (type === 0) { return { bg: this.theme.active.b_med, fg: this.theme.active.background } }
-    // Haste
+    // _
     if (type === 1) { return { bg: this.theme.active.b_inv } }
-    // Input
-    if (type === 2) { return { fg: this.theme.active.b_high } }
+    // _
+    if (type === 2) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_high } }
     // step cursor
     if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
     // cursor
     if (type === 4) { return { bg: this.theme.active.f_med, fg: this.theme.active.f_low } }
     // Mark Step inverse.
     if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
-    // Reader
+    // _
     if (type === 6) { return { fg: this.theme.active.b_inv } }
     // Invisible
     if (type === 7) { return {} }
     // Block select.
     if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
-    // Reader+Background
+    // Black.
     if (type === 10) { return { bg: this.theme.active.background, fg: this.theme.active.f_high } }
     // Default
     return { fg: this.theme.active.f_low }
@@ -276,31 +280,20 @@ The production of course is more varied and peppered with additional elements su
     }
   }
 
-  this.drawArea = function(){
-    const theme = this.makeTheme(4)
-    let rect = this.cursor.toRect()
-    const r = {
-      x: rect.x * this.scale * this.tile.w,
-      y: rect.y * this.scale * this.tile.h,
-      w: rect.w * this.scale * this.tile.w,
-      h: rect.h * this.scale * this.tile.h
-    }
-    this.context.fillStyle = theme.bg
-    this.context.fillRect(r.x + 120, r.y, r.w, r.h) 
-  }
-
   this.drawStroke = function(){
-    let rect
-    rect = this.cursor.toRect()
-    const r = {
-      x: rect.x * this.scale * this.tile.w,
-      y: rect.y * this.scale * this.tile.h,
-      w: rect.w * this.scale * this.tile.w,
-      h: rect.h * this.scale * this.tile.h
-    }
-    this.context.lineWidth = 1;
-    this.context.strokeStyle = this.theme.active.background
-    this.context.strokeRect(r.x, r.y, r.w, r.h)
+    let rects
+    rects = this.cursor.toRect()
+    rects.forEach( rect => {
+      const r = {
+        x: rect.x * this.scale * this.tile.w,
+        y: rect.y * this.scale * this.tile.h,
+        w: rect.w * this.scale * this.tile.w,
+        h: rect.h * this.scale * this.tile.h
+      }
+      this.context.lineWidth = 1;
+      this.context.strokeStyle = this.theme.active.background
+      this.context.strokeRect(r.x, r.y, r.w, r.h)
+    })
   }
 
   this.drawSprite = function (x, y, g, type) {
