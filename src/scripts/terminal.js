@@ -33,7 +33,7 @@ The production of course is more varied and peppered with additional elements su
     f_inv: '#D1FF00', // purple-ish
     b_high: '#eeeeee', //grey-white.
     b_med: '#3EFB00',  // green
-    b_low: '#C2B7E0', // grey-black
+    b_low: '#00FFD4', // grey-black
     b_inv: '#69DA44'  // selection
   })
 
@@ -80,7 +80,7 @@ The production of course is more varied and peppered with additional elements su
     this.clear()
     this.drawProgram()
     this.stepcursor.run()
-    this.drawStroke()
+    this.drawStroke(this.cursor)
     seeq.isRegExpSearching? this.match():() => {}
   }
 
@@ -110,8 +110,17 @@ The production of course is more varied and peppered with additional elements su
       let g = terminal.seequencer.glyphAt(item.x, item.y)
       if (this.seequencer.inBlock(item.x, item.y)) {
         terminal.drawSprite(item.x, item.y, g, 0) // trigger background
+        const r = {
+          x: item.x * this.scale * this.tile.w,
+          y: item.y * this.scale * this.tile.h,
+          w: 1 * this.scale * this.tile.w,
+          h: 1 * this.scale * this.tile.h
+        }
+        this.context.lineWidth = 1;
+        this.context.strokeStyle = this.theme.active.background
+        this.context.strokeRect(r.x, r.y, r.w, r.h)
       } else {
-        terminal.drawSprite(item.x, item.y, g, 0)
+        terminal.drawSprite(item.x, item.y, g, 0) //match marked.
       }
     })
   }
@@ -171,6 +180,10 @@ The production of course is more varied and peppered with additional elements su
     return !!( this.cursor.cursors.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
 
+  // this.isInSelectionScope = function(el){
+  //   return !!( el.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
+  // }
+
   this.isMarker = function (x, y) {
     return x % this.grid.w === 0 && y % this.grid.h === 0
   }
@@ -217,11 +230,24 @@ The production of course is more varied and peppered with additional elements su
   this.makeGlyph = function (x, y) {
     let cursor = this.cursor.cursors
     const g = this.seequencer.glyphAt(x, y)
-    if (g !== '.') { return g }
+    if (g !== '.' ) { 
+      if( this.isCursor(x,y)){
+        // for(const id in cursor ){ 
+        //   return cursor[id].i.toString() 
+        // }
+        return "◊"
+      } else {
+        return g 
+      }
+    }
+
     if (this.isCursor(x, y)) { 
-      for(const id in cursor ){ 
-        return cursor[id].i.toString() 
-      }}
+      // for(const id in cursor ){ 
+        // return cursor[id].i.toString() 
+      // }
+      return '◊'
+    }
+
     if (this.isMarker(x, y)) { return '+' }
     return g
   }
@@ -230,7 +256,7 @@ The production of course is more varied and peppered with additional elements su
     // const isLocked = this.seequencer.lockAt(x, y)
     // const port = this.ports[this.seequencer.indexAt(x, y)]
     if(this.isCursor(x,y)) { return 10 }
-    if (this.isSelection(x, y)) { return 4}
+    if (this.isSelection(x, y)) { return 1}
     // if (!port && glyph === '.' && isLocked === false && this.hardmode === true) { return this.isLocals(x, y) === true ? 9 : 7 }
     // if (selection === glyph && isLocked === false && selection !== '.') { return 6 }
     // if (glyph === '*' && isLocked === false) { return 6 }
@@ -242,7 +268,7 @@ The production of course is more varied and peppered with additional elements su
     // match.
     if (type === 0) { return { bg: this.theme.active.b_med, fg: this.theme.active.background } }
     // _
-    if (type === 1) { return { bg: this.theme.active.b_inv } }
+    if (type === 1) { return { bg: this.theme.active.f_high, fg: this.theme.active.f_low  } }
     // _
     if (type === 2) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_high } }
     // step cursor
@@ -280,9 +306,9 @@ The production of course is more varied and peppered with additional elements su
     }
   }
 
-  this.drawStroke = function(){
+  this.drawStroke = function(el){
     let rects
-    rects = this.cursor.toRect()
+    rects = el.toRect()
     rects.forEach( rect => {
       const r = {
         x: rect.x * this.scale * this.tile.w,

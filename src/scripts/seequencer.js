@@ -1,14 +1,10 @@
 function Seequencer(terminal){
-  // const Library = require('./library')
-
-  // this.library = new Library
   this.w = 1 // Default Width
   this.h = 1 // Default Height
   this.f = 0 // Frame
   this.s = '' // String
 
   this.terminal = terminal
-//   this.keys = Object.keys(library).slice(0, 36)
   this.keys = ""
 
   this.locks = []

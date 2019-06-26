@@ -14,28 +14,32 @@ function StepCounter(terminal){
   }
 
   this.increment = function (c) {
-    let activeCursor = terminal.cursor.cursors[terminal.cursor.active]
     if (!this.isSelected) {
       if (c.x % terminal.seequencer.w === 0 && c.x !== 0) {
         c.x = 0
-        c.y++
-      } else {
-        c.x++
-      }
+        if(c.y % terminal.seequencer.h === 0 && c.y !== 0){
+          c.y = 0
+        } else {
+          c.y++
+        }
+      } 
     } else { // range cursor.
-      if (
-        c.x > (activeCursor.x + activeCursor.w - 2) || 
-        c.y > (activeCursor.y + activeCursor.h) || 
-        activeCursor.x > c.x || 
-        activeCursor.y > c.y
-      ) {
-        c.x = activeCursor.x
-        c.y = activeCursor.h > 1 ? activeCursor.y + c.counter % activeCursor.h : activeCursor.y
-        c.counter++
-      } else {
-        c.x++
-      }
+      terminal.cursor.cursors.forEach( value => {
+        if( value.i === c.i){
+          if (
+            c.x > (value.x + value.w - 2) || 
+            c.y > (value.y + value.h) || 
+            value.x > c.x || 
+            value.y > c.y
+          ) {
+            c.x = value.x - 1
+            c.y = value.h > 1 ? value.y + c.counter % value.h : value.y
+            c.counter++
+          }
+        }
+      })
     }
+    c.x++
   }
 
   this.range = function () {

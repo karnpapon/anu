@@ -188,7 +188,7 @@ function Commander (terminal) {
     if (event.keyCode === 78 && (event.metaKey || event.ctrlKey)) { 
       terminal.globalIdx += 1
       terminal.cursor.add(); 
-      terminal.stepcursor.add();
+      // terminal.stepcursor.add();
       terminal.stepcounter.isSelected = true; 
       terminal.stepcounter.range();
       event.preventDefault(); 

@@ -27,11 +27,9 @@ function Cursor(terminal) {
   }
 
   this.add = function(){
-    this.cursors.push({ x: 0, y: 0, w: 1, h: 1, i: terminal.globalIdx }) 
-    console.log("this.cursors", this.cursors)
+    this.cursors.push({ x: 0, y: 0, w: 10, h: 1, i: terminal.globalIdx }) 
   }
 
-  /* #region fold */
   this.moveTo = function (x, y) {
     let active = this.cursors[this.active]  
     if (isNaN(x) || isNaN(y)) { return }
@@ -39,7 +37,7 @@ function Cursor(terminal) {
     active.y = clamp(parseInt(y), 0, terminal.seequencer.h - 1)
     terminal.update()
   }
-
+  
   this.scaleTo = function (w, h) {
     let active = this.cursors[this.active] 
     if (isNaN(w) || isNaN(h)) { return }
@@ -47,7 +45,8 @@ function Cursor(terminal) {
     active.h = clamp(parseInt(h), 1, terminal.seequencer.h - 1)
     terminal.update()
   }
-
+  
+  /* #region fold */
   // this.resize = function (w, h) {
   //   if (isNaN(w) || isNaN(h)) { return }
   //   this.w = clamp(parseInt(w), 1, terminal.seequencer.w - this.x)
@@ -182,7 +181,6 @@ function Cursor(terminal) {
     return 'empty'
   }
 
-  /* #region fold */
   // Block
 
   this.getBlock = function () {
@@ -216,35 +214,6 @@ function Cursor(terminal) {
     })
     return block
   }
-
-
-  // this.writeBlock = function (block, overlap = false) {
-  //   if (!block || block.length === 0) { return }
-  //   const rect = this.toRect()
-  //   let _y = rect.y
-  //   for (const x in block) {
-  //     let _x = rect.x
-  //     for (const y in block[x]) {
-  //       const glyph = block[x][y]
-  //       terminal.seequencer.write(_x, _y, overlap === true && glyph === '.' ? terminal.seequencer.glyphAt(_x, _y) : glyph)
-  //       _x++
-  //     }
-  //     _y++
-  //   }
-  //   terminal.history.record(terminal.seequencer.s)
-  // }
-
-  // this.eraseBlock = function (x, y, w, h) {
-  //   if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h)) { return }
-  //   for (let _y = y; _y < y + h; _y++) {
-  //     for (let _x = x; _x < x + w; _x++) {
-  //       terminal.seequencer.write(_x, _y, '.')
-  //     }
-  //   }
-  //   terminal.history.record(terminal.seequencer.s)
-  // }
-
-  /* #endregion*/
 
   this.toRect = function () {
     let cursorArea = []
