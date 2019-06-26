@@ -45,11 +45,21 @@ function StepCursor(terminal) {
       h: el.h * terminal.scale * terminal.tile.h
     }
 
-    // start
-    terminal.context.globalAlpha = (100 - opacity)/100;
-    terminal.context.fillStyle = terminal.theme.active.b_med
-    terminal.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
+    let block = terminal.cursor.getBlockByIndex(el.i)
+
+    block.forEach( c => {
+      let g = terminal.seequencer.glyphAt(c.x, c.y)
+      if(terminal.isCursor(c.x,c.y)){
+        // start
+        terminal.context.globalAlpha = (100 - opacity)/100;
+        terminal.context.fillStyle = terminal.theme.active.b_med
+        terminal.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
+      } else {
+        terminal.drawSprite(c.x, c.y, g, 7)
+      }
+    })
     
+
     // end
     terminal.context.globalAlpha = (opacity) / 100;
     terminal.context.fillStyle = terminal.theme.active.background
@@ -57,9 +67,9 @@ function StepCursor(terminal) {
 
     terminal.context.strokeStyle = terminal.theme.active.background
     terminal.context.strokeRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-
-    terminal.context.fillStyle = terminal.theme.active.f_high 
     terminal.drawSprite(el.x, el.y, "*", 0)
+    
+    
     // reset
     terminal.context.globalAlpha=1.00;
 

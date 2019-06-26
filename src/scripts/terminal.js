@@ -27,7 +27,7 @@ The production of course is more varied and peppered with additional elements su
   // Themes
   this.theme = new Theme({ 
     background: '#000000', //black
-    f_high: '#ffffff',  //almost white
+    f_high: '#FFFFFF',  //almost white
     f_med: '#FFC500', // grey
     f_low: '#000000',  //black
     f_inv: '#D1FF00', // purple-ish
@@ -176,6 +176,10 @@ The production of course is more varied and peppered with additional elements su
     return this.cursor.cursors.some( cs => x === cs.x && y === cs.y)
   }
 
+  // this.isCursorByIndex = function(idx){
+  //   return this.cursor.cursors
+  // }
+
   this.isSelection = function (x, y) {
     return !!( this.cursor.cursors.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
@@ -235,7 +239,7 @@ The production of course is more varied and peppered with additional elements su
         // for(const id in cursor ){ 
         //   return cursor[id].i.toString() 
         // }
-        return "◊"
+        return "+"
       } else {
         return g 
       }
@@ -245,7 +249,7 @@ The production of course is more varied and peppered with additional elements su
       // for(const id in cursor ){ 
         // return cursor[id].i.toString() 
       // }
-      return '◊'
+      return '+'
     }
 
     if (this.isMarker(x, y)) { return '+' }
@@ -256,7 +260,7 @@ The production of course is more varied and peppered with additional elements su
     // const isLocked = this.seequencer.lockAt(x, y)
     // const port = this.ports[this.seequencer.indexAt(x, y)]
     if(this.isCursor(x,y)) { return 10 }
-    if (this.isSelection(x, y)) { return 1}
+    if (this.isSelection(x, y)) { return 6}
     // if (!port && glyph === '.' && isLocked === false && this.hardmode === true) { return this.isLocals(x, y) === true ? 9 : 7 }
     // if (selection === glyph && isLocked === false && selection !== '.') { return 6 }
     // if (glyph === '*' && isLocked === false) { return 6 }
@@ -277,10 +281,10 @@ The production of course is more varied and peppered with additional elements su
     if (type === 4) { return { bg: this.theme.active.f_med, fg: this.theme.active.f_low } }
     // Mark Step inverse.
     if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
-    // _
+    // cursor selection scope.
     if (type === 6) { return { fg: this.theme.active.b_inv } }
     // Invisible
-    if (type === 7) { return {} }
+    if (type === 7) { return { fg: this.theme.active.f_high} }
     // Block select.
     if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
     // Black.
@@ -368,8 +372,8 @@ The production of course is more varied and peppered with additional elements su
   // }
 
   this.resize = function (force = false) {
-    const size = { w: window.innerWidth - 40, h: window.innerHeight - (this.tile.h) }
-    const tiles = { w: Math.ceil(size.w / this.tile.w - 17 ), h: 17 }
+    const size = { w: window.innerWidth - 56, h: window.innerHeight - (60 + this.tile.h * 2) }
+    const tiles = { w: Math.ceil(size.w / this.tile.w - 14 ), h: 17 }
 
     // if (this.seequencer.w === tiles.w && this.seequencer.h === tiles.h && force === false) { return }
 
@@ -383,7 +387,7 @@ The production of course is more varied and peppered with additional elements su
     if (this.cursor.cursors[this.cursor.active].x >= tiles.w) { this.cursor.cursors[this.cursor.active].x = tiles.w - 1 }
     if (this.cursor.cursors[this.cursor.active].y >= tiles.h) { this.cursor.cursors[this.cursor.active].y = tiles.h - 1 }
 
-    this.el.width = ( this.tile.w) * this.seequencer.w * this.scale
+    this.el.width = (this.tile.w) * this.seequencer.w * this.scale
     this.el.height = (this.tile.h) * this.seequencer.h * this.scale
     this.el.style.width = `${Math.ceil(this.tile.w * this.seequencer.w)}px`
     // this.el.style.height = `100%`

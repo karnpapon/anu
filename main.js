@@ -32,9 +32,9 @@ function createDevTools(){
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 680, 
+    width: 663, 
     height: 580, 
-    // resizable: false,
+    resizable: false,
     frame: false,
     hasShadow: false,
     // movable: true
