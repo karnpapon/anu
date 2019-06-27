@@ -127,6 +127,12 @@ The production of course is more varied and peppered with additional elements su
     })
   }
 
+  this.eraseSelection = function(){
+    this.cursor.erase()
+    this.stepcounter.erase()
+    this.stepcursor.erase()
+  }
+
   /* #region unused */
   // this.toggleRetina = function () {
   //   this.scale = this.scale === 1 ? window.devicePixelRatio : 1
@@ -185,10 +191,6 @@ The production of course is more varied and peppered with additional elements su
   this.isSelection = function (x, y) {
     return !!( this.cursor.cursors.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
-
-  // this.isInSelectionScope = function(el){
-  //   return !!( el.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
-  // }
 
   this.isMarker = function (x, y) {
     return x % this.grid.w === 0 && y % this.grid.h === 0
@@ -271,8 +273,6 @@ The production of course is more varied and peppered with additional elements su
   }
 
   this.makeStyle = function (x, y, glyph, selection) {
-    // const isLocked = this.seequencer.lockAt(x, y)
-    // const port = this.ports[this.seequencer.indexAt(x, y)]
     let f = this.seequencer.f
     if(this.isCursor(x,y)) {
       if(this.isCurrentCursor(x,y) ){
@@ -282,10 +282,6 @@ The production of course is more varied and peppered with additional elements su
       }
     }
     if (this.isSelection(x, y)) { return 6}
-    // if (!port && glyph === '.' && isLocked === false && this.hardmode === true) { return this.isLocals(x, y) === true ? 9 : 7 }
-    // if (selection === glyph && isLocked === false && selection !== '.') { return 6 }
-    // if (glyph === '*' && isLocked === false) { return 6 }
-    // if (isLocked === true) { return 5 }
     return 9
   }
 

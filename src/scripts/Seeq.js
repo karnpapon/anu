@@ -56,6 +56,7 @@ function Seeq(){
   this.isReverse = false
   this.isPlaying = false
   this.isBPMtoggle = false
+  this.isInsertable = false
 
   // Console status display.
   this.bpmNumber
@@ -229,8 +230,8 @@ function Seeq(){
               </div>
             </div>
             <div class="counter">
+            <div class="control-btn wdth-auto">
               <button data-ctrl="metronome">*</button>
-              <div class="control-btn wdth-auto">
               <button data-ctrl="subtract">-</button>
               <button data-ctrl="add">+</button>
               </div>
@@ -296,6 +297,8 @@ function Seeq(){
       characters: ' ░▒█▓█></',
       speed: 50
     });
+
+    seeq.toggleInsert()
   
     this.inputFetch.focus()
     this.inputFetch.addEventListener("input", function(){
@@ -337,6 +340,12 @@ function Seeq(){
         seeq.isRegExpSearching = true
         seeq.searchValue = this.value
         seeq.getMatchedPosition() //TODO: return value instead.
+
+        // seeq.keys.infoShow()
+        // seeq.keys.keyDisplayElCmd.innerHTML = `/${displayText}/gi`
+        // seeq.keys.kbInfoOperatorIcon.innerHTML = ""
+
+
         /*#region*/
         // seeq.content.unmark({
         //   done: function( ) {
@@ -629,6 +638,22 @@ function Seeq(){
       // })
 
   });
+
+  this.toggleInsert = function(){
+    // this.inputFetch.focus()
+    var inputs, index;
+    inputs = document.getElementsByTagName('input');
+    for (i = 0; i < inputs.length; ++i) {
+      if( this.isInsertable){
+        inputs[i].classList.remove("disable-input")
+        inputs[i].disabled = false
+      } else {
+        inputs[i].classList.add("disable-input")
+        inputs[i].disabled = true
+      }
+  
+    }
+  }
 
 
   this.findHighlightIndex = function(target){

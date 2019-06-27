@@ -150,6 +150,9 @@ function Cursor(terminal) {
   //   terminal.history.record(terminal.seequencer.s)
   // }
 
+  this.erase = function(){
+    this.cursors.forEach( ( cs,i,arr ) => { if(cs.i !== this.active){ this.cursors.splice(i,1)} } )
+  }
   // this.find = function (str) {
   //   const i = terminal.seequencer.s.indexOf(str)
   //   if (i < 0) { return }

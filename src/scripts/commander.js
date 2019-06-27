@@ -127,26 +127,18 @@ function Commander (terminal) {
 
   this.onKeyDown = function (event) {
     /*#region */
-    // Reset
     if ((event.metaKey || event.ctrlKey) && event.key === 'Backspace') {
-      terminal.reset()
+      terminal.eraseSelection()
       event.preventDefault()
       return
     }
-
-    // if (event.keyCode === 191 && (event.metaKey || event.ctrlKey)) { terminal.cursor.comment(); event.preventDefault(); return }
-
-    // Copy/Paste
-    // if (event.keyCode === 67 && (event.metaKey || event.ctrlKey)) { terminal.cursor.copy(); event.preventDefault(); return }
-    // if (event.keyCode === 88 && (event.metaKey || event.ctrlKey)) { terminal.cursor.cut(); event.preventDefault(); return }
-    // if (event.keyCode === 86 && (event.metaKey || event.ctrlKey) && event.shiftKey) { terminal.cursor.paste(true); event.preventDefault(); return }
-    // if (event.keyCode === 86 && (event.metaKey || event.ctrlKey)) { terminal.cursor.paste(false); event.preventDefault(); return }
-    // if (event.keyCode === 65 && (event.metaKey || event.ctrlKey)) { terminal.cursor.selectAll(); event.preventDefault(); return }
-
-    // // Undo/Redo
-    // if (event.keyCode === 90 && (event.metaKey || event.ctrlKey) && event.shiftKey) { terminal.history.redo(); event.preventDefault(); return }
-    // if (event.keyCode === 90 && (event.metaKey || event.ctrlKey)) { terminal.history.undo(); event.preventDefault(); return }
-    /*#endregion */
+     // insert.
+     if (event.keyCode === 73 && (event.metaKey || event.ctrlKey)) { 
+      seeq.isInsertable = !seeq.isInsertable
+      seeq.toggleInsert()
+      event.preventDefault(); 
+      return 
+    }
 
     if (event.keyCode === 38) { this.onArrowUp(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
     if (event.keyCode === 40) { this.onArrowDown(event.shiftKey, (event.metaKey || event.ctrlKey)); return }

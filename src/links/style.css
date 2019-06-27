@@ -203,6 +203,11 @@ div button{
   width: 276px;
 }
 
+.disable-input{
+  background-color: #a5a5a5;
+  border: unset;
+}
+
 lf{
   font-family: 'input_sans_condensed_bold';
   font-size:12px;
@@ -593,8 +598,8 @@ app {
 div button.control-btn:hover{ border:1px solid black;}
 
 div input{
-  background-color: white !important;
-  border: 1px solid !important; 
+  /* background-color: white !important; */
+  border: 1px solid; 
 }
 
 .input-note{

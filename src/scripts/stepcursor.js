@@ -29,6 +29,10 @@ function StepCursor(terminal) {
     this.steps.pop()
   }
 
+  this.erase = function(){
+    this.steps.forEach( ( step,i,arr ) => { if(step.i !== this.active){ this.steps.splice(i,1)} } )
+  }
+
   this.run = function () {
     let self = this
     this.steps.forEach( ( step, idx ) => {
