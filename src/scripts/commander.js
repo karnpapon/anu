@@ -161,7 +161,14 @@ function Commander (terminal) {
 
     // add step.
     if (event.shiftKey && event.keyCode === 187) { 
-      terminal.stepcursor.add() 
+      if(!terminal.stepcounter.isSelected){
+        terminal.stepcursor.remove()  
+        terminal.stepcursor.add();
+        terminal.stepcounter.range();
+        terminal.stepcounter.isSelected = true; 
+      } else {
+        terminal.stepcursor.add() 
+      }
       return 
     }
 
@@ -188,9 +195,6 @@ function Commander (terminal) {
     if (event.keyCode === 78 && (event.metaKey || event.ctrlKey)) { 
       terminal.globalIdx += 1
       terminal.cursor.add(); 
-      // terminal.stepcursor.add();
-      terminal.stepcounter.isSelected = true; 
-      terminal.stepcounter.range();
       event.preventDefault(); 
       return 
     }
@@ -243,14 +247,8 @@ function Commander (terminal) {
   }
 
   this.onArrowUp = function (mod = false, skip = false) {
-    // Navigate History
-    if (this.isActive === true) {
-      this.historyIndex -= this.historyIndex > 0 ? 1 : 0
-      this.start(this.history[this.historyIndex])
-      return
-    }
+   
     const leap = skip ? terminal.grid.h : 1
-    // terminal.toggleGuide(false)
     if (mod) {
       terminal.cursor.scale(0, leap)
     } else {
@@ -259,25 +257,29 @@ function Commander (terminal) {
   }
 
   this.onArrowDown = function (mod = false, skip = false) {
-    // Navigate History
-    // if (this.isActive === true) {
-    //   this.historyIndex += this.historyIndex < this.history.length ? 1 : 0
-    //   this.start(this.history[this.historyIndex])
-    //   return
-    // }
-    const leap = skip ? terminal.grid.h : 1
-    // terminal.toggleGuide(false)
-    if (mod) {
-      terminal.cursor.scale(0, -leap)
-    } else {
-      terminal.cursor.move(0, -leap)
+    const c = terminal.cursor.cursors.filter( cs => cs.i === terminal.cursor.active)
+    let leap 
+    if(!terminal.isSelectionAtEdgeBottom(c[0])){
+      // const leap = skip ? terminal.grid.h : 1
+      if(skip){
+        if(c[0].y + c[0].h + terminal.grid.h > terminal.seequencer.h){ 
+          leap = terminal.seequencer.h  % ( c[0].y + c[0].h )
+        } else { leap = terminal.grid.h }
+      } else {
+        leap = 1
+      }
+
+      if (mod) {
+        terminal.cursor.scale(0, -leap)
+      } else {
+        terminal.cursor.move(0, -leap)
+      }
     }
   }
 
   this.onArrowLeft = function (mod = false, skip = false) {
     const leap = skip ? terminal.grid.w : 1
-    // terminal.toggleGuide(false)
-   if (mod) {
+    if (mod) {
       terminal.cursor.scale(-leap, 0)
     } else {
       terminal.cursor.move(-leap, 0)
@@ -285,12 +287,22 @@ function Commander (terminal) {
   }
 
   this.onArrowRight = function (mod = false, skip = false) {
-    const leap = skip ? terminal.grid.w : 1
-    // terminal.toggleGuide(false)
-    if (mod) {
-      terminal.cursor.scale(leap, 0)
-    } else {
-      terminal.cursor.move(leap, 0)
+    const c = terminal.cursor.cursors.filter( cs => cs.i === terminal.cursor.active)
+    let leap
+    if(!terminal.isSelectionAtEdgeRight(c[0])){
+      if(skip){
+        if(c[0].x + c[0].w + terminal.grid.w > terminal.seequencer.w){ 
+          leap = terminal.seequencer.w  % ( c[0].x + c[0].w )
+        } else { leap = terminal.grid.w }
+      } else {
+        leap = 1
+      }
+
+      if (mod) {
+        terminal.cursor.scale(leap, 0)
+      } else {
+        terminal.cursor.move(leap, 0)
+      }
     }
   }
 

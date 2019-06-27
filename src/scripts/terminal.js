@@ -206,6 +206,18 @@ The production of course is more varied and peppered with additional elements su
     return x === 0 || y === 0 || x === this.seequencer.w - 1 || y === this.seequencer.h - 1
   }
 
+  this.isSelectionAtEdge = function(cursor){
+    return ( cursor.x + cursor.w ) - 1  === this.seequencer.w - 1 || ( cursor.y + cursor.h ) - 1  === this.seequencer.h - 1
+  }
+
+  this.isSelectionAtEdgeRight = function(cursor){
+    return ( cursor.x + cursor.w ) - 1  === this.seequencer.w - 1 
+  }
+
+  this.isSelectionAtEdgeBottom = function(cursor){
+    return ( cursor.y + cursor.h ) - 1  === this.seequencer.h - 1
+  }
+
   // this.isLocals = function (x, y) {
   //   return this.isNear(x, y) === true && (x % (this.grid.w / 4) === 0 && y % (this.grid.h / 4) === 0) === true
   // }
