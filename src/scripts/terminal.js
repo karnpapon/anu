@@ -10,6 +10,7 @@ function Terminal () {
   const Clock = require('./clock')
   const StepCursor = require('./stepcursor')
   const StepCounter = require('./stepcounter')
+  const IO = require('./io')
 
   this.seequencer = new Seequencer(this)
   this.cursor = new Cursor(this)
@@ -18,6 +19,7 @@ function Terminal () {
   this.clock = new Clock(this)
   this.stepcursor = new StepCursor(this)
   this.stepcounter = new StepCounter(this)
+  // this.io = new IO(this)
 
   this.dataMockup = `Extratone is basically a form of extreme sound art,”explains a London-based artist and Slime City label owner who has identified himself as Rick.
 He operates under various aliases, like Zara Skumshot and Skat Injector.“It’s not about pounding kicks, but kicks so fast they have morphed into a tonal beast.
@@ -28,7 +30,7 @@ The production of course is more varied and peppered with additional elements su
   this.theme = new Theme({ 
     background: '#000000', //black
     f_high: '#FFFFFF',  //almost white
-    f_med: '#FFC500', // grey
+    f_med: '#e6e6e6', // grey
     f_low: '#000000',  //black
     f_inv: '#D1FF00', // purple-ish
     b_high: '#eeeeee', //grey-white.
@@ -176,9 +178,9 @@ The production of course is more varied and peppered with additional elements su
     return this.cursor.cursors.some( cs => x === cs.x && y === cs.y)
   }
 
-  // this.isCursorByIndex = function(idx){
-  //   return this.cursor.cursors
-  // }
+  this.isCurrentCursor = function(x,y){
+    return this.cursor.cursors.some( cs => x === cs.x && y === cs.y && cs.i === this.cursor.active)
+  }
 
   this.isSelection = function (x, y) {
     return !!( this.cursor.cursors.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
@@ -239,7 +241,7 @@ The production of course is more varied and peppered with additional elements su
         // for(const id in cursor ){ 
         //   return cursor[id].i.toString() 
         // }
-        return "+"
+        return "*"
       } else {
         return g 
       }
@@ -249,7 +251,7 @@ The production of course is more varied and peppered with additional elements su
       // for(const id in cursor ){ 
         // return cursor[id].i.toString() 
       // }
-      return '+'
+      return '*'
     }
 
     if (this.isMarker(x, y)) { return '+' }
@@ -259,7 +261,14 @@ The production of course is more varied and peppered with additional elements su
   this.makeStyle = function (x, y, glyph, selection) {
     // const isLocked = this.seequencer.lockAt(x, y)
     // const port = this.ports[this.seequencer.indexAt(x, y)]
-    if(this.isCursor(x,y)) { return 10 }
+    let f = this.seequencer.f
+    if(this.isCursor(x,y)) {
+      if(this.isCurrentCursor(x,y) ){
+        return f % 6 === 0 || f % 6 === 1 || f % 6 === 2 ? 0:10
+      } else {
+        return 10 
+      }
+    }
     if (this.isSelection(x, y)) { return 6}
     // if (!port && glyph === '.' && isLocked === false && this.hardmode === true) { return this.isLocals(x, y) === true ? 9 : 7 }
     // if (selection === glyph && isLocked === false && selection !== '.') { return 6 }
@@ -283,8 +292,8 @@ The production of course is more varied and peppered with additional elements su
     if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
     // cursor selection scope.
     if (type === 6) { return { fg: this.theme.active.b_inv } }
-    // Invisible
-    if (type === 7) { return { fg: this.theme.active.f_high} }
+    // current cursor.
+    if (type === 7) { return { fg: this.theme.active.background} }
     // Block select.
     if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
     // Black.
@@ -419,44 +428,6 @@ The production of course is more varied and peppered with additional elements su
     // this.history.reset()
     this.seequencer.load(w, h, block, this.seequencer.f)
   }
-
-  /* #region unused */
-  // Docs
-
-  // this.docs = function () {
-  //   let html = ''
-  //   const operators = Object.keys(library).filter((val) => { return isNaN(val) })
-  //   for (const id in operators) {
-  //     const oper = new this.library[operators[id]]()
-  //     const ports = oper.ports.input ? Object.keys(oper.ports.input).reduce((acc, key, val) => { return acc + ' ' + key }, '') : ''
-  //     html += `- \`${oper.glyph.toUpperCase()}\` **${oper.name}**${ports !== '' ? '(' + ports.trim() + ')' : ''}: ${oper.info}.\n`
-  //   }
-  //   return html
-  // }
-  // Events
-
-  // window.addEventListener('dragover', (e) => {
-  //   e.stopPropagation()
-  //   e.preventDefault()
-  //   e.dataTransfer.dropEffect = 'copy'
-  // })
-
-  // window.addEventListener('drop', (e) => {
-  //   e.preventDefault()
-  //   e.stopPropagation()
-
-  //   const file = e.dataTransfer.files[0]
-  //   const path = file.path ? file.path : file.name
-
-  //   if (!path || path.indexOf('.seequencer') < 0) { console.log('seequencer', 'Not a seequencer file'); return }
-
-  //   terminal.source.read(path)
-  // })
-
-  // window.onresize = (event) => {
-  //   terminal.resize()
-  // }
-  /* #endregion*/
 
   // Helpers
 
