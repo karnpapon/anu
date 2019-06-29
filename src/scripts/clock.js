@@ -1,55 +1,44 @@
 'use strict'
 
-class Clock {
-  constructor(bpm, callback) {
-    this.bpm = 0
-    this.callback = () => { }
-    this.timer = null
-    this.running = false
-    this.setBpm(bpm)
-    this.isPaused = true
+function Clock(canvas) {
+  this.bpm = 0
+  this.callback = () => { }
+  this.timer = null
+  // this.setBpm(bpm)
+  this.isPaused = true
+  this.speed = { value: 120, target: 120 }
 
-    this.speed = { value: 120, target: 120 }
-  }
-
-  setCallback(callback) {
+  this.setCallback = function(callback) {
     this.callback = callback
   }
 
-  canSetBpm() {
+  this.canSetBpm = function() {
     return true
   }
 
-  getBpm() {
-    return this.bpm
+  this.getBpm = function(){
+    return this.timer
   }
 
-  setBpm(bpm) {
-    this.bpm = bpm
-    this.reset()
-  }
+  // this.setBpm = function(bpm) {
+  //   this.bpm = bpm
+  //   this.reset()
+  // }
 
-  run() {
+  this.run = function() {
     if (this.speed.target === this.speed.value) { return }
     this.set(this.speed.value + (this.speed.value < this.speed.target ? 1 : -1), null, true)
   }
 
-  reset() {
-    if (this.timer) {
-      clearInterval(this.timer)
-    }
-
-    if (this.running) {
-      this.timer = setInterval(() => { this.callback() }, (60000 / this.bpm) / 4)
-    }
+  this.reset = function() {
+    this.isPaused = true
+    console.log('Clock', 'Stop')
+    this.clearTimer()
+    this.resetFrame()
+    this.start()
   }
 
-  setRunning(running) {
-    this.running = running
-    this.reset()
-  }
-
-  togglePlay() {
+  this.togglePlay = function() {
     if (this.isPaused === true) {
       this.play()
     } else {
@@ -57,12 +46,12 @@ class Clock {
     }
   }
 
-  start() {
+  this.start = function() {
     this.setTimer(120)
     this.play()
   }
 
-  play() {
+  this.play = function() {
     if (!this.isPaused) { console.warn('Already playing'); return }
     console.log('Clock', 'Play')
     this.isPaused = false
@@ -70,59 +59,59 @@ class Clock {
     this.set(this.speed.target, this.speed.target, true)
   }
 
-  set(value, target = null, setTimer = false) {
-    if (value) { this.speed.value = this.clamp(value, 60, 300) }
-    if (target) { this.speed.target = this.clamp(target, 60, 300) }
+  this.set = function(value, target = null, setTimer = false) {
+    if (value) { this.speed.value = clamp(value, 60, 300) }
+    if (target) { this.speed.target = clamp(target, 60, 300) }
     if (setTimer === true) { this.setTimer(this.speed.value) }
   }
 
-  setTimer(bpm) {
-    console.log('Clock', 'New Timer ' + bpm + 'bpm')
+  this.setTimer = function(bpm) {
+    seeq.console.bpmNumber.innerText = bpm
     this.clearTimer()
     this.timer = new Worker('./scripts/timer.js')
     this.timer.postMessage((60000 / bpm) / 4)
-    this.timer.onmessage = (event) => { terminal.run() }
+    this.timer.onmessage = (event) => { canvas.run() }
   }
 
-  mod(mod = 0, animate = false) {
+  this.mod = function(mod = 0, animate = false) {
   if (animate === true) {
     this.set(null, this.speed.target + mod)
   } else {
     this.set(this.speed.value + mod, this.speed.value + mod, true)
-    terminal.update()
+    canvas.update()
   }
 }
 
-  clearTimer() {
+  this.clearTimer = function() {
     if (this.timer) {
       this.timer.terminate()
     }
     this.timer = null
   }
 
-  setFrame(f) {
+  this.setFrame = function(f) {
     if (isNaN(f)) { return }
-    terminal.orca.f = clamp(f, 0, 9999999)
+    canvas.seequencer.f = clamp(f, 0, 9999999)
   }
 
-  resetFrame(){
-    terminal.orca.f = 0
+  this.resetFrame = function(){
+    canvas.seequencer.f = 0
   }
 
-  stop() {
+  this.stop = function () {
     if (this.isPaused) { console.warn('Already stopped'); return }
     console.log('Clock', 'Stop')
-    // terminal.io.midi.silence()
+    // canvas.io.midi.silence()
     this.isPaused = true
     // if (this.isPuppet) { return console.warn('External Midi control') }
     this.clearTimer()
   }
 
-  toString() {
+  this.toString = function() {
     return `${this.bpm}`
   }
 
-  clamp (v, min, max) { return v < min ? min : v > max ? max : v }
+  function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
 }
 
 module.exports = Clock

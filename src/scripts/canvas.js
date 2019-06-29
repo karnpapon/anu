@@ -1,6 +1,6 @@
 'use strict'
 
-function Terminal () {
+function Canvas () {
 
   const Theme = require('./lib/theme')
   const Seequencer = require('./seequencer')
@@ -25,6 +25,8 @@ function Terminal () {
 He operates under various aliases, like Zara Skumshot and Skat Injector.“It’s not about pounding kicks, but kicks so fast they have morphed into a tonal beast.
 they’ve mutated into a whole different animal. A natural process of evolution.It reminds me at times of such genres as harsh noise and HWN in places depending on production.
 The production of course is more varied and peppered with additional elements such as synths and sampling.That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-based label Legs Akimbo Records, an imprint that wound down operations indefinitely on December 31, 2017. “It can be a very rewarding, but also a very harsh experience. You will find both extreme, ear-bleeding distortion and sublimely clean, intricate sound design within the extratone scene. It’s far more diverse than, say, the standard Frenchcore sound.`
+
+  this.texts = ""
 
   // Themes
   this.theme = new Theme({ 
@@ -62,7 +64,7 @@ The production of course is more varied and peppered with additional elements su
     // this.io.start()
     this.source.start()
     this.clock.start()
-    this.dataInstall()
+    this.writeData()
     this.update()
     this.el.className = 'ready'
   }
@@ -83,11 +85,15 @@ The production of course is more varied and peppered with additional elements su
     this.drawProgram()
     this.stepcursor.run()
     this.drawStroke(this.cursor)
-    seeq.isRegExpSearching? this.match():() => {}
+    seeq.console.isRegExpFocused? this.match():() => {} //deactive if possible.
   }
 
   this.reset = function () {
+    this.seequencer.reset()
     this.theme.reset()
+    this.cursor.reset()
+    this.stepcounter.reset()
+    this.stepcursor.reset()
   }
 
   this.setGrid = function (w, h) {
@@ -96,22 +102,24 @@ The production of course is more varied and peppered with additional elements su
     this.update()
   }
 
-  this.dataInstall = function () {
-    for (var i = 0; i < this.dataMockup.length; i++) {
-      this.cursor.write(this.dataMockup.charAt(i))
-      this.cursor.cursors[this.cursor.active].x++
-      if (this.cursor.cursors[this.cursor.active].x % this.seequencer.w === 0) {
-        this.cursor.cursors[this.cursor.active].x = 0
-        this.cursor.cursors[this.cursor.active].y++
+  this.writeData = function (data = 'please give some input value' ) {
+    this.texts = data
+    let position = this.cursor.cursors[this.cursor.active]
+    for (var i = 0; i < this.texts.length; i++) {
+      this.cursor.write(this.texts.charAt(i))
+      position.x++
+      if (position.x % this.seequencer.w === 0) {
+        position.x = 0
+        position.y++
       }
     }
   }
 
   this.match = function () {
-    terminal.p.forEach((item, i) => {
-      let g = terminal.seequencer.glyphAt(item.x, item.y)
+    this.p.forEach((item, i) => {
+      let g = this.seequencer.glyphAt(item.x, item.y)
       if (this.seequencer.inBlock(item.x, item.y)) {
-        terminal.drawSprite(item.x, item.y, g, 0) // trigger background
+        this.drawSprite(item.x, item.y, g, 0) // trigger background
         const r = {
           x: item.x * this.scale * this.tile.w,
           y: item.y * this.scale * this.tile.h,
@@ -122,7 +130,7 @@ The production of course is more varied and peppered with additional elements su
         this.context.strokeStyle = this.theme.active.background
         this.context.strokeRect(r.x, r.y, r.w, r.h)
       } else {
-        terminal.drawSprite(item.x, item.y, g, 0) //match marked.
+        this.drawSprite(item.x, item.y, g, 0) //match marked.
       }
     })
   }
@@ -251,23 +259,10 @@ The production of course is more varied and peppered with additional elements su
     let cursor = this.cursor.cursors
     const g = this.seequencer.glyphAt(x, y)
     if (g !== '.' ) { 
-      if( this.isCursor(x,y)){
-        // for(const id in cursor ){ 
-        //   return cursor[id].i.toString() 
-        // }
-        return "*"
-      } else {
-        return g 
-      }
+      if( this.isCursor(x,y)){return "*"} else {return g }
     }
 
-    if (this.isCursor(x, y)) { 
-      // for(const id in cursor ){ 
-        // return cursor[id].i.toString() 
-      // }
-      return '*'
-    }
-
+    if (this.isCursor(x, y)) { return '*'}
     if (this.isMarker(x, y)) { return '+' }
     return g
   }
@@ -383,7 +378,7 @@ The production of course is more varied and peppered with additional elements su
   //   const winSize = win.getSize()
   //   const current = { w: winSize[0], h: winSize[1] }
   //   if (current.w === size.w && current.h === size.h) { console.warn('Terminal', 'No resize required.'); return }
-  //   console.log('Source', `Fit terminal for ${this.seequencer.w}x${this.seequencer.h}(${size.w}x${size.h})`)
+  //   console.log('Source', `Fit canvas for ${this.seequencer.w}x${this.seequencer.h}(${size.w}x${size.h})`)
   //   win.setSize(parseInt(size.w), parseInt(size.h), false)
   //   this.resize()
   // }
@@ -444,4 +439,4 @@ The production of course is more varied and peppered with additional elements su
 }
 
 
-module.exports = Terminal
+module.exports = Canvas

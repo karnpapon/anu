@@ -101,7 +101,7 @@ div button{
 
 .limit{
   width: 513px;
-  height: 40px;
+  height: 100%;
   position: absolute;
   word-wrap: break-word;
   display: flex;
@@ -111,7 +111,7 @@ div button{
   justify-content: center;
   border: 1px solid;
   padding: 10px 5px;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   /* transition: all .2s ease-in; */
 }
 
@@ -205,7 +205,7 @@ div button{
 
 .disable-input{
   background-color: #a5a5a5;
-  border: unset;
+  border: 1px solid;
 }
 
 lf{
@@ -348,7 +348,8 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 } */
 
 .loading {
-  color: black;
+  color: white;
+  background: black;
   align-items: center;
   justify-content: center;
   display: flex;
@@ -397,7 +398,7 @@ button:active{
   display: flex; 
   flex-direction: column;
   height: 85px;
-  flex: 3;
+  /* flex: 3; */
   padding-bottom: 5px;
   margin-right: 20px;
   justify-content: space-between;
@@ -419,6 +420,7 @@ button:active{
 .controller-wrapper{ 
   display: flex; 
   height: 110px;
+  width: 100%;
 }
 .control-btn{ 
   display: flex;
@@ -449,9 +451,13 @@ button:active{
   justify-content: inherit;
 }
 
-.input-control{ width: 100px}
+/* .input-control{ width: 100px}
 .input-control-2 { width: 90px; margin-right: 5px;}
-.input-regex{ width: 151px}
+.input-regex{ width: 151px} */
+
+.console-1{ flex: 2}
+.console-2{ flex: 2}
+.console-3{ flex: 2}
 
 [data-ctrl="subtract"]{ 
   border-top: 1px solid black !important;
@@ -586,11 +592,11 @@ app {
 .normal-search{
   width: 100%;
   height: auto; 
-  display: flex;
+  /* display: flex; */
 }
 
 .flex-col{ 
-  flex: 1.25;
+  /* flex: 1.25; */
   align-items: flex-end;
   text-align: end; 
 }
@@ -600,6 +606,7 @@ div button.control-btn:hover{ border:1px solid black;}
 div input{
   /* background-color: white !important; */
   border: 1px solid; 
+  width: 100%;
 }
 
 .input-note{
@@ -615,6 +622,7 @@ div input{
 
 .info {
   width: 100%;
+  display: flex;
 }
 
 .show{

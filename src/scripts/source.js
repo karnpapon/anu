@@ -1,6 +1,6 @@
 'use strict'
 
-function Source (terminal) {
+function Source (canvas) {
   const fs = require('fs')
   const path = require('path')
   const { dialog, app } = require('electron').remote
@@ -17,16 +17,16 @@ function Source (terminal) {
     console.log('Source', 'Make a new file..')
     this.path = null
     this.queue = []
-    terminal.seequencer.reset()
-    terminal.resize()
-    // terminal.history.reset()
-    terminal.cursor.reset()
-    // terminal.clock.play()
+    canvas.seequencer.reset()
+    canvas.resize()
+    // canvas.history.reset()
+    canvas.cursor.reset(true)
+    // canvas.clock.play()
   }
 
   this.run = function () {
-    if (!this.queue || this.queue.length < terminal.seequencer.f || !this.queue[terminal.seequencer.f]) { return }
-    terminal.commander.trigger(this.queue[terminal.seequencer.f])
+    if (!this.queue || this.queue.length < canvas.seequencer.f || !this.queue[canvas.seequencer.f]) { return }
+    canvas.commander.trigger(this.queue[canvas.seequencer.f])
   }
 
   /* #region */
@@ -71,10 +71,10 @@ function Source (terminal) {
   //   if (!data) { return }
   //   const lines = data.split('\n')
   //   if (paste === true) {
-  //     terminal.cursor.writeBlock(lines)
-  //     terminal.cursor.reset()
+  //     canvas.cursor.writeBlock(lines)
+  //     canvas.cursor.reset()
   //   } else {
-  //     terminal.cursor.resize(lines[0].length, lines.length)
+  //     canvas.cursor.resize(lines[0].length, lines.length)
   //   }
   // }
 
@@ -83,7 +83,7 @@ function Source (terminal) {
   // this.write = function (loc, data = this.generate(), quitAfter = false) {
   //   console.log('Source', 'Writing ' + loc)
   //   fs.writeFileSync(loc, data)
-  //   terminal.source.remember('active', loc)
+  //   canvas.source.remember('active', loc)
   //   if (quitAfter === true) {
   //     app.exit()
   //   }
@@ -101,7 +101,7 @@ function Source (terminal) {
   //   const queue = path.join(this.folder(), this.name() + '.queue')
   //   if (fs.existsSync(queue)) {
   //     this.queue = fs.readFileSync(queue, 'utf8').split('\n')
-  //     // terminal.clock.resetFrame()
+  //     // canvas.clock.resetFrame()
   //     console.log('Source', `Found Queue: ${this.queue.length} lines`)
   //   }
   // }
@@ -115,10 +115,10 @@ function Source (terminal) {
   //   const h = lines.length
   //   const s = lines.join('\n').trim()
 
-  //   terminal.seequencer.load(w, h, s)
-  //   // // terminal.history.reset()
-  //   // terminal.history.record(terminal.orca.s)
-  //   terminal.fit()
+  //   canvas.seequencer.load(w, h, s)
+  //   // // canvas.history.reset()
+  //   // canvas.history.record(canvas.orca.s)
+  //   canvas.fit()
   // }
 
   // this.quit = function () {
@@ -148,7 +148,7 @@ function Source (terminal) {
   //   console.log('Source', 'Looking for changes..')
   //   if (!this.path) {
   //     console.log('Source', 'File is unsaved..')
-  //     if (terminal.seequencer.length() > 2) {
+  //     if (canvas.seequencer.length() > 2) {
   //       console.log('Source', `File is not empty.`)
   //       return true
   //     }
@@ -205,7 +205,7 @@ function Source (terminal) {
   /* #region */
   // Converters
 
-  // this.generate = function (seequencer = terminal.seequencer) {
+  // this.generate = function (seequencer = canvas.seequencer) {
   //   return `${seequencer}`
   // }
 
@@ -237,7 +237,7 @@ function Source (terminal) {
   //   let c = ''
   //   for (let x = 0; x <= s.length; x++) {
   //     const char = s.charAt(x)
-  //     c += !terminal.seequencer.isAllowed(char) ? '.' : char
+  //     c += !canvas.seequencer.isAllowed(char) ? '.' : char
   //   }
   //   return c
   // }

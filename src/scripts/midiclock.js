@@ -58,8 +58,8 @@ class WrappedClock {
 }
 
 class MidiClock {
-  constructor(terminal) {
-    this.terminal = terminal
+  constructor(canvas) {
+    this.canvas = canvas
   }
 
   start() {

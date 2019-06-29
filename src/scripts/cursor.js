@@ -1,25 +1,27 @@
 'use strict'
 
-function Cursor(terminal) {
+function Cursor(canvas) {
   this.mode = 0
   this.block = []
   this.active = 0
+  this.cursorInstallData = {x:0, y:0}
   this.cursors = [{ x: 0, y: 0, w: 1, h:1, i: 0}]
 
   this.move = function (x, y) {
     let active = this.cursors[this.active]
     if (isNaN(x) || isNaN(y)) { return }
-    active.x = clamp(active.x + parseInt(x), 0, terminal.seequencer.w - 1)
-    active.y = clamp(active.y - parseInt(y), 0, terminal.seequencer.h - 1)
-    terminal.update()
+    active.x = clamp(active.x + parseInt(x), 0, canvas.seequencer.w - 1)
+    active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
+    seeq.console.cursorPosition.innerText = `${canvas.cursor.getActivePosition()}`
+    canvas.update()
   }
 
   this.scale = function (x, y) {
     let active = this.cursors[this.active] 
     if (isNaN(x) || isNaN(y)) { return }
-    active.w = clamp(active.w + parseInt(x), 1, terminal.seequencer.w - active.x)
-    active.h = clamp(active.h - parseInt(y), 1, terminal.seequencer.h - active.y)
-    terminal.update()
+    active.w = clamp(active.w + parseInt(x), 1, canvas.seequencer.w - active.x)
+    active.h = clamp(active.h - parseInt(y), 1, canvas.seequencer.h - active.y)
+    canvas.update()
   }
 
   this.switch = function(index = 0){
@@ -27,31 +29,31 @@ function Cursor(terminal) {
   }
 
   this.add = function(){
-    this.cursors.push({ x: 0, y: 0, w: 10, h: 1, i: terminal.globalIdx }) 
+    this.cursors.push({ x: 0, y: 0, w: 10, h: 1, i: canvas.globalIdx }) 
   }
 
   this.moveTo = function (x, y) {
     let active = this.cursors[this.active]  
     if (isNaN(x) || isNaN(y)) { return }
-    active.x = clamp(parseInt(x), 0, terminal.seequencer.w - 1)
-    active.y = clamp(parseInt(y), 0, terminal.seequencer.h - 1)
-    terminal.update()
+    active.x = clamp(parseInt(x), 0, canvas.seequencer.w - 1)
+    active.y = clamp(parseInt(y), 0, canvas.seequencer.h - 1)
+    canvas.update()
   }
   
   this.scaleTo = function (w, h) {
     let active = this.cursors[this.active] 
     if (isNaN(w) || isNaN(h)) { return }
-    active.w = clamp(parseInt(w), 1, terminal.seequencer.w - 1)
-    active.h = clamp(parseInt(h), 1, terminal.seequencer.h - 1)
-    terminal.update()
+    active.w = clamp(parseInt(w), 1, canvas.seequencer.w - 1)
+    active.h = clamp(parseInt(h), 1, canvas.seequencer.h - 1)
+    canvas.update()
   }
   
   /* #region fold */
   // this.resize = function (w, h) {
   //   if (isNaN(w) || isNaN(h)) { return }
-  //   this.w = clamp(parseInt(w), 1, terminal.seequencer.w - this.x)
-  //   this.h = clamp(parseInt(h), 1, terminal.seequencer.h - this.y)
-  //   terminal.update()
+  //   this.w = clamp(parseInt(w), 1, canvas.seequencer.w - this.x)
+  //   this.h = clamp(parseInt(h), 1, canvas.seequencer.h - this.y)
+  //   canvas.update()
   // }
 
   // this.drag = function (x, y) {
@@ -65,10 +67,10 @@ function Cursor(terminal) {
   // this.selectAll = function () {
   //   this.x = 0
   //   this.y = 0
-  //   this.w = terminal.seequencer.w
-  //   this.h = terminal.seequencer.h
+  //   this.w = canvas.seequencer.w
+  //   this.h = canvas.seequencer.h
   //   this.mode = 0
-  //   terminal.update()
+  //   canvas.update()
   // }
 
   // this.copy = function () {
@@ -91,16 +93,16 @@ function Cursor(terminal) {
 
   // this.rotate = function (rate = 1) {
   //   if (isNaN(rate)) { return }
-  //   const cols = terminal.cursor.getBlock()
+  //   const cols = canvas.cursor.getBlock()
   //   for (const y in cols) {
   //     for (const x in cols[y]) {
   //       const g = cols[y][x]
   //       if (g === '.') { continue }
-  //       if (terminal.seequencer.isSpecial(g)) { continue }
-  //       cols[y][x] = terminal.seequencer.keyOf(parseInt(rate) + terminal.seequencer.valueOf(g), sense(g))
+  //       if (canvas.seequencer.isSpecial(g)) { continue }
+  //       cols[y][x] = canvas.seequencer.keyOf(parseInt(rate) + canvas.seequencer.valueOf(g), sense(g))
   //     }
   //   }
-  //   terminal.cursor.writeBlock(cols)
+  //   canvas.cursor.writeBlock(cols)
   // }
 
   // this.comment = function () {
@@ -117,29 +119,30 @@ function Cursor(terminal) {
   this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
     this.moveTo(x, y)
     this.scaleTo(w, h)
-    terminal.update()
+    canvas.update()
   }
 
-  this.reset = function (pos = false) {
-    let active = this.cursors[this.active]  
-    if (pos) {
-      active.x = 0
-      active.y = 0
-    }
-    this.move(0, 0)
-    active.w = 1
-    active.h = 1
+  this.init = function(){
     this.mode = 0
+    this.block = []
+    this.active = 0
+    this.cursorInstallData = { x: 0, y: 0 }
+    this.cursors = [{ x: 0, y: 0, w: 1, h: 1, i: 0 }]
+  }
+
+  this.reset = function () {
+    this.init()
+    this.move(0, 0)
   }
 
   this.read = function () {
     let active = this.cursors[this.active] 
-    return terminal.seequencer.glyphAt(active.x, active.y)
+    return canvas.seequencer.glyphAt(active.x, active.y)
   }
 
   this.write = function (g) {
-    let active = this.cursors[this.active] 
-    if (terminal.seequencer.write(active.x, active.y, g) && this.mode === 1) {
+    let active = this.cursors[this.active]
+    if (canvas.seequencer.write(active.x, active.y, g) && this.mode === 1) {
       this.move(1, 0)
     }
   }
@@ -147,16 +150,16 @@ function Cursor(terminal) {
   // this.erase = function () {
   //   this.eraseBlock(this.x, this.y, this.w, this.h)
   //   if (this.mode === 1) { this.move(-1, 0) }
-  //   terminal.history.record(terminal.seequencer.s)
+  //   canvas.history.record(canvas.seequencer.s)
   // }
 
   this.erase = function(){
     this.cursors.forEach( ( cs,i,arr ) => { if(cs.i !== this.active){ this.cursors.splice(i,1)} } )
   }
   // this.find = function (str) {
-  //   const i = terminal.seequencer.s.indexOf(str)
+  //   const i = canvas.seequencer.s.indexOf(str)
   //   if (i < 0) { return }
-  //   const pos = terminal.seequencer.posAt(i)
+  //   const pos = canvas.seequencer.posAt(i)
   //   this.w = str.length
   //   this.h = 1
   //   this.x = pos.x
@@ -164,7 +167,7 @@ function Cursor(terminal) {
   // }
 
   // this.trigger = function () {
-    // const operator = terminal.seequencer.operatorAt(this.x, this.y)
+    // const operator = canvas.seequencer.operatorAt(this.x, this.y)
     // if (!operator) { console.warn('Cursor', 'Nothing to trigger.'); return }
     // console.log('Cursor', 'Trigger: ' + operator.name)
     // operator.run(true)
@@ -178,9 +181,9 @@ function Cursor(terminal) {
 
   this.inspect = function (name = true, ports = false) {
     // if (this.w > 1 || this.h > 1) { return 'multi' }
-    // const port = terminal.portAt(this.x, this.y)
+    // const port = canvas.portAt(this.x, this.y)
     // if (port) { return `${port[3]}` }
-    // if (terminal.seequencer.lockAt(this.x, this.y)) { return 'locked' }
+    // if (canvas.seequencer.lockAt(this.x, this.y)) { return 'locked' }
     return 'empty'
   }
 
@@ -216,6 +219,10 @@ function Cursor(terminal) {
       }
     })
     return block
+  }
+
+  this.getActivePosition = function(){
+    return `(${this.cursors[this.active].x},${this.cursors[this.active].y})`
   }
 
   this.toRect = function () {

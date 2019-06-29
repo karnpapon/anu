@@ -1,10 +1,10 @@
-function Seequencer(terminal){
+function Seequencer(canvas){
   this.w = 1 // Default Width
   this.h = 1 // Default Height
   this.f = 0 // Frame
   this.s = '' // String
 
-  this.terminal = terminal
+  this.canvas = canvas
   this.keys = ""
 
   this.locks = []
@@ -130,7 +130,7 @@ function Seequencer(terminal){
   }
 
   this.inBlock = function(x,y){
-    let block = terminal.cursor.getBlock()
+    let block = canvas.cursor.getBlock()
     return  block.some( b => b.x == x && b.y == y)
   }
 
@@ -139,7 +139,7 @@ function Seequencer(terminal){
     seeq.matchedPosition.forEach(pos => { 
       let len = 0
       for(var i=0; i<pos.len;i++){
-        p.push(terminal.seequencer.posAt(pos.index + len)) 
+        p.push(canvas.seequencer.posAt(pos.index + len)) 
         len++
       }
     })
