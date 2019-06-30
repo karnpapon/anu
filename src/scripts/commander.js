@@ -141,6 +141,7 @@ function Commander (canvas) {
 
     if ((event.key === "Enter") && seeq.displayer.isOscFocused) {
       seeq.displayer.runCmd("input[type='osc']")
+      canvas.cursor.setOSCmsg()
       // send OSC
       event.preventDefault()
       return

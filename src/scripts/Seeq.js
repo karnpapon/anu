@@ -90,12 +90,6 @@ function Seeq(){
 
   // -----------------------------------
 
-  // paragraph row detector ( Disabled )
-  // this.lines = ""
-  // this.textLineBuffers = ""
-
-  // -----------------------------------
-
   this.start = function(){
     this.console.build()
     this.displayer.build()
@@ -109,30 +103,6 @@ function Seeq(){
   this.show = function () {
     seeq.el.style.opacity = 1;
   }
-
-  // this.retrieveCursor = function(){
-  //   let reset = [{
-  //     position: 0,
-  //     isCursorOffsetReverse: false,
-  //     isMuted: false,
-  //     isRetrigger: false,
-  //     up: 0,
-  //     down: 0,
-  //     note: [],
-  //     notelength: [],
-  //     velocity: [],
-  //     octave: [],
-  //     counter: 0,
-  //     channel: "",
-  //     reverse: false,
-  //     UDP: ["D3C"],
-  //     OSC: {
-  //       path: "play2",
-  //       msg: "s [dr,sd,bd] n [12,6,9]"
-  //     }
-  //   }]
-  //   return reset 
-  // }
 
   this.clear = function(){
     this.isPlaying = false

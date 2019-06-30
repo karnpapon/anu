@@ -10,7 +10,7 @@ function Cursor(canvas) {
     msg: {
       MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
       UDP: ["D3C"],
-      OSC:  { path: 'play2', msg: "s [dr] n [12,6,9]" }
+      OSC:  { path: 'play2', msg: "" }
     }
   }]
 
@@ -61,6 +61,11 @@ function Cursor(canvas) {
     active.w = clamp(parseInt(w), 1, canvas.seequencer.w - 1)
     active.h = clamp(parseInt(h), 1, canvas.seequencer.h - 1)
     canvas.update()
+  }
+
+  this.setOSCmsg  = function(){
+    this.cursors[this.active].msg.OSC.msg = seeq.displayer.displayerInput
+    console.log("this.cursors", this.cursors)
   }
   
   /* #region fold */
@@ -147,7 +152,7 @@ function Cursor(canvas) {
       msg: {
         MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
         UDP: ["D3C"],
-        OSC:  { path: 'play2', msg: "s [dr,sd,bd] n [12,6,9]" }
+        OSC:  { path: 'play2', msg: "" }
       }
     }]
   }

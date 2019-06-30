@@ -16,6 +16,7 @@ function Displayer(app) {
   this.isOscShowed = false
   this.isDefaultShowed = true
   this.isActivedCursorShowed = false
+  this.currentCmd = ""
   
   this.oscConf
   this.isOscFocused = false
@@ -29,7 +30,7 @@ function Displayer(app) {
     <form id="info-osc" class="info-input">
       <lf>
         <p>MSG:</p>
-        <input id="addosc" class="input-osc" type="osc" value="s [dr] n [22,11,4,5,6,12]">
+        <input id="addosc" class="input-osc" type="osc" value="">
       </lf>
     </form>
   `
@@ -45,7 +46,7 @@ function Displayer(app) {
 
   this.build = function(){
     this.buildWrapper()
-    this.buildOutput()
+    this.buildOSC()
     this.buildActiveCursor()
     app.el.appendChild(this.el)
   }
@@ -62,21 +63,40 @@ function Displayer(app) {
   }
 
   this.run = function(){
-    this.isDefaultShowed? this.main_text.classList.add("displayer-show"):this.main_text.classList.remove("displayer-show")
+    let active = canvas.cursor.cursors[canvas.cursor.active]
+    let target
 
-    if( this.isActivedCursorShowed ){
-      this.el_active_cursor.classList.add("displayer-show")
+    switch (this.currentCmd) {
+      case 'active-cursor':
+        this.isDefaultShowed = false
+        this.isOscShowed = false
+        this.isActivedCursorShowed = true
+        target = this.el_active_cursor
+        this.el_active_cursor.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
+        break;
+      case 'osc':
+        this.isDefaultShowed = false
+        this.isOscShowed = !this.isOscShowed
+        this.isActivedCursorShowed = false
+        target = this.el_osc
+        this.oscConf.value = active.msg.OSC.msg
+        break;
+      default:
+        this.isDefaultShowed = true
+        this.isActivedCursorShowed = false
+        this.isOscShowed = false
+        target = this.el_active_cursor
+        break;
+    }
+    
+    if( this.isActivedCursorShowed || this.isOscShowed ){
+      target.classList.add("displayer-show")
+      this.main_text.classList.remove("displayer-show")
     } else {
-      this.el_active_cursor.classList.remove("displayer-show")
+      target.classList.remove("displayer-show")
       this.main_text.classList.add("displayer-show")
     }
-
-    if( this.isOscShowed ){
-      this.el_osc.classList.add("displayer-show")
-    } else {
-      this.el_osc.classList.remove("displayer-show")
-      // this.main_text.classList.add("displayer-show")
-    }
+    
   }
 
   this.runCmd = function(id){
@@ -85,7 +105,7 @@ function Displayer(app) {
     setTimeout(() => {target.classList.remove("trigger") }, 200);
   }
 
-  this.buildOutput = function () {
+  this.buildOSC = function () {
     this.el_osc.classList.add("displayer-osc")
     this.el_osc.innerHTML += this.output
     this.el_elem.appendChild(this.el_osc)
@@ -96,40 +116,18 @@ function Displayer(app) {
     this.el_elem.appendChild(this.el_active_cursor)
   }
 
-  this.displayDefault = function(){
-    this.isDefaultShowed = true
-  }
-
   this.displayOSC = function(){
-    // let active = canvas.cursor.cursors[canvas.cursor.active]
-    this.isActivedCursorShowed = false
-    this.isDefaultShowed = false
-    this.isOscShowed = !this.isOscShowed
+    this.currentCmd = "osc"
   }
 
   this.displayActivedCursor = function(){
-    let active = canvas.cursor.cursors[canvas.cursor.active]
-    this.isDefaultShowed = false
-    this.isOscShowed = false
-    this.isActivedCursorShowed = true
-    this.el_active_cursor.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
+    this.currentCmd = "active-cursor" 
   }
 
-  this.hideActivedCursor = function(){
-    this.displayDefault()
+  this.displayDefault = function(cmd){
+    this.currentCmd = ""
   }
 
-  this.hideAll = function(){
-    this.isActivedCursorShowed = false
-    this.isDefaultShowed = false
-    this.isOscShowed = false
-  }
-
-  this.displayDefault = function(){
-    this.isActivedCursorShowed = false
-    this.isDefaultShowed = true
-    this.isOscShowed = false 
-  }
 
 }
 

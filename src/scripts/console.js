@@ -83,7 +83,6 @@ function Console(app) {
   this.nextBtn 
   this.configBtn 
   this.inputFetch
-  this.getTextBtn 
   this.linkBtn 
   this.clearBtn 
   this.nudgeBtn 
@@ -92,7 +91,6 @@ function Console(app) {
   this.revBtn 
   this.addBtn
   this.devBtn 
-  this.subtractBtn 
 
   // this.notationMode 
   // this.extractLines 
@@ -172,7 +170,7 @@ function Console(app) {
     // find
     self.searchInput.addEventListener("input", function () {
       self.searchValue = this.value;
-      self.updateMarkType = "normal"
+      // self.updateMarkType = "normal"
     });
     self.searchInput.addEventListener("focus", function () { self.isFindFocused = true });
     self.searchInput.addEventListener("blur", function () { self.isFindFocused = false });
@@ -182,7 +180,7 @@ function Console(app) {
       self.isRegExpFocused = !self.isRegExpFocused
       self.searchValue = this.value
       seeq.getMatchedPosition() //TODO: return value instead.
-      self.updateMarkType = "regex"
+      // self.updateMarkType = "regex"
     });
     // self.searchRegExp.addEventListener("focus", function () { self.isRegExpFocused = true});
     // self.searchRegExp.addEventListener("blur", function () { self.isRegExpFocused = false});
