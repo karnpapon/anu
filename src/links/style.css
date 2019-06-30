@@ -518,13 +518,10 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 }
 
 .textfx{
-  width: 230px;
+ width: 230px;
   font-size: 1em;
   margin-left: 10px;
-  display: flex;
-  /* text-align: left; */
-  /* justify-content: center;  */
-  /* margin-right: auto; */
+  position: absolute;
 }
 
 .default-info{
@@ -623,6 +620,8 @@ div input{
 .info {
   width: 100%;
   display: flex;
+  position: absolute;
+  justify-content: center;
 }
 
 .show{
@@ -634,7 +633,8 @@ div input{
 }
 
 .info-input{ 
-  width: 100%;
+  /* width: 100%; */
+  min-width: 349px;
   display: flex;
 }
 
