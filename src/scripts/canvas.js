@@ -21,11 +21,6 @@ function Canvas () {
   this.stepcounter = new StepCounter(this)
   // this.io = new IO(this)
 
-  this.dataMockup = `Extratone is basically a form of extreme sound art,”explains a London-based artist and Slime City label owner who has identified himself as Rick.
-He operates under various aliases, like Zara Skumshot and Skat Injector.“It’s not about pounding kicks, but kicks so fast they have morphed into a tonal beast.
-they’ve mutated into a whole different animal. A natural process of evolution.It reminds me at times of such genres as harsh noise and HWN in places depending on production.
-The production of course is more varied and peppered with additional elements such as synths and sampling.That’s the thing with difficult music,” admits Neil LAR, founder of U.K.-based label Legs Akimbo Records, an imprint that wound down operations indefinitely on December 31, 2017. “It can be a very rewarding, but also a very harsh experience. You will find both extreme, ear-bleeding distortion and sublimely clean, intricate sound design within the extratone scene. It’s far more diverse than, say, the standard Frenchcore sound.`
-
   this.texts = ""
 
   // Themes
@@ -48,7 +43,7 @@ The production of course is more varied and peppered with additional elements su
   this.p = []
   this.prevRegExInput = ""
   this.grid = { w: 8, h: 8 }
-  this.tile = { w: 7, h: 14 }
+  this.tile = { w: 8, h: 16 }
   this.scale = window.devicePixelRatio
   this.hardmode = true
   this.guide = false
@@ -89,6 +84,7 @@ The production of course is more varied and peppered with additional elements su
   }
 
   this.reset = function () {
+    this.globalIdx = 0 
     this.seequencer.reset()
     this.theme.reset()
     this.cursor.reset()
@@ -332,9 +328,9 @@ The production of course is more varied and peppered with additional elements su
         w: rect.w * this.scale * this.tile.w,
         h: rect.h * this.scale * this.tile.h
       }
-      this.context.lineWidth = 1;
+      this.context.lineWidth = 1.25;
       this.context.strokeStyle = this.theme.active.background
-      this.context.strokeRect(r.x, r.y, r.w, r.h)
+      this.context.strokeRect(r.x + 0.25, r.y + 0.25, r.w - 0.25, r.h - 0.25)
     })
   }
 
@@ -384,8 +380,8 @@ The production of course is more varied and peppered with additional elements su
   // }
 
   this.resize = function (force = false) {
-    const size = { w: window.innerWidth - 56, h: window.innerHeight - (60 + this.tile.h * 2) }
-    const tiles = { w: Math.ceil(size.w / this.tile.w - 14 ), h: 17 }
+    const size = { w: window.innerWidth + 0.5, h: window.innerHeight }
+    const tiles = { w: Math.ceil(size.w / this.tile.w - 19 ), h: 16 }
 
     // if (this.seequencer.w === tiles.w && this.seequencer.h === tiles.h && force === false) { return }
 

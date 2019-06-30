@@ -4,12 +4,19 @@ function Cursor(canvas) {
   this.mode = 0
   this.block = []
   this.active = 0
-  this.cursorInstallData = {x:0, y:0}
-  this.cursors = [{ x: 0, y: 0, w: 1, h:1, i: 0}]
+  this.cursors = [{ 
+    x: 0, y: 0, w: 1, h:1, i: 0, 
+    n: `cursor-name-${this.active}`,
+    msg: {
+      MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
+      UDP: ["D3C"],
+      OSC:  { path: 'play2', msg: "s [dr] n [12,6,9]" }
+    }
+  }]
 
   this.move = function (x, y) {
     let active = this.cursors[this.active]
-    if (isNaN(x) || isNaN(y)) { return }
+    if (isNaN(x) || isNaN(y) && document.hasFocus()) { return }
     active.x = clamp(active.x + parseInt(x), 0, canvas.seequencer.w - 1)
     active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
     seeq.console.cursorPosition.innerText = `${canvas.cursor.getActivePosition()}`
@@ -29,7 +36,15 @@ function Cursor(canvas) {
   }
 
   this.add = function(){
-    this.cursors.push({ x: 0, y: 0, w: 10, h: 1, i: canvas.globalIdx }) 
+    this.cursors.push({ 
+      x: 0, y: 0, w: 10, h:1, i: canvas.globalIdx, 
+      n: `cursor-name-${canvas.globalIdx}`,
+      msg: {
+        MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
+        UDP: ["D3C"],
+        OSC:  { path: 'play2', msg: "" }
+      }
+    }) 
   }
 
   this.moveTo = function (x, y) {
@@ -126,8 +141,15 @@ function Cursor(canvas) {
     this.mode = 0
     this.block = []
     this.active = 0
-    this.cursorInstallData = { x: 0, y: 0 }
-    this.cursors = [{ x: 0, y: 0, w: 1, h: 1, i: 0 }]
+    this.cursors = [{ 
+      x: 0, y: 0, w: 1, h:1, i: 0, 
+      n: `cursor-name-${this.active}`,
+      msg: {
+        MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
+        UDP: ["D3C"],
+        OSC:  { path: 'play2', msg: "s [dr,sd,bd] n [12,6,9]" }
+      }
+    }]
   }
 
   this.reset = function () {
@@ -188,28 +210,19 @@ function Cursor(canvas) {
   }
 
   // Block
-
-  this.getBlock = function () {
+  this.getBlock = function (idx = undefined) {
     let rect = []
     rect = this.toRect()
     const block = []
     rect.forEach( r => {
-      for (let _y = r.y; _y < r.y + r.h; _y++) {
-        const line = []
-        for (let _x = r.x; _x < r.x + r.w; _x++) {
-          block.push({x: _x, y: _y })
+      if( r.i === idx && idx ){
+        for (let _y = r.y; _y < r.y + r.h; _y++) {
+          const line = []
+          for (let _x = r.x; _x < r.x + r.w; _x++) {
+            block.push({x: _x, y: _y })
+          }
         }
-      }
-    })
-    return block
-  }
-
-  this.getBlockByIndex = function (idx) {
-    let rect = []
-    rect = this.toRect()
-    const block = []
-    rect.forEach( r => {
-      if( r.i === idx ){
+      } else {
         for (let _y = r.y; _y < r.y + r.h; _y++) {
           const line = []
           for (let _x = r.x; _x < r.x + r.w; _x++) {
@@ -233,7 +246,8 @@ function Cursor(canvas) {
         y: cs.y, 
         w: cs.w, 
         h: cs.h,
-        i: cs.i
+        i: cs.i,
+        n: `cursor-name-${this.active}`
       })
     })
 

@@ -4,13 +4,8 @@
     <link rel="stylesheet" href="links/style.css">
     <link rel="stylesheet" href="links/fonts.css">
     <script src="../node_modules/socket.io-client/dist/socket.io.js"></script>
-    <!-- <script src="../node_modules/mark.js/dist/mark.min.js"></script>
-    <script src="../node_modules/TextHighlighter/src/TextHighlighter.js"></script> -->
     <style>
-      ::selection {
-        background: var(--hl-color); 
-      }
-
+      ::selection { background: var(--hl-color);}
       #devtools { display: none; }
     </style>
 
@@ -28,7 +23,6 @@
         const fs = require('fs');
         const axios = require('axios');
         var socket = io('http://localhost:3000');
-        // const os 	= require('os-utils');
         // const OSC = require('osc-js')
 
         
@@ -45,12 +39,6 @@
           canvas.start(); 
         })
        
-        // os.cpuUsage(function(v){
-        //   let cpu = setInterval(() => {
-        //     seeq.seq.setCPUUsageDisplay(v)
-        //   }, 1000);
-        // });
-
         // prevent dblclick selection.
         document.addEventListener('mousedown', function (event) {
           if (event.detail > 1) {

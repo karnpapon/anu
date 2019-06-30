@@ -106,9 +106,8 @@ function StepCursor(canvas) {
   }
 
   this.trigger = function (step) {
-    // this.offset =  Math.random() * 14.5
     if (this.isTrigger(step.x, step.y)) {
-      this.oscOut()
+      this.oscOut(step)
       canvas.cursor.cursors.forEach( value => {
         if( value.i === step.i){
           this.opacityStep = 0;
@@ -118,8 +117,10 @@ function StepCursor(canvas) {
     }
   }
 
-  this.oscOut = function(){
-    seeq.io.osc.send('/' + this.osc.path, `s amencutup n ${getRandomInt(0,32)}` )
+  this.oscOut = function(step){
+
+    let target = canvas.cursor.cursors.filter( cs => cs.i === step.i )
+    seeq.io.osc.send('/' + target[0].msg.OSC.path, target[0].msg.OSC.msg )
     seeq.io.run()
     seeq.io.clear()
   }

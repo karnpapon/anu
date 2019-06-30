@@ -102,7 +102,6 @@ function Seeq(){
     this.content.build()
     this.metronome.init()
     this.console.toggleInsert()
-    // this.keys.build()
     this.io.start()
     setTimeout(seeq.show,200)
   }

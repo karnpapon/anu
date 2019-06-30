@@ -4,6 +4,7 @@
   --reverse-target: #f287ff;
   --clock: 200ms;
   --hl-color: rgb(255, 212, 57);
+  --osc-msg: 0.85rem;
 }
 
 body {
@@ -210,7 +211,7 @@ div button{
 
 lf{
   font-family: 'input_sans_condensed_bold';
-  font-size:12px;
+  font-size: var(--osc-msg);
   display: flex;
   margin-right: 5px;
   align-items: center;
@@ -221,6 +222,7 @@ lf p{
   margin: 0;
   align-items: center;
   display: flex;
+  font-size: var(--osc-msg);
 }
 
 lft{
@@ -516,13 +518,45 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 .init-bpm{
   display: block;
 }
+/* ---------------------- */
 
-.textfx{
- width: 230px;
+/* displayer */
+
+.displayer-default{
   font-size: 1em;
-  margin-left: 10px;
   position: absolute;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
 }
+
+.displayer-osc {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  opacity: 0;
+}
+
+.displayer-active-cursor {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center; 
+  opacity: 0;
+}
+
+.displayer-show{ opacity: 1; z-index: 99; }
+.displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px;}
+
+/* ---------------------- */
 
 .default-info{
   width: 200px;
@@ -617,16 +651,7 @@ div input{
   flex: 3;
 }
 
-.info {
-  width: 100%;
-  display: flex;
-  position: absolute;
-  justify-content: center;
-}
-
-.show{
-  display: block;
-}
+.show{ display: block;}
 
 .info-header{
   width: 11%;
@@ -647,6 +672,7 @@ div input{
   width: 100%;
   display: flex;
   margin-left: 5px;
+  font-size: var(--osc-msg);
 }
 
 .send-osc{

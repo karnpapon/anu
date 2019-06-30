@@ -139,6 +139,13 @@ function Commander (canvas) {
       return
     }
 
+    if ((event.key === "Enter") && seeq.displayer.isOscFocused) {
+      seeq.displayer.runCmd("input[type='osc']")
+      // send OSC
+      event.preventDefault()
+      return
+    }
+
     // if ((event.key === "Enter") && seeq.console.isRegExpFocused) {
     //   seeq.console.runCmd("regex")
     //   event.preventDefault()
@@ -158,7 +165,7 @@ function Commander (canvas) {
       return 
     }
 
-    if (event.keyCode === 38) { this.onArrowUp(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
+    if (event.keyCode === 38 ) { this.onArrowUp(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
     if (event.keyCode === 40) { this.onArrowDown(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
     if (event.keyCode === 37) { this.onArrowLeft(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
     if (event.keyCode === 39) { this.onArrowRight(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
@@ -208,10 +215,18 @@ function Commander (canvas) {
       event.preventDefault(); 
       return 
     }
+    
 
     // switch cursor.
     if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) { 
       canvas.cursor.switch(1); 
+      event.preventDefault(); 
+      return 
+    }
+
+    // OSC config.
+    if (event.keyCode === 79 && (event.metaKey || event.ctrlKey)) { 
+      seeq.displayer.displayOSC()
       event.preventDefault(); 
       return 
     }
@@ -236,15 +251,19 @@ function Commander (canvas) {
 
   this.onKeyUp = function (event) {
 
+    // switch cursor.
     if( this.switchFlag ){ 
       if( this.switchFlag && this.altFlag){ 
         canvas.cursor.switch(this.switchCounter % canvas.cursor.cursors.length)
         this.altFlag = false
+        seeq.displayer.displayActivedCursor()
       } else {
         this.switchFlag = false
+        seeq.displayer.displayDefault()
       }
     }
-    
+
+    seeq.displayer.run() 
     canvas.update()
   }
 
