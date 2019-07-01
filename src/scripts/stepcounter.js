@@ -18,10 +18,6 @@ function StepCounter(canvas){
     })
   }
 
-  this.erase = function(){
-    this.counter.forEach( ( c,i,arr ) => { if(c.i !== this.active){ this.counter.splice(i,1)} } )
-  }
-
   this.increment = function (c) {
     c.x++
     if (!this.isSelected) {

@@ -8,7 +8,7 @@ function Displayer(app) {
   this.el = el("div")
   this.el_elem = el("div")
   this.main_text = el("div")
-  this.default_text = "seeq | livecoding environtment"
+  this.default_text = "cmd (⌘) or ctrl + i = toggle insert mode."
 
   
   // state.

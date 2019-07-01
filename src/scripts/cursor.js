@@ -16,7 +16,7 @@ function Cursor(canvas) {
 
   this.move = function (x, y) {
     let active = this.cursors[this.active]
-    if (isNaN(x) || isNaN(y) && document.hasFocus()) { return }
+    if (isNaN(x) || isNaN(y)) { return }
     active.x = clamp(active.x + parseInt(x), 0, canvas.seequencer.w - 1)
     active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
     seeq.console.cursorPosition.innerText = `${canvas.cursor.getActivePosition()}`
@@ -181,8 +181,16 @@ function Cursor(canvas) {
   // }
 
   this.erase = function(){
-    this.cursors.forEach( ( cs,i,arr ) => { if(cs.i !== this.active){ this.cursors.splice(i,1)} } )
+    let filteredCursor, filterStep, filterStepCounter
+    filteredCursor = this.cursors.filter( ( cs ) => cs.i !== this.cursors[ this.active ].i)
+    filterStep = canvas.stepcursor.steps.filter( ( step ) => step.i !== canvas.stepcursor.steps[ this.active ].i)
+    filterStepCounter = canvas.stepcounter.counter.filter( ( c ) => c.i !== canvas.stepcounter.counter[ this.active ].i)
+    this.cursors = filteredCursor
+    canvas.stepcursor.steps = filterStep
+    canvas.stepcounter.counter = filterStepCounter
+    this.active = 0
   }
+
   // this.find = function (str) {
   //   const i = canvas.seequencer.s.indexOf(str)
   //   if (i < 0) { return }

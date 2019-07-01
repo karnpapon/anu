@@ -131,10 +131,11 @@ function Canvas () {
     })
   }
 
-  this.eraseSelection = function(){
+  this.eraseSelectionCursor = function(){
     this.cursor.erase()
-    this.stepcounter.erase()
-    this.stepcursor.erase()
+    this.commander.resetSwitchCounter()
+    // this.stepcounter.erase()
+    // this.stepcursor.erase()
   }
 
   /* #region unused */
@@ -189,7 +190,11 @@ function Canvas () {
   }
 
   this.isCurrentCursor = function(x,y){
-    return this.cursor.cursors.some( cs => x === cs.x && y === cs.y && cs.i === this.cursor.active)
+    return this.cursor.cursors.some( cs => x === cs.x && y === cs.y && cs.i === this.cursor.cursors[ this.cursor.active ].i)
+  }
+
+  this.getCurrentCursor = function(){
+    return this.cursor.cursors.filter( cs => cs.i === this.cursor.cursors[ this.cursor.active ].i)
   }
 
   this.isSelection = function (x, y) {

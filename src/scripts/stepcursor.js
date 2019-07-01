@@ -31,17 +31,14 @@ function StepCursor(canvas) {
   }
 
   this.add = function(){
-    canvas.stepcounter.counter.push({ x:0 ,y: 0, counter: 0, i: canvas.cursor.active})
-    this.steps.push({ x: 0, y:0, i: canvas.cursor.active})
+    let cursor = canvas.cursor.cursors[ canvas.cursor.active ]
+    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: cursor.i})
+    this.steps.push({ x: 0, y:0, i: cursor.i})
   }
 
   this.remove = function(){
     canvas.stepcounter.counter.pop({ x:0 ,y: 0, counter: 0})
     this.steps.pop()
-  }
-
-  this.erase = function(){
-    this.steps.forEach( ( step,i,arr ) => { if(step.i !== this.active){ this.steps.splice(i,1)} } )
   }
 
   this.run = function () {

@@ -47,6 +47,10 @@ function Commander (canvas) {
     // this.preview()
   }
 
+  this.resetSwitchCounter = function(){
+    this.switchCounter = 0
+  }
+
   this.write = function (key) {
     if (key.length !== 1) { return }
     this.query += key
@@ -83,14 +87,8 @@ function Commander (canvas) {
       return
     }
 
-    // if ((event.key === "Enter") && seeq.console.isRegExpFocused) {
-    //   seeq.console.runCmd("regex")
-    //   event.preventDefault()
-    //   return
-    // }
-
-    if ((event.metaKey || event.ctrlKey) && event.key === 'Backspace') {
-      canvas.eraseSelection()
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Backspace' && canvas.cursor.cursors.length > 1) {
+      canvas.eraseSelectionCursor()
       event.preventDefault()
       return
     }
@@ -127,7 +125,7 @@ function Commander (canvas) {
     }
 
     // remove step
-    if (event.shiftKey && event.keyCode === 189) { 
+    if (event.shiftKey && event.keyCode === 189 ) { 
       canvas.stepcursor.remove() 
       return 
     }
@@ -171,7 +169,7 @@ function Commander (canvas) {
     if (event.metaKey) { return }
     if (event.ctrlKey) { return }
 
-    if (event.key === ' ' ) { canvas.clock.togglePlay(); event.preventDefault(); return }
+    if (event.key === ' ' && !seeq.console.isInsertable) { canvas.clock.togglePlay(); event.preventDefault(); return }
 
     if (event.key === 'Escape') { 
       // canvas.toggleGuide(false); 
@@ -215,7 +213,7 @@ function Commander (canvas) {
   }
 
   this.onArrowDown = function (mod = false, skip = false) {
-    const c = canvas.cursor.cursors.filter( cs => cs.i === canvas.cursor.active)
+    const c = canvas.getCurrentCursor()
     let leap 
     if(!canvas.isSelectionAtEdgeBottom(c[0])){
       // const leap = skip ? canvas.grid.h : 1
@@ -245,7 +243,7 @@ function Commander (canvas) {
   }
 
   this.onArrowRight = function (mod = false, skip = false) {
-    const c = canvas.cursor.cursors.filter( cs => cs.i === canvas.cursor.active)
+    const c = canvas.getCurrentCursor()
     let leap
     if(!canvas.isSelectionAtEdgeRight(c[0])){
       if(skip){

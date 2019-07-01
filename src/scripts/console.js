@@ -89,7 +89,8 @@ function Console(app) {
   this.udpBtn 
   this.oscBtn 
   this.revBtn 
-  this.addBtn
+  this.bpmUpBtn
+  this.bpmDownBtn
   this.devBtn 
 
   // this.notationMode 
@@ -145,8 +146,8 @@ function Console(app) {
     self.udpBtn = qs("button[data-ctrl='udp']")
     self.oscBtn = qs("button[data-ctrl='osc']")
     self.revBtn = qs("button[data-ctrl='rev']")
-    self.addBtn = qs("button[data-ctrl='add']")
-    self.subtractBtn = qs("button[data-ctrl='subtract']")
+    self.bpmUpBtn = qs("button[data-ctrl='add']")
+    self.bpmDownBtn = qs("button[data-ctrl='subtract']")
     // self.notationMode = qs("button[data-ctrl='notation-mode']")
     // self.extractLines = qs("button[data-ctrl='extract-line']")
     self.bpmNumber = qs("p[data-ctrl='bpm']")
@@ -264,6 +265,14 @@ function Console(app) {
 
     self.nudgeBtn.addEventListener("click", function () {
       app.nudge()
+    })
+
+    self.bpmUpBtn.addEventListener("click", function(){
+      canvas.clock.mod(1)
+    })
+
+    self.bpmDownBtn.addEventListener("click", function(){
+      canvas.clock.mod(-1)
     })
 
     self.revBtn.addEventListener("click", function () {
