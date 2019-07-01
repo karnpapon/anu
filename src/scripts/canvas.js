@@ -80,7 +80,7 @@ function Canvas () {
     this.drawProgram()
     this.stepcursor.run()
     this.drawStroke(this.cursor)
-    seeq.console.isRegExpFocused? this.match():() => {} //deactive if possible.
+    this.match()
   }
 
   this.reset = function () {
@@ -381,7 +381,7 @@ function Canvas () {
 
   this.resize = function (force = false) {
     const size = { w: window.innerWidth + 0.5, h: window.innerHeight }
-    const tiles = { w: Math.ceil(size.w / this.tile.w - 19 ), h: 16 }
+    const tiles = { w: Math.ceil(size.w / this.tile.w - 19 ), h: 17 }
 
     // if (this.seequencer.w === tiles.w && this.seequencer.h === tiles.h && force === false) { return }
 
@@ -396,15 +396,13 @@ function Canvas () {
     if (this.cursor.cursors[this.cursor.active].y >= tiles.h) { this.cursor.cursors[this.cursor.active].y = tiles.h - 1 }
 
     this.el.width = (this.tile.w) * this.seequencer.w * this.scale
-    this.el.height = (this.tile.h) * this.seequencer.h * this.scale
+    this.el.height = (this.tile.h + 5) * this.seequencer.h * this.scale
     this.el.style.width = `${Math.ceil(this.tile.w * this.seequencer.w)}px`
-    // this.el.style.height = `100%`
-    // this.el.style.width = `100%`
     // this.el.style.height = `${Math.ceil((this.tile.h + (this.tile.h / 5)) * this.seequencer.h)}px`
 
     this.context.textBaseline = 'bottom'
     this.context.textAlign = 'center'
-    this.context.font = `${this.tile.h * 0.75 * this.scale}px input_mono_regular`
+    this.context.font = `${this.tile.h * 0.75 * this.scale}px input_mono_regular` //TODO: make this configurable or generative based on particular articles.
 
     this.update()
   }

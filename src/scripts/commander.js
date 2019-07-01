@@ -10,53 +10,6 @@ function Commander (canvas) {
   this.switchFlag = false
   this.switchCounter = 0
 
-  /*#region*/
-  // Library
-
-  // this.passives = {
-  //   'find': (p) => { canvas.cursor.find(p.str) },
-  //   'select': (p) => { canvas.cursor.select(p.x, p.y, p.w, p.h) },
-  //   'inject': (p) => { canvas.cursor.select(p._x, p._y); canvas.source.inject(p._str, false) },
-  //   'write': (p) => { canvas.cursor.select(p._x, p._y, p._str.length) }
-  // }
-
-  // this.actives = {
-  //   // Ports
-  //   'osc': (p) => { canvas.io.osc.select(p.int) },
-  //   'udp': (p) => { canvas.io.udp.select(p.int) },
-  //   'ip': (p) => { canvas.io.setIp(p.str) },
-  //   // Cursor
-  //   'copy': (p) => { canvas.cursor.copy() },
-  //   'paste': (p) => { canvas.cursor.paste(true) },
-  //   'erase': (p) => { canvas.cursor.erase() },
-  //   // Controls
-  //   'play': (p) => { canvas.clock.play() },
-  //   'stop': (p) => { canvas.clock.stop() },
-  //   'run': (p) => { canvas.run() },
-  //   // Speed
-  //   'apm': (p) => { canvas.clock.set(null, p.int) },
-  //   'bpm': (p) => { canvas.clock.set(p.int, p.int, true) },
-  //   'time': (p) => { canvas.clock.setFrame(p.int) },
-  //   'rewind': (p) => { canvas.clock.setFrame(canvas.orca.f - p.int) },
-  //   'skip': (p) => { canvas.clock.setFrame(canvas.orca.f + p.int) },
-  //   // Effects
-  //   'rot': (p) => { canvas.cursor.rotate(p.int) },
-  //   // Themeing
-  //   'color': (p) => { canvas.theme.set('b_med', p.parts[0]); canvas.theme.set('b_inv', p.parts[1]); canvas.theme.set('b_high', p.parts[2]) },
-  //   'graphic': (p) => { canvas.theme.setImage(canvas.source.locate(p.str + '.jpg')) },
-  //   // Edit
-  //   'find': (p) => { canvas.cursor.find(p.str) },
-  //   'select': (p) => { canvas.cursor.select(p.x, p.y, p.w, p.h) },
-  //   'inject': (p) => { canvas.cursor.select(p._x, p._y); canvas.source.inject(p._str, true) },
-  //   'write': (p) => { canvas.cursor.select(p._x, p._y, p._str.length); canvas.cursor.writeBlock([p._str.split('')]) }
-  // }
-
-  /* #endregion*/
-
-  // Make shorthands
-  // for (const id in this.actives) {
-  //   this.actives[id.substr(0, 2)] = this.actives[id]
-  // }
 
   function Param (val) {
     this.str = `${val}`
@@ -106,23 +59,6 @@ function Commander (canvas) {
     canvas.update()
   }
 
-  /*#region */
-
-  this.trigger = function (msg = this.query, touch = true) {
-    // const cmd = `${msg}`.split(':')[0].toLowerCase()
-    // const val = `${msg}`.substr(cmd.length + 1)
-    // if (!this.actives[cmd]) { console.warn('Commander', `Unknown message: ${msg}`); this.stop(); return }
-    // console.info('Commander trigger', msg)
-    // this.actives[cmd](new Param(val), true)
-    // if (touch === true) {
-    //   this.history.push(msg)
-    //   this.historyIndex = this.history.length
-    //   this.stop()
-    // }
-  }
-
-  /*#endregion */
-
   // Events
 
   this.onKeyDown = function (event) {
@@ -166,10 +102,10 @@ function Commander (canvas) {
       return 
     }
 
-    if (event.keyCode === 38 ) { this.onArrowUp(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
-    if (event.keyCode === 40) { this.onArrowDown(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
-    if (event.keyCode === 37) { this.onArrowLeft(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
-    if (event.keyCode === 39) { this.onArrowRight(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
+    if (event.keyCode === 38 && !seeq.console.isInsertable) { this.onArrowUp(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
+    if (event.keyCode === 40 && !seeq.console.isInsertable) { this.onArrowDown(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
+    if (event.keyCode === 37 && !seeq.console.isInsertable) { this.onArrowLeft(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
+    if (event.keyCode === 39 && !seeq.console.isInsertable) { this.onArrowRight(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
 
     if (event.shiftKey && event.keyCode === 13) { 
       canvas.stepcounter.range() 
