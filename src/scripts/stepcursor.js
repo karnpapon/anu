@@ -2,8 +2,6 @@
 
 function StepCursor(canvas) {
 
-  const { getRandomInt } = require('./lib/utils')
-
   this.steps = [ { x: 0, y: 0, i: 0 } ]
   this.duration = 0.25;
   this.opacitySteps = parseInt(60*this.duration);
@@ -121,9 +119,6 @@ function StepCursor(canvas) {
     seeq.io.run()
     seeq.io.clear()
   }
-
-  function display(str, f, max) { return str.length < max ? str : str.slice(f % str.length) + str.substr(0, f % str.length) }
- 
 }
 
 

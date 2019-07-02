@@ -23,8 +23,8 @@ function Displayer(app) {
 
   // -------------------------------------------------------
   
-  this.el_osc = el("div")
-  this.el_active_cursor = el("div")
+  this.el_with_input = el("div")
+  this.el_general = el("div")
   this.output = `
     <lf class="info-header">OSC |</lf>
     <form id="info-osc" class="info-input">
@@ -71,21 +71,28 @@ function Displayer(app) {
         this.isDefaultShowed = false
         this.isOscShowed = false
         this.isActivedCursorShowed = true
-        target = this.el_active_cursor
-        this.el_active_cursor.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
+        target = this.el_general
+        target.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
         break;
       case 'osc':
         this.isDefaultShowed = false
         this.isOscShowed = !this.isOscShowed
         this.isActivedCursorShowed = false
-        target = this.el_osc
+        target = this.el_with_input
         this.oscConf.value = active.msg.OSC.msg
+        break;
+      case 'regex':
+        this.isDefaultShowed = false
+        this.isOscShowed = false
+        this.isActivedCursorShowed = true
+        target = this.el_general
+        target.innerHTML = `<div class="displayer-bold">${app.console.regexInput}</div>`
         break;
       default:
         this.isDefaultShowed = true
         this.isActivedCursorShowed = false
         this.isOscShowed = false
-        target = this.el_active_cursor
+        target = this.el_general
         break;
     }
     
@@ -106,14 +113,14 @@ function Displayer(app) {
   }
 
   this.buildOSC = function () {
-    this.el_osc.classList.add("displayer-osc")
-    this.el_osc.innerHTML += this.output
-    this.el_elem.appendChild(this.el_osc)
+    this.el_with_input.classList.add("displayer-osc")
+    this.el_with_input.innerHTML += this.output
+    this.el_elem.appendChild(this.el_with_input)
   }
 
   this.buildActiveCursor = function () {
-    this.el_active_cursor.classList.add("displayer-active-cursor")
-    this.el_elem.appendChild(this.el_active_cursor)
+    this.el_general.classList.add("displayer-active-cursor")
+    this.el_elem.appendChild(this.el_general)
   }
 
   this.displayOSC = function(){
@@ -126,6 +133,10 @@ function Displayer(app) {
 
   this.displayDefault = function(cmd){
     this.currentCmd = ""
+  }
+
+  this.displayMsg = function(msg){
+    this.currentCmd = "regex" 
   }
 
 

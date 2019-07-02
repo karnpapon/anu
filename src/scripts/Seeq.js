@@ -9,7 +9,7 @@ function Seeq(){
   const IO = require('./io')
   const Keys = require('./keys')
   const Metronome = require('./metronome')
-  const { $, el, qs, scale, isChar, clamp } = require('./lib/utils')
+  const { $, el, qs, scale, isChar} = require('./lib/utils')
 
   this.content = new Content(this)
   this.io = new IO(this)
@@ -19,12 +19,10 @@ function Seeq(){
   this.metronome = new Metronome(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
-  this.selectedClock = 0
 
   // ------------------------------------
 
   // DOM installation.
-  // this.logoSeeq
   this.appWrapper = el("appwrapper")
   this.el = el("app");
   this.el.style.opacity = 0;
@@ -39,54 +37,15 @@ function Seeq(){
 
   // ------------------------------------
 
-  // Ajax Request Initialize.
+  // Ajax.
   this.url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles="
   this.urlEnd = "&redirects=1"
-
-  // Ajax Status.
   this.isGettingData = false
-
-  // -----------------------------------
-
-  // text buffers.
-  this.switchText = ""
-  this.notation = ""
 
   // -----------------------------------
 
   // Cursor.
   this.matchedPosition = []
-
-  // this.cursor = [{
-  //   position: 0,
-  //   isCursorOffsetReverse: false,
-  //   isMuted: false,
-  //   isRetrigger: false,
-  //   up: 0,
-  //   down: 0,
-  //   note: [],
-  //   notelength: [],
-  //   velocity: [],
-  //   octave: [],
-  //   counter: 0,
-  //   channel: "",
-  //   reverse: false,
-  //   UDP: ["D3C"],
-  //   OSC: {
-  //     path: "play2",
-  //     msg: "s [dr] n [22,11,4,5,6,12]"
-  //   }
-  // }]
-
-  // this.triggerCursor = {
-  //   note: [],
-  //   notelength: "",
-  //   velocity: "",
-  //   octave: "",
-  //   channel: "",
-  //   counter: 0,
-  //   UDP: ["73C"]
-  // }
 
   // -----------------------------------
 
@@ -105,16 +64,13 @@ function Seeq(){
   }
 
   this.clear = function(){
-    this.isPlaying = false
-    this.seq.stop()
-    // this.data.hltr.removeHighlights();
-    // this.content.unmark()
-    this.fetchWithoutDisconnect()
+    // this.isPlaying = false
+    // this.fetchWithoutDisconnect()
   }
 
   this.nudge = function(){
-    this.isPlaying = false
-    this.seq.nudged()
+    // this.isPlaying = false
+    // this.seq.nudged()
   }
 
   this.fetchWithoutDisconnect = function(){
@@ -272,9 +228,17 @@ function Seeq(){
 
   this.getMatchedPosition = function(){
     var searchFrom = canvas.texts
-    let target = this.console.searchValue
-    var search = new RegExp(target,"gi")
+    let target, search, noBracketTarget
     var match
+
+    if(this.console.searchType === 'regex'){
+      target = this.console.regexInput
+      search = new RegExp(target,"gi")
+    } else {
+      target = this.console.searchValue
+      noBracketTarget = target.replace(/[\])}[{(]/g, ''); 
+      search = new RegExp(`(${noBracketTarget})`,"gi")
+    }
     canvas.p = []
 
     this.matchedPosition = []
@@ -382,29 +346,6 @@ function Seeq(){
     }
 
     return res
-  }
-
-  this.retrieveInfoDisplay = function(){
-    return `<div class="textfx">seeq | livecoding environtment </div>`
-  }
-
-  this.clock = function () {
-    return this.masterClock[this.selectedClock]
-  }
-
-  this.setSpeed = function (bpm) {
-    if (this.clock().canSetBpm()) {
-      bpm = clamp(bpm, 60, 300)
-      this.clock().setBpm(bpm)
-    }
-  }
-
-  this.modSpeed = function (mod = 0) {
-    let bpm = this.clock()
-    if (this.clock().canSetBpm()) {
-      this.setSpeed(this.clock().getBpm() + mod)
-    }
-    seeq.seq.setBPMdisplay(bpm) 
   }
 
   this.getUdpNote = function(note){

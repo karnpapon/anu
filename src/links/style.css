@@ -1,6 +1,7 @@
 :root {
   --main-bg-color: #e6e6e6;
   --trigger-color: rgb(62, 251, 0);
+  --trigger-input-color: #000000;
   --reverse-target: #f287ff;
   --clock: 200ms;
   --hl-color: rgb(255, 212, 57);
@@ -205,7 +206,7 @@ div button{
 }
 
 .disable-input{
-  background-color: #a5a5a5;
+  background-color: #a5a5a5 !important;
   border: 1px solid;
 }
 
@@ -278,6 +279,12 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 
 .trigger{
   background-color: var( --trigger-color )  !important;
+  transition: all .2s ease;
+}
+
+.trigger-input{
+  color: white;
+  background-color: var( --trigger-input-color )  !important;
   transition: all .2s ease;
 }
 
@@ -554,7 +561,7 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 }
 
 .displayer-show{ opacity: 1; z-index: 99; }
-.displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px;}
+.displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1rem;}
 
 /* ---------------------- */
 

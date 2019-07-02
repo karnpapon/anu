@@ -99,6 +99,7 @@ function Console(app) {
   // Input. 
   this.searchInput
   this.searchRegExp
+  this.regexInput
   this.fetchSearchInput = ""
   this.searchValue = ""
  
@@ -165,26 +166,28 @@ function Console(app) {
 
     // input to get.
     self.inputFetch.addEventListener("input", function () { self.fetchSearchInput = this.value;})
-    self.inputFetch.addEventListener("focus", function () { self.isInputFocused = true })
-    self.inputFetch.addEventListener("blur", function () { self.isInputFocused = false })
+    self.inputFetch.addEventListener("focus", function () { self.isInputFocused = true; self.setFocusStyle(self.inputFetch) })
+    self.inputFetch.addEventListener("blur", function () { self.isInputFocused = false; self.removeFocusStyle(self.inputFetch) })
 
     // find
     self.searchInput.addEventListener("input", function () {
       self.searchValue = this.value;
-      // self.updateMarkType = "normal"
+      self.searchType = "normal"
+      seeq.getMatchedPosition()
     });
-    self.searchInput.addEventListener("focus", function () { self.isFindFocused = true });
-    self.searchInput.addEventListener("blur", function () { self.isFindFocused = false });
+    self.searchInput.addEventListener("focus", function () { self.isFindFocused = true; self.setFocusStyle(self.searchInput) });
+    self.searchInput.addEventListener("blur", function () { self.isFindFocused = false; self.removeFocusStyle(self.searchInput) });
 
     // RegExp.
     self.searchRegExp.addEventListener("input", function () {
+      self.searchType = "regex"
       self.isRegExpFocused = !self.isRegExpFocused
-      self.searchValue = this.value
+      self.regexInput = this.value
       seeq.getMatchedPosition() //TODO: return value instead.
-      // self.updateMarkType = "regex"
+      seeq.displayer.displayMsg(this.value)
     });
-    // self.searchRegExp.addEventListener("focus", function () { self.isRegExpFocused = true});
-    // self.searchRegExp.addEventListener("blur", function () { self.isRegExpFocused = false});
+    self.searchRegExp.addEventListener("focus", function () { self.setFocusStyle(self.searchRegExp) });
+    self.searchRegExp.addEventListener("blur", function () {self.removeFocusStyle(self.searchRegExp) });
 
     // this.nextBtn.addEventListener("click", function(){
     //   if(seeq.results.length){
@@ -332,12 +335,20 @@ function Console(app) {
   this.runCmd = function(id){
     let target = document.getElementById(id)
 
-    target.classList.add("trigger")
+    target.classList.add("trigger-input")
     this.isInputFocused? app.startFetch():() => {}
     setTimeout(() => {
-      target.classList.remove("trigger") 
+      target.classList.remove("trigger-input") 
     }, 200);
   
+  }
+
+  this.setFocusStyle = function(target){
+    target.style.backgroundColor = "#3EFB00" 
+  }
+
+  this.removeFocusStyle = function(target){
+    target.style.backgroundColor = "#FFFFFF"  
   }
 
 }

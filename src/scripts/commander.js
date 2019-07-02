@@ -96,6 +96,7 @@ function Commander (canvas) {
      if (event.keyCode === 73 && (event.metaKey || event.ctrlKey)) { 
       seeq.console.isInsertable = !seeq.console.isInsertable
       seeq.console.toggleInsert()
+      seeq.displayer.displayDefault()
       event.preventDefault(); 
       return 
     }
@@ -105,14 +106,14 @@ function Commander (canvas) {
     if (event.keyCode === 37 && !seeq.console.isInsertable) { this.onArrowLeft(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
     if (event.keyCode === 39 && !seeq.console.isInsertable) { this.onArrowRight(event.shiftKey, (event.metaKey || event.ctrlKey)); return }
 
-    if (event.shiftKey && event.keyCode === 13) { 
+    if (event.shiftKey && event.keyCode === 13 && !seeq.console.isInsertable) { 
       canvas.stepcounter.range() 
       canvas.stepcounter.isSelected = !canvas.stepcounter.isSelected; 
       return 
     }
 
     // add step.
-    if (event.shiftKey && event.keyCode === 187) { 
+    if (event.shiftKey && event.keyCode === 187 && !seeq.console.isInsertable) { 
       if(!canvas.stepcounter.isSelected){
         canvas.stepcursor.remove()  
         canvas.stepcursor.add();
