@@ -165,7 +165,10 @@ function Console(app) {
     // });
 
     // input to get.
-    self.inputFetch.addEventListener("input", function () { self.fetchSearchInput = this.value;})
+    self.inputFetch.addEventListener("input", function () { 
+      self.fetchSearchInput = this.value; 
+      seeq.displayer.displayMsg("input")
+    })
     self.inputFetch.addEventListener("focus", function () { self.isInputFocused = true; self.setFocusStyle(self.inputFetch) })
     self.inputFetch.addEventListener("blur", function () { self.isInputFocused = false; self.removeFocusStyle(self.inputFetch) })
 
@@ -184,7 +187,7 @@ function Console(app) {
       self.isRegExpFocused = !self.isRegExpFocused
       self.regexInput = this.value
       seeq.getMatchedPosition() //TODO: return value instead.
-      seeq.displayer.displayMsg(this.value)
+      seeq.displayer.displayMsg("regex")
     });
     self.searchRegExp.addEventListener("focus", function () { self.setFocusStyle(self.searchRegExp) });
     self.searchRegExp.addEventListener("blur", function () {self.removeFocusStyle(self.searchRegExp) });

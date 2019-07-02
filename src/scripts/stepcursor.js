@@ -3,7 +3,7 @@
 function StepCursor(canvas) {
 
   this.steps = [ { x: 0, y: 0, i: 0 } ]
-  this.duration = 0.25;
+  this.duration = 0.125;
   this.opacitySteps = parseInt(60*this.duration);
   this.opacityStep = 0;
   this.offset
@@ -47,14 +47,16 @@ function StepCursor(canvas) {
         step.y = canvas.stepcounter.counter[idx].y
         self.trigger(step)
       }
-      canvas.drawSprite( step.x, step.y,canvas.seequencer.glyphAt(step.x, step.y),10)
+      canvas.drawSprite( step.x, step.y,this.isTrigger(step.x,step.y)? '*':canvas.seequencer.glyphAt(step.x, step.y),10)
     })
   }
 
   this.animate = function(time,el){
-
-    var opacity = 100 * (this.opacityStep/this.opacitySteps);
+   
+    var opacity 
+    opacity = 100 * (this.opacityStep/this.opacitySteps * 0.25);
     if(this.opacityStep >= this.opacitySteps-1){ opacity = 100; }
+    canvas.context.globalAlpha = ( (100 - opacity)/100 );
 
     const bgrect = { 
       x: el.x * canvas.scale * canvas.tile.w,
@@ -63,32 +65,27 @@ function StepCursor(canvas) {
       h: el.h * canvas.scale * canvas.tile.h
     }
 
-    // let block = canvas.cursor.getBlockByIndex(el.i)
-
-    // block.forEach( c => {
-    //   let g = canvas.seequencer.glyphAt(c.x, c.y)
-    //   if(canvas.isCursor(c.x,c.y)){
-    //     // start
-       
-    //   } else {
-    //     canvas.drawSprite(c.x, c.y, g, 7)
-    //   }
-    // })
-
-    canvas.context.globalAlpha = ( (100 - opacity)/100 );
-    canvas.context.fillStyle = canvas.theme.active.b_med
-    canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
+    let target  = canvas.cursor.getSelectionArea(el)
+    target.forEach( item => {
+      const fgrect = { 
+        x: (item.x + 0.5) * canvas.tile.w * canvas.scale, 
+        y: (item.y + 1) * canvas.tile.h * canvas.scale, 
+      }
+      if(!canvas.isMatchedChar(item.x,item.y)){
+        canvas.context.fillStyle = canvas.theme.active.background
+        canvas.context.fillText(".", fgrect.x, fgrect.y)
+      } else {
+        canvas.context.fillStyle = canvas.theme.active.b_med
+        canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
+      }
+      
+    })
     
     // end
     canvas.context.globalAlpha = (opacity) / 100;
     canvas.context.fillStyle = canvas.theme.active.background
     canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-
-    canvas.context.strokeStyle = canvas.theme.active.background
     canvas.context.strokeRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-    canvas.drawSprite(el.x, el.y, "*", 0)
-    
-    
     // reset
     canvas.context.globalAlpha=1.00;
 
@@ -104,16 +101,16 @@ function StepCursor(canvas) {
     if (this.isTrigger(step.x, step.y)) {
       this.oscOut(step)
       canvas.cursor.cursors.forEach( value => {
-        if( value.i === step.i){
+        if( value.i === step.i ){
           this.opacityStep = 0;
           this.animate(null, value)
         }
       })
+     
     }
   }
 
   this.oscOut = function(step){
-
     let target = canvas.cursor.cursors.filter( cs => cs.i === step.i )
     seeq.io.osc.send('/' + target[0].msg.OSC.path, target[0].msg.OSC.msg )
     seeq.io.run()

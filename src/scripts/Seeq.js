@@ -233,38 +233,42 @@ function Seeq(){
 
     if(this.console.searchType === 'regex'){
       target = this.console.regexInput
-      search = new RegExp(target,"gi")
+      try{ 
+        search = new RegExp(target,"gi") //TODO: make this configurable.
+    } catch(e) { console.log("invalid regular expression")}
     } else {
       target = this.console.searchValue
       noBracketTarget = target.replace(/[\])}[{(]/g, ''); 
-      search = new RegExp(`(${noBracketTarget})`,"gi")
-    }
-    canvas.p = []
-
-    this.matchedPosition = []
-    
-    if (target !== ""){
-      while( match = search.exec(searchFrom)){
-        this.matchedPosition.push({
-          index: match.index, 
-          len: match.length == 2? match[0].length:0 
-        })
-      } 
+      try { search = new RegExp(`(${noBracketTarget})`,"gi") } catch(e) { console.log("invalid value.")}
     }
 
-    if(this.matchedPosition){
-      this.matchedPosition.forEach(pos => {
-        if (pos.len > 0) {
-          let len = 0
-          for (var i = 0; i < pos.len; i++) {
-            canvas.p.push(canvas.seequencer.posAt(pos.index + len))
-            len++
+    if(search){
+      canvas.p = []
+      this.matchedPosition = []
+      if (target !== ""){
+        while( match = search.exec(searchFrom)){
+          this.matchedPosition.push({
+            index: match.index, 
+            len: match.length == 2? match[0].length:0 
+          })
+        } 
+      }
+  
+      if(this.matchedPosition){
+        this.matchedPosition.forEach(pos => {
+          if (pos.len > 0) {
+            let len = 0
+            for (var i = 0; i < pos.len; i++) {
+              canvas.p.push(canvas.seequencer.posAt(pos.index + len))
+              len++
+            }
+          } else {
+            canvas.p.push(canvas.seequencer.posAt(pos.index))
           }
-        } else {
-          canvas.p.push(canvas.seequencer.posAt(pos.index))
-        }
-      })
+        })
+      }
     }
+    
   }
 
   this.startFetch = function(){

@@ -29,7 +29,7 @@ function Canvas () {
     f_high: '#FFFFFF',  //almost white
     f_med: '#e6e6e6', // grey
     f_low: '#000000',  //black
-    f_inv: '#D1FF00', // purple-ish
+    f_inv: '#FFAE00', // purple-ish
     b_high: '#eeeeee', //grey-white.
     b_med: '#3EFB00',  // green
     b_low: '#00FFD4', // grey-black
@@ -78,9 +78,9 @@ function Canvas () {
     if (document.hidden === true) { return }
     this.clear()
     this.drawProgram()
+    this.match()
     this.stepcursor.run()
     this.drawStroke(this.cursor)
-    this.match()
   }
 
   this.reset = function () {
@@ -126,7 +126,7 @@ function Canvas () {
         this.context.strokeStyle = this.theme.active.background
         this.context.strokeRect(r.x, r.y, r.w, r.h)
       } else {
-        this.drawSprite(item.x, item.y, g, 0) //match marked.
+        this.drawSprite(item.x, item.y, g, 0) //match marked green.
       }
     })
   }
@@ -134,56 +134,7 @@ function Canvas () {
   this.eraseSelectionCursor = function(){
     this.cursor.erase()
     this.commander.resetSwitchCounter()
-    // this.stepcounter.erase()
-    // this.stepcursor.erase()
   }
-
-  /* #region unused */
-  // this.toggleRetina = function () {
-  //   this.scale = this.scale === 1 ? window.devicePixelRatio : 1
-  //   console.log('Terminal', `Pixel resolution: ${this.scale}`)
-  //   this.resize(true)
-  // }
-
-  // this.toggleHardmode = function () {
-  //   this.hardmode = this.hardmode !== true
-  //   console.log('Terminal', `Hardmode: ${this.hardmode}`)
-  //   this.update()
-  // }
-
-  // this.toggleGuide = function (force = null) {
-  //   const display = force !== null ? force : this.guide !== true
-  //   if (display === this.guide) { return }
-  //   console.log('Terminal', `Toggle Guide: ${display}`)
-  //   this.guide = display
-  //   this.update()
-  // }
-
-  // this.reqGuide = function () {
-  //   const session = this.source.recall('session')
-  //   console.log('Terminal', 'Session #' + session)
-  //   if (!session || parseInt(session) < 20) { return true }
-  //   return false
-  // }
-
-  // this.modGrid = function (x = 0, y = 0) {
-  //   const w = clamp(this.grid.w + x, 4, 16)
-  //   const h = clamp(this.grid.h + y, 4, 16)
-  //   this.setGrid(w, h)
-  // }
-
-  // this.modZoom = function (mod = 0, reset = false) {
-  //   this.tile = {
-  //     w: reset ? 10 : this.tile.w * (mod + 1),
-  //     h: reset ? 15 : this.tile.h * (mod + 1)
-  //   }
-  //   localStorage.setItem('tilew', this.tile.w)
-  //   localStorage.setItem('tileh', this.tile.h)
-  //   this.resize(true)
-  // }
-
-  //
-  /* #endregion*/
 
   this.isCursor = function (x, y) {
     return this.cursor.cursors.some( cs => x === cs.x && y === cs.y)
@@ -203,6 +154,14 @@ function Canvas () {
 
   this.isMarker = function (x, y) {
     return x % this.grid.w === 0 && y % this.grid.h === 0
+  }
+
+  this.isMatchedChar = function(x,y){
+    return this.p.some( matched => matched.x === x && matched.y === y)
+  }
+
+  this.isSelectionTrigged = function(x,y){
+    return this.getCurrentCursor()
   }
 
   // this.isNear = function (x, y) {
@@ -233,27 +192,6 @@ function Canvas () {
   //   return this.isNear(x, y) === true && (x % (this.grid.w / 4) === 0 && y % (this.grid.h / 4) === 0) === true
   // }
 
-  /* #region unused */
-  // this.portAt = function (x, y) {
-  //   return this.ports[this.seequencer.indexAt(x, y)]
-  // }
-
-  // this.findPorts = function () {
-  //   const a = new Array((this.seequencer.w * this.seequencer.h) - 1)
-  //   for (const id in this.seequencer.runtime) {
-  //     const operator = this.seequencer.runtime[id]
-  //     if (this.seequencer.lockAt(operator.x, operator.y)) { continue }
-  //     const ports = operator.getPorts()
-  //     for (const i in ports) {
-  //       const port = ports[i]
-  //       const index = this.seequencer.indexAt(port[0], port[1])
-  //       a[index] = port
-  //     }
-  //   }
-  //   return a
-  // }
-  /* #endregion*/
-
   // Interface
 
   this.makeGlyph = function (x, y) {
@@ -277,7 +215,11 @@ function Canvas () {
         return 10 
       }
     }
-    if (this.isSelection(x, y)) { return 6}
+    if (this.isSelection(x, y)) { 
+      // if( !canvas.stepcursor.isTrigger(x,y)){ return 3}
+      return 6
+    }
+
     return 9
   }
 
@@ -370,19 +312,6 @@ function Canvas () {
       x += 1
     }
   }
-
-  // Resize tools
-
-  // this.fit = function () {
-  //   const size = { w: (this.seequencer.w * this.tile.w) + 60, h: (this.seequencer.h * this.tile.h) + 60 + (2 * this.tile.h) }
-  //   const win = require('electron').remote.getCurrentWindow()
-  //   const winSize = win.getSize()
-  //   const current = { w: winSize[0], h: winSize[1] }
-  //   if (current.w === size.w && current.h === size.h) { console.warn('Terminal', 'No resize required.'); return }
-  //   console.log('Source', `Fit canvas for ${this.seequencer.w}x${this.seequencer.h}(${size.w}x${size.h})`)
-  //   win.setSize(parseInt(size.w), parseInt(size.h), false)
-  //   this.resize()
-  // }
 
   this.resize = function (force = false) {
     const size = { w: window.innerWidth + 0.5, h: window.innerHeight }

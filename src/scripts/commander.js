@@ -162,7 +162,7 @@ function Commander (canvas) {
 
     // OSC config.
     if (event.keyCode === 79 && (event.metaKey || event.ctrlKey)) { 
-      seeq.displayer.displayOSC()
+      seeq.displayer.displayMsg('osc')
       event.preventDefault(); 
       return 
     }
@@ -192,7 +192,7 @@ function Commander (canvas) {
       if( this.switchFlag && this.altFlag){ 
         canvas.cursor.switch(this.switchCounter % canvas.cursor.cursors.length)
         this.altFlag = false
-        seeq.displayer.displayActivedCursor()
+        seeq.displayer.displayMsg('active-cursor')
       } else {
         this.switchFlag = false
         seeq.displayer.displayDefault()

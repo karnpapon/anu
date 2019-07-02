@@ -88,6 +88,13 @@ function Displayer(app) {
         target = this.el_general
         target.innerHTML = `<div class="displayer-bold">${app.console.regexInput}</div>`
         break;
+      case 'input':
+        this.isDefaultShowed = false
+        this.isOscShowed = false
+        this.isActivedCursorShowed = true
+        target = this.el_general
+        target.innerHTML = `<div class="displayer-bold">${app.console.fetchSearchInput}</div>`
+        break;
       default:
         this.isDefaultShowed = true
         this.isActivedCursorShowed = false
@@ -103,7 +110,6 @@ function Displayer(app) {
       target.classList.remove("displayer-show")
       this.main_text.classList.add("displayer-show")
     }
-    
   }
 
   this.runCmd = function(id){
@@ -123,20 +129,12 @@ function Displayer(app) {
     this.el_elem.appendChild(this.el_general)
   }
 
-  this.displayOSC = function(){
-    this.currentCmd = "osc"
-  }
-
-  this.displayActivedCursor = function(){
-    this.currentCmd = "active-cursor" 
-  }
-
   this.displayDefault = function(cmd){
     this.currentCmd = ""
   }
 
-  this.displayMsg = function(msg){
-    this.currentCmd = "regex" 
+  this.displayMsg = function(type){
+    this.currentCmd = type
   }
 
 

@@ -65,7 +65,6 @@ function Cursor(canvas) {
 
   this.setOSCmsg  = function(){
     this.cursors[this.active].msg.OSC.msg = seeq.displayer.displayerInput
-    console.log("this.cursors", this.cursors)
   }
   
   /* #region fold */
@@ -191,23 +190,6 @@ function Cursor(canvas) {
     this.active = 0
   }
 
-  // this.find = function (str) {
-  //   const i = canvas.seequencer.s.indexOf(str)
-  //   if (i < 0) { return }
-  //   const pos = canvas.seequencer.posAt(i)
-  //   this.w = str.length
-  //   this.h = 1
-  //   this.x = pos.x
-  //   this.y = pos.y
-  // }
-
-  // this.trigger = function () {
-    // const operator = canvas.seequencer.operatorAt(this.x, this.y)
-    // if (!operator) { console.warn('Cursor', 'Nothing to trigger.'); return }
-    // console.log('Cursor', 'Trigger: ' + operator.name)
-    // operator.run(true)
-  // }
-
   // this.toggleMode = function (val) {
   //   this.w = 1
   //   this.h = 1
@@ -249,6 +231,16 @@ function Cursor(canvas) {
 
   this.getActivePosition = function(){
     return `(${this.cursors[this.active].x},${this.cursors[this.active].y})`
+  }
+
+  this.getSelectionArea = function(r){
+    const area = []
+    for (let _y = r.y; _y < r.y + r.h; _y++) {
+      for (let _x = r.x; _x < r.x + r.w; _x++) {
+        area.push({x: _x, y: _y })
+      }
+    } 
+    return area
   }
 
   this.toRect = function () {
