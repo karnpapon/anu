@@ -29,7 +29,7 @@ function Canvas () {
     f_high: '#FFFFFF',  //almost white
     f_med: '#e6e6e6', // grey
     f_low: '#000000',  //black
-    f_inv: '#FFAE00', // purple-ish
+    f_inv: '#6C00FF', // purple-ish
     b_high: '#eeeeee', //grey-white.
     b_med: '#3EFB00',  // green
     b_low: '#00FFD4', // grey-black
@@ -216,7 +216,6 @@ function Canvas () {
       }
     }
     if (this.isSelection(x, y)) { 
-      // if( !canvas.stepcursor.isTrigger(x,y)){ return 3}
       return 6
     }
 
@@ -317,12 +316,6 @@ function Canvas () {
     const size = { w: window.innerWidth + 0.5, h: window.innerHeight }
     const tiles = { w: Math.ceil(size.w / this.tile.w - 19 ), h: 17 }
 
-    // if (this.seequencer.w === tiles.w && this.seequencer.h === tiles.h && force === false) { return }
-
-    // Limit Tiles to Bounds
-    // const bounds = this.seequencer.bounds()
-    // if (tiles.w <= bounds.w) { tiles.w = bounds.w + 1 }
-    // if (tiles.h <= bounds.h) { tiles.h = bounds.h + 1 }
     this.crop(tiles.w, tiles.h)
 
     // Keep cursor in bounds
@@ -332,7 +325,6 @@ function Canvas () {
     this.el.width = (this.tile.w) * this.seequencer.w * this.scale
     this.el.height = (this.tile.h + 5) * this.seequencer.h * this.scale
     this.el.style.width = `${Math.ceil(this.tile.w * this.seequencer.w)}px`
-    // this.el.style.height = `${Math.ceil((this.tile.h + (this.tile.h / 5)) * this.seequencer.h)}px`
 
     this.context.textBaseline = 'bottom'
     this.context.textAlign = 'center'

@@ -67,6 +67,10 @@ function Commander (canvas) {
 
   this.onKeyDown = function (event) {
 
+    if (event.which == 40 || event.which == 41){
+      event.preventDefault();
+    };
+
     if ((event.key === "Enter") && seeq.console.isInputFocused ) {
       seeq.console.runCmd("content")
       event.preventDefault()
@@ -166,6 +170,13 @@ function Commander (canvas) {
       event.preventDefault(); 
       return 
     }
+
+    // rename cursor.
+    // if (event.keyCode === 82 && (event.metaKey || event.ctrlKey)) { 
+    //   seeq.displayer.displayMsg('helper')
+    //   event.preventDefault(); 
+    //   return 
+    // }
 
     if (event.metaKey) { return }
     if (event.ctrlKey) { return }

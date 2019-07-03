@@ -3,7 +3,7 @@
 function StepCursor(canvas) {
 
   this.steps = [ { x: 0, y: 0, i: 0 } ]
-  this.duration = 0.125;
+  this.duration = 0.25;
   this.opacitySteps = parseInt(60*this.duration);
   this.opacityStep = 0;
   this.offset
@@ -51,13 +51,41 @@ function StepCursor(canvas) {
     })
   }
 
-  this.animate = function(time,el){
-   
+  this.animate2 = function(time, el){
+
     var opacity 
-    opacity = 100 * (this.opacityStep/this.opacitySteps * 0.25);
+    opacity = 100 * (this.opacityStep/this.opacitySteps);
     if(this.opacityStep >= this.opacitySteps-1){ opacity = 100; }
     canvas.context.globalAlpha = ( (100 - opacity)/100 );
 
+    const fgrect = { 
+      x: (el.x + 0.5) * canvas.tile.w * canvas.scale, 
+      y: (el.y + 1) * canvas.tile.h * canvas.scale, 
+    } 
+
+    // start.
+    canvas.context.fillStyle = canvas.theme.active.background
+    canvas.context.fillText(canvas.seequencer.glyphAt(el.x, el.y), fgrect.x, fgrect.y)
+
+    // end.
+    canvas.context.globalAlpha = (opacity) / 100;
+    canvas.context.fillStyle = canvas.theme.active.background
+    canvas.context.fillText(canvas.seequencer.glyphAt(el.x, el.y), fgrect.x, fgrect.y)
+
+    // reset
+    canvas.context.globalAlpha=1.00;
+
+    // return if all steps have been played
+    if(++this.opacityStep >= this.opacitySteps){return;}
+
+    requestAnimationFrame(function(timestamp){ 
+      canvas.stepcursor.animate2(timestamp, el)
+    }) 
+
+  }
+
+  this.animate = function(time,el){
+   
     const bgrect = { 
       x: el.x * canvas.scale * canvas.tile.w,
       y: el.y * canvas.scale * canvas.tile.h,
@@ -67,7 +95,7 @@ function StepCursor(canvas) {
 
     let target  = canvas.cursor.getSelectionArea(el)
     target.forEach( item => {
-      const fgrect = { 
+      let fgrect = { 
         x: (item.x + 0.5) * canvas.tile.w * canvas.scale, 
         y: (item.y + 1) * canvas.tile.h * canvas.scale, 
       }
@@ -77,12 +105,20 @@ function StepCursor(canvas) {
       } else {
         canvas.context.fillStyle = canvas.theme.active.b_med
         canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
+        canvas.context.fillStyle = canvas.theme.active.f_high
+        canvas.context.fillText("*", fgrect.x - 1, fgrect.y - 0.5)
       }
       
     })
+
+    var opacity 
+    opacity = 100 * (this.opacityStep/this.opacitySteps * 0.5);
+    if(this.opacityStep >= this.opacitySteps-1){ opacity = 100; }
+    canvas.context.globalAlpha = ( (100 - opacity)/100 );
+
     
     // end
-    canvas.context.globalAlpha = (opacity) / 100;
+    canvas.context.globalAlpha = (opacity) / 70;
     canvas.context.fillStyle = canvas.theme.active.background
     canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
     canvas.context.strokeRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
@@ -100,13 +136,9 @@ function StepCursor(canvas) {
   this.trigger = function (step) {
     if (this.isTrigger(step.x, step.y)) {
       this.oscOut(step)
-      canvas.cursor.cursors.forEach( value => {
-        if( value.i === step.i ){
-          this.opacityStep = 0;
-          this.animate(null, value)
-        }
-      })
-     
+      let value = canvas.cursor.cursors[step.i]
+      this.opacityStep = 0;
+      this.animate(null, value)
     }
   }
 

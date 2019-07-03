@@ -229,17 +229,21 @@ function Seeq(){
   this.getMatchedPosition = function(){
     var searchFrom = canvas.texts
     let target, search, noBracketTarget
-    var match
+    var match, query
 
     if(this.console.searchType === 'regex'){
-      target = this.console.regexInput
-      try{ 
-        search = new RegExp(target,"gi") //TODO: make this configurable.
-    } catch(e) { console.log("invalid regular expression")}
+      query = this.console.regexInput
+      target = query.replace(/[)(]/g, "\\$&");
+      if(target){
+        try{ search = new RegExp("(" + target + ")","ig")  //TODO: make this configurable.
+      } catch(e) { console.log("invalid regular expression")}
+      }
     } else {
       target = this.console.searchValue
       noBracketTarget = target.replace(/[\])}[{(]/g, ''); 
-      try { search = new RegExp(`(${noBracketTarget})`,"gi") } catch(e) { console.log("invalid value.")}
+      if( noBracketTarget){
+        try { search = new RegExp(`(${noBracketTarget})`,"gi") } catch(e) { console.log("invalid value.")}
+      }
     }
 
     if(search){

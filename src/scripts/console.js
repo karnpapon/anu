@@ -10,7 +10,7 @@ function Console(app) {
         <div class="header-wrapper console-1">
           <div class="header">
             <div data-logo="seeq" class="title">input</div>
-            <input id="content" data-fetch="fetch" placeholder="" class="input-control">
+            <input id="content" data-fetch="fetch" placeholder=""  class="input-control">
           </div>
           <div class="header">
             <div class="title">RegExp:</div>
@@ -30,12 +30,12 @@ function Console(app) {
           <div class="control-panel">
             <div class="title">Control:</div>
             <div class="control-btn">
-              <button data-ctrl="link">link</button>
-              <button data-ctrl="udp">udp</button>
-              <button data-ctrl="osc">osc</button>
-              <button data-ctrl="rev">rev</button>
-              <button data-ctrl="clear">clear</button>
-              <button data-ctrl="nudge">nudge</button>
+              <button data-ctrl="link" tabindex="-1">link</button>
+              <button data-ctrl="udp" tabindex="-1">udp</button>
+              <button data-ctrl="osc" tabindex="-1">osc</button>
+              <button data-ctrl="rev" tabindex="-1">rev</button>
+              <button data-ctrl="clear" tabindex="-1">clear</button>
+              <button data-ctrl="nudge" tabindex="-1">nudge</button>
             </div>
             </div>
           </div>
@@ -68,9 +68,9 @@ function Console(app) {
             </div>
             <div class="counter">
             <div class="control-btn">
-              <button data-ctrl="metronome">*</button>
-              <button data-ctrl="subtract">-</button>
-              <button data-ctrl="add">+</button>
+              <button data-ctrl="metronome" tabindex="-1">*</button>
+              <button data-ctrl="subtract" tabindex="-1">-</button>
+              <button data-ctrl="add" tabindex="-1">+</button>
               </div>
             </div>
           </div> 

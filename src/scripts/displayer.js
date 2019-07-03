@@ -46,8 +46,8 @@ function Displayer(app) {
 
   this.build = function(){
     this.buildWrapper()
-    this.buildOSC()
-    this.buildActiveCursor()
+    this.buildInputDisplay()
+    this.buildGeneralDisplay()
     app.el.appendChild(this.el)
   }
 
@@ -74,6 +74,13 @@ function Displayer(app) {
         target = this.el_general
         target.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
         break;
+      case 'helper':
+        this.isDefaultShowed = false
+        this.isOscShowed = false
+        this.isActivedCursorShowed = true
+        target = this.el_general
+        target.innerText = `cmd (⌘) or ctrl + h = helps.` 
+        break;
       case 'osc':
         this.isDefaultShowed = false
         this.isOscShowed = !this.isOscShowed
@@ -86,7 +93,8 @@ function Displayer(app) {
         this.isOscShowed = false
         this.isActivedCursorShowed = true
         target = this.el_general
-        target.innerHTML = `<div class="displayer-bold">${app.console.regexInput}</div>`
+        let regexToDisplay = app.console.regexInput.replace(/[)(]/g, "\\$&");
+        target.innerHTML = `<div class="displayer-bold">${new RegExp("(" + regexToDisplay + ")","gi")}</div>`
         break;
       case 'input':
         this.isDefaultShowed = false
@@ -118,13 +126,13 @@ function Displayer(app) {
     setTimeout(() => {target.classList.remove("trigger") }, 200);
   }
 
-  this.buildOSC = function () {
+  this.buildInputDisplay = function () {
     this.el_with_input.classList.add("displayer-osc")
     this.el_with_input.innerHTML += this.output
     this.el_elem.appendChild(this.el_with_input)
   }
 
-  this.buildActiveCursor = function () {
+  this.buildGeneralDisplay = function () {
     this.el_general.classList.add("displayer-active-cursor")
     this.el_elem.appendChild(this.el_general)
   }
