@@ -18,9 +18,19 @@ function Displayer(app) {
   this.isDefaultShowed = true
   this.isActivedCursorShowed = false
   this.currentCmd = ""
+
+  this.displayType = "default"
+  this.isDisplayInputToggled = false
+  this.isDisplayFormFocused = false
+  this.displayInputTarget = null
   
   this.oscConf
+  this.renameInput = ""
   this.isOscFocused = false
+
+
+  // Observered Selection.
+  this.observeConfig = { childList: true, subtree: true };
 
   // -------------------------------------------------------
   
@@ -31,17 +41,40 @@ function Displayer(app) {
     <form id="info-osc" class="info-input">
       <lf>
         <p>MSG:</p>
-        <input id="addosc" class="input-osc" type="osc" value="">
+        <input id="addosc" class="displayer-form" type="osc" value="">
       </lf>
     </form>
   `
 
   document.addEventListener("DOMContentLoaded", function () {
     const self = app.displayer
-    self.oscConf = qs("input[type='osc']")
-    self.oscConf.addEventListener("input", function () { self.displayerInput = this.value;})
-    self.oscConf.addEventListener("focus", function () { self.isOscFocused = true })
-    self.oscConf.addEventListener("blur", function () { self.isOscFocused = false })
+
+    var observeCallback = function(mutationsList, observer) {
+      let target = mutationsList[0].target.lastElementChild[0]
+      if(self.displayType === 'form'){
+        target.addEventListener("input", function(){
+          self.displayInputTarget = target
+          if(self.currentCmd === 'osc'){
+            self.oscConf = target.value
+          } else if( self.currentCmd === 'rename-cursor'){
+            self.renameInput = target.value 
+          }
+        })
+  
+        target.addEventListener("focus", function(){
+          self.isDisplayFormFocused = true
+        })
+  
+        target.addEventListener("blur", function(){
+          self.isDisplayFormFocused = false
+        })
+      }
+      
+    };
+      
+    var observer = new MutationObserver(observeCallback); 
+    observer.observe(self.el, self.observeConfig);
+
   })
 
 
@@ -66,74 +99,88 @@ function Displayer(app) {
   this.run = function(){
     let active = canvas.cursor.cursors[canvas.cursor.active]
     let target
+    
 
     switch (this.currentCmd) {
       case 'active-cursor':
-        this.isDefaultShowed = false
-        this.isOscShowed = false
-        this.isActivedCursorShowed = true
-        this.isConsoleInputShowed = false
+        this.displayType = "preview"
         target = this.el_general
         target.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
         break;
       case 'helper':
-        this.isDefaultShowed = false
-        this.isOscShowed = false
-        this.isActivedCursorShowed = false
-        this.isConsoleInputShowed = false
+        this.displayType = "preview"
         target = this.el_general
         target.innerText = `cmd (⌘) or ctrl + h = helps.` 
         break;
       case 'osc':
-        this.isDefaultShowed = false
-        this.isOscShowed = !this.isOscShowed
-        this.isActivedCursorShowed = false
-        this.isConsoleInputShowed = false
+        this.isDisplayInputToggled = !this.isDisplayInputToggled
+        this.displayType = this.isDisplayInputToggled? "form":"default"
         target = this.el_with_input
-        this.oscConf.value = active.msg.OSC.msg
+        target.innerHTML = `
+          <lf class="info-header">OSC |</lf>
+          <form id="info-osc" class="info-input">
+            <lf>
+              <p>MSG:</p>
+              <input id="addosc" class="displayer-form" type="osc" value="${active.msg.OSC.msg}">
+            </lf>
+          </form>
+        `
         break;
       case 'regex':
-        this.isDefaultShowed = false
-        this.isOscShowed = false
-        this.isActivedCursorShowed = true
-        this.isConsoleInputShowed = false
+        this.displayType = "preview"  
         target = this.el_general
         let regexToDisplay = app.console.regexInput.replace(/[)(]/g, "\\$&");
         target.innerHTML = `<div class="displayer-bold">${new RegExp("(" + regexToDisplay + ")","gi")}</div>`
         break;
-      case 'input':
-        this.isDefaultShowed = false
-        this.isOscShowed = false
-        this.isActivedCursorShowed = false
-        this.isConsoleInputShowed = true
+      case 'console':
+        this.displayType = "preview"  
         target = this.el_general
         target.innerHTML = `<div class="displayer-bold">${app.console.fetchSearchInput}</div>`
         break;
+      case 'rename-cursor':
+        this.isDisplayInputToggled = !this.isDisplayInputToggled
+        this.displayType = this.isDisplayInputToggled? "form":"default"
+        target = this.el_with_input
+        target.innerHTML = `
+        <lf class="info-header">CURSOR |</lf>
+        <form id="dp-cs-rename" class="info-input">
+          <lf>
+            <p>name:</p>
+            <input class="displayer-form" type="rename" value="${active.n}">
+          </lf>
+        </form>`
+        break;
       case 'default':
-        this.isDefaultShowed = true
-        this.isActivedCursorShowed = false
-        this.isOscShowed = false
-        this.isConsoleInputShowed = false
+        this.displayType = "default"
         target = this.el_general
         break;
     }
-    
-    if( this.isActivedCursorShowed || this.isOscShowed ){
-      target.classList.add("displayer-show")
-      this.main_text.classList.remove("displayer-show")
-    } else if(this.isConsoleInputShowed) {
-      target.classList.add("displayer-show")
+
+    if( this.displayType === "preview"){
+      this.el_general.classList.add("displayer-show")
       this.el_with_input.classList.remove("displayer-show")
       this.main_text.classList.remove("displayer-show")
-    } else {
-      target.classList.remove("displayer-show")
-      this.el_with_input.classList.remove("displayer-show")
+    } else if ( this.displayType === "form"){
+      this.el_with_input.classList.add("displayer-show")
+      this.el_general.classList.remove("displayer-show")
+      this.main_text.classList.remove("displayer-show")
+    } else if (this.displayType === "default"){
       this.main_text.classList.add("displayer-show")
+      this.el_general.classList.remove("displayer-show")
+      this.el_with_input.classList.remove("displayer-show")
     }
   }
 
-  this.runCmd = function(id){
-    let target = qs(id)
+  this.runCmd = function(){
+    let target = this.displayInputTarget
+    switch (this.currentCmd) {
+      case 'osc':
+        canvas.cursor.setOSCmsg();
+        break;
+      case 'rename-cursor':
+        canvas.cursor.setCursorName();
+        break;
+    }
     target.classList.add("trigger")
     setTimeout(() => {target.classList.remove("trigger") }, 200);
   }

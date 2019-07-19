@@ -160,9 +160,7 @@ function Console(app) {
     // input to get.
     self.inputFetch.addEventListener("input", function () { 
       self.fetchSearchInput = this.value; 
-      if(!seeq.displayer.isOscShowed){
-        seeq.displayer.displayMsg("input")
-      }
+      seeq.displayer.displayMsg("console")
     })
     self.inputFetch.addEventListener("focus", function () { self.isInputFocused = true; self.setFocusStyle(self.inputFetch) })
     self.inputFetch.addEventListener("blur", function () { self.isInputFocused = false; self.removeFocusStyle(self.inputFetch) })

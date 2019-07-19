@@ -661,7 +661,7 @@ div input{
 .show{ display: block;}
 
 .info-header{
-  width: 11%;
+  width: fit-content;
 }
 
 .info-input{ 
@@ -674,7 +674,7 @@ div input{
 
 }
 
-.input-osc{
+.displayer-form{
   border: unset !important;
   width: 100%;
   display: flex;

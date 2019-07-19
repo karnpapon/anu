@@ -64,7 +64,11 @@ function Cursor(canvas) {
   }
 
   this.setOSCmsg  = function(){
-    this.cursors[this.active].msg.OSC.msg = seeq.displayer.displayerInput
+    this.cursors[this.active].msg.OSC.msg = seeq.displayer.oscConf
+  }
+
+  this.setCursorName = function(){
+    this.cursors[this.active].n = seeq.displayer.renameInput 
   }
   
   /* #region fold */
@@ -151,7 +155,7 @@ function Cursor(canvas) {
       msg: {
         MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
         UDP: ["D3C"],
-        OSC:  { path: 'play2', msg: "" }
+        OSC:  { path: 'play2', msg: "bd" }
       }
     }]
   }

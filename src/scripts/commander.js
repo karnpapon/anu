@@ -67,10 +67,13 @@ function Commander(canvas) {
       return;
     }
 
-    if (event.key === "Enter" && seeq.displayer.isOscFocused) {
-      seeq.displayer.runCmd("input[type='osc']");
-      canvas.cursor.setOSCmsg();
-      // send OSC
+    if (event.key === "Enter" && seeq.displayer.isDisplayFormFocused) {
+      seeq.displayer.runCmd();
+      event.preventDefault();
+      return;
+    }
+
+    if (event.key === "Enter") {
       event.preventDefault();
       return;
     }
@@ -141,9 +144,16 @@ function Commander(canvas) {
     }
 
     // switch cursor.
-    if (event.keyCode === 9 && this.altFlag && !seeq.displayer.isOscShowed) {
+    if (event.keyCode === 9 && this.altFlag) {
       this.switchFlag = true;
       this.switchCounter += 1;
+      event.preventDefault();
+      return;
+    }
+
+    // show cursor name.
+    if (event.keyCode === 69 && this.altFlag) {
+      this.switchFlag = true;
       event.preventDefault();
       return;
     }
@@ -156,9 +166,10 @@ function Commander(canvas) {
       return;
     }
 
-    // switch cursor.
-    if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) {
-      canvas.cursor.switch(1);
+
+     // rename cursor's name.
+     if (event.keyCode === 69 && (event.metaKey || event.ctrlKey)) {
+      seeq.displayer.displayMsg("rename-cursor");
       event.preventDefault();
       return;
     }
