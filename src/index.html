@@ -6,7 +6,7 @@
     <script src="../node_modules/socket.io-client/dist/socket.io.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Domine&display=swap" rel="stylesheet">
     <style>
-      ::selection { background: var(--hl-color);}
+      /* ::selection { background: var(--hl-color);} */
       #devtools { display: none; }
     </style>
 
@@ -39,12 +39,24 @@
         window.addEventListener('load', () => { 
           canvas.start(); 
         })
+
+        var unFocus = function () {
+          if (document.selection) {
+            document.selection.empty()
+          } else {
+            window.getSelection().removeAllRanges()
+          }
+        } 
        
         // prevent dblclick selection.
         document.addEventListener('mousedown', function (event) {
           if (event.detail > 1) {
             event.preventDefault();
           }
+        }, false);
+
+        document.addEventListener('mousemove', function (event) {
+          unFocus()
         }, false);
 
         // frameless devtool.

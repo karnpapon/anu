@@ -14,6 +14,7 @@ function Displayer(app) {
   // state.
   this.displayerInput = ""
   this.isOscShowed = false
+  this.isConsoleInputShowed = false
   this.isDefaultShowed = true
   this.isActivedCursorShowed = false
   this.currentCmd = ""
@@ -71,13 +72,15 @@ function Displayer(app) {
         this.isDefaultShowed = false
         this.isOscShowed = false
         this.isActivedCursorShowed = true
+        this.isConsoleInputShowed = false
         target = this.el_general
         target.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
         break;
       case 'helper':
         this.isDefaultShowed = false
         this.isOscShowed = false
-        this.isActivedCursorShowed = true
+        this.isActivedCursorShowed = false
+        this.isConsoleInputShowed = false
         target = this.el_general
         target.innerText = `cmd (⌘) or ctrl + h = helps.` 
         break;
@@ -85,6 +88,7 @@ function Displayer(app) {
         this.isDefaultShowed = false
         this.isOscShowed = !this.isOscShowed
         this.isActivedCursorShowed = false
+        this.isConsoleInputShowed = false
         target = this.el_with_input
         this.oscConf.value = active.msg.OSC.msg
         break;
@@ -92,6 +96,7 @@ function Displayer(app) {
         this.isDefaultShowed = false
         this.isOscShowed = false
         this.isActivedCursorShowed = true
+        this.isConsoleInputShowed = false
         target = this.el_general
         let regexToDisplay = app.console.regexInput.replace(/[)(]/g, "\\$&");
         target.innerHTML = `<div class="displayer-bold">${new RegExp("(" + regexToDisplay + ")","gi")}</div>`
@@ -99,14 +104,16 @@ function Displayer(app) {
       case 'input':
         this.isDefaultShowed = false
         this.isOscShowed = false
-        this.isActivedCursorShowed = true
+        this.isActivedCursorShowed = false
+        this.isConsoleInputShowed = true
         target = this.el_general
         target.innerHTML = `<div class="displayer-bold">${app.console.fetchSearchInput}</div>`
         break;
-      default:
+      case 'default':
         this.isDefaultShowed = true
         this.isActivedCursorShowed = false
         this.isOscShowed = false
+        this.isConsoleInputShowed = false
         target = this.el_general
         break;
     }
@@ -114,8 +121,13 @@ function Displayer(app) {
     if( this.isActivedCursorShowed || this.isOscShowed ){
       target.classList.add("displayer-show")
       this.main_text.classList.remove("displayer-show")
+    } else if(this.isConsoleInputShowed) {
+      target.classList.add("displayer-show")
+      this.el_with_input.classList.remove("displayer-show")
+      this.main_text.classList.remove("displayer-show")
     } else {
       target.classList.remove("displayer-show")
+      this.el_with_input.classList.remove("displayer-show")
       this.main_text.classList.add("displayer-show")
     }
   }
@@ -137,12 +149,14 @@ function Displayer(app) {
     this.el_elem.appendChild(this.el_general)
   }
 
-  this.displayDefault = function(cmd){
-    this.currentCmd = ""
+  this.displayDefault = function(){
+    this.currentCmd = "default"
+    this.run();
   }
 
   this.displayMsg = function(type){
     this.currentCmd = type
+    this.run();
   }
 
 

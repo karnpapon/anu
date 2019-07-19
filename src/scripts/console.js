@@ -157,17 +157,12 @@ function Console(app) {
     self.totalNumber = qs("p[data-ctrl='total']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
 
-    // seeq.textFX = document.getElementsByClassName('textfx')
-
-    // seeq.baffles = baffle('.textfx', {
-    //   characters: ' ░▒█▓█></',
-    //   speed: 50
-    // });
-
     // input to get.
     self.inputFetch.addEventListener("input", function () { 
       self.fetchSearchInput = this.value; 
-      seeq.displayer.displayMsg("input")
+      if(!seeq.displayer.isOscShowed){
+        seeq.displayer.displayMsg("input")
+      }
     })
     self.inputFetch.addEventListener("focus", function () { self.isInputFocused = true; self.setFocusStyle(self.inputFetch) })
     self.inputFetch.addEventListener("blur", function () { self.isInputFocused = false; self.removeFocusStyle(self.inputFetch) })
