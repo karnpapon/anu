@@ -24,10 +24,21 @@ function Displayer(app) {
   this.isDisplayFormFocused = false
   this.displayInputTarget = null
   
-  this.oscConf
+  this.oscConf = {
+    path: "",
+    msg: ""
+  }
+
+  this.midiConf = {
+    note: [], 
+    notelength: [], 
+    velocity: [], 
+    octave: [], 
+    channel: "",
+  }
+
   this.renameInput = ""
   this.isOscFocused = false
-
 
   // Observered Selection.
   this.observeConfig = { childList: true, subtree: true };
@@ -36,7 +47,7 @@ function Displayer(app) {
   
   this.el_with_input = el("div")
   this.el_general = el("div")
-  this.output = `
+  this.input_text_default = `
     <lf class="info-header">OSC |</lf>
     <form id="info-osc" class="info-input">
       <lf>
@@ -48,28 +59,38 @@ function Displayer(app) {
 
   document.addEventListener("DOMContentLoaded", function () {
     const self = app.displayer
-
     var observeCallback = function(mutationsList, observer) {
-      let target = mutationsList[0].target.lastElementChild[0]
-      if(self.displayType === 'form'){
-        target.addEventListener("input", function(){
-          self.displayInputTarget = target
-          if(self.currentCmd === 'osc'){
-            self.oscConf = target.value
-          } else if( self.currentCmd === 'rename-cursor'){
-            self.renameInput = target.value 
+      for(var mutation of mutationsList){
+        if(mutation.target.lastElementChild.nodeName === "FORM"){
+           
+          for( var mut_elem of mutation.target.lastElementChild){
+            let target  = mut_elem
+            target.addEventListener("input", function(){
+              if(self.currentCmd === 'osc'){
+                self.oscConf.path =  target.getAttribute("type") === 'osc-path'? target.value:self.oscConf.path
+                self.oscConf.msg =  target.getAttribute("type") === 'osc'? target.value:self.oscConf.msg
+              } else if( self.currentCmd === 'rename-cursor'){
+                self.renameInput = target.value 
+              } else if( self.currentCmd === 'midi'){
+                self.midiConf.note =  target.getAttribute("type") === 'midi-note'? target.value:self.midiConf.note
+                self.midiConf.notelength =  target.getAttribute("type") === 'midi-notelen'? target.value:self.midiConf.notelength
+                self.midiConf.velocity =  target.getAttribute("type") === 'midi-velo'? target.value:self.midiConf.velocity
+                self.midiConf.channel =  target.getAttribute("id") === 'midi-chan'? target.value:self.midiConf.channel
+              }
+            })
+            
+            target.addEventListener("focus", function(){
+              self.isDisplayFormFocused = true
+              self.displayInputTarget = target
+              self.setFocusStyle(target)
+            })
+            target.addEventListener("blur", function(){
+              self.isDisplayFormFocused = false
+              self.removeFocusStyle(target) 
+            })
           }
-        })
-  
-        target.addEventListener("focus", function(){
-          self.isDisplayFormFocused = true
-        })
-  
-        target.addEventListener("blur", function(){
-          self.isDisplayFormFocused = false
-        })
+        }
       }
-      
     };
       
     var observer = new MutationObserver(observeCallback); 
@@ -98,7 +119,7 @@ function Displayer(app) {
 
   this.run = function(){
     let active = canvas.cursor.cursors[canvas.cursor.active]
-    let target
+    let target, pairedNoteAndOct
     
 
     switch (this.currentCmd) {
@@ -119,10 +140,41 @@ function Displayer(app) {
         target.innerHTML = `
           <lf class="info-header">OSC |</lf>
           <form id="info-osc" class="info-input">
+            <div class="displayer-form-short-wrapper">
+              <p>PATH:</p>
+              <input class="displayer-form-short" type="osc-path" value="${active.msg.OSC.path}">
+            </div>
             <lf>
-              <p>MSG:</p>
-              <input id="addosc" class="displayer-form" type="osc" value="${active.msg.OSC.msg}">
-            </lf>
+            <p>MSG:</p>
+            <input id="addosc" class="displayer-form" type="osc" value="${active.msg.OSC.msg}">
+          </lf>
+          </form>
+        `
+        break;
+      case 'midi':
+        this.isDisplayInputToggled = !this.isDisplayInputToggled
+        this.displayType = this.isDisplayInputToggled? "form":"default"
+        target = this.el_with_input
+        pairedNoteAndOct = this.getPairedNoteAndOct(active)
+        target.innerHTML = `
+          <lf class="info-header">MIDI |</lf>
+          <form id="info-osc" class="info-input">
+            <div class="displayer-form-short-wrapper">
+              <p>N:</p>
+              <input class="displayer-form" placeholder="note" type="midi-note" value="${pairedNoteAndOct}">
+            </div>
+            <div class="displayer-form-short-wrapper">
+              <p>L:</p>
+              <input class="displayer-form-short" placeholder="length" type="midi-notelen" value="${active.msg.MIDI.notelength}">
+            </div>
+            <div class="displayer-form-short-wrapper">
+              <p>V:</p>
+              <input class="displayer-form-short" placeholder="velocity" type="midi-velo" value="${active.msg.MIDI.velocity}">
+            </div>
+            <div class="displayer-form-short-wrapper">
+            <p>C:</p>
+            <input id="midi-chan" class="displayer-form-short" placeholder="channel" type="number" min="0" max="15" value="${active.msg.MIDI.channel}">
+          </div>
           </form>
         `
         break;
@@ -180,14 +232,17 @@ function Displayer(app) {
       case 'rename-cursor':
         canvas.cursor.setCursorName();
         break;
+      case 'midi':
+        canvas.cursor.setMIDImsg();
+        break;
     }
-    target.classList.add("trigger")
-    setTimeout(() => {target.classList.remove("trigger") }, 200);
+    target.classList.add("trigger-input")
+    setTimeout(() => {target.classList.remove("trigger-input")  }, 200);
   }
 
   this.buildInputDisplay = function () {
     this.el_with_input.classList.add("displayer-osc")
-    this.el_with_input.innerHTML += this.output
+    this.el_with_input.innerHTML += this.input_text_default
     this.el_elem.appendChild(this.el_with_input)
   }
 
@@ -204,6 +259,25 @@ function Displayer(app) {
   this.displayMsg = function(type){
     this.currentCmd = type
     this.run();
+  }
+
+  this.setFocusStyle = function(target){
+    target.style.backgroundColor = "#3EFB00" 
+  }
+
+  this.removeFocusStyle = function(target){
+    target.style.backgroundColor = "#FFFFFF"  
+  }
+
+  this.getPairedNoteAndOct = function(target){
+    var notes, noteWithOct = [];
+    
+    for (var i = 0; i < target.msg.MIDI.note.length; i++) {
+      noteWithOct.push(`${ target.msg.MIDI.note[i] }${ target.msg.MIDI.octave[i]}`)
+    }
+    notes = noteWithOct.join()
+
+    return notes
   }
 
 

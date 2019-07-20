@@ -90,30 +90,6 @@ function Seeq(){
     this.metronome.play()
   }
 
-  this.sendOSC = function(osc){
-    let osc_input
-    seeq.keys.infoInputConfig.innerHTML = `
-      <div class="operator-group info"> 
-        <lf class="info-header">OSC |</lf> 
-        <form id="info-osc" class="info-input">
-          <lf> 
-            <p>MSG:</p>
-            <input id="addosc" class="input-osc" type="text" value=${JSON.stringify( osc.msg )}>
-          </lf>
-        </form>
-      </div> 
-      <button type="submit" value="Submit" form="info-osc" class="send-osc">send</button>
-    ` 
-
-    addOsc = $('addosc')
-    addOsc.addEventListener("input", function (e) { osc_input = this.value })
-
-    qs('form.info-input').addEventListener('submit', function (e) {
-      e.preventDefault(); 
-      osc.msg = osc_input
-    })
-  }
-
   this.setOutputMsg = function(outputMsg){
     let addNote, addLength, addVelocity, addChannel,
     note = outputMsg.note? outputMsg.note:"",

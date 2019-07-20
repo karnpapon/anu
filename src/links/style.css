@@ -525,6 +525,8 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 .init-bpm{
   display: block;
 }
+
+
 /* ---------------------- */
 
 /* displayer */
@@ -558,6 +560,35 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
   align-items: center;
   justify-content: center; 
   opacity: 0;
+}
+
+.display-flex{
+  display: flex;
+}
+
+.displayer-form{
+  border: unset !important;
+  width: 100%;
+  display: flex;
+  margin-left: 5px;
+  padding-left: 5px;
+  font-size: var(--osc-msg);
+}
+
+.displayer-form-short{
+  width: 100%;
+  border: unset;
+  padding-left: 5px;
+  font-size: var(--osc-msg);
+}
+
+.displayer-form-short-wrapper{
+  font-family: 'input_sans_condensed_bold';
+  font-size: var(--osc-msg);
+  display: flex;
+  margin-right: 5px;
+  align-items: center;
+  width: 50%;
 }
 
 .displayer-show{ opacity: 1; z-index: 99; }
@@ -661,29 +692,31 @@ div input{
 .show{ display: block;}
 
 .info-header{
-  width: fit-content;
+  /* width: fit-content; */
+  display: flex;
+  padding-left: 20px;
+  flex: 0.37;
 }
 
 .info-input{ 
-  /* width: 100%; */
   min-width: 349px;
   display: flex;
+  padding-right: 20px;
+  flex: 2;
 }
 
 .send-midi{
 
 }
 
-.displayer-form{
-  border: unset !important;
-  width: 100%;
-  display: flex;
-  margin-left: 5px;
-  font-size: var(--osc-msg);
-}
+
 
 .send-osc{
   
+}
+
+.half-width{
+  width: 50%;
 }
 
 span.current-active{ background: black; color: white;}

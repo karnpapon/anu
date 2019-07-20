@@ -7,6 +7,7 @@ function Cursor(canvas) {
   this.cursors = [{ 
     x: 0, y: 0, w: 1, h:1, i: 0, 
     n: `cursor-name-${this.active}`,
+    matched: [],
     msg: {
       MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
       UDP: ["D3C"],
@@ -21,6 +22,7 @@ function Cursor(canvas) {
     active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
     seeq.console.cursorPosition.innerText = `${canvas.cursor.getActivePosition()}`
     canvas.update()
+    console.log("matched", this.cursors)
   }
 
   this.scale = function (x, y) {
@@ -39,6 +41,7 @@ function Cursor(canvas) {
     this.cursors.push({ 
       x: 0, y: 0, w: 10, h:1, i: canvas.globalIdx, 
       n: `cursor-name-${canvas.globalIdx}`,
+      matched: [],
       msg: {
         MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
         UDP: ["D3C"],
@@ -64,81 +67,50 @@ function Cursor(canvas) {
   }
 
   this.setOSCmsg  = function(){
-    this.cursors[this.active].msg.OSC.msg = seeq.displayer.oscConf
+    this.cursors[this.active].msg.OSC = seeq.displayer.oscConf
+  }
+
+  this.setMIDImsg  = function(){
+    let midiMsg = {
+      note: [], 
+      notelength: [], 
+      velocity: [], 
+      octave: [], 
+      channel: "",
+    }
+    let noteAndOct = [], len = [], vel = []
+    let noteOnly = []
+    let octOnly = []
+
+    const { 
+      note, 
+      notelength, 
+      velocity, 
+      channel
+    } = seeq.displayer.midiConf
+
+    noteAndOct = seeq.parser(note, 'note')
+    len = seeq.parser(notelength, 'length')
+    vel = seeq.parser(velocity, 'velocity') 
+
+    noteAndOct.forEach(item => {
+      noteOnly.push(item[0])
+      octOnly.push(parseInt( item[1] ))
+    })
+
+    midiMsg.note = noteOnly
+    midiMsg.octave = octOnly
+    midiMsg.notelength = len 
+    midiMsg.velocity = vel
+    midiMsg.channel = channel
+    
+    this.cursors[this.active].msg.MIDI = midiMsg
   }
 
   this.setCursorName = function(){
     this.cursors[this.active].n = seeq.displayer.renameInput 
   }
   
-  /* #region fold */
-  // this.resize = function (w, h) {
-  //   if (isNaN(w) || isNaN(h)) { return }
-  //   this.w = clamp(parseInt(w), 1, canvas.seequencer.w - this.x)
-  //   this.h = clamp(parseInt(h), 1, canvas.seequencer.h - this.y)
-  //   canvas.update()
-  // }
-
-  // this.drag = function (x, y) {
-  //   if (isNaN(x) || isNaN(y)) { return }
-  //   this.mode = 0
-  //   this.cut()
-  //   this.move(x, y)
-  //   this.paste()
-  // }
-
-  // this.selectAll = function () {
-  //   this.x = 0
-  //   this.y = 0
-  //   this.w = canvas.seequencer.w
-  //   this.h = canvas.seequencer.h
-  //   this.mode = 0
-  //   canvas.update()
-  // }
-
-  // this.copy = function () {
-  //   const block = this.getBlock()
-  //   var rows = []
-  //   for (var i = 0; i < block.length; i++) {
-  //     rows.push(block[i].join(''))
-  //   }
-  //   clipboard.writeText(rows.join('\n'))
-  // }
-
-  // this.cut = function () {
-  //   this.copy()
-  //   this.erase()
-  // }
-
-  // this.paste = function (overlap = false) {
-  //   this.writeBlock(clipboard.readText().split(/\r?\n/), overlap)
-  // }
-
-  // this.rotate = function (rate = 1) {
-  //   if (isNaN(rate)) { return }
-  //   const cols = canvas.cursor.getBlock()
-  //   for (const y in cols) {
-  //     for (const x in cols[y]) {
-  //       const g = cols[y][x]
-  //       if (g === '.') { continue }
-  //       if (canvas.seequencer.isSpecial(g)) { continue }
-  //       cols[y][x] = canvas.seequencer.keyOf(parseInt(rate) + canvas.seequencer.valueOf(g), sense(g))
-  //     }
-  //   }
-  //   canvas.cursor.writeBlock(cols)
-  // }
-
-  // this.comment = function () {
-  //   const block = this.getBlock()
-  //   for (const id in block) {
-  //     block[id][0] = block[id][0] === '#' ? '.' : '#'
-  //     block[id][block[id].length - 1] = block[id][block[id].length - 1] === '#' ? '.' : '#'
-  //   }
-  //   this.writeBlock(block)
-  // }
-
-  /* #endregion*/
-
   this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
     this.moveTo(x, y)
     this.scaleTo(w, h)
@@ -152,6 +124,7 @@ function Cursor(canvas) {
     this.cursors = [{ 
       x: 0, y: 0, w: 1, h:1, i: 0, 
       n: `cursor-name-${this.active}`,
+      matched: [],
       msg: {
         MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
         UDP: ["D3C"],
@@ -177,12 +150,6 @@ function Cursor(canvas) {
     }
   }
 
-  // this.erase = function () {
-  //   this.eraseBlock(this.x, this.y, this.w, this.h)
-  //   if (this.mode === 1) { this.move(-1, 0) }
-  //   canvas.history.record(canvas.seequencer.s)
-  // }
-
   this.erase = function(){
     let filteredCursor, filterStep, filterStepCounter
     filteredCursor = this.cursors.filter( ( cs ) => cs.i !== this.cursors[ this.active ].i)
@@ -194,18 +161,24 @@ function Cursor(canvas) {
     this.active = 0
   }
 
-  // this.toggleMode = function (val) {
-  //   this.w = 1
-  //   this.h = 1
-  //   this.mode = this.mode === 0 ? val : 0
-  // }
+  this.setMatchedPos = function(item){
+    let b = this.getBlock()
+    b.forEach(_item => {
+      if( _item.x === item.x && _item.y === item.y){
+        this.cursors[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
+        ""
+        :
+        this.cursors[_item.i].matched.push(item)
+      } else if (  _item.x !== item.x && _item.y !== item.y ) {
+        this.cursors[_item.i].matched = []
+      }
+    })
+  }
 
-  this.inspect = function (name = true, ports = false) {
-    // if (this.w > 1 || this.h > 1) { return 'multi' }
-    // const port = canvas.portAt(this.x, this.y)
-    // if (port) { return `${port[3]}` }
-    // if (canvas.seequencer.lockAt(this.x, this.y)) { return 'locked' }
-    return 'empty'
+  this.clearMatchedPos = function(){
+    this.cursors.forEach( c => {
+      c.matched = []
+    })
   }
 
   // Block
@@ -216,16 +189,14 @@ function Cursor(canvas) {
     rect.forEach( r => {
       if( r.i === idx && idx ){
         for (let _y = r.y; _y < r.y + r.h; _y++) {
-          const line = []
           for (let _x = r.x; _x < r.x + r.w; _x++) {
             block.push({x: _x, y: _y })
           }
         }
       } else {
         for (let _y = r.y; _y < r.y + r.h; _y++) {
-          const line = []
           for (let _x = r.x; _x < r.x + r.w; _x++) {
-            block.push({x: _x, y: _y })
+            block.push({x: _x, y: _y, i:r.i })
           }
         }
       }
@@ -256,7 +227,6 @@ function Cursor(canvas) {
         w: cs.w, 
         h: cs.h,
         i: cs.i,
-        n: `cursor-name-${this.active}`
       })
     })
 

@@ -73,11 +73,6 @@ function Commander(canvas) {
       return;
     }
 
-    if (event.key === "Enter") {
-      event.preventDefault();
-      return;
-    }
-
     if (
       (event.metaKey || event.ctrlKey) &&
       event.key === "Backspace" &&
@@ -113,6 +108,7 @@ function Commander(canvas) {
       return;
     }
 
+    // get step into cursor range.
     if (event.shiftKey && event.keyCode === 13 && !seeq.console.isInsertable) {
       canvas.stepcounter.range();
       canvas.stepcounter.isSelected = !canvas.stepcounter.isSelected;
@@ -181,6 +177,13 @@ function Commander(canvas) {
       return;
     }
 
+    // MIDI config.
+    if (event.keyCode === 77 && (event.metaKey || event.ctrlKey)) {
+      seeq.displayer.displayMsg("midi");
+      event.preventDefault();
+      return;
+    }
+
     // rename cursor.
     // if (event.keyCode === 82 && (event.metaKey || event.ctrlKey)) {
     //   seeq.displayer.displayMsg('helper')
@@ -195,7 +198,11 @@ function Commander(canvas) {
       return;
     }
 
-    if (event.key === " " && !seeq.console.isInsertable) {
+    if (event.key === "Enter") {
+      return;
+    }
+
+    if (event.key === " " && !seeq.console.isInsertable && !seeq.displayer.isDisplayInputToggled) {
       canvas.clock.togglePlay();
       event.preventDefault();
       return;

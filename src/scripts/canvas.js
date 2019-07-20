@@ -19,7 +19,6 @@ function Canvas () {
   this.clock = new Clock(this)
   this.stepcursor = new StepCursor(this)
   this.stepcounter = new StepCounter(this)
-  // this.io = new IO(this)
 
   this.texts = ""
 
@@ -56,7 +55,6 @@ function Canvas () {
 
   this.start = function () {
     this.theme.start()
-    // this.io.start()
     this.source.start()
     this.clock.start()
     this.writeData()
@@ -65,8 +63,6 @@ function Canvas () {
   }
 
   this.run = function () {
-    // this.io.clear()
-    // this.io.run()
     this.clock.run()
     this.source.run()
     this.seequencer.run()
@@ -112,23 +108,29 @@ function Canvas () {
   }
 
   this.match = function () {
-    this.p.forEach((item, i) => {
-      let g = this.seequencer.glyphAt(item.x, item.y)
-      if (this.seequencer.inBlock(item.x, item.y)) {
-        this.drawSprite(item.x, item.y, g, 0) // trigger background
-        const r = {
-          x: item.x * this.scale * this.tile.w,
-          y: item.y * this.scale * this.tile.h,
-          w: 1 * this.scale * this.tile.w,
-          h: 1 * this.scale * this.tile.h
+    if(this.p.length > 0){
+      this.cursor.clearMatchedPos() 
+      this.p.forEach((item, i) => {
+        let g = this.seequencer.glyphAt(item.x, item.y)
+        if (this.seequencer.inBlock(item.x, item.y)) {
+          this.cursor.setMatchedPos(item)
+          this.drawSprite(item.x, item.y, g, 0) // marked within cursor block.
+          const r = {
+            x: item.x * this.scale * this.tile.w,
+            y: item.y * this.scale * this.tile.h,
+            w: 1 * this.scale * this.tile.w,
+            h: 1 * this.scale * this.tile.h
+          }
+          this.context.lineWidth = 1;
+          this.context.strokeStyle = this.theme.active.background
+          this.context.strokeRect(r.x, r.y, r.w, r.h)
+        } else {
+          this.drawSprite(item.x, item.y, g, 0) //match marked green.
         }
-        this.context.lineWidth = 1;
-        this.context.strokeStyle = this.theme.active.background
-        this.context.strokeRect(r.x, r.y, r.w, r.h)
-      } else {
-        this.drawSprite(item.x, item.y, g, 0) //match marked green.
-      }
-    })
+      })
+    } else {
+      this.cursor.clearMatchedPos() 
+    }
   }
 
   this.eraseSelectionCursor = function(){

@@ -146,6 +146,10 @@ function Seequencer(canvas){
     return  p.some( b => b.x == x && b.y == y)
   }
 
+  this.isContainMatched = function(x,y){
+    return 
+  }
+
   this.isAllowed = function (g) {
     return g === '.' || !!library[`${g}`.toLowerCase()]
   }

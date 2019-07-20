@@ -135,16 +135,25 @@ function StepCursor(canvas) {
 
   this.trigger = function (step) {
     if (this.isTrigger(step.x, step.y)) {
-      this.oscOut(step)
+      this.msgOut(step)
       let value = canvas.cursor.cursors[step.i]
       this.opacityStep = 0;
       this.animate(null, value)
     }
   }
 
-  this.oscOut = function(step){
+  this.msgOut = function(step){
     let target = canvas.cursor.cursors.filter( cs => cs.i === step.i )
+    const {
+      channel,
+      note,
+      notelength,
+      octave,
+      velocity
+    } = target[0].msg.MIDI
+    
     seeq.io.osc.send('/' + target[0].msg.OSC.path, target[0].msg.OSC.msg )
+    seeq.io.midi.send({ channel: parseInt(channel) ,octave, note ,velocity , length: notelength })
     seeq.io.run()
     seeq.io.clear()
   }
