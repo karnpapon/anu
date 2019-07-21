@@ -38,7 +38,6 @@ function Midi(app) {
 
   this.set = function (data = this.stack, device) {
     const channel = convertChannel(data['channel'])
-    console.log("channel", channel)
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity'] > 127 || data['velocity'] < 0 ? 60: data['velocity']
     const length = window.performance.now() + convertLength(data['length'], canvas.clock.speed.value)

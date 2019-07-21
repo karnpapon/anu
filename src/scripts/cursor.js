@@ -9,7 +9,13 @@ function Cursor(canvas) {
     n: `cursor-name-${this.active}`,
     matched: [],
     msg: {
-      MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
+      MIDI: { 
+        note: ["C", "E", "G"], 
+        notelength: [3,4,5], 
+        velocity: [9,10,11], 
+        octave: [2,3,4], 
+        channel: 0 
+      },
       UDP: ["D3C"],
       OSC:  { path: 'play2', msg: "" }
     }
@@ -22,7 +28,6 @@ function Cursor(canvas) {
     active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
     seeq.console.cursorPosition.innerText = `${canvas.cursor.getActivePosition()}`
     canvas.update()
-    console.log("matched", this.cursors)
   }
 
   this.scale = function (x, y) {
@@ -43,7 +48,13 @@ function Cursor(canvas) {
       n: `cursor-name-${canvas.globalIdx}`,
       matched: [],
       msg: {
-        MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
+        MIDI: { 
+          note: ["C", "E", "G"], 
+          notelength: [3,4,5], 
+          velocity: [9,10,11], 
+          octave: [2,3,4], 
+          channel: 0 
+        },
         UDP: ["D3C"],
         OSC:  { path: 'play2', msg: "" }
       }
@@ -126,9 +137,14 @@ function Cursor(canvas) {
       n: `cursor-name-${this.active}`,
       matched: [],
       msg: {
-        MIDI: { note: [], notelength: [], velocity: [], octave: [], channel: "" },
+        MIDI: { 
+          note: ["C", "E", "G"], 
+          notelength: [3,4,5], 
+          velocity: [9,10,11], 
+          octave: [2,3,4], 
+          channel: 0 },
         UDP: ["D3C"],
-        OSC:  { path: 'play2', msg: "bd" }
+        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]" }
       }
     }]
   }
@@ -169,9 +185,7 @@ function Cursor(canvas) {
         ""
         :
         this.cursors[_item.i].matched.push(item)
-      } else if (  _item.x !== item.x && _item.y !== item.y ) {
-        this.cursors[_item.i].matched = []
-      }
+      } 
     })
   }
 

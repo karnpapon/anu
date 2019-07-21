@@ -39,13 +39,14 @@ function Osc (app) {
     if (!this.client) { console.warn('OSC', 'Unavailable client'); return }
     if (!msg) { console.warn('OSC', 'Empty message'); return }
     const oscMsg = new osc.Message(path)
-    var formattedMsg = this.formatter(msg)
-    formattedMsg.forEach(( item, index ) => {
-      Array.isArray(item) ?
-      oscMsg.append(item[this.counter % item.length]):
-      oscMsg.append(item)
-    })
-    this.counter++  // TODO: should reset after submit `send`
+    // var formattedMsg = this.formatter(msg)
+    // formattedMsg.forEach(( item, index ) => {
+    //   Array.isArray(item) ?
+    //   oscMsg.append(item[this.counter % item.length]):
+    //   oscMsg.append(item)
+    // })
+    oscMsg.append(msg.split(" "))
+    // this.counter++  // TODO: should reset after submit `send`
     this.client.send(oscMsg, (err) => {
       if (err) { console.warn(err) }
     })
