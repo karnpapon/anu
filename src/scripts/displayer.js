@@ -30,10 +30,9 @@ function Displayer(app) {
   }
 
   this.midiConf = {
-    note: [], 
-    notelength: [], 
-    velocity: [], 
-    octave: [], 
+    note: "", 
+    notelength: "", 
+    velocity: "", 
     channel: "",
   }
 
@@ -72,10 +71,10 @@ function Displayer(app) {
               } else if( self.currentCmd === 'rename-cursor'){
                 self.renameInput = target.value 
               } else if( self.currentCmd === 'midi'){
-                self.midiConf.note =  target.getAttribute("type") === 'midi-note'? target.value:self.midiConf.note
-                self.midiConf.notelength =  target.getAttribute("type") === 'midi-notelen'? target.value:self.midiConf.notelength
-                self.midiConf.velocity =  target.getAttribute("type") === 'midi-velo'? target.value:self.midiConf.velocity
-                self.midiConf.channel =  target.getAttribute("id") === 'midi-chan'? target.value:self.midiConf.channel
+                self.midiConf.note =  target.getAttribute("type") === 'midi-note'? target.value:""
+                self.midiConf.notelength =  target.getAttribute("type") === 'midi-notelen'? target.value:""
+                self.midiConf.velocity =  target.getAttribute("type") === 'midi-velo'? target.value:""
+                self.midiConf.channel =  target.getAttribute("id") === 'midi-chan'? target.value:""
               }
             })
             
@@ -165,11 +164,11 @@ function Displayer(app) {
             </div>
             <div class="displayer-form-short-wrapper">
               <p>L:</p>
-              <input class="displayer-form-short" placeholder="length" type="midi-notelen" value="${active.msg.MIDI.notelength}">
+              <input class="displayer-form-short" placeholder="length" type="midi-notelen" value="${active.msg.MIDI.notelength.join()}">
             </div>
             <div class="displayer-form-short-wrapper">
               <p>V:</p>
-              <input class="displayer-form-short" placeholder="velocity" type="midi-velo" value="${active.msg.MIDI.velocity}">
+              <input class="displayer-form-short" placeholder="velocity" type="midi-velo" value="${active.msg.MIDI.velocity.join()}">
             </div>
             <div class="displayer-form-short-wrapper">
             <p>C:</p>

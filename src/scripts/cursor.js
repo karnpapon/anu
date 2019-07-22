@@ -82,6 +82,7 @@ function Cursor(canvas) {
   }
 
   this.setMIDImsg  = function(){
+    let active = this.cursors[this.active]
     let midiMsg = {
       note: [], 
       notelength: [], 
@@ -89,16 +90,22 @@ function Cursor(canvas) {
       octave: [], 
       channel: "",
     }
-    let noteAndOct = [], len = [], vel = []
+    let noteAndOct = [], len = "", vel = ""
     let noteOnly = []
     let octOnly = []
 
-    const { 
+    let { 
       note, 
       notelength, 
       velocity, 
       channel
     } = seeq.displayer.midiConf
+
+    // handle separately eval msg.
+    note = note === ""?   seeq.displayer.getPairedNoteAndOct(active):note
+    notelength = notelength ===""? active.msg.MIDI.notelength.join():notelength
+    velocity = velocity === ""? active.msg.MIDI.velocity.join():velocity
+    channel = channel === ""? active.msg.MIDI.channel:channel
 
     noteAndOct = seeq.parser(note, 'note')
     len = seeq.parser(notelength, 'length')
