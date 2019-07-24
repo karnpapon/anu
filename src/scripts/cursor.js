@@ -16,7 +16,7 @@ function Cursor(canvas) {
         octave: [2,3,4], 
         channel: 0 
       },
-      UDP: ["D3C"],
+      UDP: [],
       OSC:  { path: 'play2', msg: "" }
     }
   }]
@@ -55,7 +55,7 @@ function Cursor(canvas) {
           octave: [2,3,4], 
           channel: 0 
         },
-        UDP: ["D3C"],
+        UDP: [],
         OSC:  { path: 'play2', msg: "" }
       }
     }) 
@@ -105,7 +105,7 @@ function Cursor(canvas) {
     note = note === ""?   seeq.displayer.getPairedNoteAndOct(active):note
     notelength = notelength ===""? active.msg.MIDI.notelength.join():notelength
     velocity = velocity === ""? active.msg.MIDI.velocity.join():velocity
-    channel = channel === ""? active.msg.MIDI.channel:channel
+    channel = channel === ""? active.msg.MIDI.channel:channel > 15?  active.msg.MIDI.channel:channel
 
     noteAndOct = seeq.parser(note, 'note')
     len = seeq.parser(notelength, 'length')
@@ -121,8 +121,31 @@ function Cursor(canvas) {
     midiMsg.notelength = len 
     midiMsg.velocity = vel
     midiMsg.channel = channel
-    
+
+    this.setUDPmsg(midiMsg)
     this.cursors[this.active].msg.MIDI = midiMsg
+  }
+
+  this.setUDPmsg = function(msg){
+    this.cursors[this.active].msg.UDP = []
+    let convertTarget = JSON.parse(JSON.stringify(msg));
+    let udpNote = []
+    let udpLength = []
+    let udpVelocity = []
+    let udpMsg = []
+    let convertedChan = seeq.getUdpValue(parseInt(convertTarget.channel))
+
+    for (var i = 0; i < msg.note.length; i++) {
+      udpLength.push(seeq.getUdpValue(parseInt(convertTarget.notelength[i % msg.note.length])))
+      udpNote.push(seeq.getUdpNote(convertTarget.note[i]))
+      udpVelocity.push(seeq.getUDPvalFrom127(parseInt(convertTarget.velocity[i % msg.note.length])))
+    }
+
+    for(var i = 0; i< msg.note.length; i++){
+      udpMsg.push(`${convertedChan}${convertTarget.octave[i]}${udpNote[i]}${udpVelocity[i]}${udpLength[i]}` )
+    }
+
+    this.cursors[this.active].msg.UDP = udpMsg
   }
 
   this.setCursorName = function(){
@@ -150,7 +173,7 @@ function Cursor(canvas) {
           velocity: [9,10,11], 
           octave: [2,3,4], 
           channel: 0 },
-        UDP: ["D3C"],
+        UDP: [],
         OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]" }
       }
     }]

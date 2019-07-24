@@ -68,6 +68,7 @@ function Canvas () {
     this.seequencer.run()
     this.stepcounter.run()
     this.update()
+    this.stepcursor.run()
   }
   
   this.update = function () {
@@ -75,7 +76,6 @@ function Canvas () {
     this.clear()
     this.drawProgram()
     this.match()
-    this.stepcursor.run()
     this.drawStroke(this.cursor)
   }
 

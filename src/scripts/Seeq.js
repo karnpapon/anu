@@ -90,117 +90,117 @@ function Seeq(){
     this.metronome.play()
   }
 
-  this.setOutputMsg = function(outputMsg){
-    let addNote, addLength, addVelocity, addChannel,
-    note = outputMsg.note? outputMsg.note:"",
-    octave = outputMsg.octave? outputMsg.octave:"",
-    length = outputMsg.notelength? outputMsg.notelength:"",
-    velocity = outputMsg.velocity? outputMsg.velocity:"",
-    ch = outputMsg.channel? outputMsg.channel:""
+  // this.setOutputMsg = function(outputMsg){
+  //   let addNote, addLength, addVelocity, addChannel,
+  //   note = outputMsg.note? outputMsg.note:"",
+  //   octave = outputMsg.octave? outputMsg.octave:"",
+  //   length = outputMsg.notelength? outputMsg.notelength:"",
+  //   velocity = outputMsg.velocity? outputMsg.velocity:"",
+  //   ch = outputMsg.channel? outputMsg.channel:""
 
-    var noteWithOct = [];
+  //   var noteWithOct = [];
     
-    for (var i = 0; i < note.length; i++) {
-      noteWithOct.push(`${ note[i] }${ octave[i]}`)
-    }
+  //   for (var i = 0; i < note.length; i++) {
+  //     noteWithOct.push(`${ note[i] }${ octave[i]}`)
+  //   }
 
-    let notes = noteWithOct.join()
-    let lengths = length.join()
-    let velocities = velocity.join()
+  //   let notes = noteWithOct.join()
+  //   let lengths = length.join()
+  //   let velocities = velocity.join()
 
-    seeq.keys.infoInputConfig.innerHTML = `
-      <div class="operator-group info"> 
-        <lf class="info-header">MIDI |</lf> 
-        <form id="info" class="info-input">
-          <lf> 
-            <p>NTE:</p>
-            <input id="addnote" class="input-note" type="text" value=${notes}>
-          </lf>
-          <lf> 
-            <p>LEN:</p>
-            <input id="addlength" class="input-note" type="text" value=${lengths}>
-          </lf>
-          <lf> 
-            <p>VEL:</p>
-            <input id="addvelocity" class="input-note" type="text" value=${velocities}>
-          </lf>
-          <lf> 
-            <p>CHN:</p>
-            <input id="addchannel" class="input-note" type="text" value=${ch}>
-          </lf>
-        </form>
-      </div> 
-      <button type="submit" value="Submit" form="info" class="send-midi">send</button>
-    `
-    addNote = $('addnote')
-    addLength = $('addlength')
-    addVelocity = $('addvelocity')
-    addChannel = $('addchannel')
+  //   seeq.keys.infoInputConfig.innerHTML = `
+  //     <div class="operator-group info"> 
+  //       <lf class="info-header">MIDI |</lf> 
+  //       <form id="info" class="info-input">
+  //         <lf> 
+  //           <p>NTE:</p>
+  //           <input id="addnote" class="input-note" type="text" value=${notes}>
+  //         </lf>
+  //         <lf> 
+  //           <p>LEN:</p>
+  //           <input id="addlength" class="input-note" type="text" value=${lengths}>
+  //         </lf>
+  //         <lf> 
+  //           <p>VEL:</p>
+  //           <input id="addvelocity" class="input-note" type="text" value=${velocities}>
+  //         </lf>
+  //         <lf> 
+  //           <p>CHN:</p>
+  //           <input id="addchannel" class="input-note" type="text" value=${ch}>
+  //         </lf>
+  //       </form>
+  //     </div> 
+  //     <button type="submit" value="Submit" form="info" class="send-midi">send</button>
+  //   `
+  //   addNote = $('addnote')
+  //   addLength = $('addlength')
+  //   addVelocity = $('addvelocity')
+  //   addChannel = $('addchannel')
     
-    addNote.addEventListener("input", function (e) { notes = this.value })
-    addLength.addEventListener("input", function (e) { lengths = this.value })
-    addVelocity.addEventListener("input", function (e) { velocities = this.value })
-    addChannel.addEventListener("input", function(e){ ch = this.value })
+  //   addNote.addEventListener("input", function (e) { notes = this.value })
+  //   addLength.addEventListener("input", function (e) { lengths = this.value })
+  //   addVelocity.addEventListener("input", function (e) { velocities = this.value })
+  //   addChannel.addEventListener("input", function(e){ ch = this.value })
 
-    qs('form.info-input').addEventListener('submit', function (e) {
+  //   qs('form.info-input').addEventListener('submit', function (e) {
 
-      e.preventDefault();
+  //     e.preventDefault();
 
-      // -----------------------------------------------
-      // data transformation section--------------------
+  //     // -----------------------------------------------
+  //     // data transformation section--------------------
 
-      let noteAndOct = [], len = [], vel = []
+  //     let noteAndOct = [], len = [], vel = []
 
-      noteAndOct = seeq.parser(notes, 'note')
-      len = seeq.parser(lengths, 'length')
-      vel = seeq.parser(velocities, 'velocity') 
+  //     noteAndOct = seeq.parser(notes, 'note')
+  //     len = seeq.parser(lengths, 'length')
+  //     vel = seeq.parser(velocities, 'velocity') 
 
-      let noteOnly = []
-      let octOnly = []
+  //     let noteOnly = []
+  //     let octOnly = []
 
-      noteAndOct.forEach(item => {
-        noteOnly.push(item[0])
-        octOnly.push(parseInt( item[1] ))
-      })
+  //     noteAndOct.forEach(item => {
+  //       noteOnly.push(item[0])
+  //       octOnly.push(parseInt( item[1] ))
+  //     })
 
-      // -----------------------------------------------
-      // MIDI section-----------------------------------
+  //     // -----------------------------------------------
+  //     // MIDI section-----------------------------------
 
-      outputMsg.note = noteOnly
-      outputMsg.octave = octOnly
-      outputMsg.notelength = len 
-      outputMsg.velocity = vel
-      outputMsg.channel = ch
+  //     outputMsg.note = noteOnly
+  //     outputMsg.octave = octOnly
+  //     outputMsg.notelength = len 
+  //     outputMsg.velocity = vel
+  //     outputMsg.channel = ch
 
-      // -----------------------------------------------
-      // UDP section------------------------------------
+  //     // -----------------------------------------------
+  //     // UDP section------------------------------------
 
-      let convertedChan = seeq.getUdpValue(parseInt(ch))
+  //     let convertedChan = seeq.getUdpValue(parseInt(ch))
 
-      let udpNote = []
-      let udpLength = []
-      let udpVelocity = []
-      outputMsg.UDP = [] //clear first.
+  //     let udpNote = []
+  //     let udpLength = []
+  //     let udpVelocity = []
+  //     outputMsg.UDP = [] //clear first.
 
-      for (var i = 0; i < noteOnly.length; i++) {
-        udpLength.push(seeq.getUdpValue(parseInt(len[i])))
-        udpNote.push(seeq.getUdpNote(noteOnly[i]))
-        udpVelocity.push(seeq.getUDPvalFrom127(parseInt(vel[i])))
-      }
+  //     for (var i = 0; i < noteOnly.length; i++) {
+  //       udpLength.push(seeq.getUdpValue(parseInt(len[i])))
+  //       udpNote.push(seeq.getUdpNote(noteOnly[i]))
+  //       udpVelocity.push(seeq.getUDPvalFrom127(parseInt(vel[i])))
+  //     }
 
-      for(var i = 0; i< noteOnly.length; i++){
-        outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${udpNote[i]}${udpVelocity[i]}${udpLength[i]}` )
-      }
+  //     for(var i = 0; i< noteOnly.length; i++){
+  //       outputMsg.UDP.push(`${convertedChan}${octOnly[i]}${udpNote[i]}${udpVelocity[i]}${udpLength[i]}` )
+  //     }
 
-      console.log("UDP msg", outputMsg.UDP)
+  //     console.log("UDP msg", outputMsg.UDP)
 
-      // -----------------------------------------------
+  //     // -----------------------------------------------
 
-      seeq.triggerCursor['counter'] = 0
-    })
+  //     seeq.triggerCursor['counter'] = 0
+  //   })
 
-    // return outputMsg
-  }
+  //   // return outputMsg
+  // }
 
   this.getMatchedPosition = function(){
     var searchFrom = canvas.texts
@@ -294,10 +294,6 @@ function Seeq(){
     });
   }
 
-  // this.textBaffleFX = function(){
-  //   seeq.baffles.reveal(1000);
-  // }
-
   this.splitArrayNoteAndOctave = function(inputText) {
     var output = [];
     var arr = inputText.split(',');
@@ -366,7 +362,7 @@ function Seeq(){
     } else if ( val < 9 && val > (-1) ) {
       conversion = val
     } else {
-      conversion = 'D' //fallback.
+      conversion = 'f' //fallback.
     }
     return conversion
   }

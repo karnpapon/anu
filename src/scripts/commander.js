@@ -242,8 +242,7 @@ function Commander(canvas) {
       }
     }
 
-    
-    canvas.update();
+    // canvas.update();
   };
 
   this.onArrowUp = function(mod = false, skip = false) {
