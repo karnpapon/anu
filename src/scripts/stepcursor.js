@@ -218,9 +218,16 @@ function StepCursor(canvas) {
     // TODO: not hardcoded!
     // var osc_msg = `${formattedOSC[0]} ${formattedOSC[1][oscIndex1]} ${formattedOSC[2]} ${formattedOSC[3][oscIndex2]}`
 
-    // seeq.io.osc.send('/' + target[0].msg.OSC.path, osc_msg )
-    // console.log("target[0].msg.UDP[midiIndex]", target[0].msg.UDP[midiIndex])
-    seeq.io.udp.send( target[0].msg.UDP[midiIndex])
+    if(seeq.console.isOSCToggled){
+      // seeq.io.osc.send('/' + target[0].msg.OSC.path, osc_msg )
+      console.log("OSC toggled")
+    }
+
+    if(seeq.console.isUDPToggled){
+      // seeq.io.udp.send( target[0].msg.UDP[midiIndex])
+      console.log("UDP toggled")
+    }
+
     seeq.io.midi.send({ 
       channel: parseInt(channel) ,
       octave: octave[midiIndex], 

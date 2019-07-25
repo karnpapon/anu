@@ -162,6 +162,32 @@ function Commander(canvas) {
       return;
     }
 
+    // console operation.
+    if (event.keyCode === 49 && (event.metaKey || event.ctrlKey)) {
+      // seeq.console.togglePort('OSC', seeq.console.oscBtn)
+      event.preventDefault();
+      return;
+    }
+
+    // console operation.
+    if (event.keyCode === 51 && (event.metaKey || event.ctrlKey)) {
+      seeq.console.togglePort('OSC', seeq.console.oscBtn)
+      event.preventDefault();
+      return;
+    }
+
+    if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) {
+      seeq.console.togglePort('UDP', seeq.console.udpBtn)
+      event.preventDefault();
+      return;
+    }
+
+    if (event.keyCode === 52 && (event.metaKey || event.ctrlKey)) {
+      seeq.console.togglePort('REV', seeq.console.revBtn)
+      event.preventDefault();
+      return;
+    }
+
 
      // rename cursor's name.
      if (event.keyCode === 69 && (event.metaKey || event.ctrlKey)) {

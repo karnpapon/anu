@@ -62,7 +62,7 @@ function Console(app) {
               <div class="performance-details">
                 <p class="init-bpm" data-ctrl="bpm">120</p>
                 <p data-ctrl="current">16th</p> 
-                <p data-ctrl="total">--</p>
+                <p data-ctrl="crsrlen">--</p>
                 <p data-ctrl="crsrpos">--</p>
               </div>
             </div>
@@ -107,7 +107,7 @@ function Console(app) {
   this.bpmNumber
   this.metronomeBtn
   this.currentNumber
-  this.totalNumber
+  this.cursorLength
   this.cursorPosition
   this.isInfoToggleOpened = false
 
@@ -154,7 +154,7 @@ function Console(app) {
     self.bpmNumber = qs("p[data-ctrl='bpm']")
     self.metronomeBtn = qs("button[data-ctrl='metronome']")
     self.currentNumber = qs("p[data-ctrl='current']")
-    self.totalNumber = qs("p[data-ctrl='total']")
+    self.cursorLength = qs("p[data-ctrl='crsrlen']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
 
     // input to get.
@@ -249,13 +249,11 @@ function Console(app) {
     })
 
     self.udpBtn.addEventListener("click", function () {
-      self.isUDPToggled = !self.isUDPToggled
-      this.classList.toggle("toggle-btn")
+      self.togglePort('UDP', this)
     })
 
     self.oscBtn.addEventListener("click", function () {
-      self.isOSCToggled = !self.isOSCToggled
-      this.classList.toggle("toggle-btn")
+      self.togglePort('OSC', this)
     })
 
     self.clearBtn.addEventListener("click", function () {
@@ -275,14 +273,7 @@ function Console(app) {
     })
 
     self.revBtn.addEventListener("click", function () {
-      self.isReverse = !self.isReverse
-
-      if (self.isReverse) {
-        // refresh position avoiding messed up trigger.
-        app.findMatchedPosition()
-      } else {
-        app.play()
-      }
+      self.togglePort('REV', this)
     })
   });
 
@@ -306,7 +297,7 @@ function Console(app) {
   }
 
   this.setTotalLenghtCounterDisplay = function () {
-    this.totalNumber.innerHTML = canvas.texts.length
+    this.cursorLength.innerHTML = canvas.texts.length
   }
 
   this.toggleInsert = function () {
@@ -337,6 +328,17 @@ function Console(app) {
       target.classList.remove("trigger-input") 
     }, 200);
   
+  }
+
+  this.togglePort = function(type, bind){
+    if(type === 'UDP'){
+      this.isUDPToggled = !this.isUDPToggled
+    } else if ( type === 'OSC'){
+      this.isOSCToggled = !this.isOSCToggled 
+    } else if ( type === 'REV'){
+      this.isReverse = !this.isReverse
+    }
+    bind.classList.toggle("toggle-btn")
   }
 
   this.setFocusStyle = function(target){

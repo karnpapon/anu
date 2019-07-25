@@ -19,32 +19,64 @@ function StepCounter(canvas){
   }
 
   this.increment = function (c) {
-    c.x++
-    if (!this.isSelected) {
-      if (c.x % canvas.seequencer.w === 0 ) {
-        c.x = 0
-        if(c.y % ( canvas.seequencer.h - 1 ) === 0){
-          c.y = 0
+    if( !seeq.console.isReverse){
+      c.x++
+      if (!this.isSelected) {
+        if (c.x > canvas.seequencer.w) {
+          if(c.y === canvas.seequencer.h - 1){
+            c.y = 0
+            c.x = 0
+          } else {
+            c.x = 0
+            c.y++
+          }
         } 
-        c.y++
-      } 
-    } else { // range cursor.
-      canvas.cursor.cursors.forEach( value => {
-        if( value.i === c.i){
-          if (
-            c.x > (value.x + value.w - 1) || 
-            c.y > (value.y + value.h) || 
-            value.x > c.x || 
-            value.y > c.y
-          ) {
-            c.x = value.x
-            c.y = value.h > 1 ? value.y + c.counter % value.h : value.y
-            c.counter++
+      } else { 
+        canvas.cursor.cursors.forEach( value => {
+          if( value.i === c.i){
+            if (
+              c.x > (value.x + value.w - 1) || 
+              c.y > (value.y + value.h) || 
+              value.x > c.x || 
+              value.y > c.y
+            ) {
+              c.x = value.x
+              c.y = value.h > 1 ? value.y + c.counter % value.h : value.y
+              c.counter++
+            }
+          }
+        })
+      }
+    } 
+    else {
+      c.x--
+      if (!this.isSelected) {
+        if (c.x < 0) {
+          if(c.y === 0){
+            c.x = canvas.seequencer.w
+            c.y = canvas.seequencer.h - 1
+          } else {
+            c.x = canvas.seequencer.w
+            c.y--
           }
         }
-      })
+      } else { 
+        canvas.cursor.cursors.forEach( value => {
+          if( value.i === c.i){
+            if (c.x < value.x) {
+              if(c.y === value.y){
+                c.x = value.x + value.w - 1
+                c.y =  value.y + value.h - 1
+              } else {
+                c.x = value.x + value.w - 1
+                c.y--
+              }
+
+            }
+          }
+        })
+      }
     }
-    
   }
 
   this.range = function () {

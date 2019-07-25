@@ -35,6 +35,7 @@ function Cursor(canvas) {
     if (isNaN(x) || isNaN(y)) { return }
     active.w = clamp(active.w + parseInt(x), 1, canvas.seequencer.w - active.x)
     active.h = clamp(active.h - parseInt(y), 1, canvas.seequencer.h - active.y)
+    seeq.console.cursorLength.innerText = `${canvas.cursor.getStepLength()}`
     canvas.update()
   }
 
@@ -250,6 +251,10 @@ function Cursor(canvas) {
 
   this.getActivePosition = function(){
     return `(${this.cursors[this.active].x},${this.cursors[this.active].y})`
+  }
+
+  this.getStepLength = function(){
+    return `${this.cursors[this.active].w}`
   }
 
   this.getSelectionArea = function(r){
