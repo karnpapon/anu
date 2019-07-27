@@ -78,6 +78,18 @@ function Cursor(canvas) {
     canvas.update()
   }
 
+  this.getOverlapPosition = function(){
+    let block = this.getBlock()
+    var result = Object.values(block.reduce((c, v) => {
+      let k = v.x + '-' + v.y;
+      c[k] = c[k] || [];
+      c[k].push(v);
+      return c;
+    }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
+
+    return result
+  }
+
   this.setOSCmsg  = function(){
     this.cursors[this.active].msg.OSC = seeq.displayer.oscConf
   }
@@ -254,7 +266,7 @@ function Cursor(canvas) {
   }
 
   this.getStepLength = function(){
-    return `${this.cursors[this.active].w}`
+    return `${this.cursors[this.active].w}, ${this.cursors[this.active].h}`
   }
 
   this.getSelectionArea = function(r){

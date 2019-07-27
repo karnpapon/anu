@@ -186,9 +186,9 @@ function Seequencer(canvas){
     return this.locks[this.indexAt(x, y)] === true
   }
 
-  this.valueIn = function (key) {
-    return this.variables[key]
-  }
+  // this.valueIn = function (key) {
+  //   return this.variables[key]
+  // }
 
 
   // Tools

@@ -27,7 +27,7 @@ function Canvas () {
     background: '#000000', //black
     f_high: '#FFFFFF',  //almost white
     f_med: '#e6e6e6', // grey
-    f_low: '#000000',  //black
+    f_low: '#40A021',  //black
     f_inv: '#6C00FF', // purple-ish
     b_high: '#eeeeee', //grey-white.
     b_med: '#3EFB00',  // green
@@ -76,7 +76,7 @@ function Canvas () {
     this.clear()
     this.drawProgram()
     this.match()
-    this.drawStroke(this.cursor)
+    // this.drawStroke(this.cursor)
   }
 
   this.reset = function () {
@@ -115,15 +115,15 @@ function Canvas () {
         if (this.seequencer.inBlock(item.x, item.y)) {
           this.cursor.setMatchedPos(item)
           this.drawSprite(item.x, item.y, g, 0) // marked within cursor block.
-          const r = {
-            x: item.x * this.scale * this.tile.w,
-            y: item.y * this.scale * this.tile.h,
-            w: 1 * this.scale * this.tile.w,
-            h: 1 * this.scale * this.tile.h
-          }
-          this.context.lineWidth = 1;
-          this.context.strokeStyle = this.theme.active.background
-          this.context.strokeRect(r.x, r.y, r.w, r.h)
+          // const r = {
+          //   x: item.x * this.scale * this.tile.w,
+          //   y: item.y * this.scale * this.tile.h,
+          //   w: 1 * this.scale * this.tile.w,
+          //   h: 1 * this.scale * this.tile.h
+          // }
+          // this.context.lineWidth = 1;
+          // this.context.strokeStyle = this.theme.active.background
+          // this.context.strokeRect(r.x - 0.5, r.y - 0.5, r.w, r.h)
         } else {
           this.drawSprite(item.x, item.y, g, 0) //match marked green.
         }
@@ -154,6 +154,11 @@ function Canvas () {
     return !!( this.cursor.cursors.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
 
+  this.isSelectionOverlap = function(x,y){
+    let bufferPos = this.cursor.getOverlapPosition()
+    return bufferPos.some( b => b.x === x && b.y === y)
+  }
+
   this.isMarker = function (x, y) {
     return x % this.grid.w === 0 && y % this.grid.h === 0
   }
@@ -165,14 +170,6 @@ function Canvas () {
   this.isSelectionTrigged = function(x,y){
     return this.getCurrentCursor()
   }
-
-  // this.isNear = function (x, y) {
-  //   return x > (parseInt(this.cursor.x / this.grid.w) * this.grid.w) - 1 && x <= ((1 + parseInt(this.cursor.x / this.grid.w)) * this.grid.w) && y > (parseInt(this.cursor.y / this.grid.h) * this.grid.h) - 1 && y <= ((1 + parseInt(this.cursor.y / this.grid.h)) * this.grid.h)
-  // }
-
-  // this.isAligned = function (x, y) {
-  //   return x === this.cursor.x || y === this.cursor.y
-  // }
 
   this.isEdge = function (x, y) {
     return x === 0 || y === 0 || x === this.seequencer.w - 1 || y === this.seequencer.h - 1
@@ -189,10 +186,6 @@ function Canvas () {
   this.isSelectionAtEdgeBottom = function(cursor){
     return ( cursor.y + cursor.h ) - 1  === this.seequencer.h - 1
   }
-
-  // this.isLocals = function (x, y) {
-  //   return this.isNear(x, y) === true && (x % (this.grid.w / 4) === 0 && y % (this.grid.h / 4) === 0) === true
-  // }
 
   // Interface
 
@@ -217,9 +210,15 @@ function Canvas () {
         return 10 
       }
     }
-    if (this.isSelection(x, y)) { 
-      return 6
+  
+    if (this.isSelection(x, y)) {
+      if (this.isSelectionOverlap(x,y)){
+        return 1
+      } else {
+        return 6
+      }
     }
+
 
     return 9
   }
@@ -228,7 +227,7 @@ function Canvas () {
     // match.
     if (type === 0) { return { bg: this.theme.active.b_med, fg: this.theme.active.background } }
     // _
-    if (type === 1) { return { bg: this.theme.active.f_high, fg: this.theme.active.f_low  } }
+    if (type === 1) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_inv  } }
     // _
     if (type === 2) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_high } }
     // step cursor
@@ -238,7 +237,7 @@ function Canvas () {
     // Mark Step inverse.
     if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
     // cursor selection scope.
-    if (type === 6) { return { fg: this.theme.active.b_inv } }
+    if (type === 6) { return { fg: this.theme.active.b_inv, bg: this.theme.active.b_med } }
     // current cursor.
     if (type === 7) { return { fg: this.theme.active.background} }
     // Block select.
@@ -246,7 +245,7 @@ function Canvas () {
     // Black.
     if (type === 10) { return { bg: this.theme.active.background, fg: this.theme.active.f_high } }
     // Default
-    return { fg: this.theme.active.f_low }
+    return { fg: this.theme.active.background }
   }
 
   // Canvas
@@ -276,9 +275,9 @@ function Canvas () {
         w: rect.w * this.scale * this.tile.w,
         h: rect.h * this.scale * this.tile.h
       }
-      this.context.lineWidth = 1.25;
+      this.context.lineWidth = 1;
       this.context.strokeStyle = this.theme.active.background
-      this.context.strokeRect(r.x + 0.25, r.y + 0.25, r.w - 0.25, r.h - 0.25)
+      this.context.strokeRect(r.x + 0.5, r.y + 0.5, r.w, r.h)
     })
   }
 
@@ -316,7 +315,7 @@ function Canvas () {
 
   this.resize = function (force = false) {
     const size = { w: window.innerWidth + 0.5, h: window.innerHeight }
-    const tiles = { w: Math.ceil(size.w / this.tile.w - 19 ), h: 17 }
+    const tiles = { w: Math.ceil(( size.w) / this.tile.w - 19 ), h: 17 }
 
     this.crop(tiles.w, tiles.h)
 
@@ -330,7 +329,7 @@ function Canvas () {
 
     this.context.textBaseline = 'bottom'
     this.context.textAlign = 'center'
-    this.context.font = `${this.tile.h * 0.75 * this.scale}px input_mono_regular` //TODO: make this configurable or generative based on particular articles.
+    this.context.font = `${this.tile.h * 0.75 * this.scale}px input_mono_regular` 
 
     this.update()
   }
