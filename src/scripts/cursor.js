@@ -7,6 +7,7 @@ function Cursor(canvas) {
   this.cursors = [{ 
     x: 0, y: 0, w: 1, h:1, i: 0, 
     n: `cursor-name-${this.active}`,
+    isOverlap: false,
     matched: [],
     msg: {
       MIDI: { 
@@ -86,7 +87,6 @@ function Cursor(canvas) {
       c[k].push(v);
       return c;
     }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
-
     return result
   }
 

@@ -1,6 +1,7 @@
 function StepCounter(canvas){
   this.isSelected = false
   this.counter = [{ x: 0, y: 0, counter: 0, i: 0}]
+  this.randomNumber = [ -1, -1, 1,0,2]
 
   this.reset = function(){
     this.isSelected = false
@@ -19,6 +20,7 @@ function StepCounter(canvas){
   }
 
   this.increment = function (c) {
+    let rand
     if( !seeq.console.isReverse){
       c.x++
       if (!this.isSelected) {
@@ -34,16 +36,23 @@ function StepCounter(canvas){
       } else { 
         canvas.cursor.cursors.forEach( value => {
           if( value.i === c.i){
-            if (
-              c.x > (value.x + value.w - 1) || 
-              c.y > (value.y + value.h) || 
-              value.x > c.x || 
-              value.y > c.y
-            ) {
-              c.x = value.x
-              c.y = value.h > 1 ? value.y + c.counter % value.h : value.y
-              c.counter++
+            c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)? true:false
+            if(!c.isOverlap){
+              if (
+                c.x > (value.x + value.w - 1) || 
+                c.y > (value.y + value.h) || 
+                value.x > c.x || 
+                value.y > c.y
+              ) {
+                c.x = value.x 
+                c.y = value.h > 1 ? value.y + c.counter % value.h : value.y
+                c.counter++
+              }
+            } else {
+              rand = canvas.bufferPos[Math.floor(Math.random() * canvas.bufferPos.length)].x
+              c.x = rand < value.x || rand > value.x + value.w - 1 ? c.x++:rand
             }
+
           }
         })
       }

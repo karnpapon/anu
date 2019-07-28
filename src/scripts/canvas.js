@@ -40,6 +40,8 @@ function Canvas () {
 
   // Settings
   this.p = []
+  this.block = []
+  this.bufferPos = []
   this.prevRegExInput = ""
   this.grid = { w: 8, h: 8 }
   this.tile = { w: 8, h: 16 }
@@ -155,8 +157,8 @@ function Canvas () {
   }
 
   this.isSelectionOverlap = function(x,y){
-    let bufferPos = this.cursor.getOverlapPosition()
-    return bufferPos.some( b => b.x === x && b.y === y)
+    this.bufferPos = this.cursor.getOverlapPosition()
+    return this.bufferPos.some( b => b.x === x && b.y === y)
   }
 
   this.isMarker = function (x, y) {
@@ -237,7 +239,7 @@ function Canvas () {
     // Mark Step inverse.
     if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
     // cursor selection scope.
-    if (type === 6) { return { fg: this.theme.active.b_inv, bg: this.theme.active.b_med } }
+    if (type === 6) { return { fg: this.theme.active.f_low, bg: this.theme.active.b_med } }
     // current cursor.
     if (type === 7) { return { fg: this.theme.active.background} }
     // Block select.

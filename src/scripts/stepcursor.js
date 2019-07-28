@@ -224,8 +224,7 @@ function StepCursor(canvas) {
     }
 
     if(seeq.console.isUDPToggled){
-      // seeq.io.udp.send( target[0].msg.UDP[midiIndex])
-      console.log("UDP toggled")
+      seeq.io.udp.send( target[0].msg.UDP[midiIndex])
     }
 
     seeq.io.midi.send({ 
