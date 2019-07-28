@@ -116,7 +116,7 @@ function Canvas () {
         let g = this.seequencer.glyphAt(item.x, item.y)
         if (this.seequencer.inBlock(item.x, item.y)) {
           this.cursor.setMatchedPos(item)
-          this.drawSprite(item.x, item.y, g, 0) // marked within cursor block.
+          this.drawSprite(item.x, item.y, g, 2) // marked within cursor block.
           // const r = {
           //   x: item.x * this.scale * this.tile.w,
           //   y: item.y * this.scale * this.tile.h,
@@ -231,7 +231,7 @@ function Canvas () {
     // _
     if (type === 1) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_inv  } }
     // _
-    if (type === 2) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_high } }
+    if (type === 2) { return { bg: '#4B4B4B', fg: this.theme.active.b_med } }
     // step cursor
     if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
     // cursor
