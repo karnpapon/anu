@@ -2,7 +2,7 @@
 
 function Sequencer(app){
 
-  const { getRandomInt } = require('./utils')
+  const { getRandomInt } = require('./lib/utils')
 
   this.output = ""
   this.beatRatio = '16th'
@@ -55,7 +55,7 @@ function Sequencer(app){
   // }
   
   this.setTotalLenghtCounterDisplay = function(){
-    app.totalNumber.innerHTML = app.data.cursorText.innerText.length
+    app.totalNumber.innerHTML = canvas.texts.length
   }
 
   this.selectedRangeStartIndex = function(){

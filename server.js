@@ -98,7 +98,7 @@ class Server {
   //   const ipAddress = ip.address();
   //   const { options } = this;
 
-  //   // Clear terminal
+  //   // Clear canvas
   //   process.stdout.write('\x1Bc');
 
   //   // Say hello!

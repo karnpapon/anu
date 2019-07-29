@@ -2,7 +2,7 @@
 
 function Keys(app) {
 
-  const { el } = require('./utils')
+  const { el } = require('./lib/utils')
 
   this.locks = []
   this.history = ''

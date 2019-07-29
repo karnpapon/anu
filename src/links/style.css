@@ -1,9 +1,11 @@
 :root {
   --main-bg-color: #e6e6e6;
   --trigger-color: rgb(62, 251, 0);
+  --trigger-input-color: #000000;
   --reverse-target: #f287ff;
   --clock: 200ms;
   --hl-color: rgb(255, 212, 57);
+  --osc-msg: 0.85rem;
 }
 
 body {
@@ -12,8 +14,53 @@ body {
   margin: 0;
 }
 
+/* body{
+  overflow: hidden;
+  -webkit-app-region: drag;
+  transition: background-color 500ms;
+  background-size: cover;
+  background: var(--main-bg-color) !important;
+  background-position: center center;
+  max-height: calc(100% - 60px);
+  box-sizing: border-box; 
+} */
 
-*{box-sizing: border-box; }
+canvas { 
+  display: block;
+  white-space: pre;
+  /* font-size: 16px; */
+  /* line-height: 10px;  */
+  text-transform: uppercase; 
+  width:300px; -webkit-app-region: drag; 
+  opacity: 0; 
+  transition: opacity 1000ms
+}
+canvas.ready { opacity: 1 }
+
+
+*{
+  box-sizing: border-box; 
+  -webkit-font-smoothing: antialiased;
+}
+
+/* *{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  text-decoration: none;
+  font-weight: inherit;
+  font-style: inherit;
+  color: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  list-style: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+} */
+
 body p{font-family: 'input_mono_regular'; font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
@@ -55,8 +102,8 @@ div button{
 }
 
 .limit{
-  width:534px;
-  height: 40px;
+  width: 513px;
+  height: 100%;
   position: absolute;
   word-wrap: break-word;
   display: flex;
@@ -66,7 +113,7 @@ div button{
   justify-content: center;
   border: 1px solid;
   padding: 10px 5px;
-  margin-top: 10px;
+  /* margin-top: 10px; */
   /* transition: all .2s ease-in; */
 }
 
@@ -158,9 +205,14 @@ div button{
   width: 276px;
 }
 
+.disable-input{
+  background-color: #a5a5a5 !important;
+  border: 1px solid;
+}
+
 lf{
   font-family: 'input_sans_condensed_bold';
-  font-size:12px;
+  font-size: var(--osc-msg);
   display: flex;
   margin-right: 5px;
   align-items: center;
@@ -171,6 +223,7 @@ lf p{
   margin: 0;
   align-items: center;
   display: flex;
+  font-size: var(--osc-msg);
 }
 
 lft{
@@ -226,6 +279,12 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 
 .trigger{
   background-color: var( --trigger-color )  !important;
+  transition: all .2s ease;
+}
+
+.trigger-input{
+  color: white;
+  background-color: var( --trigger-input-color )  !important;
   transition: all .2s ease;
 }
 
@@ -298,7 +357,8 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 } */
 
 .loading {
-  color: black;
+  color: white;
+  background: black;
   align-items: center;
   justify-content: center;
   display: flex;
@@ -347,7 +407,7 @@ button:active{
   display: flex; 
   flex-direction: column;
   height: 85px;
-  flex: 3;
+  /* flex: 3; */
   padding-bottom: 5px;
   margin-right: 20px;
   justify-content: space-between;
@@ -369,6 +429,7 @@ button:active{
 .controller-wrapper{ 
   display: flex; 
   height: 110px;
+  width: 100%;
 }
 .control-btn{ 
   display: flex;
@@ -399,9 +460,13 @@ button:active{
   justify-content: inherit;
 }
 
-.input-control{ width: 100px}
+/* .input-control{ width: 100px}
 .input-control-2 { width: 90px; margin-right: 5px;}
-.input-regex{ width: 151px}
+.input-regex{ width: 151px} */
+
+.console-1{ flex: 2}
+.console-2{ flex: 2}
+.console-3{ flex: 2}
 
 [data-ctrl="subtract"]{ 
   border-top: 1px solid black !important;
@@ -461,15 +526,75 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
   display: block;
 }
 
-.textfx{
-  width: 230px;
+
+/* ---------------------- */
+
+/* displayer */
+
+.displayer-default{
   font-size: 1em;
-  margin-left: 10px;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
   display: flex;
-  /* text-align: left; */
-  /* justify-content: center;  */
-  /* margin-right: auto; */
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
 }
+
+.displayer-osc {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  opacity: 0;
+}
+
+.displayer-active-cursor {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center; 
+  opacity: 0;
+}
+
+.display-flex{
+  display: flex;
+}
+
+.displayer-form{
+  border: unset !important;
+  width: 100%;
+  display: flex;
+  margin-left: 5px;
+  padding-left: 5px;
+  font-size: var(--osc-msg);
+}
+
+.displayer-form-short{
+  width: 100%;
+  border: unset;
+  padding-left: 5px;
+  font-size: var(--osc-msg);
+}
+
+.displayer-form-short-wrapper{
+  font-family: 'input_sans_condensed_bold';
+  font-size: var(--osc-msg);
+  display: flex;
+  margin-right: 5px;
+  align-items: center;
+  width: 50%;
+}
+
+.displayer-show{ opacity: 1; z-index: 99; }
+.displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1rem;}
+
+/* ---------------------- */
 
 .default-info{
   width: 200px;
@@ -513,7 +638,7 @@ app {
   height: 480px; 
   position: relative; 
   opacity:0; 
-  width:calc(100% - 60px); 
+  width:calc(100% - 50px); 
   transition: all .2s ease;
 }
 
@@ -536,11 +661,11 @@ app {
 .normal-search{
   width: 100%;
   height: auto; 
-  display: flex;
+  /* display: flex; */
 }
 
 .flex-col{ 
-  flex: 1.25;
+  /* flex: 1.25; */
   align-items: flex-end;
   text-align: end; 
 }
@@ -548,8 +673,9 @@ app {
 div button.control-btn:hover{ border:1px solid black;}
 
 div input{
-  background-color: white !important;
-  border: 1px solid !important; 
+  /* background-color: white !important; */
+  border: 1px solid; 
+  width: 100%;
 }
 
 .input-note{
@@ -563,36 +689,34 @@ div input{
   flex: 3;
 }
 
-.info {
-  width: 100%;
-}
-
-.show{
-  display: block;
-}
+.show{ display: block;}
 
 .info-header{
-  width: 11%;
+  /* width: fit-content; */
+  display: flex;
+  padding-left: 20px;
+  flex: 0.37;
 }
 
 .info-input{ 
-  width: 100%;
+  min-width: 349px;
   display: flex;
+  padding-right: 20px;
+  flex: 2;
 }
 
 .send-midi{
 
 }
 
-.input-osc{
-  border: unset !important;
-  width: 100%;
-  display: flex;
-  margin-left: 5px;
-}
+
 
 .send-osc{
   
+}
+
+.half-width{
+  width: 50%;
 }
 
 span.current-active{ background: black; color: white;}
@@ -618,6 +742,7 @@ div input:focus{ outline: none;}
   /* margin-top: 30px; */
   overflow: hidden;
   position: inherit;
+  /* height: 100%; */
   margin-top: 12px;
   transition: all .2s ease-out;
 }

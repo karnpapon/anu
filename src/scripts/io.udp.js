@@ -68,20 +68,20 @@ function UDP(app) {
 
 
   // Ableton Connection.
-  socket.on('beat', function (data) {
-    const { beat, bpm } = data
+  // socket.on('beat', function (data) {
+  //   const { beat, bpm } = data
 
-    // set clock source from Ableton.
-    if (beat % 4 == 0 && bpm != app.clock().getBpm()) {
-      app.clock().setBpm(bpm)
-      app.seq.setBPMdisplay(bpm) 
-    }
+  //   // set clock source from Ableton.
+  //   if (beat % 4 == 0 && bpm != app.clock().getBpm()) {
+  //     app.clock().setBpm(bpm)
+  //     app.seq.setBPMdisplay(bpm) 
+  //   }
 
-    if (beat % 4 == 0 && !app.isPlaying && app.isLinkToggle) {
-      app.play()
-      app.metronome.play()
-    }
-  });
+  //   if (beat % 4 == 0 && !app.isPlaying && app.isLinkToggle) {
+  //     app.play()
+  //     app.metronome.play()
+  //   }
+  // });
 
   this.listener.bind(49160)
 }

@@ -31,7 +31,7 @@ function Midi(app) {
     let noteNumber = []
     let convertedNote 
     convertedNote = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'].indexOf( note )
-
+    
     let msg = Object.assign({}, { channel, octave, note: convertedNote, velocity, length })
     this.stack.push(msg)
   }
@@ -40,33 +40,12 @@ function Midi(app) {
     const channel = convertChannel(data['channel'])
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity'] > 127 || data['velocity'] < 0 ? 60: data['velocity']
-    const length = window.performance.now() + convertLength(data['length'], app.clock().bpm)
+    const length = window.performance.now() + convertLength(data['length'], canvas.clock.speed.value)
 
     if (!device) { console.warn('No midi device!'); return }
     device.send([channel[0], note, velocity]) 
     device.send([channel[1], note, velocity], length)
   }
-
-  // this.setOff = function (data = this.stack, device) {
-  //   const channel = convertChannel(data['channel'])
-  //   const note = convertNote(data['octave'], data['note'])
-  //   const velocity = data['velocity']
-  //   const length = window.performance.now() + convertLength(data['length'], seeq.clock())
-
-  //   if (!device) { console.warn('No midi device!'); return }
-  //   device.send([channel[1], note, velocity]) 
-  //   // this.handleNoteOff(device.send([channel[1], note, velocity]) )
-  // }
-  
-  // this.handleNoteOn = function( cb ){
-  //   cb()
-  //   console.log("note on >>>>")
-  // }
-
-  // this.handleNoteOff = function(cb){
-  //   cb()
-  //   console.log("note off >>>>")
-  // }
 
   this.select = function (id) {
     if (!this.devices[id]) { return }

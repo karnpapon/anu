@@ -5,7 +5,6 @@ const osc = require('node-osc')
 function Osc (app) {
   this.stack = []
   this.port = null
-  this.counter = 0
 
   // TODO make this configurable.
   this.options = { 
@@ -34,36 +33,32 @@ function Osc (app) {
   this.send = function (path, msg) {
     this.stack.push({ path, msg })
   }
-
+  
   this.play = function ({ path, msg }) {
     if (!this.client) { console.warn('OSC', 'Unavailable client'); return }
     if (!msg) { console.warn('OSC', 'Empty message'); return }
+    // console.log("this.stack", msg)
     const oscMsg = new osc.Message(path)
-    var formattedMsg = this.formatter(msg)
-    formattedMsg.forEach(( item, index ) => {
-      Array.isArray(item) ?
-      oscMsg.append(item[this.counter % item.length]):
-      oscMsg.append(item)
-    })
-    this.counter++  // TODO: should reset after submit `send`
+    oscMsg.append(msg.split(" "))
     this.client.send(oscMsg, (err) => {
       if (err) { console.warn(err) }
     })
   }
 
   this.formatter = function( msg ){
-    var noBracketArr = msg.replace(/[\])}[{(]/g, ''); 
-    var splittedArr = noBracketArr.split(" ")
-    var formattedArr = []
+    var noBracket = msg.replace(/[\])}[{(]/g, ''); 
+    var splitted = noBracket.split(" ")
+    var formatted = []
 
-    splittedArr.forEach(( item, index ) => {
-      if (index == 1 || index == 3) {
-        formattedArr.push(item.split(",") )
+    
+    splitted.forEach(( item, index ) => {
+      if (item.indexOf(",") !== -1) {
+        formatted.push(item.split(",") )
       } else {
-        formattedArr.push(item)
+        formatted.push(item)
       }
     })
-    return formattedArr
+    return formatted
   }
 
   this.select = function (port = this.options.superCollider) {

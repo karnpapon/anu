@@ -17,7 +17,7 @@ app.inspect = function(){
 function createDevTools(){
   devtools = new BrowserWindow({
     frame: false, 
-    backgroundColor: '#000000',
+    // backgroundColor: '#000000',
     hasShadow: false,
     width: 270,
     height: 580, 
@@ -32,7 +32,7 @@ function createDevTools(){
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 694, 
+    width: 663, 
     height: 580, 
     // resizable: false,
     frame: false,
