@@ -207,20 +207,15 @@ function StepCursor(canvas) {
       velocity
     } = target[0].msg.MIDI
 
-    // var formattedOSC = seeq.io.osc.formatter(target[0].msg.OSC.msg)
+    const { formattedMsg } = target[0].msg.OSC
+   
     let midiIndex = i % note.length
     let veloIndex = i % velocity.length
     let lenIndex = i % notelength.length
 
-    // let oscIndex1 = i % formattedOSC[1].length
-    // let oscIndex2 = i % formattedOSC[3].length
-
-    // TODO: not hardcoded!
-    // var osc_msg = `${formattedOSC[0]} ${formattedOSC[1][oscIndex1]} ${formattedOSC[2]} ${formattedOSC[3][oscIndex2]}`
-
     if(seeq.console.isOSCToggled){
-      // seeq.io.osc.send('/' + target[0].msg.OSC.path, osc_msg )
-      console.log("OSC toggled")
+       // TODO: dynamic index only for OSC msg.
+      seeq.io.osc.send('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
     }
 
     if(seeq.console.isUDPToggled){

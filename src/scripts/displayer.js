@@ -66,8 +66,8 @@ function Displayer(app) {
             let target  = mut_elem
             target.addEventListener("input", function(){
               if(self.currentCmd === 'osc'){
-                self.oscConf.path =  target.getAttribute("type") === 'osc-path'? target.value:self.oscConf.path
-                self.oscConf.msg =  target.getAttribute("type") === 'osc'? target.value:self.oscConf.msg
+                self.oscConf.path =  target.getAttribute("type") === 'osc-path'? target.value:""
+                self.oscConf.msg =  target.getAttribute("type") === 'osc'? target.value:""
               } else if( self.currentCmd === 'rename-cursor'){
                 self.renameInput = target.value 
               } else if( self.currentCmd === 'midi'){

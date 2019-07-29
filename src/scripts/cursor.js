@@ -18,7 +18,7 @@ function Cursor(canvas) {
         channel: 0 
       },
       UDP: [],
-      OSC:  { path: 'play2', msg: "" }
+      OSC:  { path: 'play2', msg: "", formattedMsg: "" }
     }
   }]
 
@@ -58,7 +58,7 @@ function Cursor(canvas) {
           channel: 0 
         },
         UDP: [],
-        OSC:  { path: 'play2', msg: "" }
+        OSC:  { path: 'play2', msg: "", formattedMsg: "" }
       }
     }) 
   }
@@ -91,11 +91,32 @@ function Cursor(canvas) {
   }
 
   this.setOSCmsg  = function(){
-    this.cursors[this.active].msg.OSC = seeq.displayer.oscConf
+    let active = this.getActiveCursor()
+    let { path, msg } = seeq.displayer.oscConf
+    let oscMsg = { path: "", msg: ""}
+    let fmtMsg = []
+    
+    path = path === ""? active.msg.OSC.path:path
+    msg = msg === ""? active.msg.OSC.msg:msg
+
+    var fmt = seeq.io.osc.formatter(msg)
+  
+    // TODO: dynamic index based on each sound/number length.
+    for(var i=0; i<fmt[3].length; i++){
+      var osc_msg = `${fmt[0]} ${fmt[1]} ${fmt[2]} ${fmt[3][i]}`
+      fmtMsg.push(osc_msg)
+    }
+    
+    oscMsg.path = path
+    oscMsg.msg = msg
+    oscMsg.formattedMsg = fmtMsg
+    
+    this.cursors[this.active].msg.OSC = oscMsg
+    console.log("fmtMsg", this.cursors[this.active].msg.OSC)
   }
 
   this.setMIDImsg  = function(){
-    let active = this.cursors[this.active]
+    let active = this.getActiveCursor()
     let midiMsg = {
       note: [], 
       notelength: [], 
@@ -187,7 +208,7 @@ function Cursor(canvas) {
           octave: [2,3,4], 
           channel: 0 },
         UDP: [],
-        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]" }
+        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" }
       }
     }]
   }
@@ -230,6 +251,10 @@ function Cursor(canvas) {
         this.cursors[_item.i].matched.push(item)
       } 
     })
+  }
+
+  this.getActiveCursor = function(){
+    return this.cursors[this.active]
   }
 
   this.clearMatchedPos = function(){
