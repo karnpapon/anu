@@ -6,6 +6,8 @@ function Osc (app) {
   this.stack = []
   this.port = null
 
+  const { isOdd } = require('./lib/utils')
+
   // TODO make this configurable.
   this.options = { 
     default: 49162, 
@@ -49,10 +51,9 @@ function Osc (app) {
     var noBracket = msg.replace(/[\])}[{(]/g, ''); 
     var splitted = noBracket.split(" ")
     var formatted = []
-
     
     splitted.forEach(( item, index ) => {
-      if (item.indexOf(",") !== -1) {
+      if (isOdd(index)) {
         formatted.push(item.split(",") )
       } else {
         formatted.push(item)

@@ -14,15 +14,19 @@ const isChar = (c) => {
 
 const clamp = (v, min, max) => { return v < min ? min : v > max ? max : v } 
 
-exports.getRandomInt = getRandomInt
-exports.scale = scale
-exports.isChar = isChar
-exports.clamp = clamp
-
+const isEven = (x) => { return (x%2)==0; }
+const isOdd = (x) => { return !isEven(x); }
 
 const $ = id => document.getElementById(id);
 const qs = id => document.querySelector(id);
 const el = tag => document.createElement(tag);
+
+exports.getRandomInt = getRandomInt
+exports.scale = scale
+exports.isChar = isChar
+exports.clamp = clamp
+exports.isEven = isEven
+exports.isOdd = isOdd
 
 exports.$ = $;
 exports.qs = qs;

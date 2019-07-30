@@ -1,6 +1,9 @@
 'use strict'
 
 function Cursor(canvas) {
+
+  const { isOdd } = require('./lib/utils')
+
   this.mode = 0
   this.block = []
   this.active = 0
@@ -95,24 +98,28 @@ function Cursor(canvas) {
     let { path, msg } = seeq.displayer.oscConf
     let oscMsg = { path: "", msg: ""}
     let fmtMsg = []
+    var osc_msg
     
     path = path === ""? active.msg.OSC.path:path
     msg = msg === ""? active.msg.OSC.msg:msg
 
     var fmt = seeq.io.osc.formatter(msg)
+    let len = fmt[1].length
   
     // TODO: dynamic index based on each sound/number length.
     for(var i=0; i<fmt[3].length; i++){
-      var osc_msg = `${fmt[0]} ${fmt[1]} ${fmt[2]} ${fmt[3][i]}`
+      osc_msg = `${fmt[0]} ${fmt[1][i % len ]} ${fmt[2]} ${fmt[3][i]}`
       fmtMsg.push(osc_msg)
     }
+
+    console.log("fmt", fmtMsg)
     
     oscMsg.path = path
     oscMsg.msg = msg
     oscMsg.formattedMsg = fmtMsg
     
     this.cursors[this.active].msg.OSC = oscMsg
-    console.log("fmtMsg", this.cursors[this.active].msg.OSC)
+    
   }
 
   this.setMIDImsg  = function(){

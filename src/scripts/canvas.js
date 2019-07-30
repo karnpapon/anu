@@ -48,6 +48,7 @@ function Canvas () {
   this.scale = window.devicePixelRatio
   this.hardmode = true
   this.guide = false
+  this.isShowMarked = true
   this.globalIdx = 0
 
   this.install = function (host) {
@@ -127,12 +128,16 @@ function Canvas () {
           // this.context.strokeStyle = this.theme.active.background
           // this.context.strokeRect(r.x - 0.5, r.y - 0.5, r.w, r.h)
         } else {
-          this.drawSprite(item.x, item.y, g, 0) //match marked green.
+          this.isShowMarked? this.drawSprite(item.x, item.y, g, 0):()=>{}
         }
       })
     } else {
       this.cursor.clearMatchedPos() 
     }
+  }
+
+  this.toggleShowMarks = function(){
+    this.isShowMarked = !this.isShowMarked
   }
 
   this.eraseSelectionCursor = function(){
