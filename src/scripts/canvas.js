@@ -128,7 +128,7 @@ function Canvas () {
           // this.context.strokeStyle = this.theme.active.background
           // this.context.strokeRect(r.x - 0.5, r.y - 0.5, r.w, r.h)
         } else {
-          this.isShowMarked? this.drawSprite(item.x, item.y, g, 0):()=>{}
+          this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
         }
       })
     } else {
