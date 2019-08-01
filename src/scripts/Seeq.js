@@ -110,7 +110,7 @@ function Seeq(){
       }
     }
 
-    if(search){
+    if(search && target !== ""){
       canvas.p = []
       this.matchedPosition = []
       if (target !== ""){
@@ -135,6 +135,8 @@ function Seeq(){
           }
         })
       }
+    } else {
+      canvas.clearMarksPos()
     }
     
   }

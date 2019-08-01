@@ -71,13 +71,15 @@ function Canvas () {
     this.seequencer.run()
     this.stepcounter.run()
     this.update()
-    this.stepcursor.run()
+    this.stepcursor.trigger()
+    
   }
   
   this.update = function () {
     if (document.hidden === true) { return }
     this.clear()
     this.drawProgram()
+    this.stepcursor.run()
     this.match()
     // this.drawStroke(this.cursor)
   }
@@ -242,7 +244,7 @@ function Canvas () {
     // cursor
     if (type === 4) { return { bg: this.theme.active.f_med, fg: this.theme.active.f_low } }
     // Mark Step inverse.
-    if (type === 5) { return { bg: this.theme.active.f_high, fg: this.theme.active.background } }
+    if (type === 5) { return { bg: '#B4B4B4', fg: this.theme.active.background } }
     // cursor selection scope.
     if (type === 6) { return { fg: this.theme.active.f_low, bg: this.theme.active.b_med } }
     // current cursor.
@@ -259,6 +261,10 @@ function Canvas () {
 
   this.clear = function () {
     this.context.clearRect(0, 0, this.el.width, this.el.height)
+  }
+
+  this.clearMarksPos = function(){
+    this.p = []
   }
 
   this.drawProgram = function () {

@@ -32,16 +32,23 @@ function StepCursor(canvas) {
   }
 
   this.run = function () {
-    let self = this
     this.steps.forEach( ( step, idx ) => {
       if (!canvas.clock.isPaused) {
         step.x = canvas.stepcounter.counter[idx].x
         step.y = canvas.stepcounter.counter[idx].y
-        self.trigger(step)
       }
       canvas.drawSprite( step.x, step.y,this.isTrigger(step.x,step.y)? '*':canvas.seequencer.glyphAt(step.x, step.y),10)
     })
   }
+
+  // this.handleTrigger = function(){
+  //   let self = this
+  //   this.steps.forEach( ( step, idx ) => {
+  //     if (!canvas.clock.isPaused) {
+  //       self.trigger(step)
+  //     }
+  //   })
+  // }
 
   // this.animate2 = function(time, el){
 
@@ -76,67 +83,8 @@ function StepCursor(canvas) {
 
   // }
 
-  // this.animateSmooth = function(time,el){
+  this.triggerFX = function(time,el){
    
-  //   const bgrect = { 
-  //     x: el.x * canvas.scale * canvas.tile.w,
-  //     y: el.y * canvas.scale * canvas.tile.h,
-  //     w: el.w * canvas.scale * canvas.tile.w,
-  //     h: el.h * canvas.scale * canvas.tile.h
-  //   }
-
-  //   let target  = canvas.cursor.getSelectionArea(el)
-  //   target.forEach( item => {
-  //     let fgrect = { 
-  //       x: (item.x + 0.5) * canvas.tile.w * canvas.scale, 
-  //       y: (item.y + 1) * canvas.tile.h * canvas.scale, 
-  //     }
-  //     if(!canvas.isMatchedChar(item.x,item.y)){
-  //       canvas.context.fillStyle = canvas.theme.active.background
-  //       canvas.context.fillText(".", fgrect.x, fgrect.y)
-  //     } else {
-  //       canvas.context.fillStyle = canvas.theme.active.b_med
-  //       canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-  //       canvas.context.fillStyle = canvas.theme.active.f_high
-  //       canvas.context.fillText("*", fgrect.x - 1, fgrect.y - 0.5)
-  //     }
-      
-  //   })
-
-  //   var opacity 
-  //   opacity = 100 * (this.opacityStep/this.opacitySteps * 0.5);
-  //   if(this.opacityStep >= this.opacitySteps-1){ opacity = 100; }
-  //   canvas.context.globalAlpha = ( (100 - opacity)/100 );
-
-    
-  //   // end
-  //   canvas.context.globalAlpha = (opacity) / 70;
-  //   canvas.context.fillStyle = canvas.theme.active.background
-  //   canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-  //   canvas.context.strokeRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-  //   // reset
-  //   canvas.context.globalAlpha=1.00;
-
-  //   // return if all steps have been played
-  //   if(++this.opacityStep >= this.opacitySteps){return;}
-
-  //   requestAnimationFrame(function(timestamp){ 
-  //     canvas.stepcursor.animateSmooth(timestamp, el)
-  //   })
-  // }
-
-  this.animate = function(time,el){
-   
-    // const bgrect = { 
-    //   x: el.x * canvas.scale * canvas.tile.w,
-    //   y: el.y * canvas.scale * canvas.tile.h,
-    //   w: el.w * canvas.scale * canvas.tile.w,
-    //   h: el.h * canvas.scale * canvas.tile.h
-    // }
-
-    // canvas.context.fillStyle = canvas.theme.active.b_med
-    // canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-    
     let target  = canvas.cursor.getSelectionArea(el)
     target.forEach( item => {
       let fgrect = { 
@@ -145,33 +93,30 @@ function StepCursor(canvas) {
       }
       let g = canvas.seequencer.glyphAt(item.x, item.y)
       if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isCursor(item.x,item.y)){
-        canvas.context.fillStyle = canvas.theme.active.b_med
+        canvas.context.fillStyle = canvas.theme.active.background
         canvas.context.fillText(g, fgrect.x, fgrect.y)
       } 
-      // else {
-        // canvas.context.fillStyle = canvas.theme.active.background
-        // canvas.context.fillRect(bgrect.x, bgrect.y, bgrect.w, bgrect.h)
-        // canvas.context.fillStyle = canvas.theme.active.f_high
-        // canvas.context.fillText("*", fgrect.x - 1, fgrect.y - 0.5)
-      // }
-      
     })
   }
 
-  this.trigger = function (step) {
+  this.trigger = function () {
     let i
     let value 
 
-    canvas.cursor.cursors.forEach( ( c, index) => {
-      c.matched.forEach( ( _c, _idx ) => {
-        if(_c.x === step.x && _c.y === step.y && c.i === step.i){
-          i=_idx
-          this.msgOut(step, i)
-          value = canvas.cursor.cursors[index]
-          this.opacityStep = 0;
-          this.animate(null, value)
-        } 
-      })
+    this.steps.forEach( ( step, idx ) => {
+      if (!canvas.clock.isPaused) {
+        canvas.cursor.cursors.forEach( ( c, index) => {
+          c.matched.forEach( ( _c, _idx ) => {
+            if(_c.x === step.x && _c.y === step.y && c.i === step.i){
+              i=_idx
+              this.msgOut(step, i)
+              value = canvas.cursor.cursors[index]
+              this.opacityStep = 0;
+              this.triggerFX(null, value)
+            } 
+          })
+        })
+      }
     })
   }
 

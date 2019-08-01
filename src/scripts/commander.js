@@ -188,7 +188,7 @@ function Commander(canvas) {
       return;
     }
 
-    if (event.keyCode === 74 && (event.metaKey || event.ctrlKey)) {
+    if (event.keyCode === 70 && (event.metaKey || event.ctrlKey)) {
       canvas.toggleShowMarks()
       event.preventDefault();
       return;
@@ -274,7 +274,7 @@ function Commander(canvas) {
       }
     }
 
-    // canvas.update();
+    canvas.update();
   };
 
   this.onArrowUp = function(mod = false, skip = false) {
