@@ -90,8 +90,16 @@ function Seeq(){
     this.metronome.play()
   }
 
+  this.trimmedContents = function(txt){
+    let dataText = txt
+    var limitedChar = 1090
+    var trimmedText = dataText.substring(0, limitedChar)
+    return trimmedText
+  }
+
   this.getMatchedPosition = function(){
     var searchFrom = canvas.texts
+    let trimmed = this.trimmedContents(searchFrom)
     let target, search, noBracketTarget
     var match, query
 
@@ -114,7 +122,7 @@ function Seeq(){
       canvas.p = []
       this.matchedPosition = []
       if (target !== ""){
-        while( match = search.exec(searchFrom)){
+        while( match = search.exec(trimmed)){
           this.matchedPosition.push({
             index: match.index, 
             len: match.length == 2? match[0].length:0 

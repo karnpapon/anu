@@ -14,7 +14,6 @@ function Source (canvas) {
   }
 
   this.new = function () {
-    console.log('Source', 'Make a new file..')
     this.path = null
     this.queue = []
     canvas.seequencer.reset()
@@ -25,8 +24,8 @@ function Source (canvas) {
   }
 
   this.run = function () {
-    if (!this.queue || this.queue.length < canvas.seequencer.f || !this.queue[canvas.seequencer.f]) { return }
-    canvas.commander.trigger(this.queue[canvas.seequencer.f])
+    // if (!this.queue || this.queue.length < canvas.seequencer.f || !this.queue[canvas.seequencer.f]) { return }
+    // canvas.commander.trigger(this.queue[canvas.seequencer.f])
   }
 }
 

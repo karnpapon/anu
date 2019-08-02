@@ -30,12 +30,10 @@ function Console(app) {
           <div class="control-panel">
             <div class="title">Control:</div>
             <div class="control-btn">
-              <button data-ctrl="link" tabindex="-1">link</button>
               <button data-ctrl="udp" tabindex="-1">udp</button>
               <button data-ctrl="osc" tabindex="-1">osc</button>
               <button data-ctrl="rev" tabindex="-1">rev</button>
-              <button data-ctrl="clear" tabindex="-1">clear</button>
-              <button data-ctrl="nudge" tabindex="-1">nudge</button>
+              <button data-ctrl="focus" tabindex="-1">focus</button>
             </div>
             </div>
           </div>
@@ -68,7 +66,7 @@ function Console(app) {
             </div>
             <div class="counter">
             <div class="control-btn">
-              <button data-ctrl="metronome" tabindex="-1">*</button>
+
               <button data-ctrl="subtract" tabindex="-1">-</button>
               <button data-ctrl="add" tabindex="-1">+</button>
               </div>
@@ -85,6 +83,7 @@ function Console(app) {
   this.inputFetch
   this.linkBtn 
   this.clearBtn 
+  this.focusBtn
   this.nudgeBtn 
   this.udpBtn 
   this.oscBtn 
@@ -119,6 +118,7 @@ function Console(app) {
   this.isOSCToggled = false
   this.isReverse = false
   this.isPlaying = false
+  this.isFocus = false
   this.isBPMtoggle = false
   this.isInsertable = false
   this.updateMarkType = "normal"
@@ -141,9 +141,10 @@ function Console(app) {
     // self.configBtn = qs("button[data-search='cfg']")
     self.inputFetch = qs("input[data-fetch='fetch']")
     self.getTextBtn = qs("button[data-gettext='gettext']")
-    self.linkBtn = qs("button[data-ctrl='link']")
-    self.clearBtn = qs("button[data-ctrl='clear']")
-    self.nudgeBtn = qs("button[data-ctrl='nudge']")
+    // self.linkBtn = qs("button[data-ctrl='link']")
+    // self.clearBtn = qs("button[data-ctrl='clear']")
+    self.focusBtn = qs("button[data-ctrl='focus']")
+    // self.nudgeBtn = qs("button[data-ctrl='nudge']")
     self.udpBtn = qs("button[data-ctrl='udp']")
     self.oscBtn = qs("button[data-ctrl='osc']")
     self.revBtn = qs("button[data-ctrl='rev']")
@@ -152,7 +153,7 @@ function Console(app) {
     // self.notationMode = qs("button[data-ctrl='notation-mode']")
     // self.extractLines = qs("button[data-ctrl='extract-line']")
     self.bpmNumber = qs("p[data-ctrl='bpm']")
-    self.metronomeBtn = qs("button[data-ctrl='metronome']")
+    // self.metronomeBtn = qs("button[data-ctrl='metronome']")
     self.currentNumber = qs("p[data-ctrl='current']")
     self.cursorLength = qs("p[data-ctrl='crsrlen']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
@@ -236,17 +237,17 @@ function Console(app) {
     // })
 
 
-    self.linkBtn.addEventListener("click", function () {
-      self.isLinkToggle = !self.isLinkToggle
-      app.isPlaying = true
-      this.classList.toggle("toggle-btn")
+    // self.linkBtn.addEventListener("click", function () {
+    //   self.isLinkToggle = !self.isLinkToggle
+    //   app.isPlaying = true
+    //   this.classList.toggle("toggle-btn")
 
-      if (this.isLinkToggle) {
-        socket.connect(0)
-      } else {
-        socket.disconnect(0);
-      }
-    })
+    //   if (this.isLinkToggle) {
+    //     socket.connect(0)
+    //   } else {
+    //     socket.disconnect(0);
+    //   }
+    // })
 
     self.udpBtn.addEventListener("click", function () {
       self.togglePort('UDP', this)
@@ -256,13 +257,14 @@ function Console(app) {
       self.togglePort('OSC', this)
     })
 
-    self.clearBtn.addEventListener("click", function () {
-      app.clear()
+    self.focusBtn.addEventListener("click", function () {
+      self.togglePort('FOCUS', this)
+      canvas.toggleShowMarks()
     })
 
-    self.nudgeBtn.addEventListener("click", function () {
-      app.nudge()
-    })
+    // self.nudgeBtn.addEventListener("click", function () {
+    //   app.nudge()
+    // })
 
     self.bpmUpBtn.addEventListener("click", function(){
       canvas.clock.mod(1)
@@ -337,6 +339,8 @@ function Console(app) {
       this.isOSCToggled = !this.isOSCToggled 
     } else if ( type === 'REV'){
       this.isReverse = !this.isReverse
+    } else if ( type === 'FOCUS'){
+      this.isFocus = !this.isFocus 
     }
     bind.classList.toggle("toggle-btn")
   }

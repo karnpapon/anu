@@ -120,15 +120,6 @@ function Canvas () {
         if (this.seequencer.inBlock(item.x, item.y)) {
           this.cursor.setMatchedPos(item)
           this.drawSprite(item.x, item.y, g, 2) // marked within cursor block.
-          // const r = {
-          //   x: item.x * this.scale * this.tile.w,
-          //   y: item.y * this.scale * this.tile.h,
-          //   w: 1 * this.scale * this.tile.w,
-          //   h: 1 * this.scale * this.tile.h
-          // }
-          // this.context.lineWidth = 1;
-          // this.context.strokeStyle = this.theme.active.background
-          // this.context.strokeRect(r.x - 0.5, r.y - 0.5, r.w, r.h)
         } else {
           this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
         }
@@ -260,6 +251,7 @@ function Canvas () {
   // Canvas
 
   this.clear = function () {
+    // this.context.font = `${this.tile.h * 0.75 * this.scale}px input_mono_regular` 
     this.context.clearRect(0, 0, this.el.width, this.el.height)
   }
 

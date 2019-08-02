@@ -189,6 +189,7 @@ function Commander(canvas) {
     }
 
     if (event.keyCode === 70 && (event.metaKey || event.ctrlKey)) {
+      seeq.console.togglePort('FOCUS', seeq.console.focusBtn)
       canvas.toggleShowMarks()
       event.preventDefault();
       return;

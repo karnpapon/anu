@@ -48,22 +48,7 @@ function Cursor(canvas) {
   }
 
   this.add = function(){
-    this.cursors.push({ 
-      x: 0, y: 0, w: 10, h:1, i: canvas.globalIdx, 
-      n: `cursor-name-${canvas.globalIdx}`,
-      matched: [],
-      msg: {
-        MIDI: { 
-          note: ["C", "E", "G"], 
-          notelength: [3,4,5], 
-          velocity: [9,10,11], 
-          octave: [2,3,4], 
-          channel: 0 
-        },
-        UDP: [],
-        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" }
-      }
-    }) 
+    this.cursors.push(this.getNewCursor()) 
   }
 
   this.moveTo = function (x, y) {
@@ -218,6 +203,27 @@ function Cursor(canvas) {
         OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" }
       }
     }]
+  }
+
+  this.getNewCursor = function(){
+    let newCursor = { 
+      x: 0, y: 0, w: 10, h:1, i: canvas.globalIdx, 
+      n: `cursor-name-${canvas.globalIdx}`,
+      matched: [],
+      msg: {
+        MIDI: { 
+          note: ["C", "E", "G"], 
+          notelength: [3,4,5], 
+          velocity: [9,10,11], 
+          octave: [2,3,4], 
+          channel: 0 
+        },
+        UDP: [],
+        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" }
+      }
+    }
+
+    return newCursor
   }
 
   this.reset = function () {
