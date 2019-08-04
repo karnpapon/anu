@@ -57,8 +57,7 @@ function StepCursor(canvas) {
     let i
     let value 
 
-    this.steps.forEach( ( step, idx ) => {
-
+    this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
         canvas.cursor.cursors.forEach( ( c, index) => {
           c.matched.forEach( ( _c, _idx ) => {
@@ -73,12 +72,6 @@ function StepCursor(canvas) {
         })
       }
     })
-  }
-
-  this.findAndTrigger = function(){
-    this.steps.forEach( step => {
-      canvas.isMatchedChar( step.x,step.y)
-    }) 
   }
 
   this.msgOut = function(step, i){

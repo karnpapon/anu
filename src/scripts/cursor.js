@@ -246,11 +246,13 @@ function Cursor(canvas) {
   this.erase = function(){
     let filteredCursor, filterStep, filterStepCounter
     filteredCursor = this.cursors.filter( ( cs ) => cs.i !== this.cursors[ this.active ].i)
-    filterStep = canvas.stepcursor.steps.filter( ( step ) => step.i !== canvas.stepcursor.steps[ this.active ].i)
-    filterStepCounter = canvas.stepcounter.counter.filter( ( c ) => c.i !== canvas.stepcounter.counter[ this.active ].i)
+    if( canvas.stepcursor.steps[this.active]){
+      filterStep = canvas.stepcursor.steps.filter( ( step ) => step.i !== canvas.stepcursor.steps[ this.active ].i)
+      filterStepCounter = canvas.stepcounter.counter.filter( ( c ) => c.i !== canvas.stepcounter.counter[ this.active ].i)
+      canvas.stepcursor.steps = filterStep
+      canvas.stepcounter.counter = filterStepCounter
+    }
     this.cursors = filteredCursor
-    canvas.stepcursor.steps = filterStep
-    canvas.stepcounter.counter = filterStepCounter
     this.active = 0
   }
 

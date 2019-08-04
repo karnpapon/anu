@@ -39,7 +39,6 @@ function Osc (app) {
   this.play = function ({ path, msg }) {
     if (!this.client) { console.warn('OSC', 'Unavailable client'); return }
     if (!msg) { console.warn('OSC', 'Empty message'); return }
-    // console.log("this.stack", msg)
     const oscMsg = new osc.Message(path)
     oscMsg.append(msg.split(" "))
     this.client.send(oscMsg, (err) => {
