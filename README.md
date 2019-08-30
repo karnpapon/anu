@@ -7,10 +7,15 @@ currently support sending MIDI out.
 #### Key Commands.
 
 <strike>- delete pattern ( keystroke = 'X').</strike>
+
 <strike>- reverse pattern ( keystroke = 'R').</strike>
+
 <strike>- mute ( keystroke = 'M').</strike>
+
 <strike>- sending MIDI msg ( keystroke = 'I').</strike>
+
 <strike>- increase BPM = ( keystroke = '>').</strike>
+
 <strike>- decrease BPM = ( keystroke = '<')</strike>
 
 ```
