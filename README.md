@@ -4,13 +4,20 @@ Sequencer / Livecoding environment.
 using search or RegEx pattern to assign triggers.
 currently support sending MIDI out.
 
-#### features
-- delete pattern ( keystroke = 'X').
-- reverse pattern ( keystroke = 'R').
-- mute ( keystroke = 'M').
-- sending MIDI msg ( keystroke = 'I').
-- increase BPM = ( keystroke = '>').
-- decrease BPM = ( keystroke = '<')
+#### Key Commands.
+
+<strike>- delete pattern ( keystroke = 'X').</strike>
+<strike>- reverse pattern ( keystroke = 'R').</strike>
+<strike>- mute ( keystroke = 'M').</strike>
+<strike>- sending MIDI msg ( keystroke = 'I').</strike>
+<strike>- increase BPM = ( keystroke = '>').</strike>
+<strike>- decrease BPM = ( keystroke = '<')</strike>
+
+```
+currently, using `canvas`  instead of manipulating DOM directly.
+all the key commands have been changed and undocumented.
+```
+
 
 ### watch in action.
 
@@ -25,8 +32,6 @@ currently support sending MIDI out.
 cd Seeq
 # Install dependencies
 yarn install or npm install
-# rebuild Electron to match with dependencies.
-./node_modules/.bin/electron-rebuild
 # Run the app
 yarn start or npm start
 ```
