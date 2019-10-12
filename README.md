@@ -11,7 +11,7 @@ NOTE: currently, using `canvas`  instead of manipulating DOM directly.
 some commands have been changed and undocumented.
 ```
 
-<div style="text-align:center; background-color: black; padding: 20px;"><img src="src/media/images/usage.gif" /></div>
+<div style="text-align:center; background-color: black; padding: 20px;"><img src="src/media/images/usage1.gif" /></div>
 
 #### movement
 Description |  Operation
