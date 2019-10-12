@@ -11,8 +11,8 @@ const app = require('express');
 const express = app();
 const http = require('http').createServer(express);
 const io = require('socket.io')(http);
-const abletonlink = require('abletonlink');
-const link = new abletonlink();
+// const abletonlink = require('abletonlink');
+// const link = new abletonlink();
 var port = 3000;
 
 
@@ -38,34 +38,34 @@ class Server {
     /* #endregion */
 
     // Ableton Link connection.
-    this.startLink = function () {
-      let lastBeat = 0.0;
-      let previousBPM = 120
-      link.startUpdate(60, function (beat, phase, bpm) {
-        beat = 0 ^ beat;
+    // this.startLink = function () {
+      // let lastBeat = 0.0;
+      // let previousBPM = 120
+      // link.startUpdate(60, function (beat, phase, bpm) {
+      //   beat = 0 ^ beat;
         
-        // if (bpm !== previousBPM) {
-        //   io.emit('bpmchange', { bpm })
-        //   previousBPM = bpm
-        // }
+      //   // if (bpm !== previousBPM) {
+      //   //   io.emit('bpmchange', { bpm })
+      //   //   previousBPM = bpm
+      //   // }
         
-        if (0 < beat - lastBeat) {
-          io.emit('beat', { beat, phase, bpm });
-          lastBeat = beat;
-        }
-      });
-    }
+      //   if (0 < beat - lastBeat) {
+      //     io.emit('beat', { beat, phase, bpm });
+      //     lastBeat = beat;
+      //   }
+      // });
+    // }
   }
 
   start() {
-    http.listen(port);;
-    // this.osc.open();
-    io.on('connection', function (client) {
-      client.on('event', function (data) { });
-      client.on('disconnect', function () { });
-    });
+    // http.listen(port);;
+    // // this.osc.open();
+    // io.on('connection', function (client) {
+    //   client.on('event', function (data) { });
+    //   client.on('disconnect', function () { });
+    // });
 
-    this.startLink()
+    // this.startLink()
   }
 
   /* #region unused */

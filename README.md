@@ -4,24 +4,51 @@ Sequencer / Livecoding environment.
 using search or RegEx pattern to assign triggers.
 currently support sending MIDI out.
 
-#### Key Commands.
-
-<strike>- delete pattern ( keystroke = 'X').</strike>
-
-<strike>- reverse pattern ( keystroke = 'R').</strike>
-
-<strike>- mute ( keystroke = 'M').</strike>
-
-<strike>- sending MIDI msg ( keystroke = 'I').</strike>
-
-<strike>- increase BPM = ( keystroke = '>').</strike>
-
-<strike>- decrease BPM = ( keystroke = '<')</strike>
+## Usage
 
 ```
-currently, using `canvas`  instead of manipulating DOM directly.
-all the key commands have been changed and undocumented.
+NOTE: currently, using `canvas`  instead of manipulating DOM directly.
+some commands have been changed and undocumented.
 ```
+
+#### movement
+Description |  Operation
+--- | ---
+start / stop | spacebar
+move | arrow
+leap | arrow + cmd
+
+
+#### selection
+Description |  Operation
+--- | ---
+range | arrow + shift
+large range | arrow + shift + cmd
+add | cmd + n
+delete | cmd + backspace
+rename | cmd + e
+switch between | option + tab
+get cursor within | cmd + return (enter)
+focused | cmd + f
+
+#### console -> Input
+Description |  Operation
+--- | ---
+toggle insert | cmd + i
+eval input | shift + enter
+
+#### console -> Status
+Description |  Operation
+--- | ---
+BPM up | cmd + >
+BPM down | cmd + <
+
+#### config
+Description |  Operation
+--- | ---
+set MIDI | cmd + m
+
+
 
 
 ### watch in action.

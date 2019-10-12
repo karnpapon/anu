@@ -2,21 +2,17 @@ function Seeq(){
   
   // components installation.
   const Content = require('./content')
-  const Sequencer = require('./sequencer')
+  const Sequencer = require('./unused/sequencer')
   const Console = require('./console')
   const Displayer = require('./displayer')
   const Clock = require('./clock')
   const IO = require('./io')
-  const Keys = require('./keys')
-  const Metronome = require('./metronome')
   const { $, el, qs, scale, isChar} = require('./lib/utils')
 
   this.content = new Content(this)
   this.io = new IO(this)
   this.seq = new Sequencer(this)
-  this.keys = new Keys(this)
   this.masterClock = [new Clock(120)] 
-  this.metronome = new Metronome(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
 
@@ -53,7 +49,6 @@ function Seeq(){
     this.console.build()
     this.displayer.build()
     this.content.build()
-    this.metronome.init()
     this.console.toggleInsert()
     this.io.start()
     setTimeout(seeq.show,200)
@@ -63,31 +58,8 @@ function Seeq(){
     seeq.el.style.opacity = 1;
   }
 
-  this.clear = function(){
-    // this.isPlaying = false
-    // this.fetchWithoutDisconnect()
-  }
-
-  this.nudge = function(){
-    // this.isPlaying = false
-    // this.seq.nudged()
-  }
-
-  this.fetchWithoutDisconnect = function(){
-    this.startFetch()
-  }
-
   this.fetch = function(){
     this.startFetch()
-
-    // disconnect at initial state (`linkBtn` is not actived).
-    // to handle clock freely, 
-    // otherwise it'll manage to adjust clock to Ableton clock.
-    // ( clock will keeping reset to the default, 120 BPM).
-    socket.disconnect(0)
-    // this.setCursor(this.cursor[0], 0)
-    this.play()
-    this.metronome.play()
   }
 
   this.trimmedContents = function(txt){

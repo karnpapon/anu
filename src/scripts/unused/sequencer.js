@@ -2,7 +2,7 @@
 
 function Sequencer(app){
 
-  const { getRandomInt } = require('./lib/utils')
+  const { getRandomInt } = require('../lib/utils')
 
   this.output = ""
   this.beatRatio = '16th'
