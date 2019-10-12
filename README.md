@@ -11,6 +11,8 @@ NOTE: currently, using `canvas`  instead of manipulating DOM directly.
 some commands have been changed and undocumented.
 ```
 
+<div style="text-align:center; background-color: black; padding: 20px;"><img src="src/media/images/usage.gif" /></div>
+
 #### movement
 Description |  Operation
 --- | ---
@@ -53,7 +55,8 @@ set MIDI | cmd + m
 
 ### watch in action.
 
-[![IMAGE ALT TEXT HERE](https://i.ytimg.com/vi/DGaakhSvYOg/hqdefault.jpg)](https://www.youtube.com/watch?v=DGaakhSvYOg)
+
+<div style="text-align:center; background-color: black;"><a href="https://www.youtube.com/watch?v=DGaakhSvYOg"><img src="https://i.ytimg.com/vi/DGaakhSvYOg/hqdefault.jpg" /></a></div>
 
 
 
