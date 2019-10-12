@@ -17,16 +17,11 @@ function Source (canvas) {
     this.path = null
     this.queue = []
     canvas.seequencer.reset()
+    canvas.cursor.init()
+    canvas.cursor.initCursor()
     canvas.resize()
-    // canvas.history.reset()
-    canvas.cursor.reset(true)
-    // canvas.clock.play()
   }
 
-  this.run = function () {
-    // if (!this.queue || this.queue.length < canvas.seequencer.f || !this.queue[canvas.seequencer.f]) { return }
-    // canvas.commander.trigger(this.queue[canvas.seequencer.f])
-  }
 }
 
 

@@ -24,15 +24,15 @@ function Canvas () {
 
   // Themes
   this.theme = new Theme({ 
-    background: '#000000', //black
-    f_high: '#FFFFFF',  //almost white
-    f_med: '#e6e6e6', // grey
-    f_low: '#40A021',  //black
-    f_inv: '#6C00FF', // purple-ish
-    b_high: '#eeeeee', //grey-white.
-    b_med: '#3EFB00',  // green
-    b_low: '#00FFD4', // grey-black
-    b_inv: '#69DA44'  // selection
+    background: '#000000',
+    f_high: '#FFFFFF',  
+    f_med: '#e6e6e6', 
+    f_low: '#40A021',  
+    f_inv: '#6C00FF', 
+    b_high: '#eeeeee', 
+    b_med: '#3EFB00',  
+    b_low: '#00FFD4', 
+    b_inv: '#69DA44'  
   })
 
   this.el = document.createElement('canvas')
@@ -67,7 +67,6 @@ function Canvas () {
 
   this.run = function () {
     this.clock.run()
-    this.source.run()
     this.seequencer.run()
     this.stepcounter.run()
     this.update()

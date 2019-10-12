@@ -7,23 +7,7 @@ function Cursor(canvas) {
   this.mode = 0
   this.block = []
   this.active = 0
-  this.cursors = [{ 
-    x: 0, y: 0, w: 1, h:1, i: 0, 
-    n: `cursor-name-${this.active}`,
-    isOverlap: false,
-    matched: [],
-    msg: {
-      MIDI: { 
-        note: ["C", "E", "G"], 
-        notelength: [3,4,5], 
-        velocity: [9,10,11], 
-        octave: [2,3,4], 
-        channel: 0 
-      },
-      UDP: [],
-      OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" }
-    }
-  }]
+  this.cursors = []
 
   this.move = function (x, y) {
     let active = this.cursors[this.active]
@@ -188,26 +172,16 @@ function Cursor(canvas) {
     this.mode = 0
     this.block = []
     this.active = 0
-    this.cursors = [{ 
-      x: 0, y: 0, w: 1, h:1, i: 0, 
-      n: `cursor-name-${this.active}`,
-      matched: [],
-      msg: {
-        MIDI: { 
-          note: ["C", "E", "G"], 
-          notelength: [3,4,5], 
-          velocity: [9,10,11], 
-          octave: [2,3,4], 
-          channel: 0 },
-        UDP: [],
-        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" }
-      }
-    }]
+    this.cursors = []
+  }
+
+  this.initCursor = function(){
+    this.cursors.push(this.getNewCursor())
   }
 
   this.getNewCursor = function(){
     let newCursor = { 
-      x: 0, y: 0, w: 10, h:1, i: canvas.globalIdx, 
+      x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
       n: `cursor-name-${canvas.globalIdx}`,
       matched: [],
       msg: {
@@ -228,6 +202,7 @@ function Cursor(canvas) {
 
   this.reset = function () {
     this.init()
+    this.initCursor()
     this.move(0, 0)
   }
 

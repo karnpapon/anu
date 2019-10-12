@@ -139,7 +139,7 @@ function Commander(canvas) {
       event.preventDefault();
     }
 
-    // switch cursor.
+    // switch selection.
     if (event.keyCode === 9 && this.altFlag) {
       this.switchFlag = true;
       this.switchCounter += 1;
@@ -147,7 +147,7 @@ function Commander(canvas) {
       return;
     }
 
-    // show cursor name.
+    // show selection name.
     if (event.keyCode === 69 && this.altFlag) {
       this.switchFlag = true;
       event.preventDefault();
@@ -162,32 +162,28 @@ function Commander(canvas) {
       return;
     }
 
-    // console operation.
-    if (event.keyCode === 48 && (event.metaKey || event.ctrlKey)) {
-      // seeq.console.togglePort('OSC', seeq.console.oscBtn)
-      event.preventDefault();
-      return;
-    }
-
-    // console operation.
+    // toggle OSC.
     if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) {
       seeq.console.togglePort('OSC', seeq.console.oscBtn)
       event.preventDefault();
       return;
     }
 
+    // toggle UDP
     if (event.keyCode === 49 && (event.metaKey || event.ctrlKey)) {
       seeq.console.togglePort('UDP', seeq.console.udpBtn)
       event.preventDefault();
       return;
     }
 
+    // reverse global step.
     if (event.keyCode === 51 && (event.metaKey || event.ctrlKey)) {
       seeq.console.togglePort('REV', seeq.console.revBtn)
       event.preventDefault();
       return;
     }
 
+    // focus
     if (event.keyCode === 52 && (event.metaKey || event.ctrlKey)) {
       seeq.console.togglePort('FOCUS', seeq.console.focusBtn)
       canvas.toggleShowMarks()
