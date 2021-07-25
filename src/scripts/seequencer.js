@@ -217,6 +217,3 @@ function Seequencer(canvas){
 
   this.reset()
 }
-
-
-module.exports = Seequencer

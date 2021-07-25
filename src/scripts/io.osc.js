@@ -1,12 +1,14 @@
 'use strict'
 
-const osc = require('node-osc')
 
 function Osc (app) {
+  
+  const osc = require('node-osc');
+  const isEven = (x) => { return (x%2)==0; }
+  const isOdd = (x) => { return !isEven(x); }
+
   this.stack = []
   this.port = null
-
-  const { isOdd } = require('./lib/utils')
 
   // TODO make this configurable.
   this.options = { 
@@ -17,6 +19,7 @@ function Osc (app) {
   }
 
   this.start = function () {
+    if (!osc) { console.warn('OSC', 'Could not start.'); return }
     console.info('OSC', 'Starting..')
     this.setup()
     this.select()
@@ -73,9 +76,7 @@ function Osc (app) {
   this.setup = function () {
     if (!this.port) { return }
     if (this.client) { this.client.close() }
-    this.client = new osc.Client(app.io.ip, this.port)
+    this.client = new osc.Client(app.io.ip, this.port);
     console.info('OSC', 'Started client at ' + app.io.ip + ':' + this.port)
   }
 }
-
-module.exports = Osc

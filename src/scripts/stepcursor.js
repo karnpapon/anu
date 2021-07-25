@@ -111,6 +111,3 @@ function StepCursor(canvas) {
     seeq.io.clear()
   }
 }
-
-
-module.exports = StepCursor

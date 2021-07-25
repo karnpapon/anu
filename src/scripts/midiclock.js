@@ -87,5 +87,3 @@ class MidiClock {
     // console.log("midi masterClock = ", seeq.masterClock)
   }
 }
-
-module.exports = MidiClock

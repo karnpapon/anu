@@ -2,7 +2,7 @@
 
 function Cursor(canvas) {
 
-  const { isOdd } = require('./lib/utils')
+  // const { isOdd } = require('./lib/utils')
 
   this.mode = 0
   this.block = []
@@ -312,5 +312,3 @@ function Cursor(canvas) {
   function sense (s) { return s === s.toUpperCase() && s.toLowerCase() !== s.toUpperCase() }
   function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
 }
-
-module.exports = Cursor

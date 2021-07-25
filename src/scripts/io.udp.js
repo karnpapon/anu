@@ -1,14 +1,22 @@
+// 'use strict'
+
+
 'use strict'
 
-const dgram = require('dgram')
+function Udp (client) {
+  const dgram = require('dgram')
 
-function UDP(app) {
   this.stack = []
   this.port = null
-  this.options = { default: 49161 }
+  this.socket = dgram ? dgram.createSocket('udp4') : null
+  this.listener = dgram ? dgram.createSocket('udp4') : null
 
   this.start = function () {
-    this.select()
+    if (!dgram || !this.socket || !this.listener) { console.warn('UDP', 'Could not start.'); return }
+    console.info('UDP', 'Starting..')
+
+    this.selectInput()
+    this.selectOutput()
   }
 
   this.clear = function () {
@@ -16,75 +24,52 @@ function UDP(app) {
   }
 
   this.run = function () {
-    for (const id in this.stack) {
-      this.play(this.stack[id])
+    for (const item of this.stack) {
+      this.play(item)
     }
   }
 
-  this.send = function (msg) {
+  this.push = function (msg) {
     this.stack.push(msg)
   }
 
   this.play = function (data) {
-    this.server.send(Buffer.from(`${data}`), this.port, app.io.ip, (err) => {
+    if (!this.socket) { return }
+    this.socket.send(Buffer.from(`${data}`), this.port, client.io.ip, (err) => {
       if (err) { console.warn(err) }
     })
   }
 
-  this.select = function (port = this.options.default) {
+  this.selectOutput = function (port = 49161) {
+    if (!dgram) { console.warn('UDP', 'Unavailable.'); return }
     if (parseInt(port) === this.port) { console.warn('UDP', 'Already selected'); return }
     if (isNaN(port) || port < 1000) { console.warn('UDP', 'Unavailable port'); return }
-    console.info('UDP', `Selected port: ${port}`)
+
+    console.log('UDP', `Output: ${port}`)
     this.port = parseInt(port)
-    // this.update()
   }
 
-  // this.update = function () {
-  //   app.controller.clearCat('default', 'UDP')
-  //   for (const id in this.options) {
-  //     app.controller.add('default', 'UDP', `${id.charAt(0).toUpperCase() + id.substr(1)}(${this.options[id]}) ${this.port === this.options[id] ? ' — Active' : ''}`, () => { app.io.udp.select(this.options[id]) }, '')
-  //   }
-  //   app.controller.commit()
-  // }
+  this.selectInput = (port = 49160) => {
+    if (!dgram) { console.warn('UDP', 'Unavailable.'); return }
+    if (this.listener) { this.listener.close() }
 
-  this.server = dgram.createSocket('udp4')
-  this.listener = dgram.createSocket('udp4')
+    console.log('UDP', `Input: ${port}`)
+    this.listener = dgram.createSocket('udp4')
 
-  // Input
+    this.listener.on('message', (msg, rinfo) => {
+      client.commander.trigger(`${msg}`)
+    })
 
-  this.listener.on('message', (msg, rinfo) => {
-    // app.commander.trigger(`${msg}`, false)
-  })
+    this.listener.on('listening', () => {
+      const address = this.listener.address()
+      console.info('UDP', `Started socket at ${address.address}:${address.port}`)
+    })
 
-  this.listener.on('listening', () => {
-    const address = this.listener.address()
-    console.log(`UDP Listening: ${address.address}:${address.port}`)
-  })
+    this.listener.on('error', (err) => {
+      console.warn('UDP', `Server error:\n ${err.stack}`)
+      this.listener.close()
+    })
 
-  this.listener.on('error', (err) => {
-    console.warn(`Server error:\n ${err.stack}`)
-    this.listener.close()
-  })
-
-
-  // Ableton Connection.
-  // socket.on('beat', function (data) {
-  //   const { beat, bpm } = data
-
-  //   // set clock source from Ableton.
-  //   if (beat % 4 == 0 && bpm != app.clock().getBpm()) {
-  //     app.clock().setBpm(bpm)
-  //     app.seq.setBPMdisplay(bpm) 
-  //   }
-
-  //   if (beat % 4 == 0 && !app.isPlaying && app.isLinkToggle) {
-  //     app.play()
-  //     app.metronome.play()
-  //   }
-  // });
-
-  this.listener.bind(49160)
+    this.listener.bind(port)
+  }
 }
-
-
-module.exports = UDP

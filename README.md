@@ -73,9 +73,7 @@ set MIDI | `cmd` + `m`
 ## Notes.
 - currently, MIDI devices / OSC addrs / UDP port are not configurable.
 
-
-
-# quick start
+# development
 
 ```bash
 # Go into the repository
@@ -83,5 +81,5 @@ cd Seeq
 # Install dependencies
 yarn install or npm install
 # Run the app
-yarn start or npm start
+yarn start or npm run start
 ```

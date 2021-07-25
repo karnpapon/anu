@@ -2,7 +2,7 @@
 
 function Content(app){
 
-  const { el } = require('./lib/utils')
+  const el = tag => document.createElement(tag);
   this.el = el("div")
   this.loading = el("div")
 
@@ -12,5 +12,3 @@ function Content(app){
     app.el.insertBefore(this.el,app.parentTarget.nextSibling)
   }
 }
-
-module.exports = Content

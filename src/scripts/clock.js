@@ -1,6 +1,9 @@
 'use strict'
 
 function Clock(canvas) {
+  const workerScript = 'onmessage = (e) => { setInterval(() => { postMessage(true) }, e.data)}'
+  const worker = window.URL.createObjectURL(new Blob([workerScript], { type: 'text/javascript' }))
+
   this.bpm = 0
   this.callback = () => { }
   this.timer = null
@@ -68,7 +71,7 @@ function Clock(canvas) {
   this.setTimer = function(bpm) {
     seeq.console.bpmNumber.innerText = bpm
     this.clearTimer()
-    this.timer = new Worker('./scripts/timer.js')
+    this.timer = new Worker(worker)
     this.timer.postMessage((60000 / bpm) / 4)
     this.timer.onmessage = (event) => { canvas.run() }
   }
@@ -113,5 +116,3 @@ function Clock(canvas) {
 
   function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
 }
-
-module.exports = Clock

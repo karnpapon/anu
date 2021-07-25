@@ -26,7 +26,7 @@ function Midi(app) {
   }
 
   // Midi
-
+  
   this.send = function ({ channel, octave, note, velocity, length }) {
     let noteNumber = []
     let convertedNote 
@@ -110,4 +110,3 @@ function Midi(app) {
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v }
 }
 
-module.exports = Midi

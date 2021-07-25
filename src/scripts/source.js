@@ -1,9 +1,9 @@
 'use strict'
 
 function Source (canvas) {
-  const fs = require('fs')
-  const path = require('path')
-  const { dialog, app } = require('electron').remote
+  // const fs = require('fs')
+  // const path = require('path')
+  // const { dialog, app } = require('electron').remote
 
   this.path = null
   this.queue = []
@@ -23,6 +23,3 @@ function Source (canvas) {
   }
 
 }
-
-
-module.exports = Source

@@ -2,7 +2,7 @@
 
 function Displayer(app) {
 
-  const { el, qs } = require('./lib/utils')
+  const el = tag => document.createElement(tag);
 
   // create.
   this.el = el("div")
@@ -281,5 +281,3 @@ function Displayer(app) {
 
 
 }
-
-module.exports = Displayer

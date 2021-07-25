@@ -352,5 +352,3 @@ function Commander(canvas) {
     return `${this.query}`;
   };
 }
-
-module.exports = Commander;

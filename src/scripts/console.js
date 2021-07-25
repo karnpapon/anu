@@ -2,7 +2,8 @@
 
 function Console(app) {
 
-  const { el,qs } = require('./lib/utils')
+  const el = tag => document.createElement(tag);
+  const qs = id => document.querySelector(id);
 
   this.el = el("div")
   this.el_elem = `
@@ -354,5 +355,3 @@ function Console(app) {
   }
 
 }
-
-module.exports = Console

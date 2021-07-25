@@ -1,18 +1,8 @@
 function Seeq(){
   
-  // components installation.
-  const Content = require('./content')
-  const Sequencer = require('./unused/sequencer')
-  const Console = require('./console')
-  const Displayer = require('./displayer')
-  const Clock = require('./clock')
-  const IO = require('./io')
-  const { $, el, qs, scale, isChar} = require('./lib/utils')
-
+  const el = tag => document.createElement(tag);
   this.content = new Content(this)
   this.io = new IO(this)
-  this.seq = new Sequencer(this)
-  this.masterClock = [new Clock(120)] 
   this.console = new Console(this)
   this.displayer = new Displayer(this)
 
@@ -34,7 +24,7 @@ function Seeq(){
   // ------------------------------------
 
   // Ajax.
-  this.url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles="
+  this.url = "https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=extracts&exintro&explaintext&redirects=1&titles="
   this.urlEnd = "&redirects=1"
   this.isGettingData = false
 
@@ -140,8 +130,8 @@ function Seeq(){
 
     axios({
       method: "get",
-      url: seeq.url + seeq.console.fetchSearchInput + seeq.urlEnd,
-      responseType: "json"
+      url: seeq.url + seeq.console.fetchSearchInput,
+      responseType: "json",
     })
     .then((resp) => {
       var { pages } = resp.data.query
@@ -157,7 +147,7 @@ function Seeq(){
       }
     })
     .catch((error) => {
-      res = `sorry ${error}, please try again..`
+      res = `${error}, please try again..`
       seeq.isGettingData = false
       seeq.content.loading.classList.remove("loading")
       seeq.repaint(res)
@@ -256,5 +246,3 @@ function Seeq(){
     return itobase36
   }
 }
-
-module.exports = Seeq

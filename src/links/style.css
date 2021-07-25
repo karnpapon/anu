@@ -102,7 +102,8 @@ div button{
 }
 
 .limit{
-  width: 513px;
+  /* width: 513px; */
+  width: 100%;
   height: 100%;
   position: absolute;
   word-wrap: break-word;
@@ -622,21 +623,26 @@ appwrapper{
   background: #e6e6e6;
   transition: all .2s ease;
   padding: 30px;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  height: 100vh;
 }
 app { 
   display: flex; 
   flex-direction: column;
-  width:30px; 
-  height:30px; 
   padding:20px; 
   color:black; 
   overflow: hidden; 
   z-index:20; 
-  margin: calc(50vh - 270px) auto; 
+  /* margin: calc(50vh - 270px) auto;  */
   transition: background-color 150ms, opacity 350ms; 
-  max-width: 830px; 
-  height: 480px; 
+  /* max-width: 830px;  */
+  max-width: 550px; 
+  /* height: 480px;  */
+  height: 100%;
   position: relative; 
+  justify-content: center;
   opacity:0; 
   width:calc(100% - 50px); 
   transition: all .2s ease;
@@ -742,7 +748,7 @@ div input:focus{ outline: none;}
   /* margin-top: 30px; */
   overflow: hidden;
   position: inherit;
-  /* height: 100%; */
+  height: 40%;
   margin-top: 12px;
   transition: all .2s ease-out;
 }

@@ -2,16 +2,6 @@
 
 function Canvas () {
 
-  const Theme = require('./lib/theme')
-  const Seequencer = require('./seequencer')
-  const Commander = require('./commander')
-  const Cursor = require('./cursor')
-  const Source = require('./source')
-  const Clock = require('./clock')
-  const StepCursor = require('./stepcursor')
-  const StepCounter = require('./stepcounter')
-  const IO = require('./io')
-
   this.seequencer = new Seequencer(this)
   this.cursor = new Cursor(this)
   this.source = new Source(this)
@@ -44,7 +34,10 @@ function Canvas () {
   this.bufferPos = []
   this.prevRegExInput = ""
   this.grid = { w: 8, h: 8 }
-  this.tile = { w: 8, h: 16 }
+  this.tile = {
+    w: +localStorage.getItem('tilew') || 8,
+    h: +localStorage.getItem('tileh') || 16
+  }
   this.scale = window.devicePixelRatio
   this.hardmode = true
   this.guide = false
@@ -61,6 +54,9 @@ function Canvas () {
     this.source.start()
     this.clock.start()
     this.writeData()
+
+    this.reset()
+    this.modZoom()
     this.update()
     this.el.className = 'ready'
   }
@@ -309,6 +305,19 @@ function Canvas () {
     }
   }
 
+  this.modZoom = (mod = 0, reset = false) => {
+    this.tile = {
+      w: reset ? 8 : this.tile.w * (mod + 1),
+      h: reset ? 16 : this.tile.h * (mod + 1),
+      ws: Math.floor(this.tile.w * this.scale),
+      hs: Math.floor(this.tile.h * this.scale)
+    }
+    localStorage.setItem('tilew', this.tile.w)
+    localStorage.setItem('tileh', this.tile.h)
+    this.resize(true)
+  }
+
+
   this.write = function (text, offsetX, offsetY, limit = 50, type = 2) {
     let x = 0
     while (x < text.length && x < limit - 1) {
@@ -318,8 +327,17 @@ function Canvas () {
   }
 
   this.resize = function (force = false) {
-    const size = { w: window.innerWidth + 0.5, h: window.innerHeight }
-    const tiles = { w: Math.ceil(( size.w) / this.tile.w - 19 ), h: 17 }
+    const ww = document.getElementsByClassName("content")[0];
+    const pad = 30
+    // const size = { w: window.innerWidth - (pad * 2), h: window.innerHeight - ((pad * 2) + this.tile.h * 2) }
+    const size = { w: ww.clientWidth, h: ww.clientHeight }
+    const tiles = { w: Math.ceil(( size.w) / this.tile.w  ), h: Math.ceil(( size.h) / this.tile.h  ) }
+    // const tiles = { w: Math.ceil(size.w / this.tile.w), h: Math.ceil(size.h / this.tile.h) }
+    const bounds = this.seequencer.bounds();
+
+
+    if (tiles.w < bounds.w + 1) { tiles.w = bounds.w + 1 }
+    if (tiles.h < bounds.h + 1) { tiles.h = bounds.h + 1 }
 
     this.crop(tiles.w, tiles.h)
 
@@ -327,14 +345,25 @@ function Canvas () {
     if (this.cursor.cursors[this.cursor.active].x >= tiles.w) { this.cursor.cursors[this.cursor.active].x = tiles.w - 1 }
     if (this.cursor.cursors[this.cursor.active].y >= tiles.h) { this.cursor.cursors[this.cursor.active].y = tiles.h - 1 }
 
-    this.el.width = (this.tile.w) * this.seequencer.w * this.scale
-    this.el.height = (this.tile.h + 5) * this.seequencer.h * this.scale
+    const w = this.tile.ws * this.seequencer.w
+    const h = (this.tile.hs + (this.tile.hs / 5)) * this.seequencer.h
+
+    if (w === this.el.width && h === this.el.height) { return }
+
+   
+
+    // this.el.width = (this.tile.w) * this.seequencer.w * this.scale
+    // this.el.height = (this.tile.h + 5) * this.seequencer.h * this.scale
+    // this.el.style.width = `${Math.ceil(this.tile.w * this.seequencer.w)}px`
+
+    this.el.width = w
+    this.el.height = h
     this.el.style.width = `${Math.ceil(this.tile.w * this.seequencer.w)}px`
+    this.el.style.height = `${Math.ceil((this.tile.h + (this.tile.h / 5)) * this.seequencer.h)}px`
 
     this.context.textBaseline = 'bottom'
     this.context.textAlign = 'center'
     this.context.font = `${this.tile.h * 0.75 * this.scale}px input_mono_regular` 
-
     this.update()
   }
 
@@ -344,24 +373,26 @@ function Canvas () {
     if (h > this.seequencer.h) {
       block = `${block}${`\n${'.'.repeat(this.seequencer.w)}`.repeat((h - this.seequencer.h))}`
     } else if (h < this.seequencer.h) {
-      block = `${block}`.split('\n').slice(0, (h - this.seequencer.h)).join('\n').trim()
+      block = `${block}`.split(/\r?\n/).slice(0, (h - this.seequencer.h)).join('\n').trim()
     }
 
     if (w > this.seequencer.w) {
-      block = `${block}`.split('\n').map((val) => { return val + ('.').repeat((w - this.seequencer.w)) }).join('\n').trim()
+      block = `${block}`.split(/\r?\n/).map((val) => { return val + ('.').repeat((w - this.seequencer.w)) }).join('\n').trim()
     } else if (w < this.seequencer.w) {
-      block = `${block}`.split('\n').map((val) => { return val.substr(0, val.length + (w - this.seequencer.w)) }).join('\n').trim()
+      block = `${block}`.split(/\r?\n/).map((val) => { return val.substr(0, val.length + (w - this.orca.w)) }).join('\n').trim()
     }
 
     // this.history.reset()
     this.seequencer.load(w, h, block, this.seequencer.f)
   }
 
+
+  // window.onresize = (e) => {
+  //   this.resize()
+  // }
+
   // Helpers
 
   function display (str, f, max) { return str.length < max ? str : str.slice(f % str.length) + str.substr(0, f % str.length) }
   function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
 }
-
-
-module.exports = Canvas
