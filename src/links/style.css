@@ -1,5 +1,6 @@
 :root {
-  --main-bg-color: #e6e6e6;
+  /* --main-bg-color: #e6e6e6; */
+  --main-bg-color: white;
   --trigger-color: rgb(62, 251, 0);
   --trigger-input-color: #000000;
   --reverse-target: #f287ff;
@@ -14,6 +15,23 @@ body {
   margin: 0;
 }
 
+header{
+  display: flex;
+  position: absolute; 
+  top: 0;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 20px;
+  text-align: end;
+  font-family: 'input_mono_regular'; 
+  border-bottom: 1px dashed #b9b9b9;
+  font-size:12px;
+}
+
+header img {
+  width: 3rem;
+}
 /* body{
   overflow: hidden;
   -webkit-app-region: drag;
@@ -620,7 +638,8 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 
 appwrapper{ 
   display: flex;
-  background: #e6e6e6;
+  /* background: #e6e6e6; */
+  background: #f3f3f3;
   transition: all .2s ease;
   padding: 30px;
   justify-content: center;
@@ -628,23 +647,28 @@ appwrapper{
   align-self: center;
   height: 100vh;
 }
+
+canvas { height: 320px }
 app { 
   display: flex; 
   flex-direction: column;
-  padding:20px; 
+  padding: 2.5rem; 
   color:black; 
   overflow: hidden; 
   z-index:20; 
   /* margin: calc(50vh - 270px) auto;  */
   transition: background-color 150ms, opacity 350ms; 
   /* max-width: 830px;  */
-  max-width: 550px; 
+  max-width: 655px; 
   /* height: 480px;  */
-  height: 100%;
+  height: max-content;
+  /* border: 1px solid; */
+  border-radius: 17px;
   position: relative; 
-  justify-content: center;
+  /* justify-content: center; */
   opacity:0; 
   width:calc(100% - 50px); 
+  background-color: white;
   transition: all .2s ease;
 }
 

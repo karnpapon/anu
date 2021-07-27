@@ -2,12 +2,53 @@
 
 function Cursor(canvas) {
 
-  // const { isOdd } = require('./lib/utils')
-
   this.mode = 0
   this.block = []
   this.active = 0
   this.cursors = []
+  this.mouseFrom = null
+  this.isMouseInCanvas = true;
+
+  this.start = () => {
+    document.onmousedown = this.onMouseDown
+    document.onmouseup = this.onMouseUp
+    document.onmousemove = this.onMouseMove
+  }
+
+  this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
+    this.moveTo(x, y)
+    this.scaleTo(w, h)
+    canvas.update()
+  }
+
+  this.onMouseDown = (e) => {
+    if (!canvas.el.contains(e.target)) { return }
+    const pos = this.mousePick(e.clientX, e.clientY)
+    this.select(pos.x, pos.y, 0, 0)
+    this.mouseFrom = pos
+  }
+
+  this.onMouseMove = (e) => {
+    if (!canvas.el.contains(e.target)) { return }
+    if (!this.mouseFrom) { return }
+    const pos = this.mousePick(e.clientX, e.clientY)
+    this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x, pos.y - this.mouseFrom.y)
+  }
+
+  this.onMouseUp = (e) => {
+    if (!canvas.el.contains(e.target)) { return }
+    if (this.mouseFrom) {
+      const pos = this.mousePick(e.clientX, e.clientY)
+      this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x, pos.y - this.mouseFrom.y)
+    }
+    this.mouseFrom = null
+  }
+
+  this.mousePick = (x, y, w = canvas.tile.w, h = canvas.tile.h) => {
+    var rect = canvas.el.getBoundingClientRect();
+    this.isMouseInCanvas = true;
+    return { x: parseInt(((x - rect.left)) / w) , y: parseInt(((y - rect.top)) / h) }
+  }
 
   this.move = function (x, y) {
     let active = this.cursors[this.active]
@@ -160,12 +201,6 @@ function Cursor(canvas) {
 
   this.setCursorName = function(){
     this.cursors[this.active].n = seeq.displayer.renameInput 
-  }
-  
-  this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
-    this.moveTo(x, y)
-    this.scaleTo(w, h)
-    canvas.update()
   }
 
   this.init = function(){
