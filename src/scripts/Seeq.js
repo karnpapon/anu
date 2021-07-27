@@ -35,7 +35,7 @@ function Seeq(){
 
   // -----------------------------------
 
-  this.start = function(){
+  this.build = function(){
     this.console.build()
     this.displayer.build()
     this.content.build()

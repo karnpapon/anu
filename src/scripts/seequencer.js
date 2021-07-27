@@ -50,7 +50,7 @@ function Seequencer(canvas){
   }
 
   this.clean = function (str) {
-    return `${str}`.replace(/\n/g, '').trim().substr(0, this.w * this.h)
+    return `${str}`.replace(/\n/g, '').trim().substr(0, this.w * (this.h + 2))
   }
 
   this.replace = function (s) {

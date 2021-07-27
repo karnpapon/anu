@@ -50,13 +50,13 @@ function Canvas () {
   }
 
   this.start = function () {
-    this.theme.start()
+    // this.theme.start()
     this.source.start()
-    this.clock.start()
+    // this.clock.start()
     this.cursor.start()
-    this.writeData()
-
+    
     this.reset()
+    this.writeData()
     this.modZoom()
     this.update()
     this.el.className = 'ready'
@@ -68,7 +68,6 @@ function Canvas () {
     this.stepcounter.run()
     this.update()
     this.stepcursor.trigger()
-    
   }
   
   this.update = function () {
@@ -184,38 +183,10 @@ function Canvas () {
   }
 
   // Interface
-
-  this.makeGlyph = function (x, y) {
-    let cursor = this.cursor.cursors
-    const g = this.seequencer.glyphAt(x, y)
-    if (g !== '.' ) { 
-      if( this.isCursor(x,y)){return "*"} else {return g }
-    }
-
-    if (this.isCursor(x, y)) { return '*'}
-    if (this.isMarker(x, y)) { return '+' }
-    return g
-  }
-
-  this.makeStyle = function (x, y, glyph, selection) {
+  this.makeStyle = function (x, y) {
     let f = this.seequencer.f
-    if(this.isCursor(x,y)) {
-      if(this.isCurrentCursor(x,y) ){
-        return f % 6 === 0 || f % 6 === 1 || f % 6 === 2 ? 0:10
-      } else {
-        return 10 
-      }
-    }
-  
-    if (this.isSelection(x, y)) {
-      if (this.isSelectionOverlap(x,y)){
-        return 1
-      } else {
-        return 6
-      }
-    }
-
-
+    if(this.isCursor(x,y)) { return this.isCurrentCursor(x,y)? 10:1 }
+    if (this.isSelection(x, y)) { return this.isSelectionOverlap(x,y)? 1:6 }
     return 9
   }
 
@@ -247,7 +218,6 @@ function Canvas () {
   // Canvas
 
   this.clear = function () {
-    // this.context.font = `${this.tile.h * 0.75 * this.scale}px input_mono_regular` 
     this.context.clearRect(0, 0, this.el.width, this.el.height)
   }
 
@@ -256,11 +226,11 @@ function Canvas () {
   }
 
   this.drawProgram = function () {
-    const selection = this.cursor.read()
-    for (let y = 0; y < this.seequencer.h; y++) {
+    for (let y = 0; y < this.seequencer.h ; y++) {
       for (let x = 0; x < this.seequencer.w; x++) {
-        const glyph = this.makeGlyph(x, y)
-        const style = this.makeStyle(x, y, glyph, selection)
+        const g = this.seequencer.glyphAt(x, y)
+        const style = this.makeStyle(x, y)
+        const glyph = g !== '.' ? g : this.isCursor(x, y) ? (this.clock.isPaused ? 'x' : '>') : this.isMarker(x, y) ? '+' : g
         this.drawSprite(x, y, glyph, style)
       }
     }
@@ -287,7 +257,7 @@ function Canvas () {
     if (theme.bg) {
       const bgrect = { 
         x: x * this.tile.w * this.scale, 
-        y: (y) * this.tile.h * this.scale, 
+        y: y * this.tile.h * this.scale, 
         w: this.tile.w * this.scale, 
         h: this.tile.h * this.scale 
       }
@@ -329,13 +299,9 @@ function Canvas () {
 
   this.resize = function (force = false) {
     const ww = document.getElementsByClassName("content")[0];
-    const pad = 30
-    // const size = { w: window.innerWidth - (pad * 2), h: window.innerHeight - ((pad * 2) + this.tile.h * 2) }
-    const size = { w: ww.clientWidth, h: ww.clientHeight }
+    const size = { w: ww.clientWidth, h: ww.clientHeight}
     const tiles = { w: Math.ceil(( size.w) / this.tile.w  ), h: Math.ceil(( size.h) / this.tile.h  ) }
-    // const tiles = { w: Math.ceil(size.w / this.tile.w), h: Math.ceil(size.h / this.tile.h) }
     const bounds = this.seequencer.bounds();
-
 
     if (tiles.w < bounds.w + 1) { tiles.w = bounds.w + 1 }
     if (tiles.h < bounds.h + 1) { tiles.h = bounds.h + 1 }
@@ -343,24 +309,18 @@ function Canvas () {
     this.crop(tiles.w, tiles.h)
 
     // Keep cursor in bounds
-    if (this.cursor.cursors[this.cursor.active].x >= tiles.w) { this.cursor.cursors[this.cursor.active].x = tiles.w - 1 }
-    if (this.cursor.cursors[this.cursor.active].y >= tiles.h) { this.cursor.cursors[this.cursor.active].y = tiles.h - 1 }
+    // if (this.cursor.cursors[this.cursor.active].x >= tiles.w) { this.cursor.cursors[this.cursor.active].x = tiles.w - 1 }
+    // if (this.cursor.cursors[this.cursor.active].y >= tiles.h) { this.cursor.cursors[this.cursor.active].y = tiles.h - 1 }
 
     const w = this.tile.ws * this.seequencer.w
-    const h = (this.tile.hs + (this.tile.hs / 5)) * this.seequencer.h
+    const h = (this.tile.hs + (this.tile.hs / 5)) * this.seequencer.h 
 
-    if (w === this.el.width && h === this.el.height) { return }
-
-   
-
-    // this.el.width = (this.tile.w) * this.seequencer.w * this.scale
-    // this.el.height = (this.tile.h + 5) * this.seequencer.h * this.scale
-    // this.el.style.width = `${Math.ceil(this.tile.w * this.seequencer.w)}px`
+    // if (w === this.el.width && h === this.el.height) { return }
 
     this.el.width = w
     this.el.height = h
     this.el.style.width = `${Math.ceil(this.tile.w * this.seequencer.w)}px`
-    this.el.style.height = `${Math.ceil((this.tile.h + (this.tile.h / 5)) * this.seequencer.h)}px`
+    this.el.style.height = `${Math.floor((this.tile.h + (this.tile.h / 5)) * this.seequencer.h)}px`
 
     this.context.textBaseline = 'bottom'
     this.context.textAlign = 'center'
@@ -372,18 +332,16 @@ function Canvas () {
     let block = `${this.seequencer}`
 
     if (h > this.seequencer.h) {
-      block = `${block}${`\n${'.'.repeat(this.seequencer.w)}`.repeat((h - this.seequencer.h))}`
+      block = `${block}${`\n${'.'.repeat(this.seequencer.w)}`.repeat(h - this.seequencer.h )}`
     } else if (h < this.seequencer.h) {
       block = `${block}`.split(/\r?\n/).slice(0, (h - this.seequencer.h)).join('\n').trim()
     }
-
+    
     if (w > this.seequencer.w) {
       block = `${block}`.split(/\r?\n/).map((val) => { return val + ('.').repeat((w - this.seequencer.w)) }).join('\n').trim()
     } else if (w < this.seequencer.w) {
-      block = `${block}`.split(/\r?\n/).map((val) => { return val.substr(0, val.length + (w - this.orca.w)) }).join('\n').trim()
+      block = `${block}`.split(/\r?\n/).map((val) => { return val.substr(0, val.length + (w - this.seequencer.w)) }).join('\n').trim()
     }
-
-    // this.history.reset()
     this.seequencer.load(w, h, block, this.seequencer.f)
   }
 
