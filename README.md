@@ -15,7 +15,7 @@ NOTE: currently, using `canvas`  instead of manipulating DOM directly.
 some commands have been changed and undocumented.
 ```
 
-> in order to move selection, the console has to be toggled off ( `cmd` + `i`).
+in order to move selection, the console has to be toggled off ( `cmd` + `i`).
 
 
 #### movement

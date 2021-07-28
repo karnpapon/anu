@@ -69,6 +69,9 @@ function Clock(canvas) {
   }
 
   this.setTimer = function(bpm) {
+    if (bpm < 60) { console.warn('Clock', 'Error ' + bpm); return }
+    this.clearTimer()
+    window.localStorage.setItem('bpm', bpm)
     seeq.console.bpmNumber.innerText = bpm
     this.clearTimer()
     this.timer = new Worker(worker)

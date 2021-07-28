@@ -5,6 +5,7 @@ function Seeq(){
   this.io = new IO(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
+  this.layout = new Layout(this)
 
   // ------------------------------------
 
@@ -36,6 +37,7 @@ function Seeq(){
   // -----------------------------------
 
   this.build = function(){
+    this.layout.build()
     this.console.build()
     this.displayer.build()
     this.content.build()
