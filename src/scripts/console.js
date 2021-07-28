@@ -44,7 +44,7 @@ function Console(app) {
         <div class="header-wrapper console-3 flex-col header-wrapper-status">
           <div class="tempo">
             <div class="tempo-details">
-              <div>
+              <div style="display: grid;">
                 <div class="tempo-details">
                   <b>BPM : </b>
                 </div>

@@ -1,6 +1,5 @@
 function Layout(app) {
   const el = (tag) => document.createElement(tag);
-  // this.layoutElem = el("div");
   this.headerElem = el("header");
   this.helperElem = el("div");
   this.helperElem.classList.add("helper");
@@ -8,7 +7,7 @@ function Layout(app) {
   this.init = function () {
     this.headerElem.innerHTML = `
       <div style="display: flex;">
-        <bold>seeq : letter sequencer.</bold>
+        <bold>seeq : letter sequencer</bold>
         <p id="helper"> | docs</p>
       </div>
       <div class="info">
@@ -21,20 +20,13 @@ function Layout(app) {
     this.helperElem.innerHTML = `
       <div class="scroll-area">
       <section>
-          <p>Sequencer / Livecoding environment. <br/>using search or RegEx pattern to assign triggers.</p>
+          <p>Sequencer / Livecoding environment. using search or RegEx pattern to assign triggers.</p>
           <h2>Documents.</h2>
-          <bold>OSC ports (currently, cannot configurable)</bold>
-          <p>to active OSC, osc button has to be toggled on.</p>
-          <p>open OSC msg = &nbsp; <code>cmd + o</code>&nbsp; (letter 'o' not zero number) </p>
-          <p>default: 49162</p>
-          <p>tidalCycles: 6010</p>
-          <p>superCollider: 57120</p>
-          <p>sonicPi: 4559 </p>
           <strong>movement</strong>
           <p>in order to move selection with arrow, <br/> the console has to be toggled off by cmd + i<p/>
           <ul class="helper-list">
             <li>
-              <p>start / stop</p>
+              <p>play/pause</p>
               <code>spacebar</code>
             </li>
             <li>
@@ -53,7 +45,7 @@ function Layout(app) {
               <code>shift</code><binop>+</binop><code>arrow</code>
             </li>
             <li>
-              <p>large range</p>
+              <p>enlarge</p>
               <code>shift</code><binop>+</binop><code>arrow</code><binop>+</binop><code>cmd</code>
             </li>
             <li>
@@ -69,16 +61,16 @@ function Layout(app) {
               <code>cmd</code><binop>+</binop><code>e</code>
             </li>
             <li>
-              <p>show current name</p>
+              <p>current name</p>
               <code>option</code><binop>+</binop><code>e</code>
             </li>
             <li>
-              <p>switch between</p>
+              <p>switch</p>
               <code>option</code><binop>+</binop><code>tab</code>
             </li>
             <li>
-              <p>snap step within selection</p>
-              <code>cmd</code><binop>+</binop><code>return(enter)</code>
+              <p>snap</p>
+              <code>cmd</code><binop>+</binop><code>return</code>
             </li>
             <li>
               <p>focus</p>
@@ -112,12 +104,18 @@ function Layout(app) {
               <code>cmd</code><binop>+</binop><code>m</code>
             </li>
           </ul>
+          <bold>OSC ports (currently, cannot configurable)</bold>
+          <p>to active OSC, osc button has to be toggled on.</p>
+          <p>open OSC = &nbsp;<code> cmd + o</code></p>
+          <p>default: <code>49162</code></p>
+          <p>tidalCycles: <code>6010</code></p>
+          <p>superCollider: <code>57120</code></p>
+          <p>sonicPi: <code>4559</code></p>
           <strong>caveats</strong>
           <ul class="helper-list">
-            <li> 
+            <div> 
               <p>sharp note is not support, use flat instead</p> 
-              <code>Ab,Bb</code>
-            </li>
+            </div>
           </ul>
         </section>
       </div>
