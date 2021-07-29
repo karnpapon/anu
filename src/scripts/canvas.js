@@ -52,7 +52,7 @@ function Canvas () {
   this.start = function () {
     // this.theme.start()
     this.source.start()
-    // this.clock.start()
+    this.clock.start()
     this.cursor.start()
     
     this.reset()
