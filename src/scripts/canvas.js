@@ -94,7 +94,7 @@ function Canvas () {
     this.update()
   }
 
-  this.writeData = function (data = 'please give some input value' ) {
+  this.writeData = function (data = 'please give some input value and hit return' ) {
     this.texts = data
     let position = this.cursor.cursors[this.cursor.active]
     for (var i = 0; i < this.texts.length; i++) {
