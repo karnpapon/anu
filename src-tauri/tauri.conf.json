@@ -3,8 +3,8 @@
   "build": {
     "beforeBuildCommand": "",
     "beforeDevCommand": "",
-    "devPath": "../.",
-    "distDir": "../."
+    "devPath": "../src",
+    "distDir": "../src"
   },
   "package": {
     "productName": "seeq",
@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.tauri.dev.seeq",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

@@ -4,7 +4,7 @@
   "description": "custom sequencer",
   "main": "main.js",
   "scripts": {
-    "start": "serve .",
+    "start": "serve ./src",
     "reInstall": "rm -rf node_modules && rm -rf package-lock.json && npm install",
     "clean": "rm -r ~/Desktop/Seeq-darwin-x64/ ; echo 'cleaned build location'",
     "tauri": "tauri"
