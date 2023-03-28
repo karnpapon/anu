@@ -5,22 +5,22 @@ function Seeq(){
   this.io = new IO(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
-  this.layout = new Layout(this)
+  // this.layout = new Layout(this)
 
   // ------------------------------------
 
   // DOM installation.
-  this.appWrapper = el("appwrapper")
+  // this.appWrapper = el("appwrapper")
   this.el = el("app");
   this.el.style.opacity = 0;
   this.el.id = "seeq";
-  this.appWrapper.appendChild(this.el)
+  // this.appWrapper.appendChild(this.el)
   this.wrapper_el = el("div")
   this.wrapper_el.className = "wrapper-control"
   this.el.appendChild(this.wrapper_el)
   this.parentTarget = document.getElementsByClassName("wrapper-control")
   this.infoDisplay
-  document.body.appendChild(this.appWrapper);
+  document.body.appendChild(this.el);
 
   // ------------------------------------
 
@@ -37,7 +37,7 @@ function Seeq(){
   // -----------------------------------
 
   this.build = function(){
-    this.layout.build()
+    // this.layout.build()
     this.console.build()
     this.displayer.build()
     this.content.build()

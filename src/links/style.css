@@ -703,7 +703,8 @@ app {
   position: relative; 
   /* justify-content: center; */
   opacity:0; 
-  width:calc(100% - 50px); 
+  /* width:calc(100% - 50px);  */
+  /* width:calc(100% - 50px);  */
   background-color: white;
   transition: all .2s ease;
 }

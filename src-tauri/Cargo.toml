@@ -1,11 +1,11 @@
 [package]
-name = "app"
+name = "seeq-tauri"
 version = "0.1.0"
-description = "A Tauri App"
+description = "A seeq application built with Tauri"
 authors = ["you"]
 license = ""
 repository = ""
-default-run = "app"
+default-run = "seeq-tauri"
 edition = "2021"
 rust-version = "1.59"
 
@@ -16,8 +16,9 @@ tauri-build = { version = "1.2.1", features = [] }
 
 [dependencies]
 serde_json = "1.0"
+rosc = "0.8.1"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2.4", features = [] }
+tauri = { version = "1.2.4", features = ["shell-execute", "shell-sidecar", "window-close", "window-hide", "window-maximize", "window-minimize", "window-show", "window-start-dragging", "window-unmaximize", "window-unminimize"] }
 
 [features]
 # by default Tauri runs in production mode

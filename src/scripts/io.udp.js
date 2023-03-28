@@ -3,8 +3,10 @@
 
 'use strict'
 
-function Udp (client) {
-  const dgram = require('dgram')
+// import dgram from 'dgram';
+
+function UDP (client) {
+  // const dgram = require('dgram')
 
   this.stack = []
   this.port = null

@@ -1,9 +1,9 @@
-'use strict'
-
+// 'use strict'
 
 function Osc (app) {
+
+  const osc = new OSC()
   
-  const osc = require('node-osc');
   const isEven = (x) => { return (x%2)==0; }
   const isOdd = (x) => { return !isEven(x); }
 
@@ -36,17 +36,17 @@ function Osc (app) {
   }
 
   this.send = function (path, msg) {
+    console.log("send osc", path, msg)
     this.stack.push({ path, msg })
   }
   
   this.play = function ({ path, msg }) {
-    if (!this.client) { console.warn('OSC', 'Unavailable client'); return }
-    if (!msg) { console.warn('OSC', 'Empty message'); return }
-    const oscMsg = new osc.Message(path)
-    oscMsg.append(msg.split(" "))
-    this.client.send(oscMsg, (err) => {
-      if (err) { console.warn(err) }
-    })
+    // if (!this.client) { console.warn('OSC', 'Unavailable client'); return }
+    // if (!msg) { console.warn('OSC', 'Empty message'); return }
+    const oscMsg = new OSC.Message('/test/random', 1)
+    console.log("oscMsg", oscMsg)
+    // oscMsg.append(msg.split(" "))
+    osc.send(oscMsg)
   }
 
   this.formatter = function( msg ){
@@ -76,7 +76,9 @@ function Osc (app) {
   this.setup = function () {
     if (!this.port) { return }
     if (this.client) { this.client.close() }
-    this.client = new osc.Client(app.io.ip, this.port);
+    // this.client = new osc.Client(app.io.ip, this.port);
+    // osc.open({ port: this.port });
+    osc.open();
     console.info('OSC', 'Started client at ' + app.io.ip + ':' + this.port)
   }
 }

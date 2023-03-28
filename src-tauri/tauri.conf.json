@@ -1,10 +1,11 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "beforeBuildCommand": "",
-    "beforeDevCommand": "",
+    "beforeDevCommand": "npm run  package",
+    "beforeBuildCommand": "npm run package",
     "devPath": "../src",
-    "distDir": "../src"
+    "distDir": "../src",
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "seeq",
@@ -12,7 +13,25 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "shell": {
+        "sidecar": true,
+        "execute": true,
+        "scope": [
+          { "name": "binaries/my-sidecar", "sidecar": true }
+        ]
+      },
+      "window": {
+        "all": false,
+        "close": true,
+        "hide": true,
+        "show": true,
+        "maximize": true,
+        "minimize": true,
+        "unmaximize": true,
+        "unminimize": true,
+        "startDragging": true
+      }
     },
     "bundle": {
       "active": true,
@@ -21,7 +40,7 @@
       "deb": {
         "depends": []
       },
-      "externalBin": [],
+      "externalBin": ["binaries/my-sidecar"],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -56,10 +75,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
-        "resizable": true,
+        "resizable": false,
         "title": "seeq",
-        "width": 800
+        "width": 590, 
+        "height": 570
       }
     ]
   }

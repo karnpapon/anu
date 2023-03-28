@@ -8,32 +8,28 @@
       rel="stylesheet"
     />
     <meta charset="utf-8" />
-    <script type="text/javascript">
-      function require(name) {
-        console.warn("Failed to require " + name);
-      }
-      </script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script type="text/javascript" src="/scripts/lib/theme.js"></script>
-    <script type="text/javascript" src="/scripts/lib/utils.js"></script>
-    <script type="text/javascript" src="/scripts/layout.js"></script>
-    <script type="text/javascript" src="/scripts/canvas.js"></script>
-    <script type="text/javascript" src="/scripts/clock.js"></script>
-    <script type="text/javascript" src="/scripts/commander.js"></script>
-    <script type="text/javascript" src="/scripts/console.js"></script>
-    <script type="text/javascript" src="/scripts/content.js"></script>
-    <script type="text/javascript" src="/scripts/cursor.js"></script>
-    <script type="text/javascript" src="/scripts/displayer.js"></script>
-    <script type="text/javascript" src="/scripts/io.js"></script>
-    <script type="text/javascript" src="/scripts/io.midi.js"></script>
-    <script type="text/javascript" src="/scripts/io.osc.js"></script>
-    <script type="text/javascript" src="/scripts/io.udp.js"></script>
-    <script type="text/javascript" src="/scripts/midiclock.js"></script>
-    <script type="text/javascript" src="/scripts/Seeq.js"></script>
-    <script type="text/javascript" src="/scripts/seequencer.js"></script>
-    <script type="text/javascript" src="/scripts/source.js"></script>
-    <script type="text/javascript" src="/scripts/stepcounter.js"></script>
-    <script type="text/javascript" src="/scripts/stepcursor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/osc-js@2.4.0/lib/osc.min.js"></script>
+    <script type="text/javascript" src="scripts/lib/theme.js"></script>
+    <script type="text/javascript" src="scripts/lib/utils.js"></script>
+    <script type="text/javascript" src="scripts/layout.js"></script>
+    <script type="text/javascript" src="scripts/canvas.js"></script>
+    <script type="text/javascript" src="scripts/clock.js"></script>
+    <script type="text/javascript" src="scripts/commander.js"></script>
+    <script type="text/javascript" src="scripts/console.js"></script>
+    <script type="text/javascript" src="scripts/content.js"></script>
+    <script type="text/javascript" src="scripts/cursor.js"></script>
+    <script type="text/javascript" src="scripts/displayer.js"></script>
+    <script type="text/javascript" src="scripts/io.midi.js"></script>
+    <script type="text/javascript" src="scripts/io.osc.js"></script>
+    <script type="text/javascript" src="scripts/io.udp.js"></script>
+    <script type="text/javascript" src="scripts/io.js"></script>
+    <script type="text/javascript" src="scripts/midiclock.js"></script>
+    <script type="text/javascript" src="scripts/Seeq.js"></script>
+    <script type="text/javascript" src="scripts/seequencer.js"></script>
+    <script type="text/javascript" src="scripts/source.js"></script>
+    <script type="text/javascript" src="scripts/stepcounter.js"></script>
+    <script type="text/javascript" src="scripts/stepcursor.js"></script>
     
     <style>
       ::selection {
@@ -43,11 +39,39 @@
         display: none;
       }
     </style>
-
-    <title>seeq</title>
   </head>
   <body>
+    <!-- <script src="./bundle.js"></script> -->
     <script type="text/javascript" src="/main.js"></script>
-    <noscript>Your browser must have Javascript enabled to use Seeq. </noscript>
+    <script>
+      (async () => {
+        function addMessage(div, message) {
+        const p = document.createElement('p')
+        p.innerText = message
+        div.appendChild(p)
+      }
+      const frontendDiv = document.getElementById('frontend')
+        const { Command } = window.__TAURI__.shell;
+        const { TauriEvent, listen } = window.__TAURI__.event;
+        const command = Command.sidecar("binaries/my-sidecar");
+        command.on('close', (data) => {
+          // addMessage( frontendDiv, `command finished with code ${data.code} and signal ${data.signal}`)
+          console.log("command close", data)
+        })
+        command.on('error', (error) =>
+          // addMessage(frontendDiv, `command error: "${error}"`)
+          console.log("command error", error)
+        )
+        command.stdout.on('data', (line) =>
+          // addMessage(frontendDiv, `command stdout: "${line}"`)
+          console.log("command stdout", line)
+        )
+        command.stderr.on('data', (line) =>
+          // addMessage(frontendDiv, `command stderr: "${line}"`)
+          console.log("command stderr", line)
+        )
+        await command.execute()
+      })()
+    </script>
   </body>
 </html>
