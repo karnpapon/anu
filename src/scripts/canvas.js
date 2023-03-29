@@ -47,6 +47,7 @@ function Canvas () {
   this.install = function (host) {
     host.appendChild(this.el)
     this.theme.install(host)
+    this.resize()
   }
 
   this.start = function () {
@@ -80,6 +81,7 @@ function Canvas () {
   }
 
   this.reset = function () {
+    this.resize()
     this.globalIdx = 0 
     this.seequencer.reset()
     this.theme.reset()

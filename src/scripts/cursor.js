@@ -47,7 +47,8 @@ function Cursor(canvas) {
   this.mousePick = (x, y, w = canvas.tile.w, h = canvas.tile.h) => {
     var rect = canvas.el.getBoundingClientRect();
     this.isMouseInCanvas = true;
-    return { x: parseInt(((x - rect.left)) / w) , y: parseInt(((y - rect.top)) / h) }
+    // return { x: parseInt((x - 30) / w), y: parseInt((y - 320) / h) }
+    return { x: parseInt(((x - rect.left)) / w) + 1 , y: parseInt(((y - rect.top )) / h) + 1 }
   }
 
   this.move = function (x, y) {
