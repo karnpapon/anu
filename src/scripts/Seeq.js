@@ -14,6 +14,7 @@ function Seeq(){
   this.el = el("app");
   this.el.style.opacity = 0;
   this.el.id = "seeq";
+  this.el.setAttribute("data-tauri-drag-region", "")
   // this.appWrapper.appendChild(this.el)
   this.wrapper_el = el("div")
   this.wrapper_el.className = "wrapper-control"

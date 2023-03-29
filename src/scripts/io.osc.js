@@ -1,13 +1,11 @@
 // 'use strict'
 
 function Osc (app) {
-
-  const osc = new OSC()
-  
   const isEven = (x) => { return (x%2)==0; }
   const isOdd = (x) => { return !isEven(x); }
 
   this.stack = []
+  this.socket = new OSC() // osc-js
   this.port = null
 
   // TODO make this configurable.
@@ -19,7 +17,7 @@ function Osc (app) {
   }
 
   this.start = function () {
-    if (!osc) { console.warn('OSC', 'Could not start.'); return }
+    if (!this.socket) { console.warn('OSC', 'Could not start.'); return }
     console.info('OSC', 'Starting..')
     this.setup()
     this.select()
@@ -30,23 +28,20 @@ function Osc (app) {
   }
 
   this.run = function () {
-    for (const id in this.stack) {
-      this.play(this.stack[id])
+    for (const item of this.stack) {
+      this.play(item)
     }
   }
 
-  this.send = function (path, msg) {
-    console.log("send osc", path, msg)
+  this.push = function (path, msg) {
     this.stack.push({ path, msg })
   }
   
   this.play = function ({ path, msg }) {
-    // if (!this.client) { console.warn('OSC', 'Unavailable client'); return }
-    // if (!msg) { console.warn('OSC', 'Empty message'); return }
-    const oscMsg = new OSC.Message('/test/random', 1)
-    console.log("oscMsg", oscMsg)
-    // oscMsg.append(msg.split(" "))
-    osc.send(oscMsg)
+    if (!this.socket) { console.warn('OSC', 'Unavailable socket'); return }
+    if (!msg) { console.warn('OSC', 'Empty message'); return }
+    const oscMsg = new OSC.Message(path, msg)
+    this.socket.send(oscMsg)
   }
 
   this.formatter = function( msg ){
@@ -69,16 +64,14 @@ function Osc (app) {
     if (isNaN(port) || port < 1000) { console.warn('OSC', 'Unavailable port'); return }
     console.info('OSC', `Selected port: ${port}`)
     this.port = parseInt(port)
-    this.setup()
-    // this.update()
+    // this.setup()
   }
 
+  // setup will be enabled when click osc button.
   this.setup = function () {
     if (!this.port) { return }
-    if (this.client) { this.client.close() }
-    // this.client = new osc.Client(app.io.ip, this.port);
-    // osc.open({ port: this.port });
-    osc.open();
-    console.info('OSC', 'Started client at ' + app.io.ip + ':' + this.port)
+    if (this.socket.status() === OSC.IS_CONNECTING) { this.socket.close() }
+    this.socket.open(); // connect to osc bridge(pkg-scripts/index.js) default port 8080.
+    console.info('OSC', 'Started client at :' + this.port)
   }
 }

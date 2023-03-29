@@ -92,7 +92,7 @@ function StepCursor(canvas) {
 
     if(seeq.console.isOSCToggled){
        // TODO: dynamic index only for OSC msg.
-      seeq.io.osc.send('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
+      seeq.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
     }
 
     if(seeq.console.isUDPToggled){

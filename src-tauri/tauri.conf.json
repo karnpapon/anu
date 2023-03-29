@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "beforeDevCommand": "npm run  package",
-    "beforeBuildCommand": "npm run package",
+    "beforeDevCommand": "yarn package",
+    "beforeBuildCommand": "yarn package",
     "devPath": "../src",
     "distDir": "../src",
     "withGlobalTauri": true
@@ -12,6 +12,7 @@
     "version": "0.1.0"
   },
   "tauri": {
+    "macOSPrivateApi": true,
     "allowlist": {
       "all": false,
       "shell": {
@@ -48,7 +49,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev.seeq",
+      "identifier": "com.seeq",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -78,7 +79,12 @@
         "resizable": false,
         "title": "seeq",
         "width": 590, 
-        "height": 570
+        "height": 552,
+        "label": "main",
+        "visible": true,
+        "alwaysOnTop": false,
+        "decorations": false,
+        "transparent": true
       }
     ]
   }

@@ -3,10 +3,7 @@
   <head>
     <link rel="stylesheet" href="/links/fonts.css" />
     <link rel="stylesheet" href="/links/style.css" />
-    <link
-      href="https://fonts.googleapis.com/css?family=Domine&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css?family=Domine&display=swap" rel="stylesheet" />
     <meta charset="utf-8" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/osc-js@2.4.0/lib/osc.min.js"></script>
@@ -30,48 +27,30 @@
     <script type="text/javascript" src="scripts/source.js"></script>
     <script type="text/javascript" src="scripts/stepcounter.js"></script>
     <script type="text/javascript" src="scripts/stepcursor.js"></script>
-    
     <style>
-      ::selection {
-        background: var(--main-bg-color);
-      }
-      #devtools {
-        display: none;
-      }
+       html, body {
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+      /* .element-inside-your-body { overflow: auto; } */
+      ::selection { background: var(--main-bg-color); }
+      #devtools { display: none; }
     </style>
   </head>
   <body>
-    <!-- <script src="./bundle.js"></script> -->
-    <script type="text/javascript" src="/main.js"></script>
     <script>
       (async () => {
-        function addMessage(div, message) {
-        const p = document.createElement('p')
-        p.innerText = message
-        div.appendChild(p)
-      }
-      const frontendDiv = document.getElementById('frontend')
         const { Command } = window.__TAURI__.shell;
         const { TauriEvent, listen } = window.__TAURI__.event;
         const command = Command.sidecar("binaries/my-sidecar");
-        command.on('close', (data) => {
-          // addMessage( frontendDiv, `command finished with code ${data.code} and signal ${data.signal}`)
-          console.log("command close", data)
-        })
-        command.on('error', (error) =>
-          // addMessage(frontendDiv, `command error: "${error}"`)
-          console.log("command error", error)
-        )
-        command.stdout.on('data', (line) =>
-          // addMessage(frontendDiv, `command stdout: "${line}"`)
-          console.log("command stdout", line)
-        )
-        command.stderr.on('data', (line) =>
-          // addMessage(frontendDiv, `command stderr: "${line}"`)
-          console.log("command stderr", line)
-        )
-        await command.execute()
+        command.on('close', (data) => { console.log("command close", data) })
+        command.on('error', (error) => { console.log("command error", error) })
+        command.stdout.on('data', (line) => { console.log("command stdout", line) })
+        command.stderr.on('data', (line) => { console.log("command stderr", line) })
+        const output = await command.execute()
       })()
     </script>
+    <script type="text/javascript" src="/main.js"></script>
   </body>
 </html>

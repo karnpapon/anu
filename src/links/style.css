@@ -538,7 +538,7 @@ button:active{
 }
 
 div button:focus{ outline: none;}
-div button:hover{ cursor: pointer; background-color: var( --trigger-color );}
+div button:hover{ cursor: pointer; background-color: black; color: white;}
 div button:active{ cursor: pointer; background-color: black; color: white;}
 .control-wrapper{ display: flex; justify-content: space-between; padding-bottom: 10px;}
 .control-info{ 
@@ -699,13 +699,13 @@ app {
   /* height: 480px;  */
   height: max-content;
   /* border: 1px solid; */
-  border-radius: 17px;
+  /* border-radius: 17px; */
   position: relative; 
   /* justify-content: center; */
   opacity:0; 
   /* width:calc(100% - 50px);  */
   /* width:calc(100% - 50px);  */
-  background-color: white;
+  background-color: rgb(240, 240, 240);
   transition: all .2s ease;
 }
 

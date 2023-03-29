@@ -338,6 +338,7 @@ function Console(app) {
       this.isUDPToggled = !this.isUDPToggled
     } else if ( type === 'OSC'){
       this.isOSCToggled = !this.isOSCToggled 
+      if (this.isOSCToggled) { app.io.osc.setup(); }
     } else if ( type === 'REV'){
       this.isReverse = !this.isReverse
     } else if ( type === 'FOCUS'){

@@ -207,7 +207,7 @@ function Sequencer(app){
       cursor.velocity[i], 
       cursor.notelength[i]
     )
-    app.isOSCToggled ? app.io.osc.send('/' + cursor.OSC.path, cursor.OSC.msg):() => {}
+    app.isOSCToggled ? app.io.osc.push('/' + cursor.OSC.path, cursor.OSC.msg):() => {}
     app.isUDPToggled ? this.udpSend(cursor.UDP[i]):()=> {}
     app.io.run()
     app.io.clear()

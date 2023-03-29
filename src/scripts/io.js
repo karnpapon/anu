@@ -3,26 +3,26 @@
 function IO(app) {
   this.ip = '127.0.0.1'
   this.midi = new Midi(app)
-  // this.udp = new UDP(app)
   this.osc = new Osc(app)
+  // this.udp = new UDP(app)
 
   this.start = function () {
     this.clear()
     this.midi.start()
-    // this.udp.start()
     this.osc.start()
+    // this.udp.start()
   }
 
   this.clear = function () {
     this.midi.clear()
-    // this.udp.clear()
     this.osc.clear()
+    // this.udp.clear()
   }
 
   this.run = function () {
     this.midi.run()
-    // this.udp.run()
     this.osc.run()
+    // this.udp.run()
   }
 
   this.length = function () {

@@ -5,6 +5,7 @@
 
 mod osc;
 use crate::osc::sender::{ osc_setup, osc_send };
+use tauri::{WindowBuilder, Runtime};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
