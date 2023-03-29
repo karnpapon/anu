@@ -684,7 +684,7 @@ appwrapper{
   overflow: hidden;
 }
 
-canvas { height: auto; max-height: 340px }
+canvas { height: auto; }
 app { 
   display: flex; 
   flex-direction: column;
@@ -695,9 +695,10 @@ app {
   /* margin: calc(50vh - 270px) auto;  */
   transition: background-color 150ms, opacity 350ms; 
   /* max-width: 830px;  */
-  max-width: 655px; 
+  /* max-width: 655px;  */
   /* height: 480px;  */
-  height: max-content;
+  height: 100%;
+  max-height: 100vh;
   /* border: 1px solid; */
   /* border-radius: 17px; */
   position: relative; 
@@ -731,6 +732,10 @@ app {
   /* display: flex; */
 }
 
+.normal-search input {
+  height: 16px;
+}
+
 .flex-col{ 
   /* flex: 1.25; */
   align-items: flex-end;
@@ -743,6 +748,8 @@ div input{
   /* background-color: white !important; */
   border: 1px solid; 
   width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .input-note{
@@ -809,7 +816,7 @@ div input:focus{ outline: none;}
   /* margin-top: 30px; */
   overflow: hidden;
   position: inherit;
-  height: 290px;
+  /* height: 290px; */
   margin-top: 12px;
   transition: all .2s ease-out;
 }

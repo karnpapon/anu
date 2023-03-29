@@ -76,7 +76,7 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": false,
+        "resizable": true,
         "title": "seeq",
         "width": 590, 
         "height": 552,

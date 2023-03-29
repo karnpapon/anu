@@ -285,7 +285,7 @@ function Canvas () {
     }
     localStorage.setItem('tilew', this.tile.w)
     localStorage.setItem('tileh', this.tile.h)
-    this.resize(true)
+    this.resize()
   }
 
 
@@ -297,7 +297,7 @@ function Canvas () {
     }
   }
 
-  this.resize = function (force = false) {
+  this.resize = function () {
     const ww = document.getElementsByClassName("content")[0];
     const size = { w: ww.clientWidth, h: ww.clientHeight}
     const tiles = { w: Math.ceil(( size.w) / this.tile.w  ), h: Math.ceil(( size.h) / this.tile.h  ) }
@@ -346,9 +346,9 @@ function Canvas () {
   }
 
 
-  // window.onresize = (e) => {
-  //   this.resize()
-  // }
+  window.onresize = (e) => {
+    this.resize()
+  }
 
   // Helpers
 

@@ -18,7 +18,6 @@ function Console(app) {
             <input id="regex" type="search-regex" placeholder="" class="input-regex">
           </div>
         </div>
-          
         <div class="header-wrapper console-2">
           <div class="header">
             <div class="title">find:</div>
@@ -147,6 +146,10 @@ function Console(app) {
     self.focusBtn = qs("button[data-ctrl='focus']")
     // self.nudgeBtn = qs("button[data-ctrl='nudge']")
     self.udpBtn = qs("button[data-ctrl='udp']")
+    self.udpBtn.disabled = true;
+    self.udpBtn.style.backgroundColor = "white";
+    self.udpBtn.style.color = "gray";
+    self.udpBtn.style.cursor = "default";
     self.oscBtn = qs("button[data-ctrl='osc']")
     self.revBtn = qs("button[data-ctrl='rev']")
     self.bpmUpBtn = qs("button[data-ctrl='add']")
