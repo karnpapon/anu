@@ -16,6 +16,7 @@ function Cursor(canvas) {
   }
 
   this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
+    // console.log("select.x, select.y,w,h", x,y,w,h)
     this.moveTo(x, y)
     this.scaleTo(w, h)
     canvas.update()
@@ -32,14 +33,14 @@ function Cursor(canvas) {
     if (!canvas.el.contains(e.target)) { return }
     if (!this.mouseFrom) { return }
     const pos = this.mousePick(e.clientX, e.clientY)
-    this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x, pos.y - this.mouseFrom.y)
+    this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
   }
 
   this.onMouseUp = (e) => {
     if (!canvas.el.contains(e.target)) { return }
     if (this.mouseFrom) {
       const pos = this.mousePick(e.clientX, e.clientY)
-      this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x, pos.y - this.mouseFrom.y)
+      this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
     }
     this.mouseFrom = null
   }
@@ -47,8 +48,7 @@ function Cursor(canvas) {
   this.mousePick = (x, y, w = canvas.tile.w, h = canvas.tile.h) => {
     var rect = canvas.el.getBoundingClientRect();
     this.isMouseInCanvas = true;
-    // return { x: parseInt((x - 30) / w), y: parseInt((y - 320) / h) }
-    return { x: parseInt(((x - rect.left)) / w) + 1 , y: parseInt(((y - rect.top )) / h) + 1 }
+    return { x: parseInt(((x - rect.left)) / w) , y: parseInt(((y - rect.top )) / h) }
   }
 
   this.move = function (x, y) {
