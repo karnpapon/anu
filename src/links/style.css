@@ -85,7 +85,7 @@ body p, button{font-family: 'input_mono_regular'; font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
 code { background-color: var(--main-gray); border-radius: 4px; align-items: center; display: flex;}
-.info { display: flex; align-items: center;}
+.info { display: flex; flex: 1;}
 /* .info > img  */
 bold { 
   align-items: center;
@@ -175,7 +175,9 @@ div button{
 
 #info-bar{
   position: inherit;
-  height: 60px;
+  height: 100px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .info-wrapper{
@@ -262,7 +264,7 @@ div button{
 }
 
 lf{
-  font-family: 'input_sans_condensed_bold';
+  font-family: 'input_sans_condensed_regular';
   font-size: var(--osc-msg);
   display: flex;
   margin-right: 5px;
@@ -302,10 +304,14 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 }
 
 .title{
-  font-family: 'input_sans_condensed_bold';
-  padding-bottom: 5px;
+  font-family: 'input_sans_condensed_regular';
+  /* padding-bottom: 5px; */
+  flex: 1;
+  padding: 0;
+  margin: 0;
  }
 
+.input-input { flex: 3; height: 20px;}
 
 .select-highlight{
   box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); 
@@ -454,18 +460,22 @@ button:active{
   flex-direction: column;
 }
 
+.header { display: flex;}
 .header-wrapper{ 
   display: flex; 
   flex-direction: column;
   height: 85px;
   /* flex: 3; */
   padding-bottom: 5px;
-  margin-right: 20px;
-  justify-content: space-between;
+  margin-right: 30px;
+  /* justify-content: space-between; */
 }
+
+.header-wrapper div { margin-bottom: 6px;}
 
 .header-wrapper-status{
   margin-right: 0;
+  margin-left: 1rem;
 }
 
 .header-wrapper:nth-child(2){ padding-left: 10px;}
@@ -479,7 +489,7 @@ button:active{
 
 .controller-wrapper{ 
   display: flex; 
-  height: 110px;
+  /* height: 110px; */
   width: 100%;
 }
 .control-btn{ 
@@ -515,7 +525,7 @@ button:active{
 .input-control-2 { width: 90px; margin-right: 5px;}
 .input-regex{ width: 151px} */
 
-.console-1{ flex: 2}
+.console-1{ flex: 1}
 .console-2{ flex: 2}
 .console-3{ flex: 2}
 
@@ -645,7 +655,7 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 }
 
 .displayer-show{ opacity: 1; z-index: 99; }
-.displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1rem;}
+.displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1.5rem;}
 
 /* ---------------------- */
 
@@ -662,14 +672,14 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 
 
 .performance-details { align-items: flex-end; display: flex; flex-direction: column;}
-.performance-details p{ font-size: 11px; line-height: 1rem;}
+.performance-details p{ font-size: 12px;}
 
-.tempo-details{ 
+.information-details{ 
   display: flex; 
   width: 100%;
   justify-content: space-between;
 }
-.tempo-details p{ margin: 0; }
+.information-details p{ margin: 0; }
 
 appwrapper{ 
   display: flex;

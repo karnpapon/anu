@@ -52,6 +52,7 @@ function Midi(app) {
     this.index = parseInt(id)
     // this.update()
     console.log(`Midi Device: ${this.device().name}`)
+    app.console.midiInfo.innerText = this.device().name;
     return this.device()
   }
 
@@ -70,6 +71,7 @@ function Midi(app) {
   // Setup
 
   this.setup = function () {
+    console.log("navigator.requestMIDIAccess", navigator)
     if (!navigator.requestMIDIAccess) { return }
     navigator.requestMIDIAccess({ sysex: false }).then(this.access, (err) => {
       console.warn('No Midi', err)
@@ -79,6 +81,7 @@ function Midi(app) {
   this.access = function (midiAccess) {
     const iter = midiAccess.outputs.values()
     for (let i = iter.next(); i && !i.done; i = iter.next()) {
+      console.log("midi device", i.value)
       app.io.midi.devices.push(i.value)
     }
     app.io.midi.select(0)

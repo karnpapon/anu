@@ -49,7 +49,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.seeq",
+      "identifier": "localhost",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

@@ -164,7 +164,7 @@ function Commander(canvas) {
 
     // toggle OSC.
     if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) {
-      seeq.console.togglePort('OSC', seeq.console.oscBtn)
+      seeq.console.togglePort('OSC', seeq.console.oscInfo)
       event.preventDefault();
       return;
     }

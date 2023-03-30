@@ -181,7 +181,7 @@ function Displayer(app) {
         this.displayType = "preview"  
         target = this.el_general
         let regexToDisplay = app.console.regexInput.replace(/[)(]/g, "\\$&");
-        target.innerHTML = `<div class="displayer-bold">${new RegExp("(" + regexToDisplay + ")","gi")}</div>`
+        target.innerHTML = `<div class="displayer-bold">${new RegExp(regexToDisplay,"gi")}</div>`
         break;
       case 'console':
         this.displayType = "preview"  

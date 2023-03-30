@@ -10,71 +10,60 @@ function Console(app) {
    <div class="controller-wrapper">
         <div class="header-wrapper console-1">
           <div class="header">
-            <div data-logo="seeq" class="title">input</div>
-            <input id="content" data-fetch="fetch" placeholder=""  class="input-control">
+          <p data-logo="seeq" class="title">INPUT:</p>
+            <input id="content" data-fetch="fetch" placeholder=""  class="input-control input-input">
           </div>
           <div class="header">
-            <div class="title">RegExp:</div>
-            <input id="regex" type="search-regex" placeholder="" class="input-regex">
+          <p class="title">REGEXP:</p>
+            <input id="regex" type="search-regex" placeholder="" class="input-regex input-input">
           </div>
         </div>
-        <div class="header-wrapper console-2">
-          <div class="header">
-            <div class="title">find:</div>
-            <div class="normal-search">
-              <input id="find" type="search" placeholder="" class="input-control-2">
-            </div>
-          </div>
-          
-          <div class="control-info">
-          <div class="control-panel">
-            <div class="title">Control:</div>
-            <div class="control-btn">
-              <button data-ctrl="udp" tabindex="-1">udp</button>
-              <button data-ctrl="osc" tabindex="-1">osc</button>
-              <button data-ctrl="rev" tabindex="-1">rev</button>
-              <button data-ctrl="focus" tabindex="-1">focus</button>
-            </div>
-            </div>
-          </div>
-        </div>
+       
+        <div class="info">
+          <div class="header-wrapper console-3 flex-col header-wrapper-status">
+            <div class="tempo">
+              <div class="information-details">
+                <div style="display: grid;">
+                  <p class="information-details"> BPM:</p>
+                  <p class="information-details">TME:</p>
+                  <p class="information-details">LEN:</p>
+                  <p class="information-details">POS:</p>
+                </div>
+                <div class="performance-details">
+                  <p class="init-bpm" data-ctrl="bpm">120</p>
+                  <p data-ctrl="current">16th</p> 
+                  <p data-ctrl="crsrlen">--</p>
+                  <p data-ctrl="crsrpos">--</p>
+                </div>
+              </div>
+              <div class="counter">
+              </div> 
+              </div>
+              </div>
 
-        <div class="header-line"></div>
-        <div class="header-wrapper console-3 flex-col header-wrapper-status">
-          <div class="tempo">
-            <div class="tempo-details">
-              <div style="display: grid;">
-                <div class="tempo-details">
-                  <b>BPM : </b>
+          <div class="header-wrapper console-3 flex-col header-wrapper-status">
+            <div class="tempo">
+              <div class="information-details">
+                <div style="display: grid;">
+                  <p class="information-details">OSC:</p>
+                  <p class="information-details">UDP:</p> 
+                  <p class="information-details">MIDI:</p> 
                 </div>
-                <div class="tempo-details">
-                  <b>TME : </b>
+                <div class="performance-details">
+                  <p data-ctrl="osc">--</p>
+                  <p data-ctrl="udp">--</p> 
+                  <p data-ctrl="midi">--</p> 
                 </div>
-                <div class="tempo-details">
-                  <b>LEN : </b> 
-                </div>
-                <div class="tempo-details">
-                  <b>POS : </b>
-                </div>
-              </div>
-              <div class="performance-details">
-                <p class="init-bpm" data-ctrl="bpm">120</p>
-                <p data-ctrl="current">16th</p> 
-                <p data-ctrl="crsrlen">--</p>
-                <p data-ctrl="crsrpos">--</p>
               </div>
             </div>
-            <div class="counter">
-            <div class="control-btn">
-
-              <button data-ctrl="subtract" tabindex="-1">-</button>
-              <button data-ctrl="add" tabindex="-1">+</button>
-              </div>
-            </div>
-          </div> 
+          </div>
         </div>
-      </div>
-  `
+            `
+            // <div class="control-btn">
+            //   <button data-ctrl="subtract" tabindex="-1">-</button>
+            //   <button data-ctrl="add" tabindex="-1">+</button>
+            //   </div>
+            // </div>
 
   // button.
   this.prevBtn
@@ -83,11 +72,12 @@ function Console(app) {
   this.inputFetch
   this.linkBtn 
   this.clearBtn 
-  this.focusBtn
+  // this.focusBtn
   this.nudgeBtn 
-  this.udpBtn 
-  this.oscBtn 
-  this.revBtn 
+  // this.udpBtn 
+  this.oscInfo 
+  this.midiInfo
+  // this.revBtn 
   this.bpmUpBtn
   this.bpmDownBtn
   this.devBtn 
@@ -96,7 +86,7 @@ function Console(app) {
   // this.extractLines 
 
   // Input. 
-  this.searchInput
+  // this.searchInput
   this.searchRegExp
   this.regexInput
   this.fetchSearchInput = ""
@@ -134,7 +124,7 @@ function Console(app) {
 
   document.addEventListener("DOMContentLoaded", function () {
     const self = app.console
-    self.searchInput = qs("input[type='search']")
+    // self.searchInput = qs("input[type='search']")
     self.searchRegExp = qs("input[type='search-regex']")
     // self.prevBtn = qs("button[data-search='prev']")
     // self.nextBtn = qs("button[data-search='next']")
@@ -143,17 +133,18 @@ function Console(app) {
     self.getTextBtn = qs("button[data-gettext='gettext']")
     // self.linkBtn = qs("button[data-ctrl='link']")
     // self.clearBtn = qs("button[data-ctrl='clear']")
-    self.focusBtn = qs("button[data-ctrl='focus']")
+    // self.focusBtn = qs("button[data-ctrl='focus']")
     // self.nudgeBtn = qs("button[data-ctrl='nudge']")
-    self.udpBtn = qs("button[data-ctrl='udp']")
-    self.udpBtn.disabled = true;
-    self.udpBtn.style.backgroundColor = "white";
-    self.udpBtn.style.color = "gray";
-    self.udpBtn.style.cursor = "default";
-    self.oscBtn = qs("button[data-ctrl='osc']")
-    self.revBtn = qs("button[data-ctrl='rev']")
-    self.bpmUpBtn = qs("button[data-ctrl='add']")
-    self.bpmDownBtn = qs("button[data-ctrl='subtract']")
+    // self.udpBtn = qs("button[data-ctrl='udp']")
+    // self.udpBtn.disabled = true;
+    // self.udpBtn.style.backgroundColor = "white";
+    // self.udpBtn.style.color = "gray";
+    // self.udpBtn.style.cursor = "default";
+    self.oscInfo = qs("p[data-ctrl='osc']")
+    self.midiInfo = qs("p[data-ctrl='midi']")
+    // self.revBtn = qs("button[data-ctrl='rev']")
+    // self.bpmUpBtn = qs("button[data-ctrl='add']")
+    // self.bpmDownBtn = qs("button[data-ctrl='subtract']")
     // self.notationMode = qs("button[data-ctrl='notation-mode']")
     // self.extractLines = qs("button[data-ctrl='extract-line']")
     self.bpmNumber = qs("p[data-ctrl='bpm']")
@@ -171,13 +162,13 @@ function Console(app) {
     self.inputFetch.addEventListener("blur", function () { self.isInputFocused = false; self.removeFocusStyle(self.inputFetch) })
 
     // find
-    self.searchInput.addEventListener("input", function () {
-      self.searchValue = this.value;
-      self.searchType = "normal"
-      seeq.getMatchedPosition()
-    });
-    self.searchInput.addEventListener("focus", function () { self.isFindFocused = true; self.setFocusStyle(self.searchInput) });
-    self.searchInput.addEventListener("blur", function () { self.isFindFocused = false; self.removeFocusStyle(self.searchInput) });
+    // self.searchInput.addEventListener("input", function () {
+    //   self.searchValue = this.value;
+    //   self.searchType = "normal"
+    //   seeq.getMatchedPosition()
+    // });
+    // self.searchInput.addEventListener("focus", function () { self.isFindFocused = true; self.setFocusStyle(self.searchInput) });
+    // self.searchInput.addEventListener("blur", function () { self.isFindFocused = false; self.removeFocusStyle(self.searchInput) });
 
     // RegExp.
     self.searchRegExp.addEventListener("input", function () {
@@ -253,34 +244,34 @@ function Console(app) {
     //   }
     // })
 
-    self.udpBtn.addEventListener("click", function () {
-      self.togglePort('UDP', this)
-    })
+    // self.udpBtn.addEventListener("click", function () {
+    //   self.togglePort('UDP', this)
+    // })
 
-    self.oscBtn.addEventListener("click", function () {
-      self.togglePort('OSC', this)
-    })
+    // self.oscInfo.addEventListener("click", function () {
+    //   self.togglePort('OSC', this)
+    // })
 
-    self.focusBtn.addEventListener("click", function () {
-      self.togglePort('FOCUS', this)
-      canvas.toggleShowMarks()
-    })
+    // self.focusBtn.addEventListener("click", function () {
+    //   self.togglePort('FOCUS', this)
+    //   canvas.toggleShowMarks()
+    // })
 
     // self.nudgeBtn.addEventListener("click", function () {
     //   app.nudge()
     // })
 
-    self.bpmUpBtn.addEventListener("click", function(){
-      canvas.clock.mod(1)
-    })
+    // self.bpmUpBtn.addEventListener("click", function(){
+    //   canvas.clock.mod(1)
+    // })
 
-    self.bpmDownBtn.addEventListener("click", function(){
-      canvas.clock.mod(-1)
-    })
+    // self.bpmDownBtn.addEventListener("click", function(){
+    //   canvas.clock.mod(-1)
+    // })
 
-    self.revBtn.addEventListener("click", function () {
-      self.togglePort('REV', this)
-    })
+    // self.revBtn.addEventListener("click", function () {
+    //   self.togglePort('REV', this)
+    // })
   });
 
   this.build = function () {
@@ -347,7 +338,10 @@ function Console(app) {
     } else if ( type === 'FOCUS'){
       this.isFocus = !this.isFocus 
     }
-    bind.classList.toggle("toggle-btn")
+
+    // if(bind) {
+    //   bind.classList.toggle("toggle-btn")
+    // }
   }
 
   this.setFocusStyle = function(target){
