@@ -37,20 +37,18 @@ function Midi(app) {
 
   this.set = function (data = this.stack, device) {
     const { invoke } = window.__TAURI__;
-    const channel = convertChannel(data['channel'])
+    // const channel = convertChannel(data['channel'])
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity'] > 127 || data['velocity'] < 0 ? 60: data['velocity']
     const length = window.performance.now() + convertLength(data['length'], canvas.clock.speed.value)
 
-    if (!this.targetDevice) { console.warn('No midi device!'); return }
-    // device.send([channel[0], note, velocity]) 
-    // device.send([channel[1], note, velocity], length)
-    console.log("send", [channel[0], note, velocity])
-    invoke('send_midi_out', { msg: "test msg....." });
+    if (!device) { console.warn('No midi device!'); return }
+    console.log("send", [data['channel'], note, velocity])
+    invoke('send_midi_out', { msg: [data['channel'], note, velocity], length });
   }
 
   this.device = function () {
-    // return this.devices[this.index]
+    return this.targetDevice
   }
 
   this.list = async function () {
