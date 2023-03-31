@@ -3,17 +3,16 @@
   windows_subsystem = "windows"
 )]
 
-mod osc;
-use crate::osc::sender::{ osc_setup, osc_send };
-use tauri::{WindowBuilder, Runtime};
+mod lib;
+use crate::lib::midi::{
+  MidiState, 
+  list_midi_connections, 
+  setup_midi_out, 
+  init_midi, 
+  setup_midi_connection_list,
+  send_midi_out
+};
 use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
-
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-   format!("Hello, {}!", name)
-}
-
 
 fn main() {
   let osc = CustomMenuItem::new("OSC".to_string(), "OSC (Open Sound Control)");
@@ -39,8 +38,13 @@ fn main() {
         _ => {}
       }
     })
+    .manage(MidiState { ..Default::default() })
     .invoke_handler(tauri::generate_handler![
-      greet,
+      init_midi,
+      list_midi_connections,
+      setup_midi_connection_list,
+      setup_midi_out,
+      send_midi_out
       // osc_setup,
       // osc_send
       ])

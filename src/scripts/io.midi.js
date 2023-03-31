@@ -1,17 +1,18 @@
 'use strict'
 
-
-// const MidiClock = require('./midiclock')
-
+// since tauri have no requestMidiAccess (in window.navigator) API.
+// we need to manually implement from backend (see src-tauri/src/lib/midi.rs)
 function Midi(app) {
+  // const MidiClock = require('./midiclock')
   this.index = 0
   this.devices = []
   this.stack = []
+  this.targetDevice = ""
   // this.clock = new MidiClock(seeq)
 
-  this.start = function () {
+  this.start = async function () {
     console.info('Starting Midi..')
-    this.setup()
+    await this.setup()
     // this.clock.start()
   }
 
@@ -25,8 +26,6 @@ function Midi(app) {
     }
   }
 
-  // Midi
-  
   this.send = function ({ channel, octave, note, velocity, length }) {
     let noteNumber = []
     let convertedNote 
@@ -37,54 +36,33 @@ function Midi(app) {
   }
 
   this.set = function (data = this.stack, device) {
+    const { invoke } = window.__TAURI__;
     const channel = convertChannel(data['channel'])
     const note = convertNote(data['octave'], data['note'])
     const velocity = data['velocity'] > 127 || data['velocity'] < 0 ? 60: data['velocity']
     const length = window.performance.now() + convertLength(data['length'], canvas.clock.speed.value)
 
-    if (!device) { console.warn('No midi device!'); return }
-    device.send([channel[0], note, velocity]) 
-    device.send([channel[1], note, velocity], length)
-  }
-
-  this.select = function (id) {
-    if (!this.devices[id]) { return }
-    this.index = parseInt(id)
-    // this.update()
-    console.log(`Midi Device: ${this.device().name}`)
-    app.console.midiInfo.innerText = this.device().name;
-    return this.device()
+    if (!this.targetDevice) { console.warn('No midi device!'); return }
+    // device.send([channel[0], note, velocity]) 
+    // device.send([channel[1], note, velocity], length)
+    console.log("send", [channel[0], note, velocity])
+    invoke('send_midi_out', { msg: "test msg....." });
   }
 
   this.device = function () {
-    return this.devices[this.index]
+    // return this.devices[this.index]
   }
 
-  this.list = function () {
-    return this.devices
+  this.list = async function () {
+    return await invoke('list_midi_connections')
   }
 
-  this.next = function () {
-    this.select((this.index + 1) % this.devices.length)
-  }
-
-  // Setup
-
-  this.setup = function () {
-    console.log("navigator.requestMIDIAccess", navigator)
-    if (!navigator.requestMIDIAccess) { return }
-    navigator.requestMIDIAccess({ sysex: false }).then(this.access, (err) => {
-      console.warn('No Midi', err)
-    })
-  }
-
-  this.access = function (midiAccess) {
-    const iter = midiAccess.outputs.values()
-    for (let i = iter.next(); i && !i.done; i = iter.next()) {
-      console.log("midi device", i.value)
-      app.io.midi.devices.push(i.value)
-    }
-    app.io.midi.select(0)
+  this.setup = async function () {
+    const { invoke } = window.__TAURI__;
+    await invoke('init_midi');
+    await invoke('setup_midi_connection_list')
+    this.targetDevice = await invoke('setup_midi_out');
+    app.console.midiInfo.innerText = this.targetDevice 
   }
 
   this.toString = function () {

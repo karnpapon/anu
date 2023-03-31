@@ -49,7 +49,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "localhost",
+      "identifier": "com.seeq",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -78,8 +78,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "seeq",
-        "width": 590, 
-        "height": 552,
+        "width": 600, 
+        "height": 640,
         "label": "main",
         "visible": true,
         "alwaysOnTop": false,

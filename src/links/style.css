@@ -467,7 +467,7 @@ button:active{
   height: 85px;
   /* flex: 3; */
   padding-bottom: 5px;
-  margin-right: 30px;
+  /* margin-right: 30px; */
   /* justify-content: space-between; */
 }
 
@@ -541,6 +541,14 @@ button:active{
   border-bottom: 1px solid black !important;
   border-left: 1px solid black !important;
   border-right: 1px solid black !important;
+}
+
+[data-ctrl="midi"]{
+  text-overflow: ellipsis;
+  width: 80px;
+  overflow: hidden;
+  display: block;
+  white-space: nowrap;
 }
 
 [data-search="cfg"] :active{ 
@@ -671,7 +679,7 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
 }
 
 
-.performance-details { align-items: flex-end; display: flex; flex-direction: column;}
+.performance-details { align-items: flex-end; display: flex; flex-direction: column; white-space: nowrap;}
 .performance-details p{ font-size: 12px;}
 
 .information-details{ 
