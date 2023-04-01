@@ -1,5 +1,15 @@
 'use strict'
 
+const library = {
+  "Cmd+a": { "info": "Outputs sum of inputs" },
+  "Cmd+b": { "info": "Outputs" },
+  "Cmd+c": { "info": "Outputs sum of inputs" },
+  "Cmd+d": { "info": "Outputs sum of inputs" },
+  "Cmd+e": { "info": "Outputs sum of inputs" },
+  "Cmd+f": { "info": "Outputs sum of inputs" },
+}
+
+
 function Canvas () {
 
   this.seequencer = new Seequencer(this)
@@ -7,6 +17,7 @@ function Canvas () {
   this.source = new Source(this)
   this.commander = new Commander(this)
   this.clock = new Clock(this)
+  this.io = new IO(this)
   this.stepcursor = new StepCursor(this)
   this.stepcounter = new StepCounter(this)
 
@@ -52,6 +63,7 @@ function Canvas () {
 
   this.start = function () {
     // this.theme.start()
+    this.io.start()
     this.source.start()
     this.clock.start()
     this.cursor.start()
@@ -61,12 +73,15 @@ function Canvas () {
     this.modZoom()
     this.update()
     this.el.className = 'ready'
+    this.toggleGuide()
   }
 
   this.run = function () {
+    this.io.clear()
     this.clock.run()
     this.seequencer.run()
     this.stepcounter.run()
+    this.io.run()
     this.update()
     this.stepcursor.trigger()
   }
@@ -77,7 +92,8 @@ function Canvas () {
     this.drawProgram()
     this.stepcursor.run()
     this.match()
-    // this.drawStroke(this.cursor)
+    this.drawStroke(this.cursor.toRect())
+    this.drawGuide()
   }
 
   this.reset = function () {
@@ -128,6 +144,14 @@ function Canvas () {
 
   this.toggleShowMarks = function(){
     this.isShowMarked = !this.isShowMarked
+  }
+
+  this.toggleGuide = (force = null) => {
+    const display = force !== null ? force : this.guide !== true
+    if (display === this.guide) { return }
+    console.log('Client', `Toggle Guide: ${display}`)
+    this.guide = display
+    this.update()
   }
 
   this.eraseSelectionCursor = function(){
@@ -211,6 +235,8 @@ function Canvas () {
     if (type === 7) { return { fg: this.theme.active.background} }
     // Block select.
     if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
+    // Guide
+    if (type === 11) { return { bg: "#F0F0F0", fg: this.theme.active.background } }
     // Black.
     if (type === 10) { return { bg: this.theme.active.background, fg: this.theme.active.f_high } }
     // Default
@@ -238,9 +264,7 @@ function Canvas () {
     }
   }
 
-  this.drawStroke = function(el){
-    let rects
-    rects = el.toRect()
+  this.drawStroke = function(rects){
     rects.forEach( rect => {
       const r = {
         x: rect.x * this.scale * this.tile.w,
@@ -250,8 +274,23 @@ function Canvas () {
       }
       this.context.lineWidth = 1;
       this.context.strokeStyle = this.theme.active.background
-      this.context.strokeRect(r.x + 0.5, r.y + 0.5, r.w, r.h)
+      this.context.strokeRect(r.x + 1, r.y + 1, r.w, r.h)
     })
+  }
+
+  this.drawGuide = () => {
+    if (this.guide !== true) { return }
+    const operators = Object.keys(library).filter((val) => { return isNaN(val) })
+    for (const id in operators) {
+      const key = operators[id]
+      const oper = library[key]
+      const text = oper.info
+      const frame = this.seequencer.h - 4
+      const x = (Math.floor(parseInt(id) / frame) * 32) + (this.seequencer.w / 2 - 19)
+      const y = (parseInt(id) % frame) + 6
+      this.write(`${' '.repeat(4)}${key}:${' '.repeat(4)}`, x, y, 99, 11)
+      this.write(`${' '.repeat(1)}${text}${' '.repeat(4)}`, x + 12, y, 99, 11)
+    }
   }
 
   this.drawSprite = function (x, y, g, type) {

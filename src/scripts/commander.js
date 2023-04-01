@@ -1,5 +1,7 @@
 "use strict";
 
+/* global seeq */
+
 function Commander(canvas) {
   this.isActive = false;
   this.query = "";
@@ -213,6 +215,12 @@ function Commander(canvas) {
       return;
     }
 
+    // show guide.
+    if (event.keyCode === 72 && !seeq.console.isInsertable) {
+      canvas.toggleGuide(true)
+      return;
+    }
+
     // rename cursor.
     // if (event.keyCode === 82 && (event.metaKey || event.ctrlKey)) {
     //   seeq.displayer.displayMsg('helper')
@@ -340,6 +348,7 @@ function Commander(canvas) {
   // Events
 
   document.onkeydown = event => {
+    canvas.toggleGuide(false)
     this.onKeyDown(event);
   };
   document.onkeyup = event => {

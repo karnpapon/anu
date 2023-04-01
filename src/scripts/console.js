@@ -1,5 +1,7 @@
 'use strict'
 
+/* global seeq */
+
 function Console(app) {
 
   const el = tag => document.createElement(tag);
@@ -306,6 +308,7 @@ function Console(app) {
         inputs[i].disabled = false
       } else {
         inputs[i].classList.add("disable-input")
+        inputs[i].blur()
         inputs[i].disabled = true
       }
     }

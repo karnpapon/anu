@@ -1,17 +1,19 @@
+/* global seeq */
+
 function StepCounter(canvas) {
   this.isSelected = false
-  this.counter = [{ x: 0, y: 0, counter: 0, i: 0 }]
+  this.counter = [{ x: 0, y: 0, counter: 0, i: 0, capture: false }]
 
   this.reset = function () {
     this.isSelected = false
-    this.counter = [{ x: 0, y: 0, counter: 0, i: 0 }]
+    this.counter = [{ x: 0, y: 0, counter: 0, i: 0, capture: false }]
   }
 
   this.run = function () {
-    this.setCounter()
+    this.runCounter()
   }
 
-  this.setCounter = function () {
+  this.runCounter = function () {
     let self = this
     this.counter.forEach(c => {
       self.increment(c)
@@ -34,7 +36,7 @@ function StepCounter(canvas) {
     } else {
       canvas.cursor.cursors.forEach(value => {
         if (value.i === c.i) {
-          c.isOverlap = canvas.isSelectionOverlap(c.x, c.y) ? true : false
+          c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
           if (!c.isOverlap) {
             if (c.x < value.x) {
               if (c.y === value.y) {
@@ -69,10 +71,11 @@ function StepCounter(canvas) {
           c.y++
         }
       }
+      // c.capture = false;
     } else {
       canvas.cursor.cursors.forEach(value => {
-        if (value.i === c.i) {
-          c.isOverlap = canvas.isSelectionOverlap(c.x, c.y) ? true : false
+        if (value.i === canvas.cursor.active) {
+          c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
           if (!c.isOverlap) {
             if (
               c.x > (value.x + value.w - 1) ||
@@ -88,7 +91,8 @@ function StepCounter(canvas) {
             rand = canvas.bufferPos[Math.floor(Math.random() * canvas.bufferPos.length)].x
             c.x = rand < value.x || rand > value.x + value.w - 1 ? c.x++ : rand
           }
-
+          // c.i = canvas.cursor.active
+          // c.capture = true
         }
       })
     }
@@ -103,6 +107,7 @@ function StepCounter(canvas) {
     canvas.cursor.cursors.forEach(cs => {
       canvas.seequencer.resetFrameToRange(cs)
     })
+    // canvas.seequencer.resetFrameToRange(canvas.cursor.cursors[canvas.cursor.active])
   }
 
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v }

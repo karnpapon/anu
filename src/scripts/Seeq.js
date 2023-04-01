@@ -1,8 +1,9 @@
+/* global seeq */
+
 function Seeq(){
   
   const el = tag => document.createElement(tag);
   this.content = new Content(this)
-  this.io = new IO(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
   // this.layout = new Layout(this)
@@ -43,7 +44,6 @@ function Seeq(){
     this.displayer.build()
     this.content.build()
     this.console.toggleInsert()
-    this.io.start()
     setTimeout(seeq.show,200)
   }
 
@@ -63,10 +63,10 @@ function Seeq(){
   }
 
   this.getMatchedPosition = function(){
-    var searchFrom = canvas.texts
+    let searchFrom = canvas.texts
     let trimmed = this.trimmedContents(searchFrom)
     let target, search, noBracketTarget
-    var match, query
+    let match, query
 
     if(this.console.searchType === 'regex'){
       query = this.console.regexInput

@@ -1,5 +1,7 @@
 'use strict'
 
+/* global seeq */
+
 function Cursor(canvas) {
 
   this.mode = 0
@@ -23,6 +25,7 @@ function Cursor(canvas) {
   }
 
   this.onMouseDown = (e) => {
+    canvas.toggleGuide(false)
     if (!canvas.el.contains(e.target)) { return }
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(pos.x, pos.y, 0, 0)
@@ -114,7 +117,7 @@ function Cursor(canvas) {
     path = path === ""? active.msg.OSC.path:path
     msg = msg === ""? active.msg.OSC.msg:msg
 
-    var fmt = seeq.io.osc.formatter(msg)
+    var fmt = canvas.io.osc.formatter(msg)
     let len = fmt[1].length
   
     // TODO: dynamic index based on each sound/number length.

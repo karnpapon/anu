@@ -1,3 +1,5 @@
+/* global seeq */
+
 function Seequencer(canvas){
   this.w = 1 // Default Width
   this.h = 1 // Default Height

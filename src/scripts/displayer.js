@@ -47,7 +47,6 @@ function Displayer(app) {
   this.el_with_input = el("div")
   this.el_general = el("div")
   this.input_text_default = `
-    <lf class="info-header">OSC |</lf>
     <form id="info-osc" class="info-input">
       <lf>
         <p>MSG:</p>
@@ -125,7 +124,7 @@ function Displayer(app) {
       case 'active-cursor':
         this.displayType = "preview"
         target = this.el_general
-        target.innerHTML = `ACTIVE_CURSOR : <div class="displayer-bold">${active.n}</div>` 
+        target.innerHTML = `<div class="displayer-bold">${active.n}</div>` 
         break;
       case 'helper':
         this.displayType = "preview"
@@ -137,7 +136,6 @@ function Displayer(app) {
         this.displayType = this.isDisplayInputToggled? "form":"default"
         target = this.el_with_input
         target.innerHTML = `
-          <lf class="info-header">OSC |</lf>
           <form id="info-osc" class="info-input">
             <div class="displayer-form-short-wrapper">
               <p>PATH:</p>
@@ -156,7 +154,6 @@ function Displayer(app) {
         target = this.el_with_input
         pairedNoteAndOct = this.getPairedNoteAndOct(active)
         target.innerHTML = `
-          <lf class="info-header">MIDI |</lf>
           <form id="info-osc" class="info-input">
             <div class="displayer-form-short-wrapper">
               <p>N:</p>
@@ -193,7 +190,6 @@ function Displayer(app) {
         this.displayType = this.isDisplayInputToggled? "form":"default"
         target = this.el_with_input
         target.innerHTML = `
-        <lf class="info-header">CURSOR |</lf>
         <form id="dp-cs-rename" class="info-input">
           <lf>
             <p>name:</p>

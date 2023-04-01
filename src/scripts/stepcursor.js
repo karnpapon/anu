@@ -1,5 +1,7 @@
 'use strict'
 
+/* global seeq */
+
 function StepCursor(canvas) {
 
   this.steps = [ { x: 0, y: 0, i: 0 } ]
@@ -22,7 +24,7 @@ function StepCursor(canvas) {
 
   this.add = function(){
     let cursor = canvas.cursor.cursors[ canvas.cursor.active ]
-    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: cursor.i})
+    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: cursor.i, capture: true})
     this.steps.push({ x: 0, y:0, i: cursor.i})
   }
 
@@ -92,22 +94,22 @@ function StepCursor(canvas) {
 
     if(seeq.console.isOSCToggled){
        // TODO: dynamic index only for OSC msg.
-      seeq.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
+      canvas.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
     }
 
     if(seeq.console.isUDPToggled){
-      seeq.io.udp.send( target[0].msg.UDP[midiIndex])
+      canvas.io.udp.send( target[0].msg.UDP[midiIndex])
     }
 
-    seeq.io.midi.send({ 
+    canvas.io.midi.push({ 
       channel: parseInt(channel) ,
       octave: octave[midiIndex], 
       note: note[midiIndex],
       velocity: velocity[veloIndex], 
-      length: notelength[lenIndex] 
+      length: notelength[lenIndex]
     })
 
-    seeq.io.run()
-    seeq.io.clear()
+    canvas.io.run()
+    canvas.io.clear()
   }
 }

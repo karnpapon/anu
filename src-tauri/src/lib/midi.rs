@@ -81,25 +81,15 @@ pub fn setup_midi_out(midi_state: tauri::State<'_, MidiState>) -> Result<String,
 }
 
 #[tauri::command]
-pub fn send_midi_out(midi_state: tauri::State<'_, MidiState>, msg: Vec<u8>, length: f32) -> Result<(),&'static str> {
-  println!("msg={:?}, length={:?}", msg, length);
-  let channel = msg[0];
+pub fn send_midi_out(midi_state: tauri::State<'_, MidiState>, msg: Vec<u8>) -> Result<(),&'static str> {
   match midi_state.out_devices.lock() {
     Ok(mut conn_out) => {
-      let note_on_msg: u8 = 0x90 + channel;
-      let note_off_msg: u8 = 0x80 + channel;
-      const VELOCITY: u8 = 0x64;
-      const NOTE: u8 = 60;
       let connection_out: &mut MidiOutputConnection = conn_out.as_mut().unwrap();
-      connection_out.send(&[note_on_msg, NOTE, VELOCITY]).unwrap();
-      // TODO: figure out how to send with timestamp since `midir` is not support `timestamp` parameter unlike WebMIDI api (https://developer.mozilla.org/en-US/docs/Web/API/MIDIOutput/send)
-
-      // sleep(Duration::from_millis(duration * 150));
-      // connection_out.send(&[note_off_msg, NOTE, VELOCITY]).unwrap();
+      connection_out.send(&msg).unwrap();
       Ok(())
     }
     _ => {
-      Err("setup_midi_out::error")
+      Err("send_midi_note_out::error")
     }
   }
 }

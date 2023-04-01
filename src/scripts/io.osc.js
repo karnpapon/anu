@@ -1,5 +1,7 @@
 // 'use strict'
 
+/* global OSC */
+
 function Osc (app) {
   const isEven = (x) => { return (x%2)==0; }
   const isOdd = (x) => { return !isEven(x); }

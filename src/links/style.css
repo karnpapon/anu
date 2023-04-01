@@ -475,7 +475,7 @@ button:active{
 
 .header-wrapper-status{
   margin-right: 0;
-  margin-left: 1rem;
+  /* margin-left: 1rem; */
 }
 
 .header-wrapper:nth-child(2){ padding-left: 10px;}
@@ -662,7 +662,7 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
   width: 50%;
 }
 
-.displayer-show{ opacity: 1; z-index: 99; }
+.displayer-show{ opacity: 1; z-index: 99; padding: 1rem; }
 .displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1.5rem;}
 
 /* ---------------------- */
@@ -793,7 +793,7 @@ div input{
 .info-input{ 
   min-width: 349px;
   display: flex;
-  padding-right: 20px;
+  /* padding-right: 20px; */
   flex: 2;
 }
 

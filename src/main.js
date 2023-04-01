@@ -6,12 +6,12 @@ canvas.install(seeq.content.el)
 
 window.addEventListener('load', () => { 
   canvas.start(); 
-  const { TauriEvent, listen } = window.__TAURI__.event;
+  const { listen } = window.__TAURI__.event;
   
   listen( "menu-osc", function (msg) {
       console.log("listen::menu-osc", msg)
       seeq.console.togglePort('OSC', seeq.console)
-      seeq.console.oscInfo.innerText = seeq.console.isOSCToggled ? `PORT:${seeq.io.osc.port}` : "--"
+      seeq.console.oscInfo.innerText = seeq.console.isOSCToggled ? `PORT:${canvas.io.osc.port}` : "--"
     },
   );
   listen( "menu-rev", function (msg) {
