@@ -1,12 +1,26 @@
 'use strict'
 
 const library = {
-  "Cmd+a": { "info": "Outputs sum of inputs" },
-  "Cmd+b": { "info": "Outputs" },
-  "Cmd+c": { "info": "Outputs sum of inputs" },
-  "Cmd+d": { "info": "Outputs sum of inputs" },
-  "Cmd+e": { "info": "Outputs sum of inputs" },
-  "Cmd+f": { "info": "Outputs sum of inputs" },
+  "Spacebar": { "info": "play/pause" },
+  "Cmd-Arrow": { "info": "leap cursor" },
+  "ShiftArrow": { "info": "increse/decrese cursor range" },
+  "ShiftArrowCmd": { "info": "jump increse/decrese cursor range" },
+
+  "Cmd-n": { "info": "add new cursor" },
+  "Cmd-Return": { "info": "toggle snap step to cursor range" },
+  "Cmd-Backspace": { "info": "delete selected cursor" },
+  "Cmd-e": { "info": "rename cursor" },
+  "Cmd-f": { "info": "focus only cursor(s)" },
+  "Option-e": { "info": "show current selected cursor name" },
+  "Option-Tab": { "info": "change selected cursors" },
+  "Shift-Plus": { "info": "add new step into selected cursor" },
+
+  "Cmd-GreaterThan": { "info": "increse BPM" },
+  "Cmd-LessThan": { "info": "decrese BPM" },
+
+  "Cmd-m": { "info": "set midi msg" },
+
+  "h": { "info": "show helps window"}
 }
 
 
@@ -62,7 +76,6 @@ function Canvas () {
   }
 
   this.start = function () {
-    // this.theme.start()
     this.io.start()
     this.source.start()
     this.clock.start()
@@ -74,6 +87,7 @@ function Canvas () {
     this.update()
     this.el.className = 'ready'
     this.toggleGuide()
+    this.resize()
   }
 
   this.run = function () {
@@ -149,7 +163,6 @@ function Canvas () {
   this.toggleGuide = (force = null) => {
     const display = force !== null ? force : this.guide !== true
     if (display === this.guide) { return }
-    console.log('Client', `Toggle Guide: ${display}`)
     this.guide = display
     this.update()
   }
@@ -235,10 +248,12 @@ function Canvas () {
     if (type === 7) { return { fg: this.theme.active.background} }
     // Block select.
     if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
-    // Guide
-    if (type === 11) { return { bg: "#F0F0F0", fg: this.theme.active.background } }
     // Black.
     if (type === 10) { return { bg: this.theme.active.background, fg: this.theme.active.f_high } }
+    // Guide
+    if (type === 11) { return { bg: "#F0F0F0", fg: this.theme.active.background } }
+    // Guide
+    if (type === 12) { return { bg: "#dfdfdf", fg:this.theme.active.background } }
     // Default
     return { fg: this.theme.active.background }
   }
@@ -286,14 +301,15 @@ function Canvas () {
       const oper = library[key]
       const text = oper.info
       const frame = this.seequencer.h - 4
-      const x = (Math.floor(parseInt(id) / frame) * 32) + (this.seequencer.w / 2 - 19)
-      const y = (parseInt(id) % frame) + 6
-      this.write(`${' '.repeat(4)}${key}:${' '.repeat(4)}`, x, y, 99, 11)
-      this.write(`${' '.repeat(1)}${text}${' '.repeat(4)}`, x + 12, y, 99, 11)
+      const x = (Math.floor(parseInt(id) / frame) * 32) + 2
+      const y = (parseInt(id) % frame) + 5
+      const text_line_length = text.length + key.length
+      this.write(`${' '.repeat(1)}${key}:${' '.repeat(1)}`, x, y, 99, 11, "bold")
+      this.write(`${' '.repeat(1)}${text}${' '.repeat(this.seequencer.w - text_line_length - 10)}`, x + key.length + 3, y, 99, 11)
     }
   }
 
-  this.drawSprite = function (x, y, g, type) {
+  this.drawSprite = function (x, y, g, type, text_weight = "normal") {
     const theme = this.makeTheme(type)
     if (theme.bg) {
       const bgrect = { 
@@ -313,6 +329,7 @@ function Canvas () {
         h: this.tile.h * this.scale 
       }
       this.context.fillStyle = theme.fg
+      this.context.font = text_weight === "bold" ? `${this.tile.h * 0.75 * this.scale}px input_mono_bold` : `${this.tile.h * 0.75 * this.scale}px input_mono_regular` 
       this.context.fillText(g, fgrect.x, fgrect.y)
     }
   }
@@ -330,10 +347,10 @@ function Canvas () {
   }
 
 
-  this.write = function (text, offsetX, offsetY, limit = 50, type = 2) {
+  this.write = function (text, offsetX, offsetY, limit = 50, type = 2, text_weight = "normal") {
     let x = 0
     while (x < text.length && x < limit - 1) {
-      this.drawSprite(offsetX + x, offsetY, text.substr(x, 1), type)
+      this.drawSprite(offsetX + x, offsetY, text.substr(x, 1), type, text_weight)
       x += 1
     }
   }

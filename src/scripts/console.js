@@ -277,7 +277,7 @@ function Console(app) {
   });
 
   this.build = function () {
-    this.el.classList.add("controller-wrapper")
+    // this.el.classList.add("controller-wrapper")
     this.el.innerHTML += this.el_elem
     app.el.appendChild(this.el)
   }

@@ -53,6 +53,12 @@ function Commander(canvas) {
   // Events
 
   this.onKeyDown = function(event) {
+
+    // close guide by pressing anykey except meta/modify keys.
+    if (!event.shiftKey && !event.metaKey && !event.ctrlKey) {
+      if (canvas.guide && event.keyCode !== 72){ canvas.toggleGuide(false) }
+    }
+
     if (event.which == 40 || event.which == 41) {
       event.preventDefault();
     }
@@ -112,8 +118,10 @@ function Commander(canvas) {
 
     // get step into cursor range.
     if (event.shiftKey && event.keyCode === 13 && !seeq.console.isInsertable) {
-      canvas.stepcounter.range();
-      canvas.stepcounter.isSelected = !canvas.stepcounter.isSelected;
+      // canvas.stepcounter.range();
+      const active_index = canvas.stepcounter.counter.length > 1 ? canvas.cursor.active : 0
+      canvas.stepcounter.isSelected = !canvas.stepcounter.isSelected
+      canvas.stepcounter.counter[active_index].i = canvas.cursor.active;
       return;
     }
 
@@ -215,12 +223,13 @@ function Commander(canvas) {
       return;
     }
 
-    // show guide.
-    if (event.keyCode === 72 && !seeq.console.isInsertable) {
-      canvas.toggleGuide(true)
+     // show guide.
+     if (event.keyCode === 72 && !seeq.console.isInsertable) {
+      canvas.toggleGuide(!canvas.guide)
+      event.preventDefault();
       return;
     }
-
+   
     // rename cursor.
     // if (event.keyCode === 82 && (event.metaKey || event.ctrlKey)) {
     //   seeq.displayer.displayMsg('helper')
@@ -246,11 +255,12 @@ function Commander(canvas) {
     }
 
     if (event.key === "Escape") {
-      // canvas.toggleGuide(false);
       canvas.commander.stop();
       canvas.clear();
       canvas.isPaused = false;
       canvas.cursor.reset();
+      canvas.stepcounter.reset()
+      canvas.stepcursor.reset()
       return;
     }
 
@@ -348,7 +358,6 @@ function Commander(canvas) {
   // Events
 
   document.onkeydown = event => {
-    canvas.toggleGuide(false)
     this.onKeyDown(event);
   };
   document.onkeyup = event => {

@@ -24,7 +24,7 @@ function StepCursor(canvas) {
 
   this.add = function(){
     let cursor = canvas.cursor.cursors[ canvas.cursor.active ]
-    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: cursor.i, capture: true})
+    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: cursor.i})
     this.steps.push({ x: 0, y:0, i: cursor.i})
   }
 

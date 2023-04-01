@@ -2,11 +2,11 @@
 
 function StepCounter(canvas) {
   this.isSelected = false
-  this.counter = [{ x: 0, y: 0, counter: 0, i: 0, capture: false }]
+  this.counter = [{ x: 0, y: 0, y_counter: 0, i: null }]
 
   this.reset = function () {
     this.isSelected = false
-    this.counter = [{ x: 0, y: 0, counter: 0, i: 0, capture: false }]
+    this.counter = [{ x: 0, y: 0, y_counter: 0, i: null }]
   }
 
   this.run = function () {
@@ -38,14 +38,11 @@ function StepCounter(canvas) {
         if (value.i === c.i) {
           c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
           if (!c.isOverlap) {
-            if (c.x < value.x) {
-              if (c.y === value.y) {
-                c.x = value.x + value.w - 1
-                c.y = value.y + value.h - 1
-              } else {
-                c.x = value.x + value.w - 1
-                c.y--
-              }
+            if( c.x < (value.x) || c.y < (value.y)) {
+              c.x = value.x + value.w - 1
+              c.y = value.h > 1 ? value.y + c.y_counter % value.h : value.y
+              c.y_counter++
+              c.y_counter = c.y_counter % value.h
             }
           } else {
             rand = canvas.bufferPos[Math.floor(Math.random() * canvas.bufferPos.length)].x
@@ -71,10 +68,9 @@ function StepCounter(canvas) {
           c.y++
         }
       }
-      // c.capture = false;
     } else {
       canvas.cursor.cursors.forEach(value => {
-        if (value.i === canvas.cursor.active) {
+        if (value.i === c.i) {
           c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
           if (!c.isOverlap) {
             if (
@@ -84,15 +80,14 @@ function StepCounter(canvas) {
               value.y > c.y
             ) {
               c.x = value.x
-              c.y = value.h > 1 ? value.y + c.counter % value.h : value.y
-              c.counter++
+              c.y = value.h > 1 ? value.y + c.y_counter % value.h : value.y
+              c.y_counter++
+              c.y_counter = c.y_counter % value.h // wrapped to height since there's no needs to count up more than cursor height.
             }
           } else {
             rand = canvas.bufferPos[Math.floor(Math.random() * canvas.bufferPos.length)].x
             c.x = rand < value.x || rand > value.x + value.w - 1 ? c.x++ : rand
           }
-          // c.i = canvas.cursor.active
-          // c.capture = true
         }
       })
     }
@@ -104,9 +99,9 @@ function StepCounter(canvas) {
   }
 
   this.range = function () {
-    canvas.cursor.cursors.forEach(cs => {
-      canvas.seequencer.resetFrameToRange(cs)
-    })
+    // canvas.cursor.cursors.forEach(cs => {
+    //   canvas.seequencer.resetFrameToRange(cs)
+    // })
     // canvas.seequencer.resetFrameToRange(canvas.cursor.cursors[canvas.cursor.active])
   }
 

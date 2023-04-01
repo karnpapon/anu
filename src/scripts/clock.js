@@ -7,7 +7,6 @@ function Clock(canvas) {
   this.bpm = 0
   this.callback = () => { }
   this.timer = null
-  // this.setBpm(bpm)
   this.isPaused = true
   this.speed = { value: 120, target: 120 }
 
@@ -22,11 +21,6 @@ function Clock(canvas) {
   this.getBpm = function(){
     return this.timer
   }
-
-  // this.setBpm = function(bpm) {
-  //   this.bpm = bpm
-  //   this.reset()
-  // }
 
   this.run = function() {
     if (this.speed.target === this.speed.value) { return }
@@ -54,14 +48,6 @@ function Clock(canvas) {
     this.play()
   }
 
-  // this.play = function() {
-  //   if (!this.isPaused) { console.warn('Already playing'); return }
-  //   console.log('Clock', 'Play')
-  //   this.isPaused = false
-  //   if (this.isPuppet) { return console.warn('External Midi control') }
-  //   this.set(this.speed.target, this.speed.target, true)
-  // }
-
   this.setSpeed = (value, target = null, setTimer = false) => {
     if (this.speed.value === value && this.speed.target === target && this.timer) { return }
     if (value) { this.speed.value = clamp(value, 60, 300) }
@@ -83,17 +69,6 @@ function Clock(canvas) {
     if (setTimer === true) { this.setTimer(this.speed.value) }
     seeq.console.bpmNumber.innerText = this.speed.value
   }
-
-  // this.setTimer = function(bpm) {
-  //   if (bpm < 60) { console.warn('Clock', 'Error ' + bpm); return }
-  //   this.clearTimer()
-  //   window.localStorage.setItem('bpm', bpm)
-  //   seeq.console.bpmNumber.innerText = bpm
-  //   this.clearTimer()
-  //   this.timer = new Worker(worker)
-  //   this.timer.postMessage((60000 / bpm) / 4)
-  //   this.timer.onmessage = (event) => { canvas.run() }
-  // }
 
   this.setTimer = function (bpm) {
     if (bpm < 60) { console.warn('Clock', 'Error ' + bpm); return }

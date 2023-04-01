@@ -18,14 +18,12 @@ function Cursor(canvas) {
   }
 
   this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
-    // console.log("select.x, select.y,w,h", x,y,w,h)
     this.moveTo(x, y)
     this.scaleTo(w, h)
     canvas.update()
   }
 
   this.onMouseDown = (e) => {
-    canvas.toggleGuide(false)
     if (!canvas.el.contains(e.target)) { return }
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(pos.x, pos.y, 0, 0)

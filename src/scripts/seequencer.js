@@ -14,8 +14,6 @@ function Seequencer(canvas){
   this.variables = {}
 
   this.run = function () {
-    this.runtime = this.parse()
-    this.operate(this.runtime)
     this.f += 1
   }
 
@@ -59,22 +57,6 @@ function Seequencer(canvas){
     this.s = s
   }
 
-  // Operators
-
-  this.parse = function () {
-    const a = []
-    for (let y = 0; y < this.h; y++) {
-      for (let x = 0; x < this.w; x++) {
-        const g = this.glyphAt(x, y)
-        const operator = this.cast(g, x, y)
-        if (operator) {
-          a.push(operator)
-        }
-      }
-    }
-    return a
-  }
-
   this.cast = function (g, x, y) {
     if (g === '.') { return }
     // if (!library[g.toLowerCase()]) { return }
@@ -83,16 +65,6 @@ function Seequencer(canvas){
     // return g
   }
 
-  this.operate = function (operators) {
-    this.release()
-    for (const id in operators) {
-      const operator = operators[id]
-      if (this.lockAt(operator.x, operator.y)) { continue }
-      // if (operator.passive || operator.hasNeighbor('*')) {
-      //   operator.run()
-      // }
-    }
-  }
 
   this.bounds = function () {
     let w = 0
