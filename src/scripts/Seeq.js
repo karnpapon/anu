@@ -57,8 +57,8 @@ function Seeq(){
 
   this.trimmedContents = function(txt){
     let dataText = txt
-    var limitedChar = 1090
-    var trimmedText = dataText.substring(0, limitedChar)
+    let limitedChar = canvas.seequencer.w * canvas.seequencer.h
+    let trimmedText = dataText.substring(0, limitedChar)
     return trimmedText
   }
 
@@ -147,6 +147,12 @@ function Seeq(){
         seeq.console.setTotalLenghtCounterDisplay()
         seeq.isGettingData = false
         seeq.content.loading.classList.remove("loading")
+
+        canvas.clearMarksPos()
+        canvas.globalIdx = 0 
+        canvas.cursor.reset()
+        canvas.stepcounter.reset()
+        canvas.stepcursor.reset()
       }
     })
     .catch((error) => {

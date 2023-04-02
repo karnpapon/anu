@@ -1,0 +1,3 @@
+- ~~stepcursor is not being wrapped for other cursors except "cursor-index-0"~~
+- ~~remove old matched highlight when input changed.~~
+- ~~match range not cover all texts.~~

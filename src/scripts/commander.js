@@ -54,6 +54,31 @@ function Commander(canvas) {
 
   this.onKeyDown = function(event) {
 
+    // disable all keys unless isInsertable is being turned off
+    if (seeq.console.isInsertable){ 
+      // insert input.
+      if (event.keyCode === 73 && (event.metaKey || event.ctrlKey) ) {
+        seeq.console.isInsertable = !seeq.console.isInsertable;
+        seeq.console.inputFetch.blur()
+        seeq.console.inputFetch.setAttribute("contenteditable", "false")
+        seeq.console.toggleInsert(seeq.console.inputFetch, seeq.console.caret);
+        seeq.displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+
+      // insert regex input.
+      if (event.keyCode === 71 && (event.metaKey || event.ctrlKey) ) {
+        seeq.console.isInsertable = !seeq.console.isInsertable;
+        seeq.console.searchRegExp.blur()
+        seeq.console.searchRegExp.setAttribute("contenteditable", "false")
+        seeq.console.toggleInsert(seeq.console.searchRegExp,  seeq.console.regexCaret);
+        seeq.displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+    }
+
     // close guide by pressing anykey except meta/modify keys.
     if (!event.shiftKey && !event.metaKey && !event.ctrlKey) {
       if (canvas.guide && event.keyCode !== 72){ canvas.toggleGuide(false) }

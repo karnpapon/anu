@@ -17,8 +17,8 @@ use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
 fn main() {
   let osc = CustomMenuItem::new("OSC".to_string(), "OSC (Open Sound Control)");
   let udp = CustomMenuItem::new("UDP".to_string(), "UDP (User Datagram Protocol)");
-  let rev = CustomMenuItem::new("REV".to_string(), "REVERSE STEP");
-  let focus = CustomMenuItem::new("FOC".to_string(), "FOCUS");
+  let rev = CustomMenuItem::new("REV".to_string(), "reverse step (r)");
+  let focus = CustomMenuItem::new("FOC".to_string(), "focus (f)");
   let submenu_app = Submenu::new("App", Menu::new().add_native_item(MenuItem::Quit));
   let submenu_commu = Submenu::new("Communications", Menu::new().add_item(osc).add_item(udp));
   let submenu_controls = Submenu::new("Controls", Menu::new().add_item(rev).add_item(focus));

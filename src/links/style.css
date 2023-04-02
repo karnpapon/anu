@@ -162,7 +162,8 @@ div button{
   font-size: 12px;
   font-family: 'input_mono_regular';
   justify-content: center;
-  border: 1px solid;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
   padding: 10px 5px;
   /* margin-top: 10px; */
   /* transition: all .2s ease-in; */

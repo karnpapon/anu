@@ -24,7 +24,7 @@ function StepCursor(canvas) {
 
   this.add = function(){
     let cursor = canvas.cursor.cursors[ canvas.cursor.active ]
-    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: cursor.i})
+    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: canvas.cursor.active, y_counter: 0})
     this.steps.push({ x: 0, y:0, i: cursor.i})
   }
 
@@ -44,7 +44,6 @@ function StepCursor(canvas) {
   }
 
   this.triggerFX = function(time,el){
-
     let target  = canvas.cursor.getSelectionArea(el)
     target.forEach( item => {
       let g = canvas.seequencer.glyphAt(item.x, item.y)

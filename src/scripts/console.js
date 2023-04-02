@@ -12,14 +12,14 @@ function Console(app) {
    <div class="controller-wrapper">
         <div class="header-wrapper console-1">
           <div class="header">
-            <p data-logo="seeq" class="title">INPUT:</p>
+            <p data-logo="seeq" class="title">INPUT:~$ </p>
             <terminal>
               <div id="content" data-ctrl="fetch" contenteditable="false"></div>
               <caret id="input-caret" for="terminal-input" class="caret btn-hide">&nbsp;</caret>
             </terminal>
           </div>
           <div class="header">
-          <p class="title">REGEXP:</p>
+          <p class="title">REGEXP:~$ </p>
             <terminal>
               <div id="regex" data-ctrl="regex" contenteditable="false"></div>
               <caret id="regex-caret" for="regex" class="caret btn-hide">&nbsp;</caret>
@@ -83,15 +83,11 @@ function Console(app) {
   this.devBtn 
   this.caret
   this.regexCaret
-  // this.focusBtn
-  // this.udpBtn 
-  // this.revBtn 
-
+  
   // this.notationMode 
   // this.extractLines 
 
   // Input. 
-  // this.searchInput
   this.searchRegExp
   this.regexInput
   this.fetchSearchInput = ""
@@ -154,7 +150,6 @@ function Console(app) {
       self.searchType = "regex"
       self.isRegExpFocused = !self.isRegExpFocused
       self.regexInput = this.innerText
-      console.log("ldjfdsl", this.innerText)
       seeq.getMatchedPosition() //TODO: return value instead.
       seeq.displayer.displayMsg("regex")
     });

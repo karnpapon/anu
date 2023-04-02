@@ -12,8 +12,8 @@ const library = {
 
   "Spacebar": { "info": "play/pause" },
   "Cmd-Arrow": { "info": "leap cursor" },
-  "ShiftArrow": { "info": "increse/decrese cursor range" },
-  "ShiftArrowCmd": { "info": "jump increse/decrese cursor range" },
+  "Shift-Arrow": { "info": "incr/decr cursor range" },
+  "Shift-Arrow-Cmd": { "info": "jump incr/decr cursor range" },
   "Cmd-Return": { "info": "toggle snap step to cursor range" },
   "Cmd-Backspace": { "info": "delete selected cursor" },
   "Option-e": { "info": "show current selected cursor name" },
@@ -295,6 +295,16 @@ function Canvas () {
   this.drawGuide = () => {
     if (this.guide !== true) { return }
     const operators = Object.keys(library).filter((val) => { return isNaN(val) })
+    const top_border = this.seequencer.w - 7
+    const top_border_symbol = ['┌','─','┐']
+    const content_symbol = ['|']
+    const bottom_border_symbol = ['└','─','┘']
+    const note = "- PLEASE MAKE SURE INPUT HAS BEEN TOGGLED OFF -"
+
+    // top_border
+    this.write(`${top_border_symbol[0]}${top_border_symbol[1].repeat(top_border)}${top_border_symbol[2]}`,2, 1, 99, 11)
+
+    // helps content
     for (const id in operators) {
       const key = operators[id]
       const oper = library[key]
@@ -303,12 +313,14 @@ function Canvas () {
       const x = (Math.floor(parseInt(id) / frame) * 32) + 2
       const y = (parseInt(id) % frame) + 2
       const text_line_length = text.length + key.length
-      this.write(`${' '.repeat(1)}${key}:${' '.repeat(1)}`, x, y, 99, 11, "bold")
-      this.write(`${' '.repeat(1)}${text}${' '.repeat(this.seequencer.w - text_line_length - 10)} `, x + key.length + 3, y, 99, 11)
+      this.write(`${content_symbol[0]}${' '.repeat(1)}${key}:${' '.repeat(1)}`, x, y, 99, 11, "bold")
+      this.write(`${' '.repeat(1)}${text}${' '.repeat(this.seequencer.w - text_line_length - 10)}${content_symbol[0]}`, x + key.length + 3, y, 99, 11)
     }
-    const note = "- PLEASE MAKE SURE INSERT MODE IS TOGGLE OFF -"
-    const note_spaces = ((this.seequencer.w - note.length) / 2) - 2
-    this.write(`${' '.repeat(note_spaces)}${note}${' '.repeat(note_spaces-1)}`,2, operators.length + 2, 99, 11, "bold")
+
+    // bottom_border
+    const note_spaces = ((this.seequencer.w - note.length) / 2) - 3
+    this.write(`|${' '.repeat(note_spaces)}${note}${' '.repeat(note_spaces)}|`,2, operators.length + 2, 99, 11, "bold")
+    this.write(`${bottom_border_symbol[0]}${bottom_border_symbol[1].repeat(top_border)}${bottom_border_symbol[2]}`,2, operators.length + 3, 99, 11)
   }
 
   this.drawSprite = function (x, y, g, type, text_weight = "normal") {
