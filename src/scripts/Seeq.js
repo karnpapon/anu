@@ -43,7 +43,7 @@ function Seeq(){
     this.console.build()
     this.displayer.build()
     this.content.build()
-    this.console.toggleInsert()
+    // this.console.toggleInsert()
     setTimeout(seeq.show,200)
   }
 

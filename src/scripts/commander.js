@@ -90,14 +90,6 @@ function Commander(canvas) {
       event.preventDefault();
       return;
     }
-    // insert.
-    if (event.keyCode === 73 && (event.metaKey || event.ctrlKey)) {
-      seeq.console.isInsertable = !seeq.console.isInsertable;
-      seeq.console.toggleInsert();
-      seeq.displayer.displayDefault();
-      event.preventDefault();
-      return;
-    }
 
     if (event.keyCode === 38 && !seeq.console.isInsertable && seeq.displayer.displayType === "default") {
       this.onArrowUp(event.shiftKey, event.metaKey || event.ctrlKey);
@@ -164,89 +156,123 @@ function Commander(canvas) {
       return;
     }
 
-    // new cursor.
-    if (event.keyCode === 78 && (event.metaKey || event.ctrlKey)) {
-      canvas.globalIdx += 1;
-      canvas.cursor.add();
+    // insert input.
+    if (event.keyCode === 73 && (event.metaKey || event.ctrlKey) ) {
+      seeq.console.isInsertable = !seeq.console.isInsertable;
+      if (seeq.console.isInsertable){
+        seeq.console.inputFetch.focus()
+        seeq.console.inputFetch.setAttribute("contenteditable", "true")
+      } else {
+        seeq.console.inputFetch.blur()
+        seeq.console.inputFetch.setAttribute("contenteditable", "false")
+      }  
+      seeq.console.toggleInsert(seeq.console.inputFetch, seeq.console.caret);
+      seeq.displayer.displayDefault();
       event.preventDefault();
       return;
     }
 
-    // toggle OSC.
-    if (event.keyCode === 50 && (event.metaKey || event.ctrlKey)) {
-      seeq.console.togglePort('OSC', seeq.console.oscInfo)
+    // insert regex input.
+    if (event.keyCode === 71 && (event.metaKey || event.ctrlKey) ) {
+      seeq.console.isInsertable = !seeq.console.isInsertable;
+      if (seeq.console.isInsertable){
+        seeq.console.searchRegExp.focus()
+        seeq.console.searchRegExp.setAttribute("contenteditable", "true")
+      } else {
+        seeq.console.searchRegExp.blur()
+        seeq.console.searchRegExp.setAttribute("contenteditable", "false")
+      }  
+      seeq.console.toggleInsert(seeq.console.searchRegExp,  seeq.console.regexCaret);
+      seeq.displayer.displayDefault();
       event.preventDefault();
       return;
     }
 
-    // toggle UDP
-    if (event.keyCode === 49 && (event.metaKey || event.ctrlKey)) {
-      seeq.console.togglePort('UDP', seeq.console.udpBtn)
-      event.preventDefault();
-      return;
-    }
+    if (!seeq.console.isInsertable){
 
-    // reverse global step.
-    if (event.keyCode === 51 && (event.metaKey || event.ctrlKey)) {
-      seeq.console.togglePort('REV', seeq.console.revBtn)
-      event.preventDefault();
-      return;
-    }
+      // toggle UDP
+      if (event.keyCode === 49 ) {
+        // seeq.console.togglePort('UDP', seeq.console.udpBtn)
+        event.preventDefault();
+        return;
+      }
 
-    // focus
-    if (event.keyCode === 52 && (event.metaKey || event.ctrlKey)) {
-      seeq.console.togglePort('FOCUS', seeq.console.focusBtn)
-      canvas.toggleShowMarks()
-      event.preventDefault();
-      return;
-    }
+      // (n) new cursor. 
+      if (event.keyCode === 78 ) {
+        canvas.globalIdx += 1;
+        canvas.cursor.add();
+        event.preventDefault();
+        return;
+      }
+
+      // (r) reverse global step.
+      if (event.keyCode === 82 ) {
+        seeq.console.togglePort('REV', seeq.console)
+        event.preventDefault();
+        return;
+      }
+
+      // (f) focus
+      if (event.keyCode === 70 ) {
+        console.log("fffff")
+        seeq.console.togglePort('FOCUS', seeq.console)
+        canvas.toggleShowMarks()
+        event.preventDefault();
+        return;
+      }
 
 
-     // rename cursor's name.
-     if (event.keyCode === 69 && (event.metaKey || event.ctrlKey)) {
-      seeq.displayer.displayMsg("rename-cursor");
-      event.preventDefault();
-      return;
-    }
+      // (e) rename cursor's name.
+      if (event.keyCode === 69) {
+        seeq.displayer.displayMsg("rename-cursor");
+        event.preventDefault();
+        return;
+      }
 
-    // OSC config.
-    if (event.keyCode === 79 && (event.metaKey || event.ctrlKey)) {
-      seeq.displayer.displayMsg("osc");
-      event.preventDefault();
-      return;
-    }
+      // (o) OSC config.
+      if (event.keyCode === 79 ) {
+        seeq.displayer.displayMsg("osc");
+        event.preventDefault();
+        return;
+      }
 
-    // MIDI config.
-    if (event.keyCode === 77 && (event.metaKey || event.ctrlKey)) {
-      seeq.displayer.displayMsg("midi");
-      event.preventDefault();
-      return;
-    }
+      // (m) MIDI config.
+      if (event.keyCode === 77 ) {
+        seeq.displayer.displayMsg("midi");
+        event.preventDefault();
+        return;
+      }
 
-     // show guide.
-     if (event.keyCode === 72 && !seeq.console.isInsertable) {
-      canvas.toggleGuide(!canvas.guide)
-      event.preventDefault();
-      return;
+      // (h) show guide.
+      if (event.keyCode === 72) {
+        canvas.toggleGuide(!canvas.guide)
+        event.preventDefault();
+        return;
+      }
+
+      // (a) rename cursor.
+      if (event.keyCode === 65) {
+        seeq.displayer.displayMsg('rename-cursor')
+        event.preventDefault();
+        return
+      }
+
+      if (event.key === ">") {
+        canvas.clock.mod(1);
+        event.preventDefault();
+        return;
+      }
+
+      if (event.key === "<") {
+        canvas.clock.mod(-1);
+        event.preventDefault();
+        return;
+      }
     }
    
-    // rename cursor.
-    // if (event.keyCode === 82 && (event.metaKey || event.ctrlKey)) {
-    //   seeq.displayer.displayMsg('helper')
-    //   event.preventDefault();
-    //   return
-    // }
-
-    if (event.metaKey) {
-      return;
-    }
-    if (event.ctrlKey) {
-      return;
-    }
-
-    if (event.key === "Enter") {
-      return;
-    }
+    if (event.metaKey) { return; }
+    if (event.ctrlKey) { return; }
+    if (event.key === "Enter") { return; }
 
     if (event.key === " " && !seeq.console.isInsertable && !seeq.displayer.isDisplayInputToggled) {
       canvas.clock.togglePlay();
@@ -258,20 +284,7 @@ function Commander(canvas) {
       canvas.commander.stop();
       canvas.clear();
       canvas.isPaused = false;
-      canvas.cursor.reset();
-      canvas.stepcounter.reset()
-      canvas.stepcursor.reset()
-      return;
-    }
-
-    if (event.key === ">") {
-      canvas.clock.mod(1);
-      event.preventDefault();
-      return;
-    }
-    if (event.key === "<") {
-      canvas.clock.mod(-1);
-      event.preventDefault();
+      canvas.reset();
       return;
     }
   };

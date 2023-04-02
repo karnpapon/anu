@@ -9,6 +9,7 @@
     "reInstall": "rm -rf node_modules && rm -rf package-lock.json && npm install",
     "clean": "rm -r ~/Desktop/Seeq-darwin-x64/ ; echo 'cleaned build location'",
     "tauri": "tauri",
+    "generate-icon": "tauri icon",
     "package": "pkg package.json --output src-tauri/binaries/my-sidecar && node scripts/move-binary.js"
   },
   "repository": "",

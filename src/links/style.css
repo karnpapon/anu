@@ -122,7 +122,7 @@ binop { padding: 0 0.125rem; }
 }
 
 div button{
-  border: 1px solid !important;
+  /* border: 1px solid !important; */
   /* transition: 0.1s; */
 }
 
@@ -307,12 +307,58 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 .title{
   font-family: 'input_sans_condensed_regular';
   /* padding-bottom: 5px; */
-  flex: 1;
+  /* flex: 1; */
   padding: 0;
   margin: 0;
  }
 
-.input-input { flex: 3; height: 20px; background-color: unset;}
+.input-input { 
+  flex: 3; 
+  height: 20px; 
+  background-color: unset;
+  display: inline;
+  word-break: break-all;
+  outline: none;
+  visibility: visible;
+}
+
+terminal {
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: 0px solid transparent;
+  border-width: 0; 
+  box-shadow: none;
+}
+
+terminal {
+  word-break: break-all;
+  visibility: visible;
+
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  margin-left: 0.5rem;
+}
+
+[contenteditable]:focus {
+  outline: 0px solid transparent;
+}
+
+caret {
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background-color: rgb(0, 0, 0);
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+}
+
+caret:hover {
+  cursor: default;
+}
 
 .select-highlight{
   box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0); 
@@ -472,7 +518,7 @@ button:active{
   /* justify-content: space-between; */
 }
 
-.header-wrapper div { margin-bottom: 6px;}
+/* .header-wrapper div { margin-bottom: 6px;} */
 
 .header-wrapper-status{
   margin-right: 0;
@@ -645,6 +691,9 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
   border: 1px solid;
   padding-left: 5px;
   font-size: var(--osc-msg);
+  border: none; 
+  border-width: 0; 
+  box-shadow: none;
 }
 
 .displayer-form-short{
@@ -732,7 +781,7 @@ app {
 }
 
 .btn-show{  display: block; }
-.btn-hide{  display: none; }
+.btn-hide{  display: none !important;}
 
 .operator{font: 400 11px system-ui;  }
 .tempo{ 
@@ -772,6 +821,18 @@ div input{
   width: 100%;
   padding: 0;
   margin: 0;
+}
+
+@-webkit-keyframes blink {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+
+@keyframes blink {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
 }
 
 .input-note{

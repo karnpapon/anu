@@ -19,7 +19,7 @@ function StepCursor(canvas) {
   }
 
   this.isTrigger = function (x, y) {
-    // return canvas.p.some(pos => pos.x === x && pos.y === y)
+    return canvas.p.some(pos => pos.x === x && pos.y === y)
   }
 
   this.add = function(){
@@ -33,13 +33,13 @@ function StepCursor(canvas) {
     this.steps.pop()
   }
 
-  this.run = function () {
+  this.draw = function () {
     this.steps.forEach( ( step, idx ) => {
       if (!canvas.clock.isPaused) {
         step.x = canvas.stepcounter.counter[idx].x
         step.y = canvas.stepcounter.counter[idx].y
       }
-      canvas.drawSprite( step.x, step.y,this.isTrigger(step.x,step.y)? '*':canvas.seequencer.glyphAt(step.x, step.y),10)
+      canvas.drawSprite( step.x, step.y,canvas.seequencer.glyphAt(step.x, step.y),10)
     })
   }
 

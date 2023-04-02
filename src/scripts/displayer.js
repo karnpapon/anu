@@ -8,7 +8,7 @@ function Displayer(app) {
   this.el = el("div")
   this.el_elem = el("div")
   this.main_text = el("div")
-  this.default_text = "cmd (⌘) or ctrl + i = toggle insert mode."
+  this.default_text = "(Cmd-i or Ctrl-i) = toggle input\n (Cmd-g or Ctrl-g) = toggle Regex input\n(Return) eval input\n(h) toggle helps window\n"
 
   
   // state.

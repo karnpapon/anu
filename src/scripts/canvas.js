@@ -1,26 +1,24 @@
 'use strict'
 
 const library = {
+  "n": { "info": "add new cursor" },
+  "f": { "info": "focus only cursor(s)" },
+  "r": { "info": "reverse step" },
+  "o": { "info": "set osc msg" },
+  "m": { "info": "set midi msg" },
+  "e": { "info": "rename cursor" },
+  ">": { "info": "increse BPM" },
+  "<": { "info": "decrese BPM" },
+
   "Spacebar": { "info": "play/pause" },
   "Cmd-Arrow": { "info": "leap cursor" },
   "ShiftArrow": { "info": "increse/decrese cursor range" },
   "ShiftArrowCmd": { "info": "jump increse/decrese cursor range" },
-
-  "Cmd-n": { "info": "add new cursor" },
   "Cmd-Return": { "info": "toggle snap step to cursor range" },
   "Cmd-Backspace": { "info": "delete selected cursor" },
-  "Cmd-e": { "info": "rename cursor" },
-  "Cmd-f": { "info": "focus only cursor(s)" },
   "Option-e": { "info": "show current selected cursor name" },
   "Option-Tab": { "info": "change selected cursors" },
   "Shift-Plus": { "info": "add new step into selected cursor" },
-
-  "Cmd-GreaterThan": { "info": "increse BPM" },
-  "Cmd-LessThan": { "info": "decrese BPM" },
-
-  "Cmd-m": { "info": "set midi msg" },
-
-  "h": { "info": "show helps window"}
 }
 
 
@@ -74,7 +72,7 @@ function Canvas () {
     this.theme.install(host)
     this.resize()
   }
-
+  
   this.start = function () {
     this.io.start()
     this.source.start()
@@ -84,10 +82,11 @@ function Canvas () {
     this.reset()
     this.writeData()
     this.modZoom()
-    this.update()
     this.el.className = 'ready'
     this.toggleGuide()
     this.resize()
+    // this.update()
+    // this.clear()
   }
 
   this.run = function () {
@@ -104,8 +103,8 @@ function Canvas () {
     if (document.hidden === true) { return }
     this.clear()
     this.drawProgram()
-    this.stepcursor.run()
     this.match()
+    this.stepcursor.draw()
     this.drawStroke(this.cursor.toRect())
     this.drawGuide()
   }
@@ -302,11 +301,14 @@ function Canvas () {
       const text = oper.info
       const frame = this.seequencer.h - 4
       const x = (Math.floor(parseInt(id) / frame) * 32) + 2
-      const y = (parseInt(id) % frame) + 5
+      const y = (parseInt(id) % frame) + 2
       const text_line_length = text.length + key.length
       this.write(`${' '.repeat(1)}${key}:${' '.repeat(1)}`, x, y, 99, 11, "bold")
-      this.write(`${' '.repeat(1)}${text}${' '.repeat(this.seequencer.w - text_line_length - 10)}`, x + key.length + 3, y, 99, 11)
+      this.write(`${' '.repeat(1)}${text}${' '.repeat(this.seequencer.w - text_line_length - 10)} `, x + key.length + 3, y, 99, 11)
     }
+    const note = "- PLEASE MAKE SURE INSERT MODE IS TOGGLE OFF -"
+    const note_spaces = ((this.seequencer.w - note.length) / 2) - 2
+    this.write(`${' '.repeat(note_spaces)}${note}${' '.repeat(note_spaces-1)}`,2, operators.length + 2, 99, 11, "bold")
   }
 
   this.drawSprite = function (x, y, g, type, text_weight = "normal") {
@@ -366,14 +368,8 @@ function Canvas () {
 
     this.crop(tiles.w, tiles.h)
 
-    // Keep cursor in bounds
-    // if (this.cursor.cursors[this.cursor.active].x >= tiles.w) { this.cursor.cursors[this.cursor.active].x = tiles.w - 1 }
-    // if (this.cursor.cursors[this.cursor.active].y >= tiles.h) { this.cursor.cursors[this.cursor.active].y = tiles.h - 1 }
-
     const w = this.tile.ws * this.seequencer.w
     const h = (this.tile.hs + (this.tile.hs / 5)) * this.seequencer.h 
-
-    // if (w === this.el.width && h === this.el.height) { return }
 
     this.el.width = w
     this.el.height = h
