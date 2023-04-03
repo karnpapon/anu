@@ -62,10 +62,12 @@ function Canvas () {
     h: +localStorage.getItem('tileh') || 16
   }
   this.scale = window.devicePixelRatio
-  this.hardmode = true
   this.guide = false
   this.isShowMarked = true
   this.globalIdx = 0
+  // this.hardmode = true
+
+  // -----------------------------
 
   this.install = function (host) {
     host.appendChild(this.el)
@@ -85,7 +87,7 @@ function Canvas () {
     this.el.className = 'ready'
     this.toggleGuide()
     this.resize()
-    // this.update()
+    this.update()
     // this.clear()
   }
 
@@ -118,12 +120,20 @@ function Canvas () {
     this.stepcounter.reset()
     this.stepcursor.reset()
   }
+  
+  // -----------------------------
 
-  this.setGrid = function (w, h) {
-    this.grid.w = w
-    this.grid.h = h
-    this.update()
-  }
+  // this.setGrid = function (w, h) {
+  //   this.grid.w = w
+  //   this.grid.h = h
+  //   this.update()
+  // }
+
+  // this.modGrid = (x = 0, y = 0) => {
+  //   const w = clamp(this.grid.w + x, 4, 16)
+  //   const h = clamp(this.grid.h + y, 4, 16)
+  //   this.setGrid(w, h)
+  // }
 
   this.writeData = function (data = 'please give some input value and hit return' ) {
     this.texts = data
@@ -171,25 +181,24 @@ function Canvas () {
     this.commander.resetSwitchCounter()
   }
 
-  this.isCursor = function (x, y) {
+  this.isHighlighter = function (x, y) {
     return this.highlighter.highlighters.some( cs => x === cs.x && y === cs.y)
   }
 
-  this.isCurrentCursor = function(x,y){
+  this.isCurrentHighlighter = function(x,y){
     return this.highlighter.highlighters.some( cs => x === cs.x && y === cs.y && cs.i === this.highlighter.highlighters[ this.highlighter.active ].i)
   }
 
-  this.getCurrentCursor = function(){
+  this.getCurrentHighlighter = function(){
     return this.highlighter.highlighters.filter( cs => cs.i === this.highlighter.highlighters[ this.highlighter.active ].i)
   }
 
-  this.isSelection = function (x, y) {
+  this.isWithinHighlightRange = function (x, y) {
     return !!( this.highlighter.highlighters.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
 
-  this.isSelectionOverlap = function(x,y){
-    this.bufferPos = this.highlighter.getOverlapPosition()
-    return this.bufferPos.some( b => b.x === x && b.y === y)
+  this.isOverlapArea = function (x,y){
+    return this.highlighter.overlapAreas.has(`${x}:${y}`)
   }
 
   this.isMarker = function (x, y) {
@@ -201,7 +210,7 @@ function Canvas () {
   }
 
   this.isSelectionTrigged = function(x,y){
-    return this.getCurrentCursor()
+    return this.getCurrentHighlighter()
   }
 
   this.isEdge = function (x, y) {
@@ -220,11 +229,10 @@ function Canvas () {
     return ( highlighter.y + highlighter.h ) - 1  === this.seequencer.h - 1
   }
 
-  // Interface
   this.makeStyle = function (x, y) {
-    let f = this.seequencer.f
-    if(this.isCursor(x,y)) { return this.isCurrentCursor(x,y)? 10:1 }
-    if (this.isSelection(x, y)) { return this.isSelectionOverlap(x,y)? 1:6 }
+    if(this.isHighlighter(x,y)) { return this.isCurrentHighlighter(x,y)? 10:1 }
+    if (this.isWithinHighlightRange(x, y)) { return this.isOverlapArea(x,y)? 1:6 }
+    // if (this.isWithinHighlightRange(x, y)) { return 6 }
     return 9
   }
 
@@ -267,13 +275,23 @@ function Canvas () {
     this.p = []
   }
 
+  this.isInvisible = (x, y) => {
+    return  this.seequencer.glyphAt(x, y) === '.'
+    // !this.isMarker(x, y) && 
+    // this.seequencer.glyphAt(x, y) === '.' &&
+    // !this.isLocals(x, y) && 
+    // !this.ports[this.orca.indexAt(x, y)] && 
+    // !this.seequencer.lockAt(x, y)
+  }
+
   this.drawProgram = function () {
-    for (let y = 0; y < this.seequencer.h ; y++) {
+    // const selection = this.cursor.read()
+    for (let y = 0; y < this.seequencer.h; y++) {
       for (let x = 0; x < this.seequencer.w; x++) {
+        // if (this.isInvisible(x, y)) { continue }
         const g = this.seequencer.glyphAt(x, y)
-        const style = this.makeStyle(x, y)
-        const glyph = g !== '.' ? g : this.isCursor(x, y) ? (this.clock.isPaused ? 'x' : '>') : this.isMarker(x, y) ? '+' : g
-        this.drawSprite(x, y, glyph, style)
+        const glyph = g !== '.' ? g : this.isHighlighter(x, y) ? (this.clock.isPaused ? 'x' : '>') : this.isMarker(x, y) ? '+' : g
+        this.drawSprite(x, y, glyph, this.makeStyle(x, y, glyph, g))
       }
     }
   }
@@ -362,10 +380,8 @@ function Canvas () {
 
 
   this.write = function (text, offsetX, offsetY, limit = 50, type = 2, text_weight = "normal") {
-    let x = 0
-    while (x < text.length && x < limit - 1) {
+    for (let x = 0; x < text.length && x < limit; x++) {
       this.drawSprite(offsetX + x, offsetY, text.substr(x, 1), type, text_weight)
-      x += 1
     }
   }
 

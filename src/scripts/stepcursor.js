@@ -47,7 +47,7 @@ function StepCursor(canvas) {
     let target  = canvas.highlighter.getSelectionArea(el)
     target.forEach( item => {
       let g = canvas.seequencer.glyphAt(item.x, item.y)
-      if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isCursor(item.x,item.y)){
+      if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isHighlighter(item.x,item.y)){
         canvas.drawSprite(item.x, item.y, g, 0)
       }
     })

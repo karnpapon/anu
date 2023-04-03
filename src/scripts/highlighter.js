@@ -9,7 +9,7 @@ function Highlighter(canvas) {
   this.active = 0
   this.highlighters = []
   this.mouseFrom = null
-  this.isMouseInCanvas = true;
+  this.overlapAreas = new Set()
 
   this.minX = 0
   this.maxX = 0
@@ -22,7 +22,7 @@ function Highlighter(canvas) {
     document.onmousemove = this.onMouseMove
   }
 
-  this.select = function (x = this.highlighters[0].x, y = this.highlighters[0].y, w = this.highlighters[0].w, h = this.highlighters[0].h) {
+  this.select = function (x = this.highlighters[this.active].x, y = this.highlighters[this.active].y, w = this.highlighters[this.active].w, h = this.highlighters[this.active].h) {
     if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h)) { return }
     const rect = { 
       x: clamp(parseInt(x), 0, canvas.seequencer.w - 1), 
@@ -43,7 +43,9 @@ function Highlighter(canvas) {
     this.highlighters[this.active].w = rect.w
     this.highlighters[this.active].h = rect.h
     this.calculateBounds()
-    seeq.console.highlightLength.innerText = (w >= 0 && h >= 0) ? `${this.getStepLength()}` : "0,0"
+    this.findOverlapArea(rect)
+    seeq.console.cursorPosition.innerText = `${canvas.highlighter.getActivePosition()}`
+    seeq.console.highlightLength.innerText = (w >= 0 && h >= 0) ? `${this.getStepLength()}` : "1,1"
     canvas.update()
   }
 
@@ -55,22 +57,37 @@ function Highlighter(canvas) {
     this.maxY = c.y > c.y + c.h ? c.y : c.y + c.h
   }
 
+  this.findOverlapArea = function(r2){
+    if (this.highlighters.length < 1) return 
+    this.overlapAreas.clear()
+    this.highlighters.filter(h => h.i !== this.active).forEach(r1 => {
+      const x = Math.max(r1.x, r2.x);
+      const y = Math.max(r1.y, r2.y);
+      const xx = Math.min(r1.x + r1.w, r2.x + r2.w);
+      const yy = Math.min(r1.y + r1.h, r2.y + r2.h);
+      if (xx-x > 0 && yy-y > 0 ) {
+        for (let i=x,ii=xx-x;ii>=1;ii--){
+          for (let j=y,jj=yy-y;jj>=1;jj--){
+            this.overlapAreas.add(`${i+ii-1}:${j+jj-1}`)
+          }
+        }
+      } 
+    })
+  }
+
   this.onMouseDown = (e) => {
-    // if (!canvas.el.contains(e.target)) { return }
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(pos.x, pos.y, 0, 0)
     this.mouseFrom = pos
   }
 
   this.onMouseMove = (e) => {
-    // if (!canvas.el.contains(e.target)) { return }
     if (!this.mouseFrom) { return }
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
   }
 
   this.onMouseUp = (e) => {
-    // if (!canvas.el.contains(e.target)) { return }
     if (this.mouseFrom) {
       const pos = this.mousePick(e.clientX, e.clientY)
       this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
@@ -79,19 +96,9 @@ function Highlighter(canvas) {
   }
 
   this.mousePick = (x, y, w = canvas.tile.w, h = canvas.tile.h) => {
-    var rect = canvas.el.getBoundingClientRect();
-    this.isMouseInCanvas = true;
+    const rect = canvas.el.getBoundingClientRect();
     return { x: parseInt(((x - rect.left)) / w) , y: parseInt(((y - rect.top )) / h) }
   }
-
-  // this.move = function (x, y) {
-  //   let active = this.highlighters[this.active]
-  //   if (isNaN(x) || isNaN(y)) { return }
-  //   active.x = clamp(active.x + parseInt(x), 0, canvas.seequencer.w - 1)
-  //   active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
-  //   seeq.console.cursorPosition.innerText = `${canvas.highlighter.getActivePosition()}`
-  //   canvas.update()
-  // }
 
   this.move = (x, y) => {
     this.select(this.highlighters[this.active].x + parseInt(x), this.highlighters[this.active].y - parseInt(y))
@@ -102,29 +109,12 @@ function Highlighter(canvas) {
   }
 
   this.add = function(){
-    this.highlighters.push(this.getNewCursor()) 
+    this.highlighters.push(this.getNewHighlighter()) 
   }
 
   this.moveTo = (x, y) => {
     this.select(x, y)
   }
-
-  // this.moveTo = function (x, y) {
-  //   let active = this.highlighters[this.active]  
-  //   if (isNaN(x) || isNaN(y)) { return }
-  //   active.x = clamp(parseInt(x), 0, canvas.seequencer.w - 1)
-  //   active.y = clamp(parseInt(y), 0, canvas.seequencer.h - 1)
-  //   canvas.update()
-  // }
-
-  // this.scale = function (x, y) {
-    // let active = this.highlighters[this.active] 
-    // if (isNaN(x) || isNaN(y)) { return }
-    // active.w = clamp(active.w + parseInt(x), 1, canvas.seequencer.w - active.x)
-    // active.h = clamp(active.h - parseInt(y), 1, canvas.seequencer.h - active.y)
-    // seeq.console.highlightLength.innerText = `${this.getStepLength()}`
-    // canvas.update()
-  // }
 
   this.scale = (w, h) => {
     this.select(
@@ -138,15 +128,12 @@ function Highlighter(canvas) {
   this.scaleTo = (w, h) => {
     this.select(this.highlighters[this.active].x, this.highlighters[this.active].y, w, h)
   }
-  
-  // this.scaleTo = function (w, h) {
-  //   let active = this.highlighters[this.active] 
-  //   if (isNaN(w) || isNaN(h)) { return }
-  //   active.w = clamp(parseInt(w), 1, canvas.seequencer.w - 1)
-  //   active.h = clamp(parseInt(h), 1, canvas.seequencer.h - 1)
-  //   canvas.update()
-  // }
 
+  this.selected = (x, y, w = 0, h = 0) => {
+    return x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY
+  }
+  
+  // TODO: optimized this urgently.
   this.getOverlapPosition = function(){
     let block = this.getBlock()
     var result = Object.values(block.reduce((c, v) => {
@@ -264,10 +251,10 @@ function Highlighter(canvas) {
   }
 
   this.initCursor = function(){
-    this.highlighters.push(this.getNewCursor())
+    this.highlighters.push(this.getNewHighlighter())
   }
 
-  this.getNewCursor = function(){
+  this.getNewHighlighter = function(){
     let newCursor = { 
       x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
       n: `highlighter-name-${canvas.globalIdx}`,

@@ -19,7 +19,7 @@ function Sequencer(app){
         offsetCursor = 36 * index
       }
 
-      let cursorPosition = highlighter.isCursorOffsetReverse? highlighter.position - 2:highlighter.position
+      let cursorPosition = highlighter.isHighlighterOffsetReverse? highlighter.position - 2:highlighter.position
       
       // handle negative index to behave correctly.
       if( cursorPosition < 0 ){
@@ -69,7 +69,7 @@ function Sequencer(app){
       let cursorPosition, offsetReverseCursor
 
       // reversed position compensation.
-      if( highlighter.isCursorOffsetReverse){
+      if( highlighter.isHighlighterOffsetReverse){
         cursorPosition = highlighter.position - 2
         offsetReverseCursor = 2
       } else {

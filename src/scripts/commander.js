@@ -340,7 +340,7 @@ function Commander(canvas) {
   };
 
   this.onArrowDown = function(mod = false, skip = false) {
-    const c = canvas.getCurrentCursor();
+    const c = canvas.getCurrentHighlighter();
     let leap;
     if (!canvas.isSelectionAtEdgeBottom(c[0])) {
       // const leap = skip ? canvas.grid.h : 1
@@ -372,7 +372,7 @@ function Commander(canvas) {
   };
 
   this.onArrowRight = function(mod = false, skip = false) {
-    const c = canvas.getCurrentCursor();
+    const c = canvas.getCurrentHighlighter();
     let leap;
     if (!canvas.isSelectionAtEdgeRight(c[0])) {
       if (skip) {

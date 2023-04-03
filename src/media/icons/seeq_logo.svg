@@ -27,9 +27,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.5854071"
-     inkscape:cx="350.18366"
-     inkscape:cy="401.43005"
+     inkscape:zoom="0.28352547"
+     inkscape:cx="8.8175501"
+     inkscape:cy="472.62068"
      inkscape:window-width="1512"
      inkscape:window-height="916"
      inkscape:window-x="0"
@@ -52,72 +52,21 @@
     <g
        id="g734"
        transform="matrix(1.4015147,0,0,1.4015147,-53.194646,-201.44216)">
-      <g
-         id="g515">
-        <rect
-           style="fill:#ececec;stroke-width:0.208075;paint-order:markers stroke fill"
-           id="rect560"
-           width="39.003536"
-           height="56.304955"
-           x="103.12317"
-           y="180.17561" />
-        <rect
-           style="fill:#ececec;stroke-width:0.177899;paint-order:markers stroke fill"
-           id="rect560-8-3"
-           width="41.723057"
-           height="38.475201"
-           x="113.20773"
-           y="180.17551" />
-        <rect
-           style="fill:#ececec;stroke-width:0.180049;paint-order:markers stroke fill"
-           id="rect560-8-3-9"
-           width="42.737846"
-           height="38.475113"
-           x="69.989418"
-           y="218.65067" />
-        <rect
-           style="fill:#ececec;stroke-width:0.208075;paint-order:markers stroke fill"
-           id="rect560-0"
-           width="39.003532"
-           height="56.304893"
-           x="83.621399"
-           y="200.8208" />
-        <rect
-           style="fill:#000000;stroke-width:0.353553;paint-order:markers stroke fill"
-           id="rect344-0"
-           width="19.50177"
-           height="35.659775"
-           x="103.12317"
-           y="200.8208" />
-        <rect
-           style="fill:#808080;stroke-width:0.450117;paint-order:markers stroke fill"
-           id="rect344-0-0"
-           width="29.296551"
-           height="38.474915"
-           x="83.621399"
-           y="218.65077" />
-        <rect
-           style="fill:#808080;stroke-width:0.450119;paint-order:markers stroke fill"
-           id="rect344-0-0-8"
-           width="29.296543"
-           height="38.475018"
-           x="112.83016"
-           y="180.17561" />
-      </g>
+      <path
+         id="rect7725"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3.56757;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+         d="m 82.919585,190.29367 v 14.3284 26.78814 h 17.181545 v -26.78814 h 33.50544 v -14.3284 z" />
       <rect
-         style="fill:#4d4d4d;stroke-width:0.177231;paint-order:markers stroke fill"
-         id="rect344-0-0-8-0"
-         width="9.8010406"
-         height="17.82983"
-         x="112.83016"
-         y="200.8208" />
-      <rect
-         style="fill:#4d4d4d;stroke-width:0.177231;paint-order:markers stroke fill"
-         id="rect344-0-0-8-0-2"
-         width="9.8010406"
-         height="17.829796"
-         x="103.11691"
-         y="218.65077" />
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3.56757;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+         id="rect7729"
+         width="31.802481"
+         height="16.13401"
+         x="101.80409"
+         y="233.20352" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1.72377;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+         d="m 134.49847,206.37183 v 25.04791"
+         id="path7861" />
     </g>
   </g>
 </svg>
