@@ -38,7 +38,7 @@ function StepCounter(canvas) {
     } else {
       canvas.highlighter.highlighters.forEach(value => {
         if (value.i === c.i) {
-          c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
+          c.isOverlap = canvas.isOverlapArea(c.x, c.y)
           if (!c.isOverlap) {
             if( c.x < (value.x) || c.y < (value.y)) {
               c.x = value.x + value.w - 1
@@ -47,7 +47,7 @@ function StepCounter(canvas) {
               c.y_counter = c.y_counter % value.h
             }
           } else {
-            rand = canvas.bufferPos[Math.floor(Math.random() * canvas.bufferPos.length)].x
+            rand = getRandomValue(canvas.highlighter.highlighters[c.i].overlapAreas).x
             c.x = rand < value.x || rand > value.x + value.w - 1 ? c.x-- : rand
           }
         }
@@ -73,7 +73,7 @@ function StepCounter(canvas) {
     } else {
       canvas.highlighter.highlighters.forEach(value => {
         if (value.i === c.i) {
-          c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
+          c.isOverlap = canvas.isOverlapArea(c.x, c.y)
           if (!c.isOverlap) {
             if (
               c.x > (value.x + value.w - 1) ||
@@ -87,10 +87,10 @@ function StepCounter(canvas) {
               c.y_counter = c.y_counter % value.h // wrapped to height since there's no needs to count up more than highlighter height.
             }
           } else {
-            rand = canvas.bufferPos[Math.floor(Math.random() * canvas.bufferPos.length)].x
+            rand = getRandomValue(canvas.highlighter.highlighters[canvas.highlighter.active].overlapAreas).x
             c.x = rand < value.x || rand > value.x + value.w - 1 ? c.x++ : rand
           }
-        }
+        } 
       })
     }
   }
@@ -105,6 +105,11 @@ function StepCounter(canvas) {
     //   canvas.seequencer.resetFrameToRange(cs)
     // })
     // canvas.seequencer.resetFrameToRange(canvas.highlighter.highlighters[canvas.highlighter.active])
+  }
+
+  function getRandomValue(collection) {
+    let keys = Array.from(collection.keys());
+    return  collection.get(keys[Math.floor(Math.random() * keys.length)]);
   }
 
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v }

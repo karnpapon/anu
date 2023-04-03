@@ -198,7 +198,7 @@ function Canvas () {
   }
 
   this.isOverlapArea = function (x,y){
-    return this.highlighter.overlapAreas.has(`${x}:${y}`)
+    return this.highlighter.highlighters.some(h => h.overlapAreas.has(`${x}:${y}`))
   }
 
   this.isMarker = function (x, y) {

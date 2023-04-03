@@ -9,7 +9,6 @@ function Highlighter(canvas) {
   this.active = 0
   this.highlighters = []
   this.mouseFrom = null
-  this.overlapAreas = new Set()
 
   this.minX = 0
   this.maxX = 0
@@ -20,6 +19,45 @@ function Highlighter(canvas) {
     document.onmousedown = this.onMouseDown
     document.onmouseup = this.onMouseUp
     document.onmousemove = this.onMouseMove
+  }
+
+  this.init = function(){
+    this.mode = 0
+    this.block = []
+    this.active = 0
+    this.highlighters = []
+  }
+
+  this.initCursor = function(){
+    this.highlighters.push(this.getNewHighlighter())
+  }
+
+  this.getNewHighlighter = function(){
+    let newCursor = { 
+      x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
+      n: `highlighter-name-${canvas.globalIdx}`,
+      overlapAreas: new Map(),
+      matched: [],
+      msg: {
+        MIDI: { 
+          note: ["C", "E", "G"], 
+          notelength: [3,4,5], 
+          velocity: [9,10,11], 
+          octave: [2,3,4], 
+          channel: 0 
+        },
+        UDP: [],
+        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" },
+      }
+    }
+
+    return newCursor
+  }
+
+  this.reset = function () {
+    this.init()
+    this.initCursor()
+    this.move(0, 0)
   }
 
   this.select = function (x = this.highlighters[this.active].x, y = this.highlighters[this.active].y, w = this.highlighters[this.active].w, h = this.highlighters[this.active].h) {
@@ -59,7 +97,7 @@ function Highlighter(canvas) {
 
   this.findOverlapArea = function(r2){
     if (this.highlighters.length < 1) return 
-    this.overlapAreas.clear()
+    this.highlighters[this.active].overlapAreas.clear()
     this.highlighters.filter(h => h.i !== this.active).forEach(r1 => {
       const x = Math.max(r1.x, r2.x);
       const y = Math.max(r1.y, r2.y);
@@ -68,7 +106,7 @@ function Highlighter(canvas) {
       if (xx-x > 0 && yy-y > 0 ) {
         for (let i=x,ii=xx-x;ii>=1;ii--){
           for (let j=y,jj=yy-y;jj>=1;jj--){
-            this.overlapAreas.add(`${i+ii-1}:${j+jj-1}`)
+            this.highlighters[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1})
           }
         }
       } 
@@ -76,6 +114,7 @@ function Highlighter(canvas) {
   }
 
   this.onMouseDown = (e) => {
+    if (canvas.guide) { canvas.toggleGuide(false)}
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(pos.x, pos.y, 0, 0)
     this.mouseFrom = pos
@@ -133,18 +172,6 @@ function Highlighter(canvas) {
     return x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY
   }
   
-  // TODO: optimized this urgently.
-  this.getOverlapPosition = function(){
-    let block = this.getBlock()
-    var result = Object.values(block.reduce((c, v) => {
-      let k = v.x + '-' + v.y;
-      c[k] = c[k] || [];
-      c[k].push(v);
-      return c;
-    }, {})).reduce((c, v) => v.length > 1 ? c.concat(v) : c, []);
-    return result
-  }
-
   this.setOSCmsg  = function(){
     let active = this.getActiveCursor()
     let { path, msg } = seeq.displayer.oscConf
@@ -241,44 +268,6 @@ function Highlighter(canvas) {
 
   this.setCursorName = function(){
     this.highlighters[this.active].n = seeq.displayer.renameInput 
-  }
-
-  this.init = function(){
-    this.mode = 0
-    this.block = []
-    this.active = 0
-    this.highlighters = []
-  }
-
-  this.initCursor = function(){
-    this.highlighters.push(this.getNewHighlighter())
-  }
-
-  this.getNewHighlighter = function(){
-    let newCursor = { 
-      x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
-      n: `highlighter-name-${canvas.globalIdx}`,
-      matched: [],
-      msg: {
-        MIDI: { 
-          note: ["C", "E", "G"], 
-          notelength: [3,4,5], 
-          velocity: [9,10,11], 
-          octave: [2,3,4], 
-          channel: 0 
-        },
-        UDP: [],
-        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" }
-      }
-    }
-
-    return newCursor
-  }
-
-  this.reset = function () {
-    this.init()
-    this.initCursor()
-    this.move(0, 0)
   }
 
   this.read = function () {
