@@ -1,31 +1,31 @@
 'use strict'
 
 const library = {
-  "n": { "info": "add new cursor" },
-  "f": { "info": "focus only cursor(s)" },
+  "n": { "info": "add new highlighter" },
+  "f": { "info": "focus only highlighter(s)" },
   "r": { "info": "reverse step" },
   "o": { "info": "set osc msg" },
   "m": { "info": "set midi msg" },
-  "e": { "info": "rename cursor" },
+  "e": { "info": "rename highlighter" },
   ">": { "info": "increse BPM" },
   "<": { "info": "decrese BPM" },
 
   "Spacebar": { "info": "play/pause" },
-  "Cmd-Arrow": { "info": "leap cursor" },
-  "Shift-Arrow": { "info": "incr/decr cursor range" },
-  "Shift-Arrow-Cmd": { "info": "jump incr/decr cursor range" },
-  "Cmd-Return": { "info": "toggle snap step to cursor range" },
-  "Cmd-Backspace": { "info": "delete selected cursor" },
-  "Option-e": { "info": "show current selected cursor name" },
-  "Option-Tab": { "info": "change selected cursors" },
-  "Shift-Plus": { "info": "add new step into selected cursor" },
+  "Cmd-Arrow": { "info": "leap highlighter" },
+  "Shift-Arrow": { "info": "incr/decr highlighter range" },
+  "Shift-Arrow-Cmd": { "info": "jump incr/decr highlighter range" },
+  "Cmd-Return": { "info": "toggle snap step to highlighter range" },
+  "Cmd-Backspace": { "info": "delete selected highlighter" },
+  "Option-e": { "info": "show current selected highlighter name" },
+  "Option-Tab": { "info": "change selected highlighters" },
+  "Shift-Plus": { "info": "add new step into selected highlighter" },
 }
 
 
 function Canvas () {
 
   this.seequencer = new Seequencer(this)
-  this.cursor = new Cursor(this)
+  this.highlighter = new Highlighter(this)
   this.source = new Source(this)
   this.commander = new Commander(this)
   this.clock = new Clock(this)
@@ -77,7 +77,7 @@ function Canvas () {
     this.io.start()
     this.source.start()
     this.clock.start()
-    this.cursor.start()
+    this.highlighter.start()
     
     this.reset()
     this.writeData()
@@ -105,7 +105,7 @@ function Canvas () {
     this.drawProgram()
     this.match()
     this.stepcursor.draw()
-    this.drawStroke(this.cursor.toRect())
+    // this.drawStroke(this.highlighter.toRect())
     this.drawGuide()
   }
 
@@ -114,7 +114,7 @@ function Canvas () {
     this.globalIdx = 0 
     this.seequencer.reset()
     this.theme.reset()
-    this.cursor.reset()
+    this.highlighter.reset()
     this.stepcounter.reset()
     this.stepcursor.reset()
   }
@@ -127,9 +127,9 @@ function Canvas () {
 
   this.writeData = function (data = 'please give some input value and hit return' ) {
     this.texts = data
-    let position = this.cursor.cursors[this.cursor.active]
+    let position = this.highlighter.highlighters[this.highlighter.active]
     for (var i = 0; i < this.texts.length; i++) {
-      this.cursor.write(this.texts.charAt(i))
+      this.highlighter.write(this.texts.charAt(i))
       position.x++
       if (position.x % this.seequencer.w === 0) {
         position.x = 0
@@ -140,18 +140,18 @@ function Canvas () {
 
   this.match = function () {
     if(this.p.length > 0){
-      this.cursor.clearMatchedPos() 
+      this.highlighter.clearMatchedPos() 
       this.p.forEach((item, i) => {
         let g = this.seequencer.glyphAt(item.x, item.y)
         if (this.seequencer.inBlock(item.x, item.y)) {
-          this.cursor.setMatchedPos(item)
-          this.drawSprite(item.x, item.y, g, 2) // marked within cursor block.
+          this.highlighter.setMatchedPos(item)
+          this.drawSprite(item.x, item.y, g, 2) // marked within highlighter block.
         } else {
           this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
         }
       })
     } else {
-      this.cursor.clearMatchedPos() 
+      this.highlighter.clearMatchedPos() 
     }
   }
 
@@ -167,28 +167,28 @@ function Canvas () {
   }
 
   this.eraseSelectionCursor = function(){
-    this.cursor.erase()
+    this.highlighter.erase()
     this.commander.resetSwitchCounter()
   }
 
   this.isCursor = function (x, y) {
-    return this.cursor.cursors.some( cs => x === cs.x && y === cs.y)
+    return this.highlighter.highlighters.some( cs => x === cs.x && y === cs.y)
   }
 
   this.isCurrentCursor = function(x,y){
-    return this.cursor.cursors.some( cs => x === cs.x && y === cs.y && cs.i === this.cursor.cursors[ this.cursor.active ].i)
+    return this.highlighter.highlighters.some( cs => x === cs.x && y === cs.y && cs.i === this.highlighter.highlighters[ this.highlighter.active ].i)
   }
 
   this.getCurrentCursor = function(){
-    return this.cursor.cursors.filter( cs => cs.i === this.cursor.cursors[ this.cursor.active ].i)
+    return this.highlighter.highlighters.filter( cs => cs.i === this.highlighter.highlighters[ this.highlighter.active ].i)
   }
 
   this.isSelection = function (x, y) {
-    return !!( this.cursor.cursors.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
+    return !!( this.highlighter.highlighters.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
 
   this.isSelectionOverlap = function(x,y){
-    this.bufferPos = this.cursor.getOverlapPosition()
+    this.bufferPos = this.highlighter.getOverlapPosition()
     return this.bufferPos.some( b => b.x === x && b.y === y)
   }
 
@@ -208,16 +208,16 @@ function Canvas () {
     return x === 0 || y === 0 || x === this.seequencer.w - 1 || y === this.seequencer.h - 1
   }
 
-  this.isSelectionAtEdge = function(cursor){
-    return ( cursor.x + cursor.w ) - 1  === this.seequencer.w - 1 || ( cursor.y + cursor.h ) - 1  === this.seequencer.h - 1
+  this.isSelectionAtEdge = function(highlighter){
+    return ( highlighter.x + highlighter.w ) - 1  === this.seequencer.w - 1 || ( highlighter.y + highlighter.h ) - 1  === this.seequencer.h - 1
   }
 
-  this.isSelectionAtEdgeRight = function(cursor){
-    return ( cursor.x + cursor.w ) - 1  === this.seequencer.w - 1 
+  this.isSelectionAtEdgeRight = function(highlighter){
+    return ( highlighter.x + highlighter.w ) - 1  === this.seequencer.w - 1 
   }
 
-  this.isSelectionAtEdgeBottom = function(cursor){
-    return ( cursor.y + cursor.h ) - 1  === this.seequencer.h - 1
+  this.isSelectionAtEdgeBottom = function(highlighter){
+    return ( highlighter.y + highlighter.h ) - 1  === this.seequencer.h - 1
   }
 
   // Interface
@@ -235,15 +235,15 @@ function Canvas () {
     if (type === 1) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_inv  } }
     // _
     if (type === 2) { return { bg: '#4B4B4B', fg: this.theme.active.b_med } }
-    // step cursor
+    // step highlighter
     if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
-    // cursor
+    // highlighter
     if (type === 4) { return { bg: this.theme.active.f_med, fg: this.theme.active.f_low } }
     // Mark Step inverse.
     if (type === 5) { return { bg: '#B4B4B4', fg: this.theme.active.background } }
-    // cursor selection scope.
+    // highlighter selection scope.
     if (type === 6) { return { fg: this.theme.active.f_low, bg: this.theme.active.b_med } }
-    // current cursor.
+    // current highlighter.
     if (type === 7) { return { fg: this.theme.active.background} }
     // Block select.
     if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }
@@ -415,9 +415,4 @@ function Canvas () {
   window.onresize = (e) => {
     this.resize()
   }
-
-  // Helpers
-
-  function display (str, f, max) { return str.length < max ? str : str.slice(f % str.length) + str.substr(0, f % str.length) }
-  function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
 }

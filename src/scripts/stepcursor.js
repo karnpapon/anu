@@ -23,9 +23,9 @@ function StepCursor(canvas) {
   }
 
   this.add = function(){
-    let cursor = canvas.cursor.cursors[ canvas.cursor.active ]
-    canvas.stepcounter.counter.push({ x: cursor.x ,y: cursor.y , counter: 0, i: canvas.cursor.active, y_counter: 0})
-    this.steps.push({ x: 0, y:0, i: cursor.i})
+    let highlighter = canvas.highlighter.highlighters[ canvas.highlighter.active ]
+    canvas.stepcounter.counter.push({ x: highlighter.x ,y: highlighter.y , counter: 0, i: canvas.highlighter.active, y_counter: 0})
+    this.steps.push({ x: 0, y:0, i: highlighter.i})
   }
 
   this.remove = function(){
@@ -44,11 +44,10 @@ function StepCursor(canvas) {
   }
 
   this.triggerFX = function(time,el){
-    let target  = canvas.cursor.getSelectionArea(el)
+    let target  = canvas.highlighter.getSelectionArea(el)
     target.forEach( item => {
       let g = canvas.seequencer.glyphAt(item.x, item.y)
       if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isCursor(item.x,item.y)){
-        // canvas.context.font = `${canvas.tile.h * 0.75 * canvas.scale}px input_mono_thin` 
         canvas.drawSprite(item.x, item.y, g, 0)
       }
     })
@@ -60,12 +59,12 @@ function StepCursor(canvas) {
 
     this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
-        canvas.cursor.cursors.forEach( ( c, index) => {
+        canvas.highlighter.highlighters.forEach( ( c, index) => {
           c.matched.forEach( ( _c, _idx ) => {
             if(_c.x === step.x && _c.y === step.y && c.i === step.i){
               i=_idx
               this.msgOut(step, i)
-              value = canvas.cursor.cursors[index]
+              value = canvas.highlighter.highlighters[index]
               canvas.drawSprite(step.x, step.y, '＊', 2)
               this.triggerFX(null, value)
             } 
@@ -76,7 +75,7 @@ function StepCursor(canvas) {
   }
 
   this.msgOut = function(step, i){
-    let target = canvas.cursor.cursors.filter( cs => cs.i === step.i )
+    let target = canvas.highlighter.highlighters.filter( cs => cs.i === step.i )
     const {
       channel,
       note,

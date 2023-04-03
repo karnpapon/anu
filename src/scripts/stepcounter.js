@@ -1,3 +1,5 @@
+'use strict'
+
 /* global seeq */
 
 function StepCounter(canvas) {
@@ -34,7 +36,7 @@ function StepCounter(canvas) {
         }
       }
     } else {
-      canvas.cursor.cursors.forEach(value => {
+      canvas.highlighter.highlighters.forEach(value => {
         if (value.i === c.i) {
           c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
           if (!c.isOverlap) {
@@ -69,7 +71,7 @@ function StepCounter(canvas) {
         }
       }
     } else {
-      canvas.cursor.cursors.forEach(value => {
+      canvas.highlighter.highlighters.forEach(value => {
         if (value.i === c.i) {
           c.isOverlap = canvas.isSelectionOverlap(c.x, c.y)
           if (!c.isOverlap) {
@@ -82,7 +84,7 @@ function StepCounter(canvas) {
               c.x = value.x
               c.y = value.h > 1 ? value.y + c.y_counter % value.h : value.y
               c.y_counter++
-              c.y_counter = c.y_counter % value.h // wrapped to height since there's no needs to count up more than cursor height.
+              c.y_counter = c.y_counter % value.h // wrapped to height since there's no needs to count up more than highlighter height.
             }
           } else {
             rand = canvas.bufferPos[Math.floor(Math.random() * canvas.bufferPos.length)].x
@@ -99,10 +101,10 @@ function StepCounter(canvas) {
   }
 
   this.range = function () {
-    // canvas.cursor.cursors.forEach(cs => {
+    // canvas.highlighter.highlighters.forEach(cs => {
     //   canvas.seequencer.resetFrameToRange(cs)
     // })
-    // canvas.seequencer.resetFrameToRange(canvas.cursor.cursors[canvas.cursor.active])
+    // canvas.seequencer.resetFrameToRange(canvas.highlighter.highlighters[canvas.highlighter.active])
   }
 
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v }

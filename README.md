@@ -26,7 +26,7 @@ move | `arrow`
 leap | `cmd` + `arrow`
 
 
-#### selection ( cursor )
+#### selection ( highlighter )
 Description |  Operation
 --- | ---
 range | `shift` + `arrow`

@@ -32,7 +32,7 @@ function Console(app) {
             <div class="tempo">
               <div class="information-details">
                 <div style="display: grid;">
-                  <p class="information-details"> BPM:</p>
+                  <p class="information-details">BPM:</p>
                   <p class="information-details">TME:</p>
                   <p class="information-details">LEN:</p>
                   <p class="information-details">POS:</p>
@@ -97,7 +97,7 @@ function Console(app) {
   this.bpmNumber
   this.metronomeBtn
   this.currentNumber
-  this.cursorLength
+  this.highlightLength
   this.cursorPosition
   this.isInfoToggleOpened = false
 
@@ -134,7 +134,7 @@ function Console(app) {
     self.midiInfo = qs("p[data-ctrl='midi']")
     self.bpmNumber = qs("p[data-ctrl='bpm']")
     self.currentNumber = qs("p[data-ctrl='current']")
-    self.cursorLength = qs("p[data-ctrl='crsrlen']")
+    self.highlightLength = qs("p[data-ctrl='crsrlen']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
 
     // input to get.
@@ -192,7 +192,7 @@ function Console(app) {
   }
 
   this.setTotalLenghtCounterDisplay = function () {
-    this.cursorLength.innerHTML = canvas.texts.length
+    this.highlightLength.innerHTML = canvas.texts.length
   }
 
   this.toggleInsert = function (el, caret) {

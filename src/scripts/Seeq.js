@@ -6,17 +6,14 @@ function Seeq(){
   this.content = new Content(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
-  // this.layout = new Layout(this)
 
   // ------------------------------------
 
   // DOM installation.
-  // this.appWrapper = el("appwrapper")
   this.el = el("app");
   this.el.style.opacity = 0;
   this.el.id = "seeq";
   this.el.setAttribute("data-tauri-drag-region", "")
-  // this.appWrapper.appendChild(this.el)
   this.wrapper_el = el("div")
   this.wrapper_el.className = "wrapper-control"
   this.el.appendChild(this.wrapper_el)
@@ -33,17 +30,15 @@ function Seeq(){
 
   // -----------------------------------
 
-  // Cursor.
+  // Highlighter.
   this.matchedPosition = []
 
   // -----------------------------------
 
   this.build = function(){
-    // this.layout.build()
     this.console.build()
     this.displayer.build()
     this.content.build()
-    // this.console.toggleInsert()
     setTimeout(seeq.show,200)
   }
 
@@ -68,19 +63,11 @@ function Seeq(){
     let target, search, noBracketTarget
     let match, query
 
-    if(this.console.searchType === 'regex'){
-      query = this.console.regexInput
-      target = query.replace(/[)(]/g, "\\$&");
-      if(target){
-        try{ search = new RegExp("(" + target + ")","ig")  //TODO: make this configurable.
+    query = this.console.regexInput
+    target = query.replace(/[)(]/g, "\\$&");
+    if(target){
+      try{ search = new RegExp("(" + target + ")","ig")  //TODO: make this configurable.
       } catch(e) { console.log("invalid regular expression")}
-      }
-    } else {
-      target = this.console.searchValue
-      noBracketTarget = target.replace(/[\])}[{(]/g, ''); 
-      if( noBracketTarget){
-        try { search = new RegExp(`(${noBracketTarget})`,"gi") } catch(e) { console.log("invalid value.")}
-      }
     }
 
     if(search && target !== ""){
@@ -150,7 +137,7 @@ function Seeq(){
 
         canvas.clearMarksPos()
         canvas.globalIdx = 0 
-        canvas.cursor.reset()
+        canvas.highlighter.reset()
         canvas.stepcounter.reset()
         canvas.stepcursor.reset()
       }

@@ -2,14 +2,19 @@
 
 /* global seeq */
 
-function Cursor(canvas) {
+function Highlighter(canvas) {
 
   this.mode = 0
   this.block = []
   this.active = 0
-  this.cursors = []
+  this.highlighters = []
   this.mouseFrom = null
   this.isMouseInCanvas = true;
+
+  this.minX = 0
+  this.maxX = 0
+  this.minY = 0
+  this.maxY = 0
 
   this.start = () => {
     document.onmousedown = this.onMouseDown
@@ -17,28 +22,55 @@ function Cursor(canvas) {
     document.onmousemove = this.onMouseMove
   }
 
-  this.select = function (x = this.cursors[0].x, y = this.cursors[0].y, w = this.cursors[0].w, h = this.cursors[0].h) {
-    this.moveTo(x, y)
-    this.scaleTo(w, h)
+  this.select = function (x = this.highlighters[0].x, y = this.highlighters[0].y, w = this.highlighters[0].w, h = this.highlighters[0].h) {
+    if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h)) { return }
+    const rect = { 
+      x: clamp(parseInt(x), 0, canvas.seequencer.w - 1), 
+      y: clamp(parseInt(y), 0, canvas.seequencer.h - 1), 
+      w: clamp(parseInt(w), 0, canvas.seequencer.w - 1), 
+      h: clamp(parseInt(h), 0, canvas.seequencer.h - 1) 
+    }
+
+    if ( this.highlighters[this.active].x === rect.x && 
+      this.highlighters[this.active].y === rect.y && 
+      this.highlighters[this.active].w === rect.w && 
+      this.highlighters[this.active].h === rect.h) {
+      return
+    }
+
+    this.highlighters[this.active].x = rect.x
+    this.highlighters[this.active].y = rect.y
+    this.highlighters[this.active].w = rect.w
+    this.highlighters[this.active].h = rect.h
+    this.calculateBounds()
+    seeq.console.highlightLength.innerText = (w >= 0 && h >= 0) ? `${this.getStepLength()}` : "0,0"
     canvas.update()
   }
 
+  this.calculateBounds = () => {
+    const c = this.highlighters[this.active]
+    this.minX = c.x < c.x + c.w ? c.x : c.x + c.w
+    this.minY = c.y < c.y + c.h ? c.y : c.y + c.h
+    this.maxX = c.x > c.x + c.w ? c.x : c.x + c.w
+    this.maxY = c.y > c.y + c.h ? c.y : c.y + c.h
+  }
+
   this.onMouseDown = (e) => {
-    if (!canvas.el.contains(e.target)) { return }
+    // if (!canvas.el.contains(e.target)) { return }
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(pos.x, pos.y, 0, 0)
     this.mouseFrom = pos
   }
 
   this.onMouseMove = (e) => {
-    if (!canvas.el.contains(e.target)) { return }
+    // if (!canvas.el.contains(e.target)) { return }
     if (!this.mouseFrom) { return }
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
   }
 
   this.onMouseUp = (e) => {
-    if (!canvas.el.contains(e.target)) { return }
+    // if (!canvas.el.contains(e.target)) { return }
     if (this.mouseFrom) {
       const pos = this.mousePick(e.clientX, e.clientY)
       this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
@@ -52,22 +84,17 @@ function Cursor(canvas) {
     return { x: parseInt(((x - rect.left)) / w) , y: parseInt(((y - rect.top )) / h) }
   }
 
-  this.move = function (x, y) {
-    let active = this.cursors[this.active]
-    if (isNaN(x) || isNaN(y)) { return }
-    active.x = clamp(active.x + parseInt(x), 0, canvas.seequencer.w - 1)
-    active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
-    seeq.console.cursorPosition.innerText = `${canvas.cursor.getActivePosition()}`
-    canvas.update()
-  }
+  // this.move = function (x, y) {
+  //   let active = this.highlighters[this.active]
+  //   if (isNaN(x) || isNaN(y)) { return }
+  //   active.x = clamp(active.x + parseInt(x), 0, canvas.seequencer.w - 1)
+  //   active.y = clamp(active.y - parseInt(y), 0, canvas.seequencer.h - 1)
+  //   seeq.console.cursorPosition.innerText = `${canvas.highlighter.getActivePosition()}`
+  //   canvas.update()
+  // }
 
-  this.scale = function (x, y) {
-    let active = this.cursors[this.active] 
-    if (isNaN(x) || isNaN(y)) { return }
-    active.w = clamp(active.w + parseInt(x), 1, canvas.seequencer.w - active.x)
-    active.h = clamp(active.h - parseInt(y), 1, canvas.seequencer.h - active.y)
-    seeq.console.cursorLength.innerText = `${canvas.cursor.getStepLength()}`
-    canvas.update()
+  this.move = (x, y) => {
+    this.select(this.highlighters[this.active].x + parseInt(x), this.highlighters[this.active].y - parseInt(y))
   }
 
   this.switch = function(index = 0){
@@ -75,24 +102,50 @@ function Cursor(canvas) {
   }
 
   this.add = function(){
-    this.cursors.push(this.getNewCursor()) 
+    this.highlighters.push(this.getNewCursor()) 
   }
 
-  this.moveTo = function (x, y) {
-    let active = this.cursors[this.active]  
-    if (isNaN(x) || isNaN(y)) { return }
-    active.x = clamp(parseInt(x), 0, canvas.seequencer.w - 1)
-    active.y = clamp(parseInt(y), 0, canvas.seequencer.h - 1)
-    canvas.update()
+  this.moveTo = (x, y) => {
+    this.select(x, y)
+  }
+
+  // this.moveTo = function (x, y) {
+  //   let active = this.highlighters[this.active]  
+  //   if (isNaN(x) || isNaN(y)) { return }
+  //   active.x = clamp(parseInt(x), 0, canvas.seequencer.w - 1)
+  //   active.y = clamp(parseInt(y), 0, canvas.seequencer.h - 1)
+  //   canvas.update()
+  // }
+
+  // this.scale = function (x, y) {
+    // let active = this.highlighters[this.active] 
+    // if (isNaN(x) || isNaN(y)) { return }
+    // active.w = clamp(active.w + parseInt(x), 1, canvas.seequencer.w - active.x)
+    // active.h = clamp(active.h - parseInt(y), 1, canvas.seequencer.h - active.y)
+    // seeq.console.highlightLength.innerText = `${this.getStepLength()}`
+    // canvas.update()
+  // }
+
+  this.scale = (w, h) => {
+    this.select(
+      this.highlighters[this.active].x, 
+      this.highlighters[this.active].y, 
+      this.highlighters[this.active].w + parseInt(w), 
+      this.highlighters[this.active].h - parseInt(h)
+    )
+  }
+
+  this.scaleTo = (w, h) => {
+    this.select(this.highlighters[this.active].x, this.highlighters[this.active].y, w, h)
   }
   
-  this.scaleTo = function (w, h) {
-    let active = this.cursors[this.active] 
-    if (isNaN(w) || isNaN(h)) { return }
-    active.w = clamp(parseInt(w), 1, canvas.seequencer.w - 1)
-    active.h = clamp(parseInt(h), 1, canvas.seequencer.h - 1)
-    canvas.update()
-  }
+  // this.scaleTo = function (w, h) {
+  //   let active = this.highlighters[this.active] 
+  //   if (isNaN(w) || isNaN(h)) { return }
+  //   active.w = clamp(parseInt(w), 1, canvas.seequencer.w - 1)
+  //   active.h = clamp(parseInt(h), 1, canvas.seequencer.h - 1)
+  //   canvas.update()
+  // }
 
   this.getOverlapPosition = function(){
     let block = this.getBlock()
@@ -123,14 +176,12 @@ function Cursor(canvas) {
       osc_msg = `${fmt[0]} ${fmt[1][i % len ]} ${fmt[2]} ${fmt[3][i]}`
       fmtMsg.push(osc_msg)
     }
-
-    console.log("fmt", fmtMsg)
     
     oscMsg.path = path
     oscMsg.msg = msg
     oscMsg.formattedMsg = fmtMsg
     
-    this.cursors[this.active].msg.OSC = oscMsg
+    this.highlighters[this.active].msg.OSC = oscMsg
     
   }
 
@@ -176,11 +227,11 @@ function Cursor(canvas) {
     midiMsg.channel = channel
 
     this.setUDPmsg(midiMsg)
-    this.cursors[this.active].msg.MIDI = midiMsg
+    this.highlighters[this.active].msg.MIDI = midiMsg
   }
 
   this.setUDPmsg = function(msg){
-    this.cursors[this.active].msg.UDP = []
+    this.highlighters[this.active].msg.UDP = []
     let convertTarget = JSON.parse(JSON.stringify(msg));
     let udpNote = []
     let udpLength = []
@@ -198,28 +249,28 @@ function Cursor(canvas) {
       udpMsg.push(`${convertedChan}${convertTarget.octave[i]}${udpNote[i]}${udpVelocity[i]}${udpLength[i]}` )
     }
 
-    this.cursors[this.active].msg.UDP = udpMsg
+    this.highlighters[this.active].msg.UDP = udpMsg
   }
 
   this.setCursorName = function(){
-    this.cursors[this.active].n = seeq.displayer.renameInput 
+    this.highlighters[this.active].n = seeq.displayer.renameInput 
   }
 
   this.init = function(){
     this.mode = 0
     this.block = []
     this.active = 0
-    this.cursors = []
+    this.highlighters = []
   }
 
   this.initCursor = function(){
-    this.cursors.push(this.getNewCursor())
+    this.highlighters.push(this.getNewCursor())
   }
 
   this.getNewCursor = function(){
     let newCursor = { 
       x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
-      n: `cursor-name-${canvas.globalIdx}`,
+      n: `highlighter-name-${canvas.globalIdx}`,
       matched: [],
       msg: {
         MIDI: { 
@@ -244,12 +295,12 @@ function Cursor(canvas) {
   }
 
   this.read = function () {
-    let active = this.cursors[this.active] 
+    let active = this.highlighters[this.active] 
     return canvas.seequencer.glyphAt(active.x, active.y)
   }
 
   this.write = function (g) {
-    let active = this.cursors[this.active]
+    let active = this.highlighters[this.active]
     if (canvas.seequencer.write(active.x, active.y, g) && this.mode === 1) {
       this.move(1, 0)
     }
@@ -257,14 +308,14 @@ function Cursor(canvas) {
 
   this.erase = function(){
     let filteredCursor, filterStep, filterStepCounter
-    filteredCursor = this.cursors.filter( ( cs ) => cs.i !== this.cursors[ this.active ].i)
+    filteredCursor = this.highlighters.filter( ( cs ) => cs.i !== this.highlighters[ this.active ].i)
     if( canvas.stepcursor.steps[this.active]){
       filterStep = canvas.stepcursor.steps.filter( ( step ) => step.i !== canvas.stepcursor.steps[ this.active ].i)
       filterStepCounter = canvas.stepcounter.counter.filter( ( c ) => c.i !== canvas.stepcounter.counter[ this.active ].i)
       canvas.stepcursor.steps = filterStep
       canvas.stepcounter.counter = filterStepCounter
     }
-    this.cursors = filteredCursor
+    this.highlighters = filteredCursor
     this.active = 0
   }
 
@@ -272,20 +323,20 @@ function Cursor(canvas) {
     let b = this.getBlock()
     b.forEach(_item => {
       if( _item.x === item.x && _item.y === item.y){
-        this.cursors[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
+        this.highlighters[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
         ""
         :
-        this.cursors[_item.i].matched.push(item)
+        this.highlighters[_item.i].matched.push(item)
       } 
     })
   }
 
   this.getActiveCursor = function(){
-    return this.cursors[this.active]
+    return this.highlighters[this.active]
   }
 
   this.clearMatchedPos = function(){
-    this.cursors.forEach( c => {
+    this.highlighters.forEach( c => {
       c.matched = []
     })
   }
@@ -314,11 +365,11 @@ function Cursor(canvas) {
   }
 
   this.getActivePosition = function(){
-    return `(${this.cursors[this.active].x},${this.cursors[this.active].y})`
+    return `(${this.highlighters[this.active].x},${this.highlighters[this.active].y})`
   }
 
   this.getStepLength = function(){
-    return `${this.cursors[this.active].w}, ${this.cursors[this.active].h}`
+    return `${this.highlighters[this.active].w}, ${this.highlighters[this.active].h}`
   }
 
   this.getSelectionArea = function(r){
@@ -333,7 +384,7 @@ function Cursor(canvas) {
 
   this.toRect = function () {
     let cursorArea = []
-    this.cursors.forEach( ( cs ) => {
+    this.highlighters.forEach( ( cs ) => {
       cursorArea.push({ 
         x: cs.x, 
         y: cs.y, 

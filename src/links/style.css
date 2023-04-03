@@ -91,7 +91,7 @@ bold {
   align-items: center;
   display: flex;
   font-family: 'input_mono_bold'; }
-#helper { margin-left: 0.5rem; cursor: pointer;}
+#helper { margin-left: 0.5rem; highlighter: pointer;}
 
 .helper{
   font-family: 'input_mono_regular';
@@ -132,11 +132,11 @@ div button{
   /* color: black; */
 }
 .hltr:hover{
-  cursor: pointer;
+  highlighter: pointer;
   box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
 }
 .hltr:active{
-  cursor: pointer;
+  highlighter: pointer;
   box-shadow:inset 0px 0px 0px 2px rgb(0, 0, 0);
 }
 
@@ -358,7 +358,7 @@ caret {
 }
 
 caret:hover {
-  cursor: default;
+  highlighter: default;
 }
 
 .select-highlight{
@@ -423,7 +423,7 @@ caret:hover {
   transition: 100ms;
 }
 
-.cursor-text{
+.highlighter-text{
   font-family: 'input_mono_regular';
   position: absolute;
   height: 350px;
@@ -605,8 +605,8 @@ button:active{
 }
 
 div button:focus{ outline: none;}
-div button:hover{ cursor: pointer; background-color: black; color: white;}
-div button:active{ cursor: pointer; background-color: black; color: white;}
+div button:hover{ highlighter: pointer; background-color: black; color: white;}
+div button:active{ highlighter: pointer; background-color: black; color: white;}
 .control-wrapper{ display: flex; justify-content: space-between; padding-bottom: 10px;}
 .control-info{ 
   font-size: 12px;     
@@ -670,7 +670,7 @@ div button:active{ cursor: pointer; background-color: black; color: white;}
   opacity: 0;
 }
 
-.displayer-active-cursor {
+.displayer-active-highlighter {
   width: 100%;
   height: 100%;
   display: flex;

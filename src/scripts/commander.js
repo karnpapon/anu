@@ -45,7 +45,7 @@ function Commander(canvas) {
   };
 
   // this.run = function () {
-  //   const tool = this.isActive === true ? 'commander' : 'cursor'
+  //   const tool = this.isActive === true ? 'commander' : 'highlighter'
   //   canvas[tool].trigger()
   //   canvas.update()
   // }
@@ -109,7 +109,7 @@ function Commander(canvas) {
     if (
       (event.metaKey || event.ctrlKey) &&
       event.key === "Backspace" &&
-      canvas.cursor.cursors.length > 1
+      canvas.highlighter.highlighters.length > 1
     ) {
       canvas.eraseSelectionCursor();
       event.preventDefault();
@@ -133,12 +133,12 @@ function Commander(canvas) {
       return;
     }
 
-    // get step into cursor range.
+    // get step into highlighter range.
     if (event.shiftKey && event.keyCode === 13 && !seeq.console.isInsertable) {
       // canvas.stepcounter.range();
-      const active_index = canvas.stepcounter.counter.length > 1 ? canvas.cursor.active : 0
+      const active_index = canvas.stepcounter.counter.length > 1 ? canvas.highlighter.active : 0
       canvas.stepcounter.isSelected = !canvas.stepcounter.isSelected
-      canvas.stepcounter.counter[active_index].i = canvas.cursor.active;
+      canvas.stepcounter.counter[active_index].i = canvas.highlighter.active;
       return;
     }
 
@@ -222,10 +222,10 @@ function Commander(canvas) {
         return;
       }
 
-      // (n) new cursor. 
+      // (n) new highlighter. 
       if (event.keyCode === 78 ) {
         canvas.globalIdx += 1;
-        canvas.cursor.add();
+        canvas.highlighter.add();
         event.preventDefault();
         return;
       }
@@ -247,9 +247,9 @@ function Commander(canvas) {
       }
 
 
-      // (e) rename cursor's name.
+      // (e) rename highlighter's name.
       if (event.keyCode === 69) {
-        seeq.displayer.displayMsg("rename-cursor");
+        seeq.displayer.displayMsg("rename-highlighter");
         event.preventDefault();
         return;
       }
@@ -275,9 +275,9 @@ function Commander(canvas) {
         return;
       }
 
-      // (a) rename cursor.
+      // (a) rename highlighter.
       if (event.keyCode === 65) {
-        seeq.displayer.displayMsg('rename-cursor')
+        seeq.displayer.displayMsg('rename-highlighter')
         event.preventDefault();
         return
       }
@@ -315,12 +315,12 @@ function Commander(canvas) {
   };
 
   this.onKeyUp = function(event) {
-    // switch cursor.
+    // switch highlighter.
     if( this.switchFlag ){
       if( this.switchFlag && this.altFlag ){
-        canvas.cursor.switch(this.switchCounter % canvas.cursor.cursors.length)
+        canvas.highlighter.switch(this.switchCounter % canvas.highlighter.highlighters.length)
         this.altFlag = false
-        seeq.displayer.displayMsg('active-cursor')
+        seeq.displayer.displayMsg('active-highlighter')
       } else {
         this.switchFlag = false
         seeq.displayer.displayDefault()
@@ -333,9 +333,9 @@ function Commander(canvas) {
   this.onArrowUp = function(mod = false, skip = false) {
     const leap = skip ? canvas.grid.h : 1;
     if (mod) {
-      canvas.cursor.scale(0, leap);
+      canvas.highlighter.scale(0, leap);
     } else {
-      canvas.cursor.move(0, leap);
+      canvas.highlighter.move(0, leap);
     }
   };
 
@@ -355,9 +355,9 @@ function Commander(canvas) {
       }
 
       if (mod) {
-        canvas.cursor.scale(0, -leap);
+        canvas.highlighter.scale(0, -leap);
       } else {
-        canvas.cursor.move(0, -leap);
+        canvas.highlighter.move(0, -leap);
       }
     }
   };
@@ -365,9 +365,9 @@ function Commander(canvas) {
   this.onArrowLeft = function(mod = false, skip = false) {
     const leap = skip ? canvas.grid.w : 1;
     if (mod) {
-      canvas.cursor.scale(-leap, 0);
+      canvas.highlighter.scale(-leap, 0);
     } else {
-      canvas.cursor.move(-leap, 0);
+      canvas.highlighter.move(-leap, 0);
     }
   };
 
@@ -386,9 +386,9 @@ function Commander(canvas) {
       }
 
       if (mod) {
-        canvas.cursor.scale(leap, 0);
+        canvas.highlighter.scale(leap, 0);
       } else {
-        canvas.cursor.move(leap, 0);
+        canvas.highlighter.move(leap, 0);
       }
     }
   };

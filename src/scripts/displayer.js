@@ -67,7 +67,7 @@ function Displayer(app) {
               if(self.currentCmd === 'osc'){
                 self.oscConf.path =  target.getAttribute("type") === 'osc-path'? target.value:""
                 self.oscConf.msg =  target.getAttribute("type") === 'osc'? target.value:""
-              } else if( self.currentCmd === 'rename-cursor'){
+              } else if( self.currentCmd === 'rename-highlighter'){
                 self.renameInput = target.value 
               } else if( self.currentCmd === 'midi'){
                 self.midiConf.note =  target.getAttribute("type") === 'midi-note'? target.value:""
@@ -116,12 +116,12 @@ function Displayer(app) {
   }
 
   this.run = function(){
-    let active = canvas.cursor.cursors[canvas.cursor.active]
+    let active = canvas.highlighter.highlighters[canvas.highlighter.active]
     let target, pairedNoteAndOct
     
 
     switch (this.currentCmd) {
-      case 'active-cursor':
+      case 'active-highlighter':
         this.displayType = "preview"
         target = this.el_general
         target.innerHTML = `<div class="displayer-bold">${active.n}</div>` 
@@ -185,7 +185,7 @@ function Displayer(app) {
         target = this.el_general
         target.innerHTML = `<div class="displayer-bold">${app.console.fetchSearchInput}</div>`
         break;
-      case 'rename-cursor':
+      case 'rename-highlighter':
         this.isDisplayInputToggled = !this.isDisplayInputToggled
         this.displayType = this.isDisplayInputToggled? "form":"default"
         target = this.el_with_input
@@ -222,13 +222,13 @@ function Displayer(app) {
     let target = this.displayInputTarget
     switch (this.currentCmd) {
       case 'osc':
-        canvas.cursor.setOSCmsg();
+        canvas.highlighter.setOSCmsg();
         break;
-      case 'rename-cursor':
-        canvas.cursor.setCursorName();
+      case 'rename-highlighter':
+        canvas.highlighter.setCursorName();
         break;
       case 'midi':
-        canvas.cursor.setMIDImsg();
+        canvas.highlighter.setMIDImsg();
         break;
     }
     target.classList.add("trigger-input")
@@ -242,7 +242,7 @@ function Displayer(app) {
   }
 
   this.buildGeneralDisplay = function () {
-    this.el_general.classList.add("displayer-active-cursor")
+    this.el_general.classList.add("displayer-active-highlighter")
     this.el_elem.appendChild(this.el_general)
   }
 

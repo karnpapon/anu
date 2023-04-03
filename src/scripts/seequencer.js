@@ -24,8 +24,8 @@ function Seequencer(canvas){
     this.replace(new Array((this.h * this.w) + 1).join('.'))
   }
 
-  this.resetFrameToRange = function(cursor){
-    this.f = 0 + cursor.x - 1
+  this.resetFrameToRange = function(highlighter){
+    this.f = 0 + highlighter.x - 1
   }
 
   this.load = function (w, h, s, f = 0) {
@@ -104,7 +104,7 @@ function Seequencer(canvas){
   }
 
   this.inBlock = function(x,y){
-    let block = canvas.cursor.getBlock()
+    let block = canvas.highlighter.getBlock()
     return  block.some( b => b.x == x && b.y == y)
   }
 
