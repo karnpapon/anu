@@ -162,8 +162,8 @@ div button{
   font-size: 12px;
   font-family: 'input_mono_regular';
   justify-content: center;
-  border-top: 1px solid;
-  border-bottom: 1px solid;
+  border-top: 1px dashed;
+  border-bottom: 1px dashed;
   padding: 10px 5px;
   /* margin-top: 10px; */
   /* transition: all .2s ease-in; */
@@ -260,7 +260,7 @@ div button{
 }
 
 .disable-input{
-  color: #3e3e3e !important;
+  color: #9f9f9f !important;
   border:0;
   outline:0;
 }
@@ -355,6 +355,7 @@ caret {
   background-color: rgb(0, 0, 0);
   display: inline-block;
   animation: blink 1s step-end infinite;
+  transform: translateX(-1px);
 }
 
 caret:hover {
@@ -714,7 +715,7 @@ div button:active{ highlighter: pointer; background-color: black; color: white;}
   width: 50%;
 }
 
-.displayer-show{ opacity: 1; z-index: 99; padding: 1rem; }
+.displayer-show{ opacity: 1; z-index: 99; padding-top: 1rem; padding-bottom: 1rem;}
 .displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1.5rem;}
 
 /* ---------------------- */

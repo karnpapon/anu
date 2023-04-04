@@ -314,6 +314,9 @@ function Canvas () {
     const top_border_symbol = ['┌','─','┐']
     const content_symbol = ['|']
     const bottom_border_symbol = ['└','─','┘']
+    // const top_border_symbol = ['+','-','+']
+    // const content_symbol = ['|']
+    // const bottom_border_symbol = ['+','-','+']
     const note = "- PLEASE MAKE SURE INPUT HAS BEEN TOGGLED OFF -"
 
     // top_border

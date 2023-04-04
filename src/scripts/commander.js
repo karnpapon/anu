@@ -100,8 +100,18 @@ function Commander(canvas) {
       return;
     }
 
-    if (event.key === "Enter" && seeq.displayer.isDisplayFormFocused) {
+    // eval sending osc msg.
+    if (event.key === "Enter" && seeq.displayer.isDisplayInputToggled) {
       seeq.displayer.runCmd();
+      event.preventDefault();
+      return;
+    }
+
+    // jump between osc msg input.
+    if (event.keyCode === 9 && seeq.displayer.isDisplayInputToggled) {
+      seeq.displayer.tabInputIndex++
+      seeq.displayer.tabInputIndex = seeq.displayer.tabInputIndex % ( seeq.displayer.currentCmd === "osc" ? 2 : 4 ) // TODO: no hardcode
+      seeq.displayer.handleTab()
       event.preventDefault();
       return;
     }
@@ -173,6 +183,7 @@ function Commander(canvas) {
 
     // insert input.
     if (event.keyCode === 73 && (event.metaKey || event.ctrlKey) ) {
+      seeq.displayer.displayDefault();
       seeq.console.isInsertable = !seeq.console.isInsertable;
       if (seeq.console.isInsertable){
         seeq.console.inputFetch.focus()
@@ -182,13 +193,13 @@ function Commander(canvas) {
         seeq.console.inputFetch.setAttribute("contenteditable", "false")
       }  
       seeq.console.toggleInsert(seeq.console.inputFetch, seeq.console.caret);
-      seeq.displayer.displayDefault();
       event.preventDefault();
       return;
     }
 
     // insert regex input.
     if (event.keyCode === 71 && (event.metaKey || event.ctrlKey) ) {
+      seeq.displayer.displayDefault();
       seeq.console.isInsertable = !seeq.console.isInsertable;
       if (seeq.console.isInsertable){
         seeq.console.searchRegExp.focus()
@@ -198,7 +209,6 @@ function Commander(canvas) {
         seeq.console.searchRegExp.setAttribute("contenteditable", "false")
       }  
       seeq.console.toggleInsert(seeq.console.searchRegExp,  seeq.console.regexCaret);
-      seeq.displayer.displayDefault();
       event.preventDefault();
       return;
     }
@@ -239,7 +249,6 @@ function Commander(canvas) {
 
       // (f) focus
       if (event.keyCode === 70 ) {
-        console.log("fffff")
         seeq.console.togglePort('FOCUS', seeq.console)
         canvas.toggleShowMarks()
         event.preventDefault();

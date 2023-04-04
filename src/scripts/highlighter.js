@@ -16,9 +16,9 @@ function Highlighter(canvas) {
   this.maxY = 0
 
   this.start = () => {
-    document.onmousedown = this.onMouseDown
-    document.onmouseup = this.onMouseUp
-    document.onmousemove = this.onMouseMove
+    canvas.el.onmousedown = this.onMouseDown
+    canvas.el.onmouseup = this.onMouseUp
+    canvas.el.onmousemove = this.onMouseMove
   }
 
   this.init = function(){
@@ -194,6 +194,8 @@ function Highlighter(canvas) {
     oscMsg.path = path
     oscMsg.msg = msg
     oscMsg.formattedMsg = fmtMsg
+
+    console.log("oscMsg", oscMsg)
     
     this.highlighters[this.active].msg.OSC = oscMsg
     
