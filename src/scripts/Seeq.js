@@ -40,7 +40,7 @@ function Seeq(){
     this.console.build()
     this.displayer.build()
     this.content.build()
-    setTimeout(seeq.show,200)
+    setTimeout(seeq.show,400)
   }
 
   this.show = function () {

@@ -2,23 +2,23 @@
 
 const library = {
   "n": { "info": "add new highlighter" },
+  "Backspace": { "info": "remove current highlighter" },
   "f": { "info": "focus only highlighter(s)" },
-  "r": { "info": "reverse step" },
+  "e": { "info": "rename highlighter" },
   "o": { "info": "set osc msg" },
   "m": { "info": "set midi msg" },
-  "e": { "info": "rename highlighter" },
-  ">": { "info": "increse BPM" },
-  "<": { "info": "decrese BPM" },
+  "r": { "info": "reverse step" },
+  "> or <": { "info": "incr/decr BPM" },
+  "[ or ]": { "info": "incr/decr note-ratio (default 1:16)" },
 
   "Spacebar": { "info": "play/pause" },
-  "Cmd-Arrow": { "info": "leap highlighter" },
+  "Cmd-Arrow": { "info": "jump" },
   "Shift-Arrow": { "info": "incr/decr highlighter range" },
   "Shift-Arrow-Cmd": { "info": "jump incr/decr highlighter range" },
   "Cmd-Return": { "info": "toggle snap step to highlighter range" },
-  "Cmd-Backspace": { "info": "delete selected highlighter" },
   "Option-e": { "info": "show current selected highlighter name" },
   "Option-Tab": { "info": "change selected highlighters" },
-  "Shift-Plus": { "info": "add new step into selected highlighter" },
+  "Shift-Plus or Shift-Minus": { "info": "add/remove step" },
 }
 
 
@@ -62,10 +62,9 @@ function Canvas () {
     h: +localStorage.getItem('tileh') || 16
   }
   this.scale = window.devicePixelRatio
-  this.guide = false
+  this.guide = true
   this.isShowMarked = true
   this.globalIdx = 0
-  // this.hardmode = true
 
   // -----------------------------
 
@@ -85,10 +84,8 @@ function Canvas () {
     this.writeData()
     this.modZoom()
     this.el.className = 'ready'
-    this.toggleGuide()
     this.resize()
     this.update()
-    // this.clear()
   }
 
   this.run = function () {
@@ -107,8 +104,8 @@ function Canvas () {
     this.drawProgram()
     this.match()
     this.stepcursor.draw()
-    // this.drawStroke(this.highlighter.toRect())
     this.drawGuide()
+    // this.drawStroke(this.highlighter.toRect())
   }
 
   this.reset = function () {
@@ -412,6 +409,8 @@ function Canvas () {
 
   this.crop = function (w, h) {
     let block = `${this.seequencer}`
+
+    console.log("crop", w,h , this.seequencer.h)
 
     if (h > this.seequencer.h) {
       block = `${block}${`\n${'.'.repeat(this.seequencer.w)}`.repeat(h - this.seequencer.h )}`

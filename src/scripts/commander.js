@@ -106,16 +106,6 @@ function Commander(canvas) {
       return;
     }
 
-    if (
-      (event.metaKey || event.ctrlKey) &&
-      event.key === "Backspace" &&
-      canvas.highlighter.highlighters.length > 1
-    ) {
-      canvas.eraseSelectionCursor();
-      event.preventDefault();
-      return;
-    }
-
     if (event.keyCode === 38 && !seeq.console.isInsertable && seeq.displayer.displayType === "default") {
       this.onArrowUp(event.shiftKey, event.metaKey || event.ctrlKey);
       return;
@@ -230,6 +220,16 @@ function Commander(canvas) {
         return;
       }
 
+      // (Backspace)
+      if (
+        event.key === "Backspace" &&
+        canvas.highlighter.highlighters.length > 1
+      ) {
+        canvas.eraseSelectionCursor();
+        event.preventDefault();
+        return;
+      }
+
       // (r) reverse global step.
       if (event.keyCode === 82 ) {
         seeq.console.togglePort('REV', seeq.console)
@@ -250,6 +250,20 @@ function Commander(canvas) {
       // (e) rename highlighter's name.
       if (event.keyCode === 69) {
         seeq.displayer.displayMsg("rename-highlighter");
+        event.preventDefault();
+        return;
+      }
+
+      // ([) change note-ratio.
+       if (event.keyCode === 219) {
+        metronome.modNoteRatio(-1)
+        event.preventDefault();
+        return;
+      }
+
+      // (]) change note-ratio.
+      if (event.keyCode === 221) {
+        metronome.modNoteRatio(1)
         event.preventDefault();
         return;
       }

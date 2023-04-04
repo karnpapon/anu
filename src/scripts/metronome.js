@@ -7,6 +7,7 @@ function Metronome(canvas) {
   this.isPlaying = false; // Are we currently playing?
   this.startTime; // The start time of the entire sequence.
   this.current16thNote; // What note is currently last scheduled?
+  this.noteRatio = 16 // default to 16th notes (16 % 1 == 0).
   // this.tempo = 120.0; // tempo (in beats per minute)
   this.tempo = { value: 120.0, target: 120.0 }
   this.lookahead = 25.0; // How frequently to call scheduling function(in milliseconds)
@@ -69,9 +70,18 @@ function Metronome(canvas) {
     seeq.console.bpmNumber.innerText = this.tempo.value
   }
 
-  this.mod = function(mod = 0, animate = false) {
+  this.setNoteRatio = function(value) {
+    if (value) { this.noteRatio = clamp(value, 1, 16) }
+    seeq.console.currentNumber.innerText = `${this.noteRatio}:16`
+  }
+
+  this.mod = function(mod = 0) {
    this.set(this.tempo.value + mod)
   }
+
+  this.modNoteRatio = function(mod = 0) {
+    this.setNoteRatio(this.noteRatio + mod)
+   }
 
   this.scheduler = function () {
     // while there are notes that will need to play before the next interval,
@@ -123,10 +133,14 @@ function Metronome(canvas) {
       }
       if (metronome.last16thNoteDrawn != currentNote) {
         for (var i = 0; i < 16; i++) {
-          if(currentNote == i){
-            // if(currentNote % 4 === 0){
+          if(currentNote === i){
+            if(metronome.noteRatio !== 16) {
+              if(currentNote % metronome.noteRatio === 0){
+                canvas.run()
+              } 
+            } else {
               canvas.run()
-            // }
+            }
           }
         }
         metronome.last16thNoteDrawn = currentNote;
@@ -149,11 +163,9 @@ function Metronome(canvas) {
       var interval=100;
       onmessage = (e) => { 
         if (e.data=="start") {
-            console.log("MetronomeWorker::starting");
             timerID=setInterval(function(){postMessage("tick");},interval)
           }
         else if (e.data.interval) {
-          console.log("MetronomeWorker::setting interval");
           interval=e.data.interval;
           if (timerID) {
             clearInterval(timerID);
@@ -161,7 +173,6 @@ function Metronome(canvas) {
           }
         }
         else if (e.data=="stop") {
-          console.log("MetronomeWorker::stopping");
           clearInterval(timerID);
           timerID=null;
         }

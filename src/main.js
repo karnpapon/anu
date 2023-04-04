@@ -32,4 +32,10 @@ window.addEventListener("load", () => {
     console.log("listen::menu-metronome");
     seeq.enableMetronome = !seeq.enableMetronome
   });
+
+  listen("menu-reset_noteratio", function (msg) {
+    console.log("listen::menu-reset_noteratio");
+    metronome.noteRatio = 16
+    seeq.console.currentNumber.innerText = "1:16"
+  });
 });

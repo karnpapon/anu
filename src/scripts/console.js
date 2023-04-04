@@ -39,7 +39,7 @@ function Console(app) {
                 </div>
                 <div class="performance-details">
                   <p class="init-bpm" data-ctrl="bpm">120</p>
-                  <p data-ctrl="current">16th</p> 
+                  <p data-ctrl="current">1:16</p> 
                   <p data-ctrl="crsrlen">--</p>
                   <p data-ctrl="crsrpos">--</p>
                 </div>
