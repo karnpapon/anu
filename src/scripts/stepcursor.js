@@ -35,7 +35,8 @@ function StepCursor(canvas) {
 
   this.draw = function () {
     this.steps.forEach( ( step, idx ) => {
-      if (!canvas.clock.isPaused) {
+      // if (!canvas.clock.isPaused) {
+      if (canvas.isPaused) {
         step.x = canvas.stepcounter.counter[idx].x
         step.y = canvas.stepcounter.counter[idx].y
       }

@@ -1,8 +1,8 @@
 'use strict'
 
 function Clock(canvas) {
-  const workerScript = 'onmessage = (e) => { setInterval(() => { postMessage(true) }, e.data)}'
-  const worker = window.URL.createObjectURL(new Blob([workerScript], { type: 'text/javascript' }))
+  // const workerScript = 'onmessage = (e) => { setInterval(() => { postMessage(true) }, e.data)}'
+  // const worker = window.URL.createObjectURL(new Blob([workerScript], { type: 'text/javascript' }))
 
   this.bpm = 0
   this.callback = () => { }
@@ -45,7 +45,7 @@ function Clock(canvas) {
 
   this.start = function() {
     this.setTimer(120)
-    this.play()
+    // this.play()
   }
 
   this.setSpeed = (value, target = null, setTimer = false) => {
@@ -58,9 +58,20 @@ function Clock(canvas) {
   this.play = function (msg = false, midiStart = false) {
     console.log('Clock', 'Play', msg, midiStart)
     if (this.isPaused === false && !midiStart) { return }
-    this.isPaused = false
+    // this.isPaused = false
     if (msg === true) { canvas.io.midi.sendClockStart() }
     this.setSpeed(this.speed.target, this.speed.target, true)
+    metronome.play()
+  }
+
+  this.stop = function (msg = false) {
+    console.log('Clock', 'Stop')
+    if (this.isPaused === true) { return }
+    // this.isPaused = true
+    if (msg === true || canvas.io.midi.isClock) { canvas.io.midi.sendClockStop() }
+    this.clearTimer()
+    canvas.io.midi.allNotesOff()
+    canvas.io.midi.silence()
   }
 
   this.set = function(value, target = null, setTimer = false) {
@@ -74,12 +85,12 @@ function Clock(canvas) {
     if (bpm < 60) { console.warn('Clock', 'Error ' + bpm); return }
     this.clearTimer()
     window.localStorage.setItem('bpm', bpm)
-    this.timer = new Worker(worker)
-    this.timer.postMessage((60000 / parseInt(bpm)) / 4)
-    this.timer.onmessage = (event) => {
-      canvas.io.midi.sendClock()
-      canvas.run()
-    }
+    // this.timer = new Worker(worker)
+    // this.timer.postMessage((60000 / parseInt(bpm)) / 4)
+    // this.timer.onmessage = (event) => {
+      // canvas.io.midi.sendClock() // TODO: should be compatible with MetronomeWorker
+      // canvas.run()
+    // }
   }
 
   this.mod = function(mod = 0, animate = false) {
@@ -105,16 +116,6 @@ function Clock(canvas) {
 
   this.resetFrame = function(){
     canvas.seequencer.f = 0
-  }
-
-  this.stop = function (msg = false) {
-    console.log('Clock', 'Stop')
-    if (this.isPaused === true) { return }
-    this.isPaused = true
-    if (msg === true || canvas.io.midi.isClock) { canvas.io.midi.sendClockStop() }
-    this.clearTimer()
-    canvas.io.midi.allNotesOff()
-    canvas.io.midi.silence()
   }
 
   this.toString = function() {

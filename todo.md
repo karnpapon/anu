@@ -2,4 +2,7 @@
 - ~~remove old matched highlight when input changed.~~
 - ~~match range not cover all texts.~~
 
-- each highlight's height should be independent.
+- ~~each highlight's height should be independent.~~
+
+
+- handle sendClockMsg to be compatible with MetronomeWorker

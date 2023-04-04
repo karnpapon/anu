@@ -75,7 +75,7 @@ function Canvas () {
     this.resize()
   }
   
-  this.start = function () {
+  this.init = function () {
     this.io.start()
     this.source.start()
     this.clock.start()
