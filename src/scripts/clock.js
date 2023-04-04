@@ -94,13 +94,13 @@ function Clock(canvas) {
   }
 
   this.mod = function(mod = 0, animate = false) {
-  if (animate === true) {
-    this.set(null, this.speed.target + mod)
-  } else {
-    this.set(this.speed.value + mod, this.speed.value + mod, true)
-    canvas.update()
+    if (animate === true) {
+      this.set(null, this.speed.target + mod)
+    } else {
+      this.set(this.speed.value + mod, this.speed.value + mod, true)
+      canvas.update()
+    }
   }
-}
 
   this.clearTimer = function() {
     if (this.timer) {

@@ -7,7 +7,8 @@ function Metronome(canvas) {
   this.isPlaying = false; // Are we currently playing?
   this.startTime; // The start time of the entire sequence.
   this.current16thNote; // What note is currently last scheduled?
-  this.tempo = 120.0; // tempo (in beats per minute)
+  // this.tempo = 120.0; // tempo (in beats per minute)
+  this.tempo = { value: 120.0, target: 120.0 }
   this.lookahead = 25.0; // How frequently to call scheduling function(in milliseconds)
 
   // How far ahead to schedule audio (sec)
@@ -18,15 +19,13 @@ function Metronome(canvas) {
   this.nextNoteTime = 0.0; // when the next note is due.
   this.noteResolution = 0; // 0 == 16th, 1 == 8th, 2 == quarter note
   this.noteLength = 0.05; // length of "beep" (in seconds)
-  // this.canvas; // the canvas element
-  // this.canvasContext; // canvasContext is the canvas' context 2D
   this.last16thNoteDrawn = -1; // the last "box" we drew on the screen
   this.notesInQueue = []; // the notes that have been put into the web audio, and may or may not have played yet. {note, time}
   this.timerWorker = null; // The Web Worker used to fire timer messages
 
   this.nextNote = function () {
     // Advance current note and time by a 16th note...
-    var secondsPerBeat = 60.0 / this.tempo; // Notice this picks up the CURRENT tempo value to calculate beat length.
+    var secondsPerBeat = 60.0 / this.tempo.value; // Notice this picks up the CURRENT tempo value to calculate beat length.
     this.nextNoteTime += 0.25 * secondsPerBeat; // Add beat length to last beat time
 
     this.current16thNote++; // Advance the beat number, wrap to zero
@@ -46,8 +45,11 @@ function Metronome(canvas) {
     //     return; // we're not playing non-quarter 8th notes
 
     // create an oscillator
-    var osc = this.audioContext.createOscillator();
-    osc.connect(this.audioContext.destination);
+    let osc = this.audioContext.createOscillator();
+    let gain = this.audioContext.createGain();
+    gain.gain.value = seeq.enableMetronome? 0.25:0;
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
 
     if (beatNumber % 16 === 0)
       // beat 0 == high pitch
@@ -61,6 +63,15 @@ function Metronome(canvas) {
     osc.start(time);
     osc.stop(time + this.noteLength);
   };
+
+  this.set = function(value) {
+    if (value) { this.tempo.value = clamp(value, 60, 300) }
+    seeq.console.bpmNumber.innerText = this.tempo.value
+  }
+
+  this.mod = function(mod = 0, animate = false) {
+   this.set(this.tempo.value + mod)
+  }
 
   this.scheduler = function () {
     // while there are notes that will need to play before the next interval,
@@ -114,7 +125,6 @@ function Metronome(canvas) {
         for (var i = 0; i < 16; i++) {
           if(currentNote == i){
             // if(currentNote % 4 === 0){
-              console.log("16th beat")
               canvas.run()
             // }
           }
@@ -167,4 +177,7 @@ function Metronome(canvas) {
     };
     this.timerWorker.postMessage({ interval: this.lookahead });
   };
+
 }
+
+function clamp (v, min, max) { return v < min ? min : v > max ? max : v }

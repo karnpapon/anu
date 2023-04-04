@@ -11,20 +11,25 @@ window.addEventListener("load", () => {
   const { listen } = window.__TAURI__.event;
 
   listen("menu-osc", function (msg) {
-    console.log("listen::menu-osc", msg);
+    console.log("listen::menu-osc");
     seeq.console.togglePort("OSC", seeq.console);
     seeq.console.oscInfo.innerText = seeq.console.isOSCToggled
       ? `PORT:${canvas.io.osc.port}`
       : "--";
   });
   listen("menu-rev", function (msg) {
-    console.log("listen::menu-rev", msg);
+    console.log("listen::menu-rev");
     seeq.console.togglePort("REV", seeq.console);
   });
 
   listen("menu-focus", function (msg) {
-    console.log("listen::menu-focus", msg);
+    console.log("listen::menu-focus");
     seeq.console.togglePort("FOCUS", seeq.console);
     canvas.toggleShowMarks();
+  });
+
+  listen("menu-metronome", function (msg) {
+    console.log("listen::menu-metronome");
+    seeq.enableMetronome = !seeq.enableMetronome
   });
 });

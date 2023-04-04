@@ -19,8 +19,8 @@ function Osc (app) {
   }
 
   this.start = function () {
-    if (!this.socket) { console.warn('OSC', 'Could not start.'); return }
-    console.info('OSC', 'Starting..')
+    if (!this.socket) { console.warn('OSC', 'Could not setting up.'); return }
+    console.info('OSC', 'Setting Up..')
     this.setup()
     this.select()
   }

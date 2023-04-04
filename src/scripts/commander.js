@@ -283,13 +283,15 @@ function Commander(canvas) {
       }
 
       if (event.key === ">") {
-        canvas.clock.mod(1);
+        // canvas.clock.mod(1);
+        metronome.mod(1)
         event.preventDefault();
         return;
       }
 
       if (event.key === "<") {
-        canvas.clock.mod(-1);
+        // canvas.clock.mod(-1);
+        metronome.mod(-1)
         event.preventDefault();
         return;
       }

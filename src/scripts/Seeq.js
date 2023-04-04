@@ -27,6 +27,7 @@ function Seeq(){
   this.url = "https://en.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=extracts&exintro&explaintext&redirects=1&titles="
   this.urlEnd = "&redirects=1"
   this.isGettingData = false
+  this.enableMetronome = false
 
   // -----------------------------------
 
