@@ -35,8 +35,7 @@ function StepCursor(canvas) {
 
   this.draw = function () {
     this.steps.forEach( ( step, idx ) => {
-      // if (!canvas.clock.isPaused) {
-      if (canvas.isPaused) {
+      if (!canvas.clock.isPaused) {
         step.x = canvas.stepcounter.counter[idx].x
         step.y = canvas.stepcounter.counter[idx].y
       }
@@ -60,9 +59,9 @@ function StepCursor(canvas) {
 
     this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
-        canvas.highlighter.highlighters.forEach( ( c, index) => {
-          c.matched.forEach( ( _c, _idx ) => {
-            if(_c.x === step.x && _c.y === step.y && c.i === step.i){
+        canvas.highlighter.highlighters.forEach( ( highlighter, index) => {
+          highlighter.matched.forEach( ( _c, _idx ) => {
+            if(_c.x === step.x && _c.y === step.y){
               i=_idx
               this.msgOut(step, i)
               value = canvas.highlighter.highlighters[index]

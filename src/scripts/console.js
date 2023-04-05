@@ -118,7 +118,6 @@ function Console(app) {
   this.beatRatio = '16th'
   
   this.isInputFocused = false
-  this.isFindFocused = false
   this.isRegExpFocused = false
 
   // --------------------------------------------------------
@@ -137,24 +136,35 @@ function Console(app) {
     self.highlightLength = qs("p[data-ctrl='crsrlen']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
 
-    // input to get.
+    // input 
     self.inputFetch.addEventListener("input", function (e) { 
       self.fetchSearchInput = this.innerText; 
       seeq.displayer.displayMsg("console")
     })
-    self.inputFetch.addEventListener("focus", function () { self.isInputFocused = true; self.setFocusStyle(self.inputFetch) })
-    self.inputFetch.addEventListener("blur", function () { self.isInputFocused = false; self.removeFocusStyle(self.inputFetch) })
+    self.inputFetch.addEventListener("focus", function () { 
+      self.isInputFocused = true; 
+      self.setFocusStyle(self.inputFetch) 
+    })
+    self.inputFetch.addEventListener("blur", function () { 
+      self.isInputFocused = false; 
+      self.removeFocusStyle(self.inputFetch) 
+    })
 
     // RegExp.
     self.searchRegExp.addEventListener("input", function () {
       self.searchType = "regex"
-      self.isRegExpFocused = !self.isRegExpFocused
       self.regexInput = this.innerText
       seeq.getMatchedPosition() //TODO: return value instead.
       seeq.displayer.displayMsg("regex")
     });
-    self.searchRegExp.addEventListener("focus", function () { self.setFocusStyle(self.searchRegExp) });
-    self.searchRegExp.addEventListener("blur", function () {self.removeFocusStyle(self.searchRegExp) });
+    self.searchRegExp.addEventListener("focus", function () { 
+      self.isRegExpFocused=true; 
+      self.setFocusStyle(self.searchRegExp) 
+    });
+    self.searchRegExp.addEventListener("blur", function () { 
+      self.isRegExpFocused=false; 
+      self.removeFocusStyle(self.searchRegExp) 
+    });
   });
 
   this.focusAndMoveCursorToTheEnd = function(input) {  
@@ -195,15 +205,28 @@ function Console(app) {
     this.highlightLength.innerHTML = canvas.texts.length
   }
 
-  this.toggleInsert = function (el, caret) {
-    console.log("toggleInsert", this.isInsertable)
-    if (this.isInsertable) {
+  this.inputFocus = function(state = false){
+    this.isInputFocused = state
+  }
+
+  this.regexFocus = function(state = false) {
+    this.isRegExpFocused = state
+  }
+
+  this.insert = function(){
+    this.isInsertable = !this.isInsertable
+  }
+
+  this.toggleInsert = function (el, caret, condition) {
+    if (condition) {
       el.classList.remove("disable-input")
       caret.classList.remove("btn-hide")
+      el.setAttribute("contenteditable", "true")
       el.focus()
       this.focusAndMoveCursorToTheEnd(el);
     } else {
       el.classList.add("disable-input")
+      el.setAttribute("contenteditable", "false")
       caret.classList.add("btn-hide")
       el.blur()
     }

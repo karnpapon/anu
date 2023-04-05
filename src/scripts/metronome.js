@@ -1,7 +1,7 @@
 "use strict";
 
 // implementation based on https://github.com/cwilso/metronome.
-function Metronome(canvas) {
+function Metronome(_canvas) {
   this.audioContext = null;
   this.unlocked = false;
   this.isPlaying = false; // Are we currently playing?
@@ -109,16 +109,16 @@ function Metronome(canvas) {
       this.unlocked = true;
     }
     
-    canvas.isPaused = !canvas.isPaused;
-    
-    if (canvas.isPaused) {
+    if (!_canvas.clock.isPaused) {
       this.current16thNote = 0;
       this.nextNoteTime = this.audioContext.currentTime;
       metronome.timerWorker.postMessage("start");
-    } else {
-      metronome.timerWorker.postMessage("stop");
-    }
+    } 
   };
+
+  this.stop = function(){
+    metronome.timerWorker.postMessage("stop"); 
+  }
 
   this.draw = function () {
     let currentNote = metronome.last16thNoteDrawn;
@@ -136,10 +136,10 @@ function Metronome(canvas) {
           if(currentNote === i){
             if(metronome.noteRatio !== 16) {
               if(currentNote % metronome.noteRatio === 0){
-                canvas.run()
+                _canvas.run()
               } 
             } else {
-              canvas.run()
+              _canvas.run()
             }
           }
         }
@@ -163,16 +163,16 @@ function Metronome(canvas) {
       var interval=100;
       onmessage = (e) => { 
         if (e.data=="start") {
-            timerID=setInterval(function(){postMessage("tick");},interval)
-          }
-        else if (e.data.interval) {
+          console.log("workerScript start");
+          timerID=setInterval(function(){postMessage("tick");},interval)
+        } else if (e.data.interval) {
           interval=e.data.interval;
           if (timerID) {
             clearInterval(timerID);
             timerID=setInterval(function(){postMessage("tick");},interval)
           }
-        }
-        else if (e.data=="stop") {
+        } else if (e.data=="stop") {
+          console.log("workerScript stop");
           clearInterval(timerID);
           timerID=null;
         }
@@ -180,6 +180,7 @@ function Metronome(canvas) {
     `
     this.timerWorker = loadWebWorker(workerScript)
     this.timerWorker.onmessage = function (e) {
+      // console.log("owrker messinge", e.data)
       if (e.data == "tick") {
         metronome.scheduler();
       } else {

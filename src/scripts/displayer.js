@@ -83,7 +83,6 @@ function Displayer(app) {
         // self.renameInput = target.value 
       } else if( self.currentCmd === 'midi'){
         self.midiConf[e.target.getAttribute("type")] =  e.target.textContent
-        console.log("midiCong", self.midiConf)
       }
     }
 
@@ -98,9 +97,7 @@ function Displayer(app) {
     }
 
     const observeCallback = function(mutationsList, observer) {
-
       for(var mutation of mutationsList){
-
         if (self.isDisplayInputToggled) {
           self.displayInputTarget = mutation.target
           mutation.target.addEventListener("input", handleInput)
@@ -112,65 +109,6 @@ function Displayer(app) {
           mutation.target.removeEventListener("focus", handleFocus, true) 
           mutation.target.removeEventListener("blur", handleBlur, true) 
         }
-
-        // mutation.target.addEventListener("blur", function(e){
-        //   // this.isDisplayFormFocused = false
-        //   console.log("this blur")
-        // })  
-
-        // if(mutation.target.lastElementChild.nodeName === "DIV"){
-          
-          // for( var mut_elem of mutation.target.lastElementChild.children){
-            // let target  = mut_elem
-
-            // target.addEventListener("input", function(){
-              // if(self.currentCmd === 'osc'){
-                // self.oscConf.path =  self.oscMsgPathElem.innerText;
-                // self.oscConf.msg =  target.getAttribute("type") === 'osc'? target.value:""
-                // console.log("self.oscConf", self.oscConf)
-              // } else if( self.currentCmd === 'rename-highlighter'){
-                // console.log("rename-highlighterrename-highlighter")
-                // self.renameInput = target.value 
-              // } else if( self.currentCmd === 'midi'){
-                // console.log("midimidimidimidi")
-                // self.midiConf.note =  target.getAttribute("type") === 'midi-note'? target.value:""
-                // self.midiConf.notelength =  target.getAttribute("type") === 'midi-notelen'? target.value:""
-                // self.midiConf.velocity =  target.getAttribute("type") === 'midi-velo'? target.value:""
-                // self.midiConf.channel =  target.getAttribute("id") === 'midi-chan'? target.value:""
-              // }
-            // })
-
-            // const terminalElem = target.querySelector("terminal");
-
-            // if(terminalElem){
-            //   const inputElem = terminalElem.getElementsByTagName("div");
-            //   for (let i=0, max=inputElem.length; i < max; i++) {
-            //     inputElem[i].addEventListener("focus", function(e){
-            //       self.isDisplayFormFocused = true
-            //       self.displayInputTarget = inputElem[i]
-            //       console.log("focus")
-            //     }) 
-
-            //     inputElem[i].addEventListener("blur", function(e){
-            //       this.isDisplayFormFocused = false
-            //       console.log("this blur")
-            //     })  
-            //   }
-            // }
-
-            // target.addEventListener("focus", function(){
-              // console.log("target focus")
-              // self.isDisplayFormFocused = true
-              // self.displayInputTarget = target
-              // self.setFocusStyle(target)
-            // })
-            // target.addEventListener("blur", function(){
-              // console.log("target blur")
-              // self.isDisplayFormFocused = false
-              // self.removeFocusStyle(target) 
-            // })
-          // }
-        // }
       }
     };
       

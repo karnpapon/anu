@@ -1,9 +1,6 @@
 'use strict'
 
 function Clock(canvas) {
-  // const workerScript = 'onmessage = (e) => { setInterval(() => { postMessage(true) }, e.data)}'
-  // const worker = window.URL.createObjectURL(new Blob([workerScript], { type: 'text/javascript' }))
-
   this.bpm = 0
   this.callback = () => { }
   this.timer = null
@@ -58,20 +55,21 @@ function Clock(canvas) {
   this.play = function (msg = false, midiStart = false) {
     console.log('Clock', 'Play', msg, midiStart)
     if (this.isPaused === false && !midiStart) { return }
-    // this.isPaused = false
+    this.isPaused = false
     if (msg === true) { canvas.io.midi.sendClockStart() }
     this.setSpeed(this.speed.target, this.speed.target, true)
     metronome.play()
   }
 
   this.stop = function (msg = false) {
-    console.log('Clock', 'Stop')
+    console.log('this.stop Clock', 'Stop')
     if (this.isPaused === true) { return }
-    // this.isPaused = true
+    this.isPaused = true
     if (msg === true || canvas.io.midi.isClock) { canvas.io.midi.sendClockStop() }
     this.clearTimer()
     canvas.io.midi.allNotesOff()
     canvas.io.midi.silence()
+    metronome.stop()
   }
 
   this.set = function(value, target = null, setTimer = false) {

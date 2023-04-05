@@ -65,7 +65,7 @@ function Commander(canvas) {
     this.doWhen(event.key === "Enter" && app_console.isInputFocused, () => this.runCmd("content", event) )
     this.doWhen(event.key === "Enter" && app_console.isFindFocused, () => this.runCmd("find", event) )
 
-    // DISPLAYER INPUT(OSC/MIDImSG/ETC.) ON
+    // DISPLAYER INPUT(OSC/MIDI MSG/ETC.) ON
     this.doWhen(displayer.isDisplayInputToggled, () => { 
       // eval input msg.
       if (event.key === "Enter") {
@@ -273,32 +273,24 @@ function Commander(canvas) {
 
       // (Cmd-i) insert input.
       if (event.keyCode === 73) {
+        if(!app_console.isInsertable || !app_console.isInputFocused) {
+          app_console.insert()
+        }
+        app_console.toggleInsert(app_console.inputFetch, app_console.caret, app_console.isInsertable);
+        app_console.toggleInsert(app_console.searchRegExp, app_console.regexCaret, false); // blur regex input
         displayer.displayDefault();
-        app_console.isInsertable = !app_console.isInsertable;
-        if (app_console.isInsertable){
-          app_console.inputFetch.focus()
-          app_console.inputFetch.setAttribute("contenteditable", "true")
-        } else {
-          app_console.inputFetch.blur()
-          app_console.inputFetch.setAttribute("contenteditable", "false")
-        }  
-        app_console.toggleInsert(app_console.inputFetch, app_console.caret);
         event.preventDefault();
         return;
       }
 
-      // insert regex input.
+      // (Cmd-g) insert regex input.
       if (event.keyCode === 71) {
+        if(!app_console.isInsertable || !app_console.isRegExpFocused) {
+          app_console.insert()
+        }
+        app_console.toggleInsert(app_console.searchRegExp,  app_console.regexCaret, app_console.isInsertable);
+        app_console.toggleInsert(app_console.inputFetch,  app_console.caret, false); // blur input
         displayer.displayDefault();
-        app_console.isInsertable = !app_console.isInsertable;
-        if (app_console.isInsertable){
-          app_console.searchRegExp.focus()
-          app_console.searchRegExp.setAttribute("contenteditable", "true")
-        } else {
-          app_console.searchRegExp.blur()
-          app_console.searchRegExp.setAttribute("contenteditable", "false")
-        }  
-        app_console.toggleInsert(app_console.searchRegExp,  app_console.regexCaret);
         event.preventDefault();
         return;
       }
