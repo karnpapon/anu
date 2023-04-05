@@ -14,14 +14,14 @@ function Console(app) {
           <div class="header">
             <p data-logo="seeq" class="title">INPUT:~$ </p>
             <terminal>
-              <div id="content" data-ctrl="fetch" contenteditable="false"></div>
+              <div id="content" data-ctrl="fetch" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off"></div>
               <caret id="input-caret" for="terminal-input" class="caret btn-hide">&nbsp;</caret>
             </terminal>
           </div>
           <div class="header">
           <p class="title">REGEXP:~$ </p>
             <terminal>
-              <div id="regex" data-ctrl="regex" contenteditable="false"></div>
+              <div id="regex" data-ctrl="regex" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off"></div>
               <caret id="regex-caret" for="regex" class="caret btn-hide">&nbsp;</caret>
             </terminal>
           </div>
@@ -196,6 +196,7 @@ function Console(app) {
   }
 
   this.toggleInsert = function (el, caret) {
+    console.log("toggleInsert", this.isInsertable)
     if (this.isInsertable) {
       el.classList.remove("disable-input")
       caret.classList.remove("btn-hide")

@@ -12,7 +12,7 @@ function Commander(canvas) {
   this.switchFlag = false;
   this.switchCounter = 0;
 
-  // Begin
+  const { displayer, console: app_console } = seeq
 
   this.start = function(q = "") {
     this.isActive = true;
@@ -41,187 +41,97 @@ function Commander(canvas) {
       return;
     }
     this.query += key;
-    // this.preview()
   };
 
-  // this.run = function () {
-  //   const tool = this.isActive === true ? 'commander' : 'highlighter'
-  //   canvas[tool].trigger()
-  //   canvas.update()
-  // }
-
-  // Events
+  this.doWhen = function(condition, callback) {
+    if(condition) {
+      callback()
+    }
+  }
 
   this.onKeyDown = function(event) {
 
-    // disable all keys unless isInsertable is being turned off
-    if (seeq.console.isInsertable){ 
-      // insert input.
-      if (event.keyCode === 73 && (event.metaKey || event.ctrlKey) ) {
-        seeq.console.isInsertable = !seeq.console.isInsertable;
-        seeq.console.inputFetch.blur()
-        seeq.console.inputFetch.setAttribute("contenteditable", "false")
-        seeq.console.toggleInsert(seeq.console.inputFetch, seeq.console.caret);
-        seeq.displayer.displayDefault();
+    // DISABLE ALL KEYS UNLESS INPUT/REGEX IS BEING TURNED OFF
+    this.doWhen(app_console.isInsertable, () => this.handleWhenInputOn(event) )
+    
+    // CLOSE GUIDE BY PRESSING ANYKEY EXCEPT META/MODIFY KEYS.
+    this.doWhen(this.isNotModifyKey(event), () => this.doWhen(canvas.guide && event.keyCode !== 72, () => {canvas.toggleGuide(false)}))
+
+    // EVAL INPUT / EVAL REGEX
+    this.doWhen(event.key === "Enter" && app_console.isInputFocused, () => this.runCmd("content", event) )
+    this.doWhen(event.key === "Enter" && app_console.isFindFocused, () => this.runCmd("find", event) )
+
+    // DISPLAYER INPUT(OSC/MIDImSG/ETC.) ON
+    this.doWhen(displayer.isDisplayInputToggled, () => { 
+      // eval input msg.
+      if (event.key === "Enter") {
+        displayer.runCmd();
         event.preventDefault();
         return;
       }
 
-      // insert regex input.
-      if (event.keyCode === 71 && (event.metaKey || event.ctrlKey) ) {
-        seeq.console.isInsertable = !seeq.console.isInsertable;
-        seeq.console.searchRegExp.blur()
-        seeq.console.searchRegExp.setAttribute("contenteditable", "false")
-        seeq.console.toggleInsert(seeq.console.searchRegExp,  seeq.console.regexCaret);
-        seeq.displayer.displayDefault();
+      // (TAB) jump between input.
+      if (event.keyCode === 9) {
+        displayer.increseTabInputIndex()
+        displayer.handleTab()
         event.preventDefault();
         return;
       }
-    }
+    })
 
-    // close guide by pressing anykey except meta/modify keys.
-    if (!event.shiftKey && !event.metaKey && !event.ctrlKey) {
-      if (canvas.guide && event.keyCode !== 72){ canvas.toggleGuide(false) }
-    }
-
-    if (event.which == 40 || event.which == 41) {
-      event.preventDefault();
-    }
-
-    if (event.key === "Enter" && seeq.console.isInputFocused) {
-      seeq.console.runCmd("content");
-      event.preventDefault();
-      return;
-    }
-
-    if (event.key === "Enter" && seeq.console.isFindFocused) {
-      seeq.console.runCmd("find");
-      event.preventDefault();
-      return;
-    }
-
-    // eval sending osc msg.
-    if (event.key === "Enter" && seeq.displayer.isDisplayInputToggled) {
-      seeq.displayer.runCmd();
-      event.preventDefault();
-      return;
-    }
-
-    // jump between osc msg input.
-    if (event.keyCode === 9 && seeq.displayer.isDisplayInputToggled) {
-      seeq.displayer.tabInputIndex++
-      seeq.displayer.tabInputIndex = seeq.displayer.tabInputIndex % ( seeq.displayer.currentCmd === "osc" ? 2 : 4 ) // TODO: no hardcode
-      seeq.displayer.handleTab()
-      event.preventDefault();
-      return;
-    }
-
-    if (event.keyCode === 38 && !seeq.console.isInsertable && seeq.displayer.displayType === "default") {
-      this.onArrowUp(event.shiftKey, event.metaKey || event.ctrlKey);
-      return;
-    }
-    if (event.keyCode === 40 && !seeq.console.isInsertable && seeq.displayer.displayType === "default") {
-      this.onArrowDown(event.shiftKey, event.metaKey || event.ctrlKey);
-      return;
-    }
-    if (event.keyCode === 37 && !seeq.console.isInsertable && seeq.displayer.displayType === "default") {
-      this.onArrowLeft(event.shiftKey, event.metaKey || event.ctrlKey);
-      return;
-    }
-    if (event.keyCode === 39 && !seeq.console.isInsertable && seeq.displayer.displayType === "default") {
-      this.onArrowRight(event.shiftKey, event.metaKey || event.ctrlKey);
-      return;
-    }
-
-    // get step into highlighter range.
-    if (event.shiftKey && event.keyCode === 13 && !seeq.console.isInsertable) {
-      // canvas.stepcounter.range();
-      const active_index = canvas.stepcounter.counter.length > 1 ? canvas.highlighter.active : 0
-      canvas.stepcounter.isSelected = !canvas.stepcounter.isSelected
-      canvas.stepcounter.counter[active_index].i = canvas.highlighter.active;
-      return;
-    }
-
-    // add step.
-    if (event.shiftKey && event.keyCode === 187 && !seeq.console.isInsertable) {
-      if (!canvas.stepcounter.isSelected) {
-        canvas.stepcursor.remove();
-        canvas.stepcursor.add();
-        canvas.stepcounter.range();
-        canvas.stepcounter.isSelected = true;
-      } else {
-        canvas.stepcursor.add();
+    // -- INPUT/REGEX OFF --
+    this.doWhen(!app_console.isInsertable, () => { 
+      if (displayer.displayType === "default") {
+        if (event.keyCode === 38) {
+          this.onArrowUp(event.shiftKey, event.metaKey || event.ctrlKey);
+          return;
+        }
+        if (event.keyCode === 40) {
+          this.onArrowDown(event.shiftKey, event.metaKey || event.ctrlKey);
+          return;
+        }
+        if (event.keyCode === 37) {
+          this.onArrowLeft(event.shiftKey, event.metaKey || event.ctrlKey);
+          return;
+        }
+        if (event.keyCode === 39) {
+          this.onArrowRight(event.shiftKey, event.metaKey || event.ctrlKey);
+          return;
+        }
       }
-      return;
-    }
 
-    // remove step
-    if (event.shiftKey && event.keyCode === 189) {
-      canvas.stepcursor.remove();
-      return;
-    }
+      this.doWhen(event.shiftKey, () => {
+        const { highlighter, stepcounter,  stepcursor } = canvas
 
-    if (event.altKey) {
-      this.altFlag = true;
-      event.preventDefault();
-    }
-
-    // switch selection.
-    if (event.keyCode === 9 && this.altFlag) {
-      this.switchFlag = true;
-      this.switchCounter += 1;
-      event.preventDefault();
-      return;
-    }
-
-    // show selection name.
-    if (event.keyCode === 69 && this.altFlag) {
-      this.switchFlag = true;
-      event.preventDefault();
-      return;
-    }
-
-    // insert input.
-    if (event.keyCode === 73 && (event.metaKey || event.ctrlKey) ) {
-      seeq.displayer.displayDefault();
-      seeq.console.isInsertable = !seeq.console.isInsertable;
-      if (seeq.console.isInsertable){
-        seeq.console.inputFetch.focus()
-        seeq.console.inputFetch.setAttribute("contenteditable", "true")
-      } else {
-        seeq.console.inputFetch.blur()
-        seeq.console.inputFetch.setAttribute("contenteditable", "false")
-      }  
-      seeq.console.toggleInsert(seeq.console.inputFetch, seeq.console.caret);
-      event.preventDefault();
-      return;
-    }
-
-    // insert regex input.
-    if (event.keyCode === 71 && (event.metaKey || event.ctrlKey) ) {
-      seeq.displayer.displayDefault();
-      seeq.console.isInsertable = !seeq.console.isInsertable;
-      if (seeq.console.isInsertable){
-        seeq.console.searchRegExp.focus()
-        seeq.console.searchRegExp.setAttribute("contenteditable", "true")
-      } else {
-        seeq.console.searchRegExp.blur()
-        seeq.console.searchRegExp.setAttribute("contenteditable", "false")
-      }  
-      seeq.console.toggleInsert(seeq.console.searchRegExp,  seeq.console.regexCaret);
-      event.preventDefault();
-      return;
-    }
-
-    if (!seeq.console.isInsertable){
+        // (Shift-Enter) get step into highlighter range.
+        if (event.keyCode === 13) {
+          const active_index = stepcounter.counter.length > 1 ? highlighter.active : 0
+          stepcounter.isSelected = !stepcounter.isSelected
+          stepcounter.counter[active_index].i = highlighter.active;
+          return;
+        }
+  
+        // (Shift-Plus) add new step
+        if (event.keyCode === 187) {
+          if (!stepcounter.isSelected) {
+            stepcursor.remove();
+            stepcursor.add();
+            stepcounter.range();
+            stepcounter.isSelected = true;
+          } else {
+            stepcursor.add();
+          }
+          return;
+        }
+      })
 
       // toggle UDP
       if (event.keyCode === 49 ) {
-        // seeq.console.togglePort('UDP', seeq.console.udpBtn)
+        // app_console.togglePort('UDP', app_console.udpBtn)
         event.preventDefault();
         return;
       }
-
+  
       // (n) new highlighter. 
       if (event.keyCode === 78 ) {
         canvas.globalIdx += 1;
@@ -229,7 +139,7 @@ function Commander(canvas) {
         event.preventDefault();
         return;
       }
-
+  
       // (Backspace)
       if (
         event.key === "Backspace" &&
@@ -242,14 +152,14 @@ function Commander(canvas) {
 
       // (r) reverse global step.
       if (event.keyCode === 82 ) {
-        seeq.console.togglePort('REV', seeq.console)
+        app_console.togglePort('REV', app_console)
         event.preventDefault();
         return;
       }
 
       // (f) focus
       if (event.keyCode === 70 ) {
-        seeq.console.togglePort('FOCUS', seeq.console)
+        app_console.togglePort('FOCUS', app_console)
         canvas.toggleShowMarks()
         event.preventDefault();
         return;
@@ -258,13 +168,13 @@ function Commander(canvas) {
 
       // (e) rename highlighter's name.
       if (event.keyCode === 69) {
-        seeq.displayer.displayMsg("rename-highlighter");
+        displayer.displayMsg("rename-highlighter");
         event.preventDefault();
         return;
       }
 
       // ([) change note-ratio.
-       if (event.keyCode === 219) {
+        if (event.keyCode === 219) {
         metronome.modNoteRatio(-1)
         event.preventDefault();
         return;
@@ -279,14 +189,14 @@ function Commander(canvas) {
 
       // (o) OSC config.
       if (event.keyCode === 79 ) {
-        seeq.displayer.displayMsg("osc");
+        displayer.displayMsg("osc");
         event.preventDefault();
         return;
       }
 
       // (m) MIDI config.
       if (event.keyCode === 77 ) {
-        seeq.displayer.displayMsg("midi");
+        displayer.displayMsg("midi");
         event.preventDefault();
         return;
       }
@@ -300,11 +210,11 @@ function Commander(canvas) {
 
       // (a) rename highlighter.
       if (event.keyCode === 65) {
-        seeq.displayer.displayMsg('rename-highlighter')
+        displayer.displayMsg('rename-highlighter')
         event.preventDefault();
         return
       }
-
+  
       if (event.key === ">") {
         // canvas.clock.mod(1);
         metronome.mod(1)
@@ -318,22 +228,83 @@ function Commander(canvas) {
         event.preventDefault();
         return;
       }
-    }
-   
-    if (event.metaKey) { return; }
-    if (event.ctrlKey) { return; }
-    if (event.key === "Enter") { return; }
 
-    if (event.key === " " && !seeq.console.isInsertable && !seeq.displayer.isDisplayInputToggled) {
-      canvas.clock.togglePlay();
-      event.preventDefault();
-      return;
-    }
+      // (Spacebar) Play/Pause
+      if (event.key === " " && !displayer.isDisplayInputToggled) {
+        canvas.clock.togglePlay();
+        event.preventDefault();
+        return;
+      }
 
-    if (event.key === "Escape") {
-      if(seeq.displayer.isDisplayInputToggled) { 
-        seeq.displayer.isDisplayInputToggled = false; 
-        seeq.displayer.displayDefault()
+    })
+
+    // -- MODIFY-KEY(CMD/SHIFT/CTRL) PRESSED --
+    this.doWhen(this.isModifyKey(event), () => {
+
+      // (Shift-Minus) remove step
+      if (event.keyCode === 189) {
+        canvas.stepcursor.remove();
+        return;
+      }
+
+      if (event.altKey) {
+        this.altFlag = true;
+        event.preventDefault();
+      }
+
+      // (Option-TAB) switch selection.
+      if (event.keyCode === 9 && this.altFlag) {
+        this.switchFlag = true;
+        this.switchCounter += 1;
+        event.preventDefault();
+        return;
+      }
+
+      // show selection name.
+      if (event.keyCode === 69 && this.altFlag) {
+        this.switchFlag = true;
+        event.preventDefault();
+        return;
+      }
+
+      // (Cmd-i) insert input.
+      if (event.keyCode === 73) {
+        displayer.displayDefault();
+        app_console.isInsertable = !app_console.isInsertable;
+        if (app_console.isInsertable){
+          app_console.inputFetch.focus()
+          app_console.inputFetch.setAttribute("contenteditable", "true")
+        } else {
+          app_console.inputFetch.blur()
+          app_console.inputFetch.setAttribute("contenteditable", "false")
+        }  
+        app_console.toggleInsert(app_console.inputFetch, app_console.caret);
+        event.preventDefault();
+        return;
+      }
+
+      // insert regex input.
+      if (event.keyCode === 71) {
+        displayer.displayDefault();
+        app_console.isInsertable = !app_console.isInsertable;
+        if (app_console.isInsertable){
+          app_console.searchRegExp.focus()
+          app_console.searchRegExp.setAttribute("contenteditable", "true")
+        } else {
+          app_console.searchRegExp.blur()
+          app_console.searchRegExp.setAttribute("contenteditable", "false")
+        }  
+        app_console.toggleInsert(app_console.searchRegExp,  app_console.regexCaret);
+        event.preventDefault();
+        return;
+      }
+    })
+
+    // -- ESC PRESSED --
+    this.doWhen(event.key === "Escape", () => {
+      if(displayer.isDisplayInputToggled) { 
+        displayer.isDisplayInputToggled = false; 
+        displayer.displayDefault()
         return 
       }
       canvas.commander.stop();
@@ -341,7 +312,8 @@ function Commander(canvas) {
       canvas.isPaused = false;
       canvas.reset();
       return;
-    }
+    })
+
   };
 
   this.onKeyUp = function(event) {
@@ -350,10 +322,10 @@ function Commander(canvas) {
       if( this.switchFlag && this.altFlag ){
         canvas.highlighter.switch(this.switchCounter % canvas.highlighter.highlighters.length)
         this.altFlag = false
-        seeq.displayer.displayMsg('active-highlighter')
+        displayer.displayMsg('active-highlighter')
       } else {
         this.switchFlag = false
-        seeq.displayer.displayDefault()
+        displayer.displayDefault()
       }
     }
 
@@ -433,8 +405,44 @@ function Commander(canvas) {
   };
 
   // UI
-
   this.toString = function() {
     return `${this.query}`;
   };
+
+
+  this.handleWhenInputOn = function(event){
+    if (event.keyCode === 73 && (event.metaKey || event.ctrlKey) ) {
+      app_console.inputFetch.blur()
+      app_console.inputFetch.setAttribute("contenteditable", "false")
+      app_console.toggleInsert(app_console.inputFetch, app_console.caret);
+      displayer.displayDefault();
+      event.preventDefault();
+      return;
+    }
+
+    // insert regex input.
+    if (event.keyCode === 71 && (event.metaKey || event.ctrlKey) ) {
+      app_console.searchRegExp.blur()
+      app_console.searchRegExp.setAttribute("contenteditable", "false")
+      app_console.toggleInsert(app_console.searchRegExp,  app_console.regexCaret);
+      displayer.displayDefault();
+      event.preventDefault();
+      return;
+    }
+  }
+
+  this.isNotModifyKey = function(event){
+    return event.shiftKey && event.metaKey && event.ctrlKey 
+  }
+
+  this.isModifyKey = function(event){
+    return event.shiftKey || event.metaKey || event.ctrlKey || event.altKey
+  }
+
+  this.runCmd = function(type, event) {
+    app_console.runCmd(type);
+    event.preventDefault();
+    return; 
+  }
+
 }

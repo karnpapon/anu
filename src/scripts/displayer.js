@@ -435,4 +435,9 @@ function Displayer(app) {
       el.blur()
     }
   }
+
+  this.increseTabInputIndex = function(){
+    this.tabInputIndex++
+    this.tabInputIndex = this.tabInputIndex % ( this.inputRef[this.currentCmd].length)
+  }
 }
