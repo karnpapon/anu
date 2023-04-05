@@ -242,8 +242,10 @@ function Highlighter(canvas) {
     midiMsg.velocity = vel
     midiMsg.channel = channel
 
-    this.setUDPmsg(midiMsg)
+    // this.setUDPmsg(midiMsg)
     this.highlighters[this.active].msg.MIDI = midiMsg
+
+    console.log("midiMsg", midiMsg)
   }
 
   this.setUDPmsg = function(msg){

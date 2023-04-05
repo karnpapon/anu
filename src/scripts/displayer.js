@@ -30,12 +30,12 @@ function Displayer(app) {
 
   this.inputRef = {
     "osc": ["displayer-osc-path", "displayer-osc-msg"],
-    "midi": []
+    "midi": ["displayer-midi-note", "displayer-midi-notelen","displayer-midi-velo", "displayer-midi-chan"]
   }
 
   this.caretRef = {
     "osc": ["caret-osc-path", "caret-osc-msg"],
-    "midi": []
+    "midi": ["caret-midi-note", "caret-midi-notelen","caret-midi-velo", "caret-midi-chan"]
   }
   
   this.oscConf = {
@@ -77,29 +77,24 @@ function Displayer(app) {
 
     function handleInput(e){
       if(self.currentCmd === 'osc'){
-        self.oscConf.path = e.target.textContent;
-        // self.oscConf.msg =  target.getAttribute("type") === 'osc'? target.value:""
-        console.log("self.oscConf",self.oscConf )
+        self.oscConf[e.target.id === "osc-path" ? "path" : "msg"] = e.target.textContent;
       } else if( self.currentCmd === 'rename-highlighter'){
         console.log("rename-highlighterrename-highlighter")
         // self.renameInput = target.value 
       } else if( self.currentCmd === 'midi'){
-        console.log("midimidimidimidi")
-        // self.midiConf.note =  target.getAttribute("type") === 'midi-note'? target.value:""
-        // self.midiConf.notelength =  target.getAttribute("type") === 'midi-notelen'? target.value:""
-        // self.midiConf.velocity =  target.getAttribute("type") === 'midi-velo'? target.value:""
-        // self.midiConf.channel =  target.getAttribute("id") === 'midi-chan'? target.value:""
+        self.midiConf[e.target.getAttribute("type")] =  e.target.textContent
+        console.log("midiCong", self.midiConf)
       }
     }
 
     function handleFocus(e){
       self.isDisplayFormFocused = true
-      console.log("focus")
+      // console.log("focus")
     }
 
     function handleBlur(e){
       self.isDisplayFormFocused = false
-      console.log("blur")
+      // console.log("blur")
     }
 
     const observeCallback = function(mutationsList, observer) {
@@ -237,9 +232,10 @@ function Displayer(app) {
             </lf>
           </div>
         `
-        this.oscMsgPathElem = qs("div[data-ctrl='displayer-osc-path']")
+        let oscMsgPathElem = qs("div[data-ctrl='displayer-osc-path']")
         let oscMsgInput = qs("caret#caret-osc-path")
-        this.toggleInsert(this.oscMsgPathElem, oscMsgInput)
+        this.toggleInsert(oscMsgPathElem, oscMsgInput)
+        this.disableNotActiveInput()
         break;
       case 'midi':
         this.isDisplayInputToggled = !this.isDisplayInputToggled
@@ -249,22 +245,38 @@ function Displayer(app) {
           <div id="info-osc" class="info-input">
             <div class="displayer-form-short-wrapper">
               <p>N:</p>
-              <input class="displayer-form" placeholder="note" type="midi-note" value="${pairedNoteAndOct}">
+              <terminal>
+                <div id="midi-note" data-ctrl="displayer-midi-note" type="note" tabindex="-1" contenteditable="false">${pairedNoteAndOct}</div>
+                <caret id="caret-midi-note" for="midi-note" class="caret btn-hide">&nbsp;</caret>
+              </terminal>
             </div>
             <div class="displayer-form-short-wrapper">
               <p>L:</p>
-              <input class="displayer-form-short" placeholder="length" type="midi-notelen" value="${active.msg.MIDI.notelength.join()}">
+              <terminal>
+                <div id="midi-notelen" data-ctrl="displayer-midi-notelen" type="notelength" tabindex="-1" contenteditable="false">${active.msg.MIDI.notelength.join()}</div>
+                <caret id="caret-midi-notelen" for="midi-notelen" class="caret btn-hide">&nbsp;</caret>
+              </terminal>
             </div>
             <div class="displayer-form-short-wrapper">
               <p>V:</p>
-              <input class="displayer-form-short" placeholder="velocity" type="midi-velo" value="${active.msg.MIDI.velocity.join()}">
+              <terminal>
+                <div id="midi-velo" data-ctrl="displayer-midi-velo" type="velocity" tabindex="-1" contenteditable="false">${active.msg.MIDI.velocity.join()}</div>
+                <caret id="caret-midi-velo" for="midi-velo" class="caret btn-hide">&nbsp;</caret>
+              </terminal>
             </div>
             <div class="displayer-form-short-wrapper">
-            <p>C:</p>
-            <input id="midi-chan" class="displayer-form-short" placeholder="channel" type="number" min="0" max="15" value="${active.msg.MIDI.channel}">
+              <p>C:</p>
+              <terminal>
+                <div id="midi-chan" data-ctrl="displayer-midi-chan" type="channel" tabindex="-1" contenteditable="false">${active.msg.MIDI.channel}</div>
+                <caret id="caret-midi-chan" for="midi-chan" class="caret btn-hide">&nbsp;</caret>
+              </terminal>
           </div>
           </div>
         `
+        let midiMsgElem = qs("div[data-ctrl='displayer-midi-note']")
+        let midiMsgInput = qs("caret#caret-midi-note")
+        this.toggleInsert(midiMsgElem, midiMsgInput)
+        this.disableNotActiveInput()
         break;
       case 'regex':
         this.displayType = "preview"  
@@ -305,10 +317,11 @@ function Displayer(app) {
       this.el_general.classList.remove("displayer-show")
       this.el_with_input.classList.remove("displayer-show")
     }
+
+    if(!this.isDisplayInputToggled) { this.resetTabInputIndex() }
   }
 
   this.runCmd = function(){
-    let target = this.displayInputTarget
     switch (this.currentCmd) {
       case 'osc':
         canvas.highlighter.setOSCmsg();
@@ -320,14 +333,18 @@ function Displayer(app) {
         canvas.highlighter.setMIDImsg();
         break;
     }
-    target.classList.add("trigger-input")
-    setTimeout(() => {target.classList.remove("trigger-input")  }, 200);
+    this.displayInputTarget.classList.add("trigger-input")
+    setTimeout(() => {this.displayInputTarget.classList.remove("trigger-input")  }, 200);
   }
 
   this.handleTab = function(){
-    this.oscMsgPathElem  = qs(`div[data-ctrl='${this.inputRef[this.currentCmd][this.tabInputIndex]}']`)
-    let oscMsgInput = qs(`caret#${this.caretRef[this.currentCmd][this.tabInputIndex]}`)
-    this.toggleInsert(this.oscMsgPathElem, oscMsgInput)
+    let elem  = qs(`div[data-ctrl='${this.inputRef[this.currentCmd][this.tabInputIndex]}']`)
+    let input = qs(`caret#${this.caretRef[this.currentCmd][this.tabInputIndex]}`)
+    this.toggleInsert(elem, input)
+    this.disableNotActiveInput()
+  }
+
+  this.disableNotActiveInput = function() {
     this.inputRef[this.currentCmd].forEach(( ref, idx ) => {
       if(idx !== this.tabInputIndex){
         const previousInput  = qs(`div[data-ctrl='${ref}']`)
@@ -335,6 +352,10 @@ function Displayer(app) {
         this.toggleInsert(previousInput, previousOscMsgInput)
       }
     })
+  }
+
+  this.resetTabInputIndex = function(){
+    this.tabInputIndex = 0
   }
 
   this.buildInputDisplay = function () {

@@ -331,6 +331,11 @@ function Commander(canvas) {
     }
 
     if (event.key === "Escape") {
+      if(seeq.displayer.isDisplayInputToggled) { 
+        seeq.displayer.isDisplayInputToggled = false; 
+        seeq.displayer.displayDefault()
+        return 
+      }
       canvas.commander.stop();
       canvas.clear();
       canvas.isPaused = false;
