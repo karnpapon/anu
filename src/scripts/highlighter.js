@@ -104,7 +104,7 @@ function Highlighter(canvas) {
     this.highlighters[this.active].overlapAreas.clear()
     this.highlighters.filter(hl => hl.overlapIndex.has(this.active)).forEach(hl => {
       hl.overlapAreas.forEach((value,key) => {
-        if (value.i === this.active) { 
+        if (value.i === this.active || value.i === hl.i) { 
           hl.overlapAreas.delete(key)
         } 
       })
@@ -116,12 +116,12 @@ function Highlighter(canvas) {
       const xx = Math.min(r1.x + r1.w, r2.x + r2.w);
       const yy = Math.min(r1.y + r1.h, r2.y + r2.h);
       if (xx-x > 0 && yy-y > 0 ) {
-        // this.highlighters[r1.i].overlapAreas.clear()
         this.highlighters[this.active].overlapIndex.clear()
         for (let i=x,ii=xx-x;ii>=1;ii--){
           for (let j=y,jj=yy-y;jj>=1;jj--){
             this.highlighters[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
             this.highlighters[this.active].overlapIndex.add(r1.i)
+            this.highlighters[r1.i].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
             this.highlighters[r1.i].overlapIndex.add(this.active)
           }
         }
