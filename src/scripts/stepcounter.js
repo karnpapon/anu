@@ -47,8 +47,10 @@ function StepCounter(canvas) {
               c.y_counter = c.y_counter % value.h
             }
           } else {
-            rand = getRandomValue(canvas.highlighter.highlighters[c.i].overlapAreas).x
-            c.x = rand < value.x || rand > value.x + value.w - 1 ? c.x-- : rand
+            rand = getRandomValue(canvas.highlighter.highlighters[canvas.highlighter.active].overlapAreas)
+            if('x' in rand) {
+              c.x = rand.x < value.x || rand.x > value.x + value.w - 1 ? c.x-- : rand.x
+            }
           }
         }
       })
@@ -87,8 +89,10 @@ function StepCounter(canvas) {
               c.y_counter = c.y_counter % value.h // wrapped to height since there's no needs to count up more than highlighter height.
             }
           } else {
-            rand = getRandomValue(canvas.highlighter.highlighters[canvas.highlighter.active].overlapAreas).x
-            c.x = rand < value.x || rand > value.x + value.w - 1 ? c.x++ : rand
+            rand = getRandomValue(canvas.highlighter.highlighters[canvas.highlighter.active].overlapAreas)
+            if('x' in rand) {
+              c.x = rand.x < value.x || rand.x > value.x + value.w - 1 ? c.x++ : rand.x
+            }
           }
         } 
       })

@@ -55,7 +55,11 @@ function Commander(canvas) {
     this.doWhen(app_console.isInsertable, () => this.handleWhenInputOn(event) )
     
     // CLOSE GUIDE BY PRESSING ANYKEY EXCEPT META/MODIFY KEYS.
-    this.doWhen(this.isNotModifyKey(event), () => this.doWhen(canvas.guide && event.keyCode !== 72, () => {canvas.toggleGuide(false)}))
+    this.doWhen(this.isNotModifyKey(event), () => {
+      if (canvas.guide && event.keyCode !== 72) {
+        canvas.toggleGuide(false)
+      }
+    })
 
     // EVAL INPUT / EVAL REGEX
     this.doWhen(event.key === "Enter" && app_console.isInputFocused, () => this.runCmd("content", event) )
@@ -432,7 +436,7 @@ function Commander(canvas) {
   }
 
   this.isNotModifyKey = function(event){
-    return event.shiftKey && event.metaKey && event.ctrlKey 
+    return !event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey
   }
 
   this.isModifyKey = function(event){
