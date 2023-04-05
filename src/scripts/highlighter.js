@@ -37,6 +37,7 @@ function Highlighter(canvas) {
       x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
       n: `highlighter-name-${canvas.globalIdx}`,
       overlapAreas: new Map(),
+      overlapIndex: new Set(),
       matched: [],
       msg: {
         MIDI: { 
@@ -97,21 +98,44 @@ function Highlighter(canvas) {
 
   this.findOverlapArea = function(r2){
     if (this.highlighters.length < 1) return 
+
+    // clear overlapAreas, firstly refresh(clear) current active one.
+    // then remove any overlapAreas related to current active one. 
     this.highlighters[this.active].overlapAreas.clear()
+    this.highlighters.filter(hl => hl.overlapIndex.has(this.active)).forEach(hl => {
+      hl.overlapAreas.forEach((value,key) => {
+        if (value.i === this.active) { 
+          hl.overlapAreas.delete(key)
+        } 
+      })
+    })
+
     this.highlighters.filter(h => h.i !== this.active).forEach(r1 => {
       const x = Math.max(r1.x, r2.x);
       const y = Math.max(r1.y, r2.y);
       const xx = Math.min(r1.x + r1.w, r2.x + r2.w);
       const yy = Math.min(r1.y + r1.h, r2.y + r2.h);
       if (xx-x > 0 && yy-y > 0 ) {
+        // this.highlighters[r1.i].overlapAreas.clear()
+        this.highlighters[this.active].overlapIndex.clear()
         for (let i=x,ii=xx-x;ii>=1;ii--){
           for (let j=y,jj=yy-y;jj>=1;jj--){
-            this.highlighters[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1})
+            this.highlighters[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
+            this.highlighters[this.active].overlapIndex.add(r1.i)
+            this.highlighters[r1.i].overlapIndex.add(this.active)
           }
         }
       } 
     })
   }
+
+  // this.clearAllHighlights = function(){
+  //   this.highlighters.forEach(h=> h.overlapAreas.clear())
+  // }
+
+  // this.clearAllOverlapIndexes = function(){
+  //   this.highlighters.forEach(h=> h.overlapIndex.clear())
+  // }
 
   this.onMouseDown = (e) => {
     if (canvas.guide) { canvas.toggleGuide(false)}
