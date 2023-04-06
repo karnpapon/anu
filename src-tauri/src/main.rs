@@ -21,14 +21,15 @@ fn main() {
   let focus = CustomMenuItem::new("FOC".to_string(), "focus (f)");
   let metronome = CustomMenuItem::new("METRONOME".to_string(), "Enable Metronome Sound");
   let note_ratio = CustomMenuItem::new("RESETNOTERATIO".to_string(), "Reset Note Ratio (1:16)");
-  let submenu_app = Submenu::new("App", Menu::new().add_item(metronome).add_item(note_ratio).add_native_item(MenuItem::Quit));
+  let submenu_app = Submenu::new("App", Menu::new().add_item(metronome).add_item(note_ratio));
   let submenu_commu = Submenu::new("Communications", Menu::new().add_item(osc).add_item(udp));
   let submenu_controls = Submenu::new("Controls", Menu::new().add_item(rev).add_item(focus));
-  let menu = Menu::new()
-    .add_native_item(MenuItem::Copy)
+  let menu = Menu::new() 
+    .add_submenu(Submenu::new("", Menu::new().add_native_item(MenuItem::Quit)))
     .add_submenu(submenu_app)
     .add_submenu(submenu_controls)
     .add_submenu(submenu_commu);
+
   tauri::Builder::default()
     .menu(menu)
     .on_menu_event(|event| {

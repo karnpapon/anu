@@ -4,3 +4,4 @@
 - ~~each highlight's height should be independent.~~
 - ~~change input to terminal styles.~~
 - handle sendClockMsg to be compatible with MetronomeWorker
+- vim keybinding mode
