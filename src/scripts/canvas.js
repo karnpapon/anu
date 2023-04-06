@@ -86,6 +86,9 @@ function Canvas () {
     this.el.className = 'ready'
     this.resize()
     this.update()
+    this.resize()
+    this.resize()
+    this.resize()
   }
 
   this.run = function () {
@@ -318,9 +321,10 @@ function Canvas () {
     // const content_symbol = ['|']
     // const bottom_border_symbol = ['+','-','+']
     const note = "- PLEASE MAKE SURE INPUT HAS BEEN TOGGLED OFF -"
+    const box = { x: 2, y: 3}
 
     // top_border
-    this.write(`${top_border_symbol[0]}${top_border_symbol[1].repeat(top_border)}${top_border_symbol[2]}`,2, 1, 99, 11)
+    this.write(`${top_border_symbol[0]}${top_border_symbol[1].repeat(top_border)}${top_border_symbol[2]}`,2, box.y, 99, 11)
 
     // helps content
     for (const id in operators) {
@@ -329,7 +333,7 @@ function Canvas () {
       const text = oper.info
       const frame = this.seequencer.h - 4
       const x = (Math.floor(parseInt(id) / frame) * 32) + 2
-      const y = (parseInt(id) % frame) + 2
+      const y = (parseInt(id) % frame) + box.y + 1
       const text_line_length = text.length + key.length
       this.write(`${content_symbol[0]}${' '.repeat(1)}${key}:${' '.repeat(1)}`, x, y, 99, 11, "bold")
       this.write(`${' '.repeat(1)}${text}${' '.repeat(this.seequencer.w - text_line_length - 10)}${content_symbol[0]}`, x + key.length + 3, y, 99, 11)
@@ -337,8 +341,8 @@ function Canvas () {
 
     // bottom_border
     const note_spaces = ((this.seequencer.w - note.length) / 2) - 3
-    this.write(`|${' '.repeat(note_spaces)}${note}${' '.repeat(note_spaces)}|`,2, operators.length + 2, 99, 11, "bold")
-    this.write(`${bottom_border_symbol[0]}${bottom_border_symbol[1].repeat(top_border)}${bottom_border_symbol[2]}`,2, operators.length + 3, 99, 11)
+    this.write(`|${' '.repeat(note_spaces)}${note}${' '.repeat(note_spaces )}|`,2, operators.length + box.y+1, 99, 11, "bold")
+    this.write(`${bottom_border_symbol[0]}${bottom_border_symbol[1].repeat(top_border)}${bottom_border_symbol[2]}`,2, operators.length + box.y+2, 99, 11)
   }
 
   this.drawSprite = function (x, y, g, type, text_weight = "normal") {
@@ -412,8 +416,6 @@ function Canvas () {
 
   this.crop = function (w, h) {
     let block = `${this.seequencer}`
-
-    console.log("crop", w,h , this.seequencer.h)
 
     if (h > this.seequencer.h) {
       block = `${block}${`\n${'.'.repeat(this.seequencer.w)}`.repeat(h - this.seequencer.h )}`

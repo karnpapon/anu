@@ -51,6 +51,20 @@ function Commander(canvas) {
 
   this.onKeyDown = function(event) {
 
+    // -- ESC PRESSED --
+    this.doWhen(event.key === "Escape", () => {
+      if(displayer.isDisplayInputToggled) { 
+        displayer.isDisplayInputToggled = false; 
+        displayer.displayDefault()
+        return 
+      }
+      this.stop();
+      canvas.isPaused = false;
+      // canvas.clear();
+      // canvas.reset();
+      return;
+    })
+
     // DISABLE ALL KEYS UNLESS INPUT/REGEX IS BEING TURNED OFF
     this.doWhen(app_console.isInsertable, () => this.handleWhenInputOn(event) )
     
@@ -81,10 +95,18 @@ function Commander(canvas) {
         event.preventDefault();
         return;
       }
+
+      // (ESC) jump between input.
+      if (event.keyCode === 9) {
+        displayer.isDisplayInputToggled = false; 
+        displayer.displayDefault()
+        this.stop();
+        return;
+      }
     })
 
     // -- INPUT/REGEX OFF --
-    this.doWhen(!app_console.isInsertable, () => { 
+    this.doWhen(!app_console.isInsertable && !displayer.isDisplayInputToggled, () => { 
       if (displayer.displayType === "default") {
         if (event.keyCode === 38) {
           this.onArrowUp(event.shiftKey, event.metaKey || event.ctrlKey);
@@ -129,12 +151,12 @@ function Commander(canvas) {
         }
       })
 
-      // toggle UDP
-      if (event.keyCode === 49 ) {
-        // app_console.togglePort('UDP', app_console.udpBtn)
-        event.preventDefault();
-        return;
-      }
+      // // toggle UDP
+      // if (event.keyCode === 49 ) {
+      //   // app_console.togglePort('UDP', app_console.udpBtn)
+      //   event.preventDefault();
+      //   return;
+      // }
   
       // (n) new marker. 
       if (event.keyCode === 78 ) {
@@ -294,21 +316,7 @@ function Commander(canvas) {
         event.preventDefault();
         return;
       }
-    })
-
-    // -- ESC PRESSED --
-    this.doWhen(event.key === "Escape", () => {
-      if(displayer.isDisplayInputToggled) { 
-        displayer.isDisplayInputToggled = false; 
-        displayer.displayDefault()
-        return 
-      }
-      canvas.commander.stop();
-      canvas.clear();
-      canvas.isPaused = false;
-      canvas.reset();
-      return;
-    })
+    })    
 
   };
 

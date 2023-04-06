@@ -7,7 +7,7 @@ function Metronome(canvas) {
   this.isPlaying = false; // Are we currently playing?
   this.startTime; // The start time of the entire sequence.
   this.current16thNote; // What note is currently last scheduled?
-  this.noteRatio = 16 // default to 16th notes (16 % 1 == 0).
+  this.noteRatio = 1 // default to 16th notes (16 % 1 == 0).
   // this.tempo = 120.0; // tempo (in beats per minute)
   this.tempo = { value: 120.0, target: 120.0 }
   this.lookahead = 25.0; // How frequently to call scheduling function(in milliseconds)
