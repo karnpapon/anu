@@ -315,8 +315,8 @@ function Commander(canvas) {
         return;
       }
 
-      // (Cmd-\) switch between regex-mode (realtime/on-eval)
-      if (event.keyCode === 220) {
+      // (Cmd-/) switch between regex-mode (realtime/on-eval)
+      if (event.keyCode === 191) {
         app_console.changeRegexMode()
         displayer.displayDefault();
         event.preventDefault();

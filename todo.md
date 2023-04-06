@@ -3,5 +3,12 @@
 - ~~match range not cover all texts.~~
 - ~~each highlight's height should be independent.~~
 - ~~change input to terminal styles.~~
+- ~~add regex mode~~
+
 - handle sendClockMsg to be compatible with MetronomeWorker
+- customizable osc port / midi-out device
+
+# TBD
 - vim keybinding mode
+- customizable regex flag
+- customizable fetch results areas.

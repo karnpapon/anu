@@ -256,6 +256,7 @@ function Console(app) {
     if (this.isInputFocused) {
       app.startFetch()
     } else {
+      canvas.clearMarksPos()
       app.matchedPosition = []
       app.getMatchedPosition()
     } 

@@ -1,85 +1,27 @@
-# What is anu?
+# `anu`
 
-Sequencer / Livecoding environment.
-using search or RegEx pattern to assign triggers.
-currently support sending MIDI out.
+backend-agnostic step-sequencer that harnesses the power of matching patterns ("RegEx") to create triggers. as the name suggests "anu" (or "อนุ"), which in Thai grammar denotes a prefix meaning "small", "sub" or "minor". it can be compatible with any others software/hardware that support [ OSC ](https://en.wikipedia.org/wiki/Open_Sound_Control) or [MIDI](https://en.wikipedia.org/wiki/MIDI) protocol (more to be implemented).
+ 
+unlike others conventional step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously developed under the name "seeq").
 
-<div style="text-align:center; background-color: black; padding: 20px;"><img src="src/media/images/usage1.gif" /></div>
+## usages
+soon...
 
-## Usage
+## notes
+built with vanillaJS with dependencies as less as possible in mind. also powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
 
-<img src="src/media/images/diagram.svg?sanitize=true">
+## features
+- support OSC, MIDI.
+- precision clock scheduling.
 
-```
-NOTE: currently, using `canvas`  instead of manipulating DOM directly.
-some commands have been changed and undocumented.
-```
-
-in order to move selection, the console has to be toggled off ( `cmd` + `i`).
-
-
-#### movement
-Description |  Operation
---- | ---
-start / stop | `spacebar`
-move | `arrow`
-leap | `cmd` + `arrow`
-
-
-#### selection ( marker )
-Description |  Operation
---- | ---
-range | `shift` + `arrow`
-large range | `shift` + `arrow` + `cmd`
-add | `cmd` + `n`
-delete | `cmd` + `backspace`
-rename | `cmd` + `e`
-show current name | `option` + `e`
-switch between | `option` + `tab`
-get step within | `cmd` + `return (enter)`
-focused | `cmd` + `f`
-
-#### step ( within selection )
-Description |  Operation
---- | ---
-add step | `shift` + `+`
-
-
-#### console -> input
-Description |  Operation
---- | ---
-toggle insert | `cmd` + `i`
-eval input | `enter`
-
-#### console -> status
-Description |  Operation
---- | ---
-BPM up | `cmd` + `>`
-BPM down | `cmd` + `<`
-
-#### config
-Description |  Operation
---- | ---
-set MIDI | `cmd` + `m`
-
-
-
-## watch in action.
-
-
-<div style="text-align:center; background-color: black;"><a href="https://www.youtube.com/watch?v=DGaakhSvYOg"><img src="https://i.ytimg.com/vi/DGaakhSvYOg/hqdefault.jpg" /></a></div>
-
-
-## Notes.
-- currently, MIDI devices / OSC addrs / UDP port are not configurable.
-
-# development
+## development
 
 ```bash
-# Go into the repository
-cd Client
 # Install dependencies
 yarn install or npm install
 # Run the app
-yarn start or npm run start
+yarn dev or npm run dev
 ```
+
+## inspirations
+draw inspirations from Orca, Sunvox, others obsolete music software.

@@ -90,10 +90,10 @@ function Marker(canvas) {
 
   this.calculateBounds = () => {
     const c = this.markers[this.active]
-    this.minX = c.x < c.x + c.w ? c.x : c.x + c.w
-    this.minY = c.y < c.y + c.h ? c.y : c.y + c.h
-    this.maxX = c.x > c.x + c.w ? c.x : c.x + c.w
-    this.maxY = c.y > c.y + c.h ? c.y : c.y + c.h
+    this.minX = (c.x < c.x + c.w ? c.x : c.x + c.w) 
+    this.minY = (c.y < c.y + c.h ? c.y : c.y + c.h)
+    this.maxX = (c.x > c.x + c.w ? c.x : c.x + c.w) - 1
+    this.maxY = (c.y > c.y + c.h ? c.y : c.y + c.h) - 1
   }
 
   this.findOverlapArea = function(r2){

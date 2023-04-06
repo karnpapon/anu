@@ -13,6 +13,7 @@ const library = {
 
   "Spacebar": { "info": "play/pause" },
   "Cmd-Arrow": { "info": "jump" },
+  "CmdOrCtrl-/": { "info": "switch regex mode" },
   "Shift-Arrow": { "info": "incr/decr marker range" },
   "Shift-Arrow-Cmd": { "info": "jump incr/decr marker range" },
   "Cmd-Return": { "info": "toggle snap step to marker range" },
@@ -276,12 +277,9 @@ function Canvas () {
   }
 
   this.isInvisible = (x, y) => {
-    return  this.seequencer.glyphAt(x, y) === '.'
-    // !this.isMarker(x, y) && 
-    // this.seequencer.glyphAt(x, y) === '.' &&
-    // !this.isLocals(x, y) && 
-    // !this.ports[this.orca.indexAt(x, y)] && 
-    // !this.seequencer.lockAt(x, y)
+    return this.seequencer.glyphAt(x, y) === '.'
+    // && !this.isMarker(x, y) 
+    && !this.marker.selected(x, y)
   }
 
   this.drawProgram = function () {
