@@ -1,13 +1,13 @@
 'use strict'
 
-/* global seeq */
+/* global client */
 
-function Highlighter(canvas) {
+function Marker(canvas) {
 
   this.mode = 0
   this.block = []
   this.active = 0
-  this.highlighters = []
+  this.markers = []
   this.mouseFrom = null
 
   this.minX = 0
@@ -25,17 +25,17 @@ function Highlighter(canvas) {
     this.mode = 0
     this.block = []
     this.active = 0
-    this.highlighters = []
+    this.markers = []
   }
 
   this.initCursor = function(){
-    this.highlighters.push(this.getNewHighlighter())
+    this.markers.push(this.getNewHighlighter())
   }
 
   this.getNewHighlighter = function(){
     let newCursor = { 
       x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
-      n: `highlighter-name-${canvas.globalIdx}`,
+      n: `marker-name-${canvas.globalIdx}`,
       overlapAreas: new Map(),
       overlapIndex: new Set(),
       matched: [],
@@ -61,7 +61,7 @@ function Highlighter(canvas) {
     this.move(0, 0)
   }
 
-  this.select = function (x = this.highlighters[this.active].x, y = this.highlighters[this.active].y, w = this.highlighters[this.active].w, h = this.highlighters[this.active].h) {
+  this.select = function (x = this.markers[this.active].x, y = this.markers[this.active].y, w = this.markers[this.active].w, h = this.markers[this.active].h) {
     if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h)) { return }
     const rect = { 
       x: clamp(parseInt(x), 0, canvas.seequencer.w - 1), 
@@ -70,26 +70,26 @@ function Highlighter(canvas) {
       h: clamp(parseInt(h), 0, canvas.seequencer.h - 1) 
     }
 
-    if ( this.highlighters[this.active].x === rect.x && 
-      this.highlighters[this.active].y === rect.y && 
-      this.highlighters[this.active].w === rect.w && 
-      this.highlighters[this.active].h === rect.h) {
+    if ( this.markers[this.active].x === rect.x && 
+      this.markers[this.active].y === rect.y && 
+      this.markers[this.active].w === rect.w && 
+      this.markers[this.active].h === rect.h) {
       return
     }
 
-    this.highlighters[this.active].x = rect.x
-    this.highlighters[this.active].y = rect.y
-    this.highlighters[this.active].w = rect.w
-    this.highlighters[this.active].h = rect.h
+    this.markers[this.active].x = rect.x
+    this.markers[this.active].y = rect.y
+    this.markers[this.active].w = rect.w
+    this.markers[this.active].h = rect.h
     this.calculateBounds()
     this.findOverlapArea(rect)
-    seeq.console.cursorPosition.innerText = `${canvas.highlighter.getActivePosition()}`
-    seeq.console.highlightLength.innerText = (w >= 0 && h >= 0) ? `${this.getStepLength()}` : "1,1"
+    client.console.cursorPosition.innerText = `${canvas.marker.getActivePosition()}`
+    client.console.highlightLength.innerText = (w >= 0 && h >= 0) ? `${this.getStepLength()}` : "1,1"
     canvas.update()
   }
 
   this.calculateBounds = () => {
-    const c = this.highlighters[this.active]
+    const c = this.markers[this.active]
     this.minX = c.x < c.x + c.w ? c.x : c.x + c.w
     this.minY = c.y < c.y + c.h ? c.y : c.y + c.h
     this.maxX = c.x > c.x + c.w ? c.x : c.x + c.w
@@ -97,12 +97,12 @@ function Highlighter(canvas) {
   }
 
   this.findOverlapArea = function(r2){
-    if (this.highlighters.length < 1) return 
+    if (this.markers.length < 1) return 
 
     // clear overlapAreas, firstly refresh(clear) current active one.
     // then remove any overlapAreas related to current active one. 
-    this.highlighters[this.active].overlapAreas.clear()
-    this.highlighters.filter(hl => hl.overlapIndex.has(this.active)).forEach(hl => {
+    this.markers[this.active].overlapAreas.clear()
+    this.markers.filter(hl => hl.overlapIndex.has(this.active)).forEach(hl => {
       hl.overlapAreas.forEach((value,key) => {
         if (value.i === this.active || value.i === hl.i) { 
           hl.overlapAreas.delete(key)
@@ -110,19 +110,19 @@ function Highlighter(canvas) {
       })
     })
 
-    this.highlighters.filter(h => h.i !== this.active).forEach(r1 => {
+    this.markers.filter(h => h.i !== this.active).forEach(r1 => {
       const x = Math.max(r1.x, r2.x);
       const y = Math.max(r1.y, r2.y);
       const xx = Math.min(r1.x + r1.w, r2.x + r2.w);
       const yy = Math.min(r1.y + r1.h, r2.y + r2.h);
       if (xx-x > 0 && yy-y > 0 ) {
-        this.highlighters[this.active].overlapIndex.clear()
+        this.markers[this.active].overlapIndex.clear()
         for (let i=x,ii=xx-x;ii>=1;ii--){
           for (let j=y,jj=yy-y;jj>=1;jj--){
-            this.highlighters[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
-            this.highlighters[this.active].overlapIndex.add(r1.i)
-            this.highlighters[r1.i].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
-            this.highlighters[r1.i].overlapIndex.add(this.active)
+            this.markers[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
+            this.markers[this.active].overlapIndex.add(r1.i)
+            this.markers[r1.i].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
+            this.markers[r1.i].overlapIndex.add(this.active)
           }
         }
       } 
@@ -130,11 +130,11 @@ function Highlighter(canvas) {
   }
 
   // this.clearAllHighlights = function(){
-  //   this.highlighters.forEach(h=> h.overlapAreas.clear())
+  //   this.markers.forEach(h=> h.overlapAreas.clear())
   // }
 
   // this.clearAllOverlapIndexes = function(){
-  //   this.highlighters.forEach(h=> h.overlapIndex.clear())
+  //   this.markers.forEach(h=> h.overlapIndex.clear())
   // }
 
   this.onMouseDown = (e) => {
@@ -164,7 +164,7 @@ function Highlighter(canvas) {
   }
 
   this.move = (x, y) => {
-    this.select(this.highlighters[this.active].x + parseInt(x), this.highlighters[this.active].y - parseInt(y))
+    this.select(this.markers[this.active].x + parseInt(x), this.markers[this.active].y - parseInt(y))
   }
 
   this.switch = function(index = 0){
@@ -172,7 +172,7 @@ function Highlighter(canvas) {
   }
 
   this.add = function(){
-    this.highlighters.push(this.getNewHighlighter()) 
+    this.markers.push(this.getNewHighlighter()) 
   }
 
   this.moveTo = (x, y) => {
@@ -181,15 +181,15 @@ function Highlighter(canvas) {
 
   this.scale = (w, h) => {
     this.select(
-      this.highlighters[this.active].x, 
-      this.highlighters[this.active].y, 
-      this.highlighters[this.active].w + parseInt(w), 
-      this.highlighters[this.active].h - parseInt(h)
+      this.markers[this.active].x, 
+      this.markers[this.active].y, 
+      this.markers[this.active].w + parseInt(w), 
+      this.markers[this.active].h - parseInt(h)
     )
   }
 
   this.scaleTo = (w, h) => {
-    this.select(this.highlighters[this.active].x, this.highlighters[this.active].y, w, h)
+    this.select(this.markers[this.active].x, this.markers[this.active].y, w, h)
   }
 
   this.selected = (x, y, w = 0, h = 0) => {
@@ -198,7 +198,7 @@ function Highlighter(canvas) {
   
   this.setOSCmsg  = function(){
     let active = this.getActiveCursor()
-    let { path, msg } = seeq.displayer.oscConf
+    let { path, msg } = client.displayer.oscConf
     let oscMsg = { path: "", msg: ""}
     let fmtMsg = []
     var osc_msg
@@ -221,7 +221,7 @@ function Highlighter(canvas) {
 
     console.log("oscMsg", oscMsg)
     
-    this.highlighters[this.active].msg.OSC = oscMsg
+    this.markers[this.active].msg.OSC = oscMsg
     
   }
 
@@ -243,17 +243,17 @@ function Highlighter(canvas) {
       notelength, 
       velocity, 
       channel
-    } = seeq.displayer.midiConf
+    } = client.displayer.midiConf
 
     // handle separately eval msg.
-    note = note === ""?   seeq.displayer.getPairedNoteAndOct(active):note
+    note = note === ""?   client.displayer.getPairedNoteAndOct(active):note
     notelength = notelength ===""? active.msg.MIDI.notelength.join():notelength
     velocity = velocity === ""? active.msg.MIDI.velocity.join():velocity
     channel = channel === ""? active.msg.MIDI.channel:channel > 15?  active.msg.MIDI.channel:channel
 
-    noteAndOct = seeq.parser(note, 'note')
-    len = seeq.parser(notelength, 'length')
-    vel = seeq.parser(velocity, 'velocity') 
+    noteAndOct = client.parser(note, 'note')
+    len = client.parser(notelength, 'length')
+    vel = client.parser(velocity, 'velocity') 
 
     noteAndOct.forEach(item => {
       noteOnly.push(item[0])
@@ -267,44 +267,44 @@ function Highlighter(canvas) {
     midiMsg.channel = channel
 
     // this.setUDPmsg(midiMsg)
-    this.highlighters[this.active].msg.MIDI = midiMsg
+    this.markers[this.active].msg.MIDI = midiMsg
 
     console.log("midiMsg", midiMsg)
   }
 
   this.setUDPmsg = function(msg){
-    this.highlighters[this.active].msg.UDP = []
+    this.markers[this.active].msg.UDP = []
     let convertTarget = JSON.parse(JSON.stringify(msg));
     let udpNote = []
     let udpLength = []
     let udpVelocity = []
     let udpMsg = []
-    let convertedChan = seeq.getUdpValue(parseInt(convertTarget.channel))
+    let convertedChan = client.getUdpValue(parseInt(convertTarget.channel))
 
     for (var i = 0; i < msg.note.length; i++) {
-      udpLength.push(seeq.getUdpValue(parseInt(convertTarget.notelength[i % msg.note.length])))
-      udpNote.push(seeq.getUdpNote(convertTarget.note[i]))
-      udpVelocity.push(seeq.getUDPvalFrom127(parseInt(convertTarget.velocity[i % msg.note.length])))
+      udpLength.push(client.getUdpValue(parseInt(convertTarget.notelength[i % msg.note.length])))
+      udpNote.push(client.getUdpNote(convertTarget.note[i]))
+      udpVelocity.push(client.getUDPvalFrom127(parseInt(convertTarget.velocity[i % msg.note.length])))
     }
 
     for(var i = 0; i< msg.note.length; i++){
       udpMsg.push(`${convertedChan}${convertTarget.octave[i]}${udpNote[i]}${udpVelocity[i]}${udpLength[i]}` )
     }
 
-    this.highlighters[this.active].msg.UDP = udpMsg
+    this.markers[this.active].msg.UDP = udpMsg
   }
 
   this.setCursorName = function(){
-    this.highlighters[this.active].n = seeq.displayer.renameInput 
+    this.markers[this.active].n = client.displayer.renameInput 
   }
 
   this.read = function () {
-    let active = this.highlighters[this.active] 
+    let active = this.markers[this.active] 
     return canvas.seequencer.glyphAt(active.x, active.y)
   }
 
   this.write = function (g) {
-    let active = this.highlighters[this.active]
+    let active = this.markers[this.active]
     if (canvas.seequencer.write(active.x, active.y, g) && this.mode === 1) {
       this.move(1, 0)
     }
@@ -312,14 +312,14 @@ function Highlighter(canvas) {
 
   this.erase = function(){
     let filteredCursor, filterStep, filterStepCounter
-    filteredCursor = this.highlighters.filter( ( cs ) => cs.i !== this.highlighters[ this.active ].i)
+    filteredCursor = this.markers.filter( ( cs ) => cs.i !== this.markers[ this.active ].i)
     if( canvas.stepcursor.steps[this.active]){
       filterStep = canvas.stepcursor.steps.filter( ( step ) => step.i !== canvas.stepcursor.steps[ this.active ].i)
       filterStepCounter = canvas.stepcounter.counter.filter( ( c ) => c.i !== canvas.stepcounter.counter[ this.active ].i)
       canvas.stepcursor.steps = filterStep
       canvas.stepcounter.counter = filterStepCounter
     }
-    this.highlighters = filteredCursor
+    this.markers = filteredCursor
     this.active = 0
   }
 
@@ -327,20 +327,20 @@ function Highlighter(canvas) {
     let b = this.getBlock()
     b.forEach(_item => {
       if( _item.x === item.x && _item.y === item.y){
-        this.highlighters[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
+        this.markers[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
         ""
         :
-        this.highlighters[_item.i].matched.push(item)
+        this.markers[_item.i].matched.push(item)
       } 
     })
   }
 
   this.getActiveCursor = function(){
-    return this.highlighters[this.active]
+    return this.markers[this.active]
   }
 
   this.clearMatchedPos = function(){
-    this.highlighters.forEach( c => {
+    this.markers.forEach( c => {
       c.matched = []
     })
   }
@@ -369,11 +369,11 @@ function Highlighter(canvas) {
   }
 
   this.getActivePosition = function(){
-    return `(${this.highlighters[this.active].x},${this.highlighters[this.active].y})`
+    return `(${this.markers[this.active].x},${this.markers[this.active].y})`
   }
 
   this.getStepLength = function(){
-    return `${this.highlighters[this.active].w}, ${this.highlighters[this.active].h}`
+    return `${this.markers[this.active].w}, ${this.markers[this.active].h}`
   }
 
   this.getSelectionArea = function(r){
@@ -388,7 +388,7 @@ function Highlighter(canvas) {
 
   this.toRect = function () {
     let cursorArea = []
-    this.highlighters.forEach( ( cs ) => {
+    this.markers.forEach( ( cs ) => {
       cursorArea.push({ 
         x: cs.x, 
         y: cs.y, 

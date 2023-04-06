@@ -91,7 +91,7 @@ bold {
   align-items: center;
   display: flex;
   font-family: 'input_mono_bold'; }
-#helper { margin-left: 0.5rem; highlighter: pointer;}
+#helper { margin-left: 0.5rem; marker: pointer;}
 
 .helper{
   font-family: 'input_mono_regular';
@@ -132,11 +132,11 @@ div button{
   /* color: black; */
 }
 .hltr:hover{
-  highlighter: pointer;
+  marker: pointer;
   box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);
 }
 .hltr:active{
-  highlighter: pointer;
+  marker: pointer;
   box-shadow:inset 0px 0px 0px 2px rgb(0, 0, 0);
 }
 
@@ -299,7 +299,7 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
   width: 55px;
 }
 
-.logo-seeq{
+.logo-client{
   background-color: black !important;
   color: var( --trigger-color );
   /* box-shadow:inset 0px 0px 0px 1px rgb(0, 0, 0);   */
@@ -359,7 +359,7 @@ caret {
 }
 
 caret:hover {
-  highlighter: default;
+  marker: default;
 }
 
 .select-highlight{
@@ -424,7 +424,7 @@ caret:hover {
   transition: 100ms;
 }
 
-.highlighter-text{
+.marker-text{
   font-family: 'input_mono_regular';
   position: absolute;
   height: 350px;
@@ -606,8 +606,8 @@ button:active{
 }
 
 div button:focus{ outline: none;}
-div button:hover{ highlighter: pointer; background-color: black; color: white;}
-div button:active{ highlighter: pointer; background-color: black; color: white;}
+div button:hover{ marker: pointer; background-color: black; color: white;}
+div button:active{ marker: pointer; background-color: black; color: white;}
 .control-wrapper{ display: flex; justify-content: space-between; padding-bottom: 10px;}
 .control-info{ 
   font-size: 12px;     
@@ -671,7 +671,7 @@ div button:active{ highlighter: pointer; background-color: black; color: white;}
   opacity: 0;
 }
 
-.displayer-active-highlighter {
+.displayer-active-marker {
   width: 100%;
   height: 100%;
   display: flex;

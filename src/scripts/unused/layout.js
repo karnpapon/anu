@@ -7,11 +7,11 @@ function Layout(app) {
   this.init = function () {
     this.headerElem.innerHTML = `
       <div style="display: flex;">
-        <bold>seeq : letter sequencer</bold>
+        <bold>client : letter sequencer</bold>
         <p id="helper"> | docs</p>
       </div>
       <div class="info">
-        <a target="_blank" href="https://github.com/karnpapon/seeq/tree/web">
+        <a target="_blank" href="https://github.com/karnpapon/client/tree/web">
           <img src="/src/media/icons/github-logo.svg" alt="gh-logo">
         </a>
       </div>

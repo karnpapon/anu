@@ -1,4 +1,4 @@
-# What is seeq?
+# What is anu?
 
 Sequencer / Livecoding environment.
 using search or RegEx pattern to assign triggers.
@@ -26,7 +26,7 @@ move | `arrow`
 leap | `cmd` + `arrow`
 
 
-#### selection ( highlighter )
+#### selection ( marker )
 Description |  Operation
 --- | ---
 range | `shift` + `arrow`
@@ -77,7 +77,7 @@ set MIDI | `cmd` + `m`
 
 ```bash
 # Go into the repository
-cd Seeq
+cd Client
 # Install dependencies
 yarn install or npm install
 # Run the app

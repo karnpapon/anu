@@ -1,6 +1,6 @@
 'use strict'
 
-/* global seeq */
+/* global client */
 
 // since tauri have no requestMidiAccess (in window.navigator) API.
 // we need to manually implement from backend (see src-tauri/src/lib/midi.rs)
@@ -92,7 +92,7 @@ function Midi(app) {
     await invoke('init_midi');
     await invoke('setup_midi_connection_list')
     this.targetDevice = await invoke('setup_midi_out');
-    seeq.console.midiInfo.innerText = this.targetDevice 
+    client.console.midiInfo.innerText = this.targetDevice 
   }
 
   this.toString = function () {

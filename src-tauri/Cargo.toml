@@ -1,11 +1,11 @@
 [package]
-name = "seeq-tauri"
+name = "anu-tauri"
 version = "0.1.0"
-description = "A seeq application built with Tauri"
+description = "A anu application built with Tauri"
 authors = ["you"]
 license = ""
 repository = ""
-default-run = "seeq-tauri"
+default-run = "anu-tauri"
 edition = "2021"
 rust-version = "1.59"
 

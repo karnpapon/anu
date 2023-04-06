@@ -1,6 +1,6 @@
 'use strict'
 
-/* global seeq */
+/* global client */
 
 function Console(app) {
 
@@ -12,7 +12,7 @@ function Console(app) {
    <div class="controller-wrapper">
         <div class="header-wrapper console-1">
           <div class="header">
-            <p data-logo="seeq" class="title">INPUT:~$ </p>
+            <p data-logo="client" class="title">INPUT:~$ </p>
             <terminal>
               <div id="content" data-ctrl="fetch" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off"></div>
               <caret id="input-caret" for="terminal-input" class="caret btn-hide">&nbsp;</caret>
@@ -139,7 +139,7 @@ function Console(app) {
     // input 
     self.inputFetch.addEventListener("input", function (e) { 
       self.fetchSearchInput = this.innerText; 
-      seeq.displayer.displayMsg("console")
+      client.displayer.displayMsg("console")
     })
     self.inputFetch.addEventListener("focus", function () { 
       self.isInputFocused = true; 
@@ -154,8 +154,8 @@ function Console(app) {
     self.searchRegExp.addEventListener("input", function () {
       self.searchType = "regex"
       self.regexInput = this.innerText
-      seeq.getMatchedPosition() //TODO: return value instead.
-      seeq.displayer.displayMsg("regex")
+      client.getMatchedPosition() //TODO: return value instead.
+      client.displayer.displayMsg("regex")
     });
     self.searchRegExp.addEventListener("focus", function () { 
       self.isRegExpFocused=true; 

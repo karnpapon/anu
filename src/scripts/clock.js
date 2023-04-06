@@ -76,7 +76,7 @@ function Clock(canvas) {
     if (value) { this.speed.value = clamp(value, 60, 300) }
     if (target) { this.speed.target = clamp(target, 60, 300) }
     if (setTimer === true) { this.setTimer(this.speed.value) }
-    seeq.console.bpmNumber.innerText = this.speed.value
+    client.console.bpmNumber.innerText = this.speed.value
   }
 
   this.setTimer = function (bpm) {

@@ -1,6 +1,6 @@
 'use strict'
 
-/* global seeq */
+/* global client */
 
 function StepCounter(canvas) {
   this.isSelected = false
@@ -36,7 +36,7 @@ function StepCounter(canvas) {
         }
       }
     } else {
-      canvas.highlighter.highlighters.forEach(value => {
+      canvas.marker.markers.forEach(value => {
         if (value.i === c.i) {
           c.isOverlap = canvas.isOverlapArea(c.x, c.y)
           if (!c.isOverlap) {
@@ -48,7 +48,7 @@ function StepCounter(canvas) {
             }
           } else {
             value.overlapIndex.forEach((i) => {
-              rand = getRandomValue(canvas.highlighter.highlighters[i].overlapAreas)
+              rand = getRandomValue(canvas.marker.markers[i].overlapAreas)
               if(rand && 'x' in rand) {
                 c.x = rand.x < value.x || rand.x > value.x + value.w - 1 ? c.x-- : rand.x
               } 
@@ -75,7 +75,7 @@ function StepCounter(canvas) {
         }
       }
     } else {
-      canvas.highlighter.highlighters.forEach(value => {
+      canvas.marker.markers.forEach(value => {
         if (value.i === c.i) {
           c.isOverlap = canvas.isOverlapArea(c.x, c.y)
           if (!c.isOverlap) {
@@ -88,11 +88,11 @@ function StepCounter(canvas) {
               c.x = value.x
               c.y = value.h > 1 ? value.y + c.y_counter % value.h : value.y
               c.y_counter++
-              c.y_counter = c.y_counter % value.h // wrapped to height since there's no needs to count up more than highlighter height.
+              c.y_counter = c.y_counter % value.h // wrapped to height since there's no needs to count up more than marker height.
             }
           } else {
             value.overlapIndex.forEach((i) => {
-              rand = getRandomValue(canvas.highlighter.highlighters[i].overlapAreas)
+              rand = getRandomValue(canvas.marker.markers[i].overlapAreas)
               if(rand && 'x' in rand) {
                 c.x = rand.x < value.x || rand.x > value.x + value.w - 1 ? c.x++ : rand.x
               } 
@@ -105,15 +105,15 @@ function StepCounter(canvas) {
   }
 
   this.increment = function (c) {
-    if (seeq.console.isReverse) { return this.back(c) }
+    if (client.console.isReverse) { return this.back(c) }
     this.forth(c)
   }
 
   this.range = function () {
-    // canvas.highlighter.highlighters.forEach(cs => {
+    // canvas.marker.markers.forEach(cs => {
     //   canvas.seequencer.resetFrameToRange(cs)
     // })
-    // canvas.seequencer.resetFrameToRange(canvas.highlighter.highlighters[canvas.highlighter.active])
+    // canvas.seequencer.resetFrameToRange(canvas.marker.markers[canvas.marker.active])
   }
 
   function getRandomValue(collection) {

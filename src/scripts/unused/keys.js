@@ -199,9 +199,9 @@ function Keys(app) {
 
     // hold open only when midi config is actived.
     // otherwise info display bar will close only when release a key.
-    app.info.style.opacity = seeq.isConfigToggle 
-    || seeq.isInfoToggleOpened 
-    || seeq.isRegExpSearching? 
+    app.info.style.opacity = client.isConfigToggle 
+    || client.isInfoToggleOpened 
+    || client.isRegExpSearching? 
     0:1
 
     this.onKeyUp(event) 

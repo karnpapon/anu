@@ -48,7 +48,7 @@ function Metronome(canvas) {
     // create an oscillator
     let osc = this.audioContext.createOscillator();
     let gain = this.audioContext.createGain();
-    gain.gain.value = seeq.enableMetronome? 0.25:0;
+    gain.gain.value = client.enableMetronome? 0.25:0;
     osc.connect(gain);
     gain.connect(this.audioContext.destination);
 
@@ -67,12 +67,12 @@ function Metronome(canvas) {
 
   this.set = function(value) {
     if (value) { this.tempo.value = clamp(value, 60, 300) }
-    seeq.console.bpmNumber.innerText = this.tempo.value
+    client.console.bpmNumber.innerText = this.tempo.value
   }
 
   this.setNoteRatio = function(value) {
     if (value) { this.noteRatio = clamp(value, 1, 16) }
-    seeq.console.currentNumber.innerText = `${this.noteRatio}:16`
+    client.console.currentNumber.innerText = `${this.noteRatio}:16`
   }
 
   this.mod = function(mod = 0) {

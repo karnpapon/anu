@@ -1,4 +1,4 @@
-/* global seeq */
+/* global client */
 
 function Seequencer(canvas){
   this.w = 1 // Default Width
@@ -24,8 +24,8 @@ function Seequencer(canvas){
     this.replace(new Array((this.h * this.w) + 1).join('.'))
   }
 
-  this.resetFrameToRange = function(highlighter){
-    this.f = 0 + highlighter.x - 1
+  this.resetFrameToRange = function(marker){
+    this.f = 0 + marker.x - 1
   }
 
   this.load = function (w, h, s, f = 0) {
@@ -104,13 +104,13 @@ function Seequencer(canvas){
   }
 
   this.inBlock = function(x,y){
-    let block = canvas.highlighter.getBlock()
+    let block = canvas.marker.getBlock()
     return  block.some( b => b.x == x && b.y == y)
   }
 
   this.inMark = function(x,y){
     let p = []
-    seeq.matchedPosition.forEach(pos => { 
+    client.matchedPosition.forEach(pos => { 
       let len = 0
       for(var i=0; i<pos.len;i++){
         p.push(canvas.seequencer.posAt(pos.index + len)) 

@@ -1,6 +1,6 @@
 "use strict";
 
-/* global seeq */
+/* global client */
 
 function Commander(canvas) {
   this.isActive = false;
@@ -12,7 +12,7 @@ function Commander(canvas) {
   this.switchFlag = false;
   this.switchCounter = 0;
 
-  const { displayer, console: app_console } = seeq
+  const { displayer, console: app_console } = client
 
   this.start = function(q = "") {
     this.isActive = true;
@@ -105,13 +105,13 @@ function Commander(canvas) {
       }
 
       this.doWhen(event.shiftKey, () => {
-        const { highlighter, stepcounter,  stepcursor } = canvas
+        const { marker, stepcounter,  stepcursor } = canvas
 
-        // (Shift-Enter) get step into highlighter range.
+        // (Shift-Enter) get step into marker range.
         if (event.keyCode === 13) {
-          const active_index = stepcounter.counter.length > 1 ? highlighter.active : 0
+          const active_index = stepcounter.counter.length > 1 ? marker.active : 0
           stepcounter.isSelected = !stepcounter.isSelected
-          stepcounter.counter[active_index].i = highlighter.active;
+          stepcounter.counter[active_index].i = marker.active;
           return;
         }
   
@@ -136,10 +136,10 @@ function Commander(canvas) {
         return;
       }
   
-      // (n) new highlighter. 
+      // (n) new marker. 
       if (event.keyCode === 78 ) {
         canvas.globalIdx += 1;
-        canvas.highlighter.add();
+        canvas.marker.add();
         event.preventDefault();
         return;
       }
@@ -147,7 +147,7 @@ function Commander(canvas) {
       // (Backspace)
       if (
         event.key === "Backspace" &&
-        canvas.highlighter.highlighters.length > 1
+        canvas.marker.markers.length > 1
       ) {
         canvas.eraseSelectionCursor();
         event.preventDefault();
@@ -170,9 +170,9 @@ function Commander(canvas) {
       }
 
 
-      // (e) rename highlighter's name.
+      // (e) rename marker's name.
       if (event.keyCode === 69) {
-        displayer.displayMsg("rename-highlighter");
+        displayer.displayMsg("rename-marker");
         event.preventDefault();
         return;
       }
@@ -212,9 +212,9 @@ function Commander(canvas) {
         return;
       }
 
-      // (a) rename highlighter.
+      // (a) rename marker.
       if (event.keyCode === 65) {
-        displayer.displayMsg('rename-highlighter')
+        displayer.displayMsg('rename-marker')
         event.preventDefault();
         return
       }
@@ -313,12 +313,12 @@ function Commander(canvas) {
   };
 
   this.onKeyUp = function(event) {
-    // switch highlighter.
+    // switch marker.
     if( this.switchFlag ){
       if( this.switchFlag && this.altFlag ){
-        canvas.highlighter.switch(this.switchCounter % canvas.highlighter.highlighters.length)
+        canvas.marker.switch(this.switchCounter % canvas.marker.markers.length)
         this.altFlag = false
-        displayer.displayMsg('active-highlighter')
+        displayer.displayMsg('active-marker')
       } else {
         this.switchFlag = false
         displayer.displayDefault()
@@ -331,9 +331,9 @@ function Commander(canvas) {
   this.onArrowUp = function(mod = false, skip = false) {
     const leap = skip ? canvas.grid.h : 1;
     if (mod) {
-      canvas.highlighter.scale(0, leap);
+      canvas.marker.scale(0, leap);
     } else {
-      canvas.highlighter.move(0, leap);
+      canvas.marker.move(0, leap);
     }
   };
 
@@ -353,9 +353,9 @@ function Commander(canvas) {
       }
 
       if (mod) {
-        canvas.highlighter.scale(0, -leap);
+        canvas.marker.scale(0, -leap);
       } else {
-        canvas.highlighter.move(0, -leap);
+        canvas.marker.move(0, -leap);
       }
     }
   };
@@ -363,9 +363,9 @@ function Commander(canvas) {
   this.onArrowLeft = function(mod = false, skip = false) {
     const leap = skip ? canvas.grid.w : 1;
     if (mod) {
-      canvas.highlighter.scale(-leap, 0);
+      canvas.marker.scale(-leap, 0);
     } else {
-      canvas.highlighter.move(-leap, 0);
+      canvas.marker.move(-leap, 0);
     }
   };
 
@@ -384,9 +384,9 @@ function Commander(canvas) {
       }
 
       if (mod) {
-        canvas.highlighter.scale(leap, 0);
+        canvas.marker.scale(leap, 0);
       } else {
-        canvas.highlighter.move(leap, 0);
+        canvas.marker.move(leap, 0);
       }
     }
   };

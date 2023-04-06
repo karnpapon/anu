@@ -17,7 +17,7 @@ struct MidiMessage {
 
 #[tauri::command]
 pub fn init_midi(midi_state: tauri::State<'_, MidiState>){
-  let midi_out = MidiOutput::new("seeq-midi-output").unwrap(); 
+  let midi_out = MidiOutput::new("client-midi-output").unwrap(); 
   let mut midi = midi_state.midi.lock().unwrap();
   *midi = Some(midi_out);
 }

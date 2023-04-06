@@ -12,8 +12,8 @@ function Source (canvas) {
     this.path = null
     this.queue = []
     canvas.seequencer.reset()
-    canvas.highlighter.init()
-    canvas.highlighter.initCursor()
+    canvas.marker.init()
+    canvas.marker.initCursor()
     canvas.resize()
   }
 

@@ -1,10 +1,10 @@
 'use strict'
 
 const library = {
-  "n": { "info": "add new highlighter" },
-  "Backspace": { "info": "remove current highlighter" },
-  "f": { "info": "focus only highlighter(s)" },
-  "e": { "info": "rename highlighter" },
+  "n": { "info": "add new marker" },
+  "Backspace": { "info": "remove current marker" },
+  "f": { "info": "focus only marker(s)" },
+  "e": { "info": "rename marker" },
   "o": { "info": "set osc msg" },
   "m": { "info": "set midi msg" },
   "r": { "info": "reverse step" },
@@ -13,11 +13,11 @@ const library = {
 
   "Spacebar": { "info": "play/pause" },
   "Cmd-Arrow": { "info": "jump" },
-  "Shift-Arrow": { "info": "incr/decr highlighter range" },
-  "Shift-Arrow-Cmd": { "info": "jump incr/decr highlighter range" },
-  "Cmd-Return": { "info": "toggle snap step to highlighter range" },
-  "Option-e": { "info": "show current selected highlighter name" },
-  "Option-Tab": { "info": "change selected highlighters" },
+  "Shift-Arrow": { "info": "incr/decr marker range" },
+  "Shift-Arrow-Cmd": { "info": "jump incr/decr marker range" },
+  "Cmd-Return": { "info": "toggle snap step to marker range" },
+  "Option-e": { "info": "show current selected marker name" },
+  "Option-Tab": { "info": "change selected markers" },
   "Shift-Plus or Shift-Minus": { "info": "add/remove step" },
 }
 
@@ -25,7 +25,7 @@ const library = {
 function Canvas () {
 
   this.seequencer = new Seequencer(this)
-  this.highlighter = new Highlighter(this)
+  this.marker = new Marker(this)
   this.source = new Source(this)
   this.commander = new Commander(this)
   this.clock = new Clock(this)
@@ -78,7 +78,7 @@ function Canvas () {
     this.io.start()
     this.source.start()
     this.clock.start()
-    this.highlighter.start()
+    this.marker.start()
     
     this.reset()
     this.writeData()
@@ -105,7 +105,7 @@ function Canvas () {
     this.match()
     this.stepcursor.draw()
     this.drawGuide()
-    // this.drawStroke(this.highlighter.toRect())
+    // this.drawStroke(this.marker.toRect())
   }
 
   this.reset = function () {
@@ -113,7 +113,7 @@ function Canvas () {
     this.globalIdx = 0 
     this.seequencer.reset()
     this.theme.reset()
-    this.highlighter.reset()
+    this.marker.reset()
     this.stepcounter.reset()
     this.stepcursor.reset()
   }
@@ -134,9 +134,9 @@ function Canvas () {
 
   this.writeData = function (data = 'please give some input value and hit return' ) {
     this.texts = data
-    let position = this.highlighter.highlighters[this.highlighter.active]
+    let position = this.marker.markers[this.marker.active]
     for (var i = 0; i < this.texts.length; i++) {
-      this.highlighter.write(this.texts.charAt(i))
+      this.marker.write(this.texts.charAt(i))
       position.x++
       if (position.x % this.seequencer.w === 0) {
         position.x = 0
@@ -147,18 +147,18 @@ function Canvas () {
 
   this.match = function () {
     if(this.p.length > 0){
-      this.highlighter.clearMatchedPos() 
+      this.marker.clearMatchedPos() 
       this.p.forEach((item, i) => {
         let g = this.seequencer.glyphAt(item.x, item.y)
         if (this.seequencer.inBlock(item.x, item.y)) {
-          this.highlighter.setMatchedPos(item)
-          this.drawSprite(item.x, item.y, g, 2) // marked within highlighter block.
+          this.marker.setMatchedPos(item)
+          this.drawSprite(item.x, item.y, g, 2) // marked within marker block.
         } else {
           this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
         }
       })
     } else {
-      this.highlighter.clearMatchedPos() 
+      this.marker.clearMatchedPos() 
     }
   }
 
@@ -174,28 +174,28 @@ function Canvas () {
   }
 
   this.eraseSelectionCursor = function(){
-    this.highlighter.erase()
+    this.marker.erase()
     this.commander.resetSwitchCounter()
   }
 
   this.isHighlighter = function (x, y) {
-    return this.highlighter.highlighters.some( cs => x === cs.x && y === cs.y)
+    return this.marker.markers.some( cs => x === cs.x && y === cs.y)
   }
 
   this.isCurrentHighlighter = function(x,y){
-    return this.highlighter.highlighters.some( cs => x === cs.x && y === cs.y && cs.i === this.highlighter.highlighters[ this.highlighter.active ].i)
+    return this.marker.markers.some( cs => x === cs.x && y === cs.y && cs.i === this.marker.markers[ this.marker.active ].i)
   }
 
   this.getCurrentHighlighter = function(){
-    return this.highlighter.highlighters.filter( cs => cs.i === this.highlighter.highlighters[ this.highlighter.active ].i)
+    return this.marker.markers.filter( cs => cs.i === this.marker.markers[ this.marker.active ].i)
   }
 
   this.isWithinHighlightRange = function (x, y) {
-    return !!( this.highlighter.highlighters.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
+    return !!( this.marker.markers.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
   }
 
   this.isOverlapArea = function (x,y){
-    return this.highlighter.highlighters.some(h => h.overlapAreas.has(`${x}:${y}`))
+    return this.marker.markers.some(h => h.overlapAreas.has(`${x}:${y}`))
   }
 
   this.isMarker = function (x, y) {
@@ -214,16 +214,16 @@ function Canvas () {
     return x === 0 || y === 0 || x === this.seequencer.w - 1 || y === this.seequencer.h - 1
   }
 
-  this.isSelectionAtEdge = function(highlighter){
-    return ( highlighter.x + highlighter.w ) - 1  === this.seequencer.w - 1 || ( highlighter.y + highlighter.h ) - 1  === this.seequencer.h - 1
+  this.isSelectionAtEdge = function(marker){
+    return ( marker.x + marker.w ) - 1  === this.seequencer.w - 1 || ( marker.y + marker.h ) - 1  === this.seequencer.h - 1
   }
 
-  this.isSelectionAtEdgeRight = function(highlighter){
-    return ( highlighter.x + highlighter.w ) - 1  === this.seequencer.w - 1 
+  this.isSelectionAtEdgeRight = function(marker){
+    return ( marker.x + marker.w ) - 1  === this.seequencer.w - 1 
   }
 
-  this.isSelectionAtEdgeBottom = function(highlighter){
-    return ( highlighter.y + highlighter.h ) - 1  === this.seequencer.h - 1
+  this.isSelectionAtEdgeBottom = function(marker){
+    return ( marker.y + marker.h ) - 1  === this.seequencer.h - 1
   }
 
   this.makeStyle = function (x, y) {
@@ -240,15 +240,15 @@ function Canvas () {
     if (type === 1) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_inv  } }
     // _
     if (type === 2) { return { bg: '#4B4B4B', fg: this.theme.active.b_med } }
-    // step highlighter
+    // step marker
     if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
-    // highlighter
+    // marker
     if (type === 4) { return { bg: this.theme.active.f_med, fg: this.theme.active.f_low } }
     // Mark Step inverse.
     if (type === 5) { return { bg: '#B4B4B4', fg: this.theme.active.background } }
-    // highlighter selection scope.
+    // marker selection scope.
     if (type === 6) { return { fg: this.theme.active.f_low, bg: this.theme.active.b_med } }
-    // current highlighter.
+    // current marker.
     if (type === 7) { return { fg: this.theme.active.background} }
     // Block select.
     if (type === 8) { return { bg: this.theme.active.b_med, fg: this.theme.active.f_low } }

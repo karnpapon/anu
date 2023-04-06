@@ -1,6 +1,6 @@
 'use strict'
 
-/* global seeq */
+/* global client */
 
 function StepCursor(canvas) {
 
@@ -23,9 +23,9 @@ function StepCursor(canvas) {
   }
 
   this.add = function(){
-    let highlighter = canvas.highlighter.highlighters[ canvas.highlighter.active ]
-    canvas.stepcounter.counter.push({ x: highlighter.x ,y: highlighter.y , counter: 0, i: canvas.highlighter.active, y_counter: 0})
-    this.steps.push({ x: 0, y:0, i: highlighter.i})
+    let marker = canvas.marker.markers[ canvas.marker.active ]
+    canvas.stepcounter.counter.push({ x: marker.x ,y: marker.y , counter: 0, i: canvas.marker.active, y_counter: 0})
+    this.steps.push({ x: 0, y:0, i: marker.i})
   }
 
   this.remove = function(){
@@ -44,7 +44,7 @@ function StepCursor(canvas) {
   }
 
   this.triggerFX = function(time,el){
-    let target  = canvas.highlighter.getSelectionArea(el)
+    let target  = canvas.marker.getSelectionArea(el)
     target.forEach( item => {
       let g = canvas.seequencer.glyphAt(item.x, item.y)
       if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isHighlighter(item.x,item.y)){
@@ -59,12 +59,12 @@ function StepCursor(canvas) {
 
     this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
-        canvas.highlighter.highlighters.forEach( ( highlighter, index) => {
-          highlighter.matched.forEach( ( _c, _idx ) => {
+        canvas.marker.markers.forEach( ( marker, index) => {
+          marker.matched.forEach( ( _c, _idx ) => {
             if(_c.x === step.x && _c.y === step.y){
               i=_idx
               this.msgOut(step, i)
-              value = canvas.highlighter.highlighters[index]
+              value = canvas.marker.markers[index]
               canvas.drawSprite(step.x, step.y, '＊', 2)
               this.triggerFX(null, value)
             } 
@@ -75,7 +75,7 @@ function StepCursor(canvas) {
   }
 
   this.msgOut = function(step, i){
-    let target = canvas.highlighter.highlighters.filter( cs => cs.i === step.i )
+    let target = canvas.marker.markers.filter( cs => cs.i === step.i )
     const {
       channel,
       note,
@@ -90,12 +90,12 @@ function StepCursor(canvas) {
     let veloIndex = i % velocity.length
     let lenIndex = i % notelength.length
 
-    if(seeq.console.isOSCToggled){
+    if(client.console.isOSCToggled){
        // TODO: dynamic index only for OSC msg.
       canvas.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
     }
 
-    if(seeq.console.isUDPToggled){
+    if(client.console.isUDPToggled){
       canvas.io.udp.send( target[0].msg.UDP[midiIndex])
     }
 

@@ -7,9 +7,9 @@ function Sequencer(app){
   this.output = ""
   this.beatRatio = '16th'
 
-  this.set = function (highlighter, index) {
+  this.set = function (marker, index) {
 
-    // app.highlighter.forEach((highlighter, index) => {
+    // app.marker.forEach((marker, index) => {
       var offsetCursor = 0
       if (index == 0) {
         this.outputType = app.data.cursorText.innerText
@@ -19,7 +19,7 @@ function Sequencer(app){
         offsetCursor = 36 * index
       }
 
-      let cursorPosition = highlighter.isHighlighterOffsetReverse? highlighter.position - 2:highlighter.position
+      let cursorPosition = marker.isHighlighterOffsetReverse? marker.position - 2:marker.position
       
       // handle negative index to behave correctly.
       if( cursorPosition < 0 ){
@@ -59,21 +59,21 @@ function Sequencer(app){
   }
 
   this.selectedRangeStartIndex = function(){
-    app.highlighter.forEach( ( highlighter, index, array ) => {
+    app.marker.forEach( ( marker, index, array ) => {
       array[index].position = app.matchedSelectPosition[index]
     })
   }
 
-  this.setSelectionRange = function(highlighter, index, array){
+  this.setSelectionRange = function(marker, index, array){
     if( !app.isTextSelected ) { return }
       let cursorPosition, offsetReverseCursor
 
       // reversed position compensation.
-      if( highlighter.isHighlighterOffsetReverse){
-        cursorPosition = highlighter.position - 2
+      if( marker.isHighlighterOffsetReverse){
+        cursorPosition = marker.position - 2
         offsetReverseCursor = 2
       } else {
-        cursorPosition = highlighter.position
+        cursorPosition = marker.position
         offsetReverseCursor = 0
       }
 
@@ -85,23 +85,23 @@ function Sequencer(app){
   }
 
   this.run = function(){
-    app.highlighter.forEach((highlighter, index, array) => {
+    app.marker.forEach((marker, index, array) => {
       if( !app.isTextSelected ) { 
-        this.setGlobalCursorWrap(highlighter, index, array)
+        this.setGlobalCursorWrap(marker, index, array)
       }
-      this.set(highlighter, index) 
-      this.counting(highlighter)
-      this.trigger(highlighter, index, array)
-      this.setSelectionRange(highlighter, index, array)
+      this.set(marker, index) 
+      this.counting(marker)
+      this.trigger(marker, index, array)
+      this.setSelectionRange(marker, index, array)
 
     })
   }
 
-  this.setGlobalCursorWrap = function(highlighter, index, array){
+  this.setGlobalCursorWrap = function(marker, index, array){
     var length = app.data.cursorText.innerText.length
-      if (highlighter.position > length - 1) {
+      if (marker.position > length - 1) {
         array[index].position = 0
-      } else if (app.isReverse && highlighter.position < 0) {
+      } else if (app.isReverse && marker.position < 0) {
         array[index].position = length - 1
       }
   }
@@ -123,17 +123,17 @@ function Sequencer(app){
     } 
   }
 
-  this.trigger = function(highlighter, index, array){
+  this.trigger = function(marker, index, array){
 
     if( app.searchValue !== ""){
       if(app.isTextSelected){
-        if (!highlighter.isMuted) {
+        if (!marker.isMuted) {
           // trigger letters.
           if (app.matchedPositionLength == 1) {
-            if (app.matchedPosition.indexOf(highlighter.position) !== (-1)) {
-              this.outputMsg(highlighter)
+            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+              this.outputMsg(marker)
               this.addTriggerClass(index)
-              highlighter.note.length > 1? highlighter.counter++:highlighter.counter
+              marker.note.length > 1? marker.counter++:marker.counter
             } else {
               this.removeTriggerClass(index)
             }
@@ -141,11 +141,11 @@ function Sequencer(app){
 
           // trigger words.
           else if (app.matchedPositionLength > 1) {
-            if (app.matchedPosition.indexOf(highlighter.position) !== (-1)) {
-              this.outputMsg(highlighter)
+            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+              this.outputMsg(marker)
               this.addTriggerClass(index)
             } else {
-              if (app.matchedPositionWithLength.indexOf(highlighter.position) == (-1)) {
+              if (app.matchedPositionWithLength.indexOf(marker.position) == (-1)) {
                 app.getHighlight[index].classList.remove("selection-trigger")
                 app.info.classList.remove("trigger")
               }
@@ -155,8 +155,8 @@ function Sequencer(app){
       } else {
           // trigger letters.
           if (app.matchedPositionLength == 1) {
-            if (app.matchedPosition.indexOf(highlighter.position) !== (-1)) {
-              this.outputMsg(highlighter)
+            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+              this.outputMsg(marker)
               this.addTriggerClass()
             }
             else {
@@ -168,11 +168,11 @@ function Sequencer(app){
 
           // trigger words.
           else if (app.matchedPositionLength > 1) {
-            if (app.matchedPosition.indexOf(highlighter.position) !== (-1)) {
-              this.outputMsg(highlighter)
+            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+              this.outputMsg(marker)
               this.addTriggerClass()
             } else {
-              // if (app.matchedPositionWithLength.indexOf(highlighter.position) == (-1)) {
+              // if (app.matchedPositionWithLength.indexOf(marker.position) == (-1)) {
               //   app.data.el.classList.remove("trigger")
               // }
             }
@@ -181,34 +181,34 @@ function Sequencer(app){
     }
   }
 
-  this.getCursorIndex = function(highlighter){
+  this.getCursorIndex = function(marker){
     let reverseCounter, counterIndex
-    if (highlighter.reverse) {
-      reverseCounter = (highlighter.note.length - 1) - highlighter.counter
+    if (marker.reverse) {
+      reverseCounter = (marker.note.length - 1) - marker.counter
       if (reverseCounter < 0) { // reset reversed counter.
-        reverseCounter = highlighter.note.length - 1
-        highlighter.counter = 0
+        reverseCounter = marker.note.length - 1
+        marker.counter = 0
       }
       counterIndex = reverseCounter
     } else {
-      highlighter.counter % highlighter.note.length == 0 ? highlighter.counter = 0 : highlighter.counter
-      counterIndex = highlighter.counter
+      marker.counter % marker.note.length == 0 ? marker.counter = 0 : marker.counter
+      counterIndex = marker.counter
     }
 
     return counterIndex
   }
 
-  this.outputMsg =  function(highlighter){
-    let i = this.getCursorIndex(highlighter)
+  this.outputMsg =  function(marker){
+    let i = this.getCursorIndex(marker)
     this.midiNoteOn(
-      highlighter.channel, 
-      highlighter.octave[i], 
-      highlighter.note[i], 
-      highlighter.velocity[i], 
-      highlighter.notelength[i]
+      marker.channel, 
+      marker.octave[i], 
+      marker.note[i], 
+      marker.velocity[i], 
+      marker.notelength[i]
     )
-    app.isOSCToggled ? app.io.osc.push('/' + highlighter.OSC.path, highlighter.OSC.msg):() => {}
-    app.isUDPToggled ? this.udpSend(highlighter.UDP[i]):()=> {}
+    app.isOSCToggled ? app.io.osc.push('/' + marker.OSC.path, marker.OSC.msg):() => {}
+    app.isUDPToggled ? this.udpSend(marker.UDP[i]):()=> {}
     app.io.run()
     app.io.clear()
     // app.textBaffleFX()
@@ -265,7 +265,7 @@ function Sequencer(app){
   }
 
   this.stop = function(){
-    app.highlighter = app.retrieveCursor()
+    app.marker = app.retrieveCursor()
     app.data.el.classList.remove("trigger")
     app.selectedRangeLength = []
     app.matchedSelectPosition = []
@@ -281,18 +281,18 @@ function Sequencer(app){
     if(app.isTextSelected){
       this.resetSelectedRange()
     } else {
-      app.highlighter = app.retrieveCursor()
+      app.marker = app.retrieveCursor()
     }
     
     app.data.el.classList.remove("trigger")
-    // this.set(app.highlighter, 0)
+    // this.set(app.marker, 0)
     if (app.isLinkToggle) {
       window.parent.postMessage("stop", '*')
     }
   }
 
   this.resetSelectedRange = function(){
-    app.highlighter.forEach((highlighter, index, array) => { 
+    app.marker.forEach((marker, index, array) => { 
       array[index].position = app.matchedSelectPosition[index]
     })
   }

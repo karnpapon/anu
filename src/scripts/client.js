@@ -1,6 +1,6 @@
-/* global seeq */
+/* global client */
 
-function Seeq(){
+function Client(){
   
   const el = tag => document.createElement(tag);
   this.content = new Content(this)
@@ -12,7 +12,7 @@ function Seeq(){
   // DOM installation.
   this.el = el("app");
   this.el.style.opacity = 0;
-  this.el.id = "seeq";
+  this.el.id = "client";
   this.el.setAttribute("data-tauri-drag-region", "")
   this.wrapper_el = el("div")
   this.wrapper_el.className = "wrapper-control"
@@ -31,7 +31,7 @@ function Seeq(){
 
   // -----------------------------------
 
-  // Highlighter.
+  // Marker.
   this.matchedPosition = []
 
   // -----------------------------------
@@ -40,11 +40,11 @@ function Seeq(){
     this.console.build()
     this.displayer.build()
     this.content.build()
-    setTimeout(seeq.show,400)
+    setTimeout(client.show,400)
   }
 
   this.show = function () {
-    seeq.el.style.opacity = 1;
+    client.el.style.opacity = 1;
   }
 
   this.fetch = function(){
@@ -117,11 +117,11 @@ function Seeq(){
     var data = ""
     var res = ""
     
-    seeq.content.loading.classList.add("loading")
+    client.content.loading.classList.add("loading")
 
     axios({
       method: "get",
-      url: seeq.url + seeq.console.fetchSearchInput,
+      url: client.url + client.console.fetchSearchInput,
       responseType: "json",
     })
     .then((resp) => {
@@ -131,23 +131,23 @@ function Seeq(){
       })
       if(data){
         res = data.extract
-        seeq.repaint(res)
-        seeq.console.setTotalLenghtCounterDisplay()
-        seeq.isGettingData = false
-        seeq.content.loading.classList.remove("loading")
+        client.repaint(res)
+        client.console.setTotalLenghtCounterDisplay()
+        client.isGettingData = false
+        client.content.loading.classList.remove("loading")
 
         canvas.clearMarksPos()
         canvas.globalIdx = 0 
-        canvas.highlighter.reset()
+        canvas.marker.reset()
         canvas.stepcounter.reset()
         canvas.stepcursor.reset()
       }
     })
     .catch((error) => {
       res = `${error}, please try again..`
-      seeq.isGettingData = false
-      seeq.content.loading.classList.remove("loading")
-      seeq.repaint(res)
+      client.isGettingData = false
+      client.content.loading.classList.remove("loading")
+      client.repaint(res)
     });
   }
 

@@ -1,9 +1,9 @@
-const seeq = new Seeq();
+const client = new Client();
 const canvas = new Canvas();
 const metronome = new Metronome(canvas);
 
-seeq.build();
-canvas.install(seeq.content.el);
+client.build();
+canvas.install(client.content.el);
 
 window.addEventListener("load", () => {
   canvas.init();
@@ -12,30 +12,30 @@ window.addEventListener("load", () => {
 
   listen("menu-osc", function (msg) {
     console.log("listen::menu-osc");
-    seeq.console.togglePort("OSC", seeq.console);
-    seeq.console.oscInfo.innerText = seeq.console.isOSCToggled
+    client.console.togglePort("OSC", client.console);
+    client.console.oscInfo.innerText = client.console.isOSCToggled
       ? `PORT:${canvas.io.osc.port}`
       : "--";
   });
   listen("menu-rev", function (msg) {
     console.log("listen::menu-rev");
-    seeq.console.togglePort("REV", seeq.console);
+    client.console.togglePort("REV", client.console);
   });
 
   listen("menu-focus", function (msg) {
     console.log("listen::menu-focus");
-    seeq.console.togglePort("FOCUS", seeq.console);
+    client.console.togglePort("FOCUS", client.console);
     canvas.toggleShowMarks();
   });
 
   listen("menu-metronome", function (msg) {
     console.log("listen::menu-metronome");
-    seeq.enableMetronome = !seeq.enableMetronome
+    client.enableMetronome = !client.enableMetronome
   });
 
   listen("menu-reset_noteratio", function (msg) {
     console.log("listen::menu-reset_noteratio");
     metronome.noteRatio = 16
-    seeq.console.currentNumber.innerText = "1:16"
+    client.console.currentNumber.innerText = "1:16"
   });
 });
