@@ -17,6 +17,8 @@ body {
 
 button { background-color: white; }
 
+p {margin: 0;}
+
 header{
   display: flex;
   position: absolute; 

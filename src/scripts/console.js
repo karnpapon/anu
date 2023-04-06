@@ -19,10 +19,16 @@ function Console(app) {
             </terminal>
           </div>
           <div class="header">
-          <p class="title">REGEXP:~$ </p>
+            <p class="title">REGEX:~$ </p>
             <terminal>
               <div id="regex" data-ctrl="regex" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off"></div>
               <caret id="regex-caret" for="regex" class="caret btn-hide">&nbsp;</caret>
+            </terminal>
+          </div>
+          <div class="header">
+            <p class="title">REGEXMODE:</p>
+            <terminal>
+              <p data-ctrl="regex-mode"></p>
             </terminal>
           </div>
         </div>
@@ -90,6 +96,9 @@ function Console(app) {
   // Input. 
   this.searchRegExp
   this.regexInput
+  this.regexMode = ["REALTIME", "ON-EVAL"]
+  this.regexModeIndex = 0
+  this.regexModeElem
   this.fetchSearchInput = ""
   this.searchValue = ""
  
@@ -135,6 +144,8 @@ function Console(app) {
     self.currentNumber = qs("p[data-ctrl='current']")
     self.highlightLength = qs("p[data-ctrl='crsrlen']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
+    self.regexModeElem = qs("p[data-ctrl='regex-mode']")
+    self.regexModeElem.innerText = self.regexMode[self.regexModeIndex]
 
     // input 
     self.inputFetch.addEventListener("input", function (e) { 
@@ -154,7 +165,9 @@ function Console(app) {
     self.searchRegExp.addEventListener("input", function () {
       self.searchType = "regex"
       self.regexInput = this.innerText
-      client.getMatchedPosition() //TODO: return value instead.
+      if (self.regexMode[self.regexModeIndex] === "REALTIME") {
+        client.getMatchedPosition() //TODO: return value instead.
+      } 
       client.displayer.displayMsg("regex")
     });
     self.searchRegExp.addEventListener("focus", function () { 
@@ -240,7 +253,12 @@ function Console(app) {
     let target = document.getElementById(id)
 
     target.classList.add("trigger-input")
-    this.isInputFocused? app.startFetch():() => {}
+    if (this.isInputFocused) {
+      app.startFetch()
+    } else {
+      app.matchedPosition = []
+      app.getMatchedPosition()
+    } 
     setTimeout(() => {
       target.classList.remove("trigger-input") 
     }, 200);
@@ -258,6 +276,12 @@ function Console(app) {
     } else if ( type === 'FOCUS'){
       this.isFocus = !this.isFocus 
     }
+  }
+
+  this.changeRegexMode = function() {
+    this.regexModeIndex++
+    this.regexModeIndex = this.regexModeIndex % this.regexMode.length
+    this.regexModeElem.innerText = this.regexMode[this.regexModeIndex]
   }
 
   this.setFocusStyle = function(target){

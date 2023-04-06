@@ -60,8 +60,6 @@ function Commander(canvas) {
       }
       this.stop();
       canvas.isPaused = false;
-      // canvas.clear();
-      // canvas.reset();
       return;
     })
 
@@ -77,7 +75,7 @@ function Commander(canvas) {
 
     // EVAL INPUT / EVAL REGEX
     this.doWhen(event.key === "Enter" && app_console.isInputFocused, () => this.runCmd("content", event) )
-    this.doWhen(event.key === "Enter" && app_console.isFindFocused, () => this.runCmd("find", event) )
+    this.doWhen(event.key === "Enter" && app_console.isRegExpFocused && app_console.regexMode[app_console.regexModeIndex] === "ON-EVAL", () => this.runCmd("regex", event) )
 
     // DISPLAYER INPUT(OSC/MIDI MSG/ETC.) ON
     this.doWhen(displayer.isDisplayInputToggled, () => { 
@@ -312,6 +310,14 @@ function Commander(canvas) {
         }
         app_console.toggleInsert(app_console.searchRegExp,  app_console.regexCaret, app_console.isInsertable);
         app_console.toggleInsert(app_console.inputFetch,  app_console.caret, false); // blur input
+        displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+
+      // (Cmd-\) switch between regex-mode (realtime/on-eval)
+      if (event.keyCode === 220) {
+        app_console.changeRegexMode()
         displayer.displayDefault();
         event.preventDefault();
         return;
