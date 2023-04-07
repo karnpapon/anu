@@ -29,10 +29,10 @@ function Marker(canvas) {
   }
 
   this.initCursor = function(){
-    this.markers.push(this.getNewHighlighter())
+    this.markers.push(this.getNewMarker())
   }
 
-  this.getNewHighlighter = function(){
+  this.getNewMarker = function(){
     let newCursor = { 
       x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
       n: `marker-name-${canvas.globalIdx}`,
@@ -177,7 +177,7 @@ function Marker(canvas) {
   }
 
   this.add = function(){
-    this.markers.push(this.getNewHighlighter()) 
+    this.markers.push(this.getNewMarker()) 
   }
 
   this.moveTo = (x, y) => {

@@ -79,7 +79,7 @@ function Displayer(app) {
       if(self.currentCmd === 'osc'){
         self.oscConf[e.target.id === "osc-path" ? "path" : "msg"] = e.target.textContent;
       } else if( self.currentCmd === 'rename-marker'){
-        console.log("rename-highlighterrename-marker")
+        console.log("rename-marker")
         // self.renameInput = target.value 
       } else if( self.currentCmd === 'midi'){
         self.midiConf[e.target.getAttribute("type")] =  e.target.textContent
