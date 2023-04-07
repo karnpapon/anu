@@ -1,34 +1,30 @@
 # `anu`
 
+[[ Demo video ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
+
 <img src="./src/media/images/ss.png"/>
 
 backend-agnostic step-sequencer/live-coding environment that harnesses the power of matching patterns ("RegEx") to create triggers. as the name suggests "anu" (or "อนุ"), which in Thai grammar denotes a prefix meaning "small", "sub" or "minor". it can be compatible with any others software/hardware that support [ OSC ](https://en.wikipedia.org/wiki/Open_Sound_Control) or [MIDI](https://en.wikipedia.org/wiki/MIDI) protocol (more to be implemented).
  
 unlike others conventional tools or step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously developed under the name "seeq").
 
+written in vanillaJS with dependencies as less as possible in mind. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
+
 ## usages
 soon...
-
-
-## demo
-<div style="text-align:center; background-color: black;"><a href="https://www.youtube.com/watch?v=DGaakhSvYOg"><img src="https://i.ytimg.com/vi/DGaakhSvYOg/hqdefault.jpg" /></a></div>
-
-
-## notes
-written in vanillaJS with dependencies as less as possible in mind. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
 
 ## features
 - support OSC, MIDI.
 - precise clock scheduling.
 
-## development
+## building the native app
 
-```bash
-# Install dependencies
-yarn install or npm install
-# Run the app
-yarn dev or npm run dev
-```
+- [Install Rust/Cargo](https://www.rust-lang.org/learn/get-started)
+- [Install Node/NPM](https://nodejs.org/)
+- Run `yarn build` to start the dev process
+
+## developing
+- `yarn dev`, for development
 
 ## inspirations
 draw inspirations from Orca, Sunvox, others obsolete music software.

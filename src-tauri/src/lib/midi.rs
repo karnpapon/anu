@@ -3,6 +3,8 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::{Mutex};
 
+use crate::App;
+
 #[derive(Default)]
 pub struct MidiState {
   pub midi: Mutex<Option<MidiOutput>>,
@@ -10,21 +12,16 @@ pub struct MidiState {
   pub out_devices: Mutex<Option<MidiOutputConnection>>
 }
 
-#[derive(Clone, Serialize)]
-struct MidiMessage {
-  message: Vec<u8>,
-}
-
 #[tauri::command]
-pub fn init_midi(midi_state: tauri::State<'_, MidiState>){
+pub fn init_midi(app: tauri::State<'_, App>){
   let midi_out = MidiOutput::new("client-midi-output").unwrap(); 
-  let mut midi = midi_state.midi.lock().unwrap();
+  let mut midi = app.midi_states.midi.lock().unwrap();
   *midi = Some(midi_out);
 }
 
 #[tauri::command]
-pub fn list_midi_connections(midi_state: tauri::State<'_, MidiState>) -> HashMap<usize, String> {
-  match midi_state.midi.lock() {
+pub fn list_midi_connections(app: tauri::State<'_, App>) -> HashMap<usize, String> {
+  match app.midi_states.midi.lock() {
     Ok(m) => {
       let mut midi_connections = HashMap::new();
       let _midi = m.as_ref().unwrap();
@@ -42,10 +39,10 @@ pub fn list_midi_connections(midi_state: tauri::State<'_, MidiState>) -> HashMap
 }
 
 #[tauri::command]
-pub fn setup_midi_connection_list(midi_state: tauri::State<'_, MidiState>) -> Result<(),&'static str> {
-  match midi_state.devices.lock() {
+pub fn setup_midi_connection_list(app: tauri::State<'_, App>) -> Result<(),&'static str> {
+  match app.midi_states.devices.lock() {
     Ok(mut midi_devices) => {
-      let state = midi_state.clone();
+      let state = app.clone();
       *midi_devices = list_midi_connections(state);
       Ok(())
     }
@@ -54,9 +51,9 @@ pub fn setup_midi_connection_list(midi_state: tauri::State<'_, MidiState>) -> Re
 }
 
 #[tauri::command]
-pub fn setup_midi_out(midi_state: tauri::State<'_, MidiState>) -> Result<String,&'static str> {
+pub fn setup_midi_out(app: tauri::State<'_, App>) -> Result<String,&'static str> {
   let mut port = None;
-  match (midi_state.devices.lock(), midi_state.midi.lock(), midi_state.out_devices.lock()) {
+  match (app.midi_states.devices.lock(), app.midi_states.midi.lock(), app.midi_states.out_devices.lock()) {
     ( Ok(devices),Ok(midi),Ok(mut out) ) => {
       let _midi = midi.as_ref().unwrap();
       let target_device = devices.get(&0).unwrap(); //TODO: no hardcode.
@@ -81,8 +78,8 @@ pub fn setup_midi_out(midi_state: tauri::State<'_, MidiState>) -> Result<String,
 }
 
 #[tauri::command]
-pub fn send_midi_out(midi_state: tauri::State<'_, MidiState>, msg: Vec<u8>) -> Result<(),&'static str> {
-  match midi_state.out_devices.lock() {
+pub fn send_midi_out(app: tauri::State<'_, App>, msg: Vec<u8>) -> Result<(),&'static str> {
+  match app.midi_states.out_devices.lock() {
     Ok(mut conn_out) => {
       let connection_out: &mut MidiOutputConnection = conn_out.as_mut().unwrap();
       connection_out.send(&msg).unwrap();

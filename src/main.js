@@ -8,14 +8,21 @@ canvas.install(client.content.el);
 window.addEventListener("load", () => {
   canvas.init();
   metronome.init();
-  const { listen } = window.__TAURI__.event;
+  const { invoke, event } = window.__TAURI__;
+  const { listen } = event;
 
   listen("menu-osc", function (msg) {
-    client.console.togglePort("OSC", client.console);
+    if (!msg.payload) return
+    const { payload } = msg
+    const osc_port = payload.split(" ")[1].replace(/[()]/g, ''); 
+    client.console.isOSCToggled = true
+    canvas.io.osc.select(osc_port)
+    invoke('osc_list', { setting: payload });
     client.console.oscInfo.innerText = client.console.isOSCToggled
-      ? `PORT:${canvas.io.osc.port}`
+      ? `${osc_port}`
       : "--";
   });
+
   listen("menu-rev", function (msg) {
     client.console.togglePort("REV", client.console);
   });

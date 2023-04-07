@@ -22,7 +22,7 @@ function Osc (app) {
     if (!this.socket) { console.warn('OSC', 'Could not setting up.'); return }
     console.info('OSC', 'Setting Up..')
     this.setup()
-    this.select()
+    // this.select()
   }
 
   this.clear = function () {
@@ -32,6 +32,12 @@ function Osc (app) {
   this.run = function () {
     for (const item of this.stack) {
       this.play(item)
+    }
+  }
+
+  this.close = function(){
+    if(this.socket){
+      this.socket.close()
     }
   }
 

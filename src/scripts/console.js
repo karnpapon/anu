@@ -271,7 +271,8 @@ function Console(app) {
       this.isUDPToggled = !this.isUDPToggled
     } else if ( type === 'OSC'){
       this.isOSCToggled = !this.isOSCToggled 
-      if (this.isOSCToggled) { app.io.osc.setup(); }
+      if (this.isOSCToggled) { canvas.io.osc.setup(); }
+      // else { app.io.}
     } else if ( type === 'REV'){
       this.isReverse = !this.isReverse
     } else if ( type === 'FOCUS'){
