@@ -1,5 +1,7 @@
 'use strict'
 
+/* global metronome, window, canvas, client */
+
 function Clock(canvas) {
   this.bpm = 0
   this.callback = () => { }
@@ -53,7 +55,7 @@ function Clock(canvas) {
   }
 
   this.play = function (msg = false, midiStart = false) {
-    console.log('Clock', 'Play', msg, midiStart)
+    console.log('Clock', 'Play')
     if (this.isPaused === false && !midiStart) { return }
     this.isPaused = false
     if (msg === true) { canvas.io.midi.sendClockStart() }
@@ -62,7 +64,7 @@ function Clock(canvas) {
   }
 
   this.stop = function (msg = false) {
-    console.log('this.stop Clock', 'Stop')
+    console.log('Clock', 'Stop')
     if (this.isPaused === true) { return }
     this.isPaused = true
     if (msg === true || canvas.io.midi.isClock) { canvas.io.midi.sendClockStop() }

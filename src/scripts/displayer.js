@@ -9,7 +9,7 @@ function Displayer(app) {
   this.el = el("div")
   this.el_elem = el("div")
   this.main_text = el("div")
-  this.default_text = "(CmdOrCtrl-i) toggle input\n (CmdOrCtrl-g) toggle Regex input\n(Return) eval input (target input must = ON)\n(h) toggle helps window\n"
+  this.default_text = DISPLAYER_DEFAULT_TEXTS
 
   // state.
   this.displayerInput = ""

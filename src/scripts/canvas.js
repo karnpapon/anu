@@ -1,28 +1,5 @@
 'use strict'
 
-const library = {
-  "n": { "info": "add new marker" },
-  "Backspace": { "info": "remove current marker" },
-  "f": { "info": "focus only marker(s)" },
-  "e": { "info": "rename marker" },
-  "o": { "info": "set osc msg" },
-  "m": { "info": "set midi msg" },
-  "r": { "info": "reverse step" },
-  "> or <": { "info": "incr/decr BPM" },
-  "[ or ]": { "info": "incr/decr note-ratio (default 1:16)" },
-
-  "Spacebar": { "info": "play/pause" },
-  "Cmd-Arrow": { "info": "jump" },
-  "CmdOrCtrl-/": { "info": "switch regex mode" },
-  "Shift-Arrow": { "info": "incr/decr marker range" },
-  "Shift-Arrow-Cmd": { "info": "jump incr/decr marker range" },
-  "Cmd-Return": { "info": "toggle snap step to marker range" },
-  "Option-e": { "info": "show current selected marker name" },
-  "Option-Tab": { "info": "change selected markers" },
-  "Shift-Plus or Shift-Minus": { "info": "add/remove step" },
-}
-
-
 function Canvas () {
 
   this.seequencer = new Seequencer(this)
@@ -182,24 +159,26 @@ function Canvas () {
     this.commander.resetSwitchCounter()
   }
 
-  this.isHighlighter = function (x, y) {
+  this.isMarkerHead = function (x, y) {
     return this.marker.markers.some( cs => x === cs.x && y === cs.y)
   }
 
-  this.isCurrentHighlighter = function(x,y){
+  this.isCurrentMarker = function(x,y){
     return this.marker.markers.some( cs => x === cs.x && y === cs.y && cs.i === this.marker.markers[ this.marker.active ].i)
   }
 
-  this.getCurrentHighlighter = function(){
+  this.getCurrentMarker = function(){
     return this.marker.markers.filter( cs => cs.i === this.marker.markers[ this.marker.active ].i)
   }
 
-  this.isWithinHighlightRange = function (x, y) {
-    return !!( this.marker.markers.some( cs => x >= cs.x && x < cs.x + cs.w && y >= cs.y && y < cs.y + cs.h )  )
+  this.isWithinMarkerRange = function (x, y) {
+    return this.marker.markers.some( item => x >= item.x && x < item.x + item.w && y >= item.y && y < item.y + item.h ) 
   }
 
   this.isOverlapArea = function (x,y){
-    return this.marker.markers.some(h => h.overlapAreas.has(`${x}:${y}`))
+    // TODO: overlapped areas for muliples marker still incorrect.
+    return this.marker.markers.some( item => item.overlapAreas.has(`${x}:${y}:${item.overlapIndex.values().next().value}`)) 
+    // ||  this.marker.markers.some((item) => item.overlapAreas.has(`${x}:${y}:${this.marker.active}`))
   }
 
   this.isMarker = function (x, y) {
@@ -211,7 +190,7 @@ function Canvas () {
   }
 
   this.isSelectionTrigged = function(x,y){
-    return this.getCurrentHighlighter()
+    return this.getCurrentMarker()
   }
 
   this.isEdge = function (x, y) {
@@ -231,9 +210,8 @@ function Canvas () {
   }
 
   this.makeStyle = function (x, y) {
-    if(this.isHighlighter(x,y)) { return this.isCurrentHighlighter(x,y)? 10:1 }
-    if (this.isWithinHighlightRange(x, y)) { return this.isOverlapArea(x,y)? 1:6 }
-    // if (this.isWithinHighlightRange(x, y)) { return 6 }
+    if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:1 }
+    if(this.isWithinMarkerRange(x, y)) { return this.isOverlapArea(x,y)? 1:6 }
     return 9
   }
 
@@ -277,18 +255,17 @@ function Canvas () {
   }
 
   this.isInvisible = (x, y) => {
-    return this.seequencer.glyphAt(x, y) === '.'
+    return this.seequencer.glyphAt(x, y) === EMPTY_GLYPH
     // && !this.isMarker(x, y) 
     && !this.marker.selected(x, y)
   }
 
   this.drawProgram = function () {
-    // const selection = this.cursor.read()
     for (let y = 0; y < this.seequencer.h; y++) {
       for (let x = 0; x < this.seequencer.w; x++) {
         // if (this.isInvisible(x, y)) { continue }
         const g = this.seequencer.glyphAt(x, y)
-        const glyph = g !== '.' ? g : this.isHighlighter(x, y) ? (this.clock.isPaused ? 'x' : '>') : this.isMarker(x, y) ? '+' : g
+        const glyph = g !== EMPTY_GLYPH ? g : this.isMarkerHead(x, y) ? (this.clock.isPaused ? MARKER_PAUSE_GLYPH : MARKER_PLAY_GLYPH) : this.isMarker(x, y) ? MARKER_GLYPH : g
         this.drawSprite(x, y, glyph, this.makeStyle(x, y, glyph, g))
       }
     }
@@ -310,37 +287,30 @@ function Canvas () {
 
   this.drawGuide = () => {
     if (this.guide !== true) { return }
-    const operators = Object.keys(library).filter((val) => { return isNaN(val) })
+    const operators = Object.keys(LIBRARY).filter((val) => { return isNaN(val) })
     const top_border = this.seequencer.w - 7
-    const top_border_symbol = ['┌','─','┐']
-    const content_symbol = ['|']
-    const bottom_border_symbol = ['└','─','┘']
-    // const top_border_symbol = ['+','-','+']
-    // const content_symbol = ['|']
-    // const bottom_border_symbol = ['+','-','+']
-    const note = "- PLEASE MAKE SURE INPUT HAS BEEN TOGGLED OFF -"
     const box = { x: 2, y: 3}
 
     // top_border
-    this.write(`${top_border_symbol[0]}${top_border_symbol[1].repeat(top_border)}${top_border_symbol[2]}`,2, box.y, 99, 11)
+    this.write(`${TOP_BORDER_SYMBOL[0]}${TOP_BORDER_SYMBOL[1].repeat(top_border)}${TOP_BORDER_SYMBOL[2]}`,2, box.y, 99, 11)
 
     // helps content
     for (const id in operators) {
       const key = operators[id]
-      const oper = library[key]
+      const oper = LIBRARY[key]
       const text = oper.info
       const frame = this.seequencer.h - 4
       const x = (Math.floor(parseInt(id) / frame) * 32) + 2
       const y = (parseInt(id) % frame) + box.y + 1
       const text_line_length = text.length + key.length
-      this.write(`${content_symbol[0]}${' '.repeat(1)}${key}:${' '.repeat(1)}`, x, y, 99, 11, "bold")
-      this.write(`${' '.repeat(1)}${text}${' '.repeat(this.seequencer.w - text_line_length - 10)}${content_symbol[0]}`, x + key.length + 3, y, 99, 11)
+      this.write(`${CONTENT_SYMBOL[0]}${SPACE_GLYPH.repeat(1)}${key}:${SPACE_GLYPH.repeat(1)}`, x, y, 99, 11, "bold")
+      this.write(`${SPACE_GLYPH.repeat(1)}${text}${SPACE_GLYPH.repeat(this.seequencer.w - text_line_length - 10)}${CONTENT_SYMBOL[0]}`, x + key.length + 3, y, 99, 11)
     }
 
     // bottom_border
-    const note_spaces = ((this.seequencer.w - note.length) / 2) - 3
-    this.write(`|${' '.repeat(note_spaces)}${note}${' '.repeat(note_spaces )}|`,2, operators.length + box.y+1, 99, 11, "bold")
-    this.write(`${bottom_border_symbol[0]}${bottom_border_symbol[1].repeat(top_border)}${bottom_border_symbol[2]}`,2, operators.length + box.y+2, 99, 11)
+    const note_spaces = ((this.seequencer.w - LIBRARY_ENDNOTES.length) / 2) - 3
+    this.write(`|${SPACE_GLYPH.repeat(note_spaces)}${LIBRARY_ENDNOTES}${SPACE_GLYPH.repeat(note_spaces )}|`,2, operators.length + box.y+1, 99, 11, "bold")
+    this.write(`${BOTTOM_BORDER_SYMBOL[0]}${BOTTOM_BORDER_SYMBOL[1].repeat(top_border)}${BOTTOM_BORDER_SYMBOL[2]}`,2, operators.length + box.y+2, 99, 11)
   }
 
   this.drawSprite = function (x, y, g, type, text_weight = "normal") {
@@ -416,13 +386,13 @@ function Canvas () {
     let block = `${this.seequencer}`
 
     if (h > this.seequencer.h) {
-      block = `${block}${`\n${'.'.repeat(this.seequencer.w)}`.repeat(h - this.seequencer.h )}`
+      block = `${block}${`\n${EMPTY_GLYPH.repeat(this.seequencer.w)}`.repeat(h - this.seequencer.h )}`
     } else if (h < this.seequencer.h) {
       block = `${block}`.split(/\r?\n/).slice(0, (h - this.seequencer.h)).join('\n').trim()
     }
     
     if (w > this.seequencer.w) {
-      block = `${block}`.split(/\r?\n/).map((val) => { return val + ('.').repeat((w - this.seequencer.w)) }).join('\n').trim()
+      block = `${block}`.split(/\r?\n/).map((val) => { return val + (EMPTY_GLYPH).repeat((w - this.seequencer.w)) }).join('\n').trim()
     } else if (w < this.seequencer.w) {
       block = `${block}`.split(/\r?\n/).map((val) => { return val.substr(0, val.length + (w - this.seequencer.w)) }).join('\n').trim()
     }

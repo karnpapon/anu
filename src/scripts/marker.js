@@ -97,31 +97,36 @@ function Marker(canvas) {
   }
 
   this.findOverlapArea = function(r2){
-    if (this.markers.length < 1) return 
-
+    if (this.markers.length < 2) return 
+    
+    // console.log("this.markers", this.markers)
     // clear overlapAreas, firstly refresh(clear) current active one.
     // then remove any overlapAreas related to current active one. 
     this.markers[this.active].overlapAreas.clear()
-    this.markers.filter(hl => hl.overlapIndex.has(this.active)).forEach(hl => {
-      hl.overlapAreas.forEach((value,key) => {
-        if (value.i === this.active || value.i === hl.i) { 
-          hl.overlapAreas.delete(key)
+    this.markers[this.active].overlapIndex.clear()
+    this.markers.filter(item => item.overlapIndex.has(this.active)).forEach(item => {
+      item.overlapAreas.forEach((value,key) => {
+        if (value.i === this.active || value.i === item.i) { 
+          item.overlapAreas.delete(key)
+          item.overlapIndex.delete(key)
         } 
       })
+
+      if (!item.overlapAreas.size) { item.overlapIndex.clear()}
     })
 
-    this.markers.filter(h => h.i !== this.active).forEach(r1 => {
+    this.markers.filter(item => item.i !== this.active).forEach(r1 => {
       const x = Math.max(r1.x, r2.x);
       const y = Math.max(r1.y, r2.y);
       const xx = Math.min(r1.x + r1.w, r2.x + r2.w);
       const yy = Math.min(r1.y + r1.h, r2.y + r2.h);
       if (xx-x > 0 && yy-y > 0 ) {
-        this.markers[this.active].overlapIndex.clear()
+        
         for (let i=x,ii=xx-x;ii>=1;ii--){
           for (let j=y,jj=yy-y;jj>=1;jj--){
-            this.markers[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
+            this.markers[this.active].overlapAreas.set(`${i+ii-1}:${j+jj-1}:${r1.i}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
             this.markers[this.active].overlapIndex.add(r1.i)
-            this.markers[r1.i].overlapAreas.set(`${i+ii-1}:${j+jj-1}`, {x: i+ii-1, y: j+jj-1, i: r1.i })
+            this.markers[r1.i].overlapAreas.set(`${i+ii-1}:${j+jj-1}:${this.active}`, {x: i+ii-1, y: j+jj-1, i: this.active })
             this.markers[r1.i].overlapIndex.add(this.active)
           }
         }

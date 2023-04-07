@@ -21,7 +21,7 @@ function Seequencer(canvas){
     this.f = 0
     this.w = w
     this.h = h
-    this.replace(new Array((this.h * this.w) + 1).join('.'))
+    this.replace(new Array((this.h * this.w) + 1).join(EMPTY_GLYPH))
   }
 
   this.resetFrameToRange = function(marker){
@@ -42,7 +42,7 @@ function Seequencer(canvas){
     if (!this.inBounds(x, y)) { return false }
     if (this.glyphAt(x, y) === g) { return false }
     const index = this.indexAt(x, y)
-    // const glyph = !this.isAllowed(g) ? '.' : g
+    // const glyph = !this.isAllowed(g) ? EMPTY_GLYPH : g
     const glyph =  g
     const string = this.s.substr(0, index) + glyph + this.s.substr(index + 1)
     this.replace(string)
@@ -58,7 +58,7 @@ function Seequencer(canvas){
   }
 
   this.cast = function (g, x, y) {
-    if (g === '.') { return }
+    if (g === EMPTY_GLYPH) { return }
     // if (!library[g.toLowerCase()]) { return }
     // const passive = g === g.toUpperCase()
     // return new library[g.toLowerCase()](this, x, y, passive)
@@ -72,7 +72,7 @@ function Seequencer(canvas){
     for (let y = 0; y < this.h; y++) {
       for (let x = 0; x < this.w; x++) {
         const g = this.glyphAt(x, y)
-        if (g !== '.') {
+        if (g !== EMPTY_GLYPH) {
           if (x > w) { w = x }
           if (y > h) { h = y }
         }
@@ -121,7 +121,7 @@ function Seequencer(canvas){
   }
 
   this.isAllowed = function (g) {
-    return g === '.' || !!library[`${g}`.toLowerCase()]
+    return g === EMPTY_GLYPH || !!LIBRARY[`${g}`.toLowerCase()]
   }
 
   this.isSpecial = function (g) {
@@ -133,7 +133,7 @@ function Seequencer(canvas){
   }
 
   this.valueOf = function (g) {
-    return !g || g === '.' ? 0 : this.keys.indexOf(`${g}`.toLowerCase())
+    return !g || g === EMPTY_GLYPH ? 0 : this.keys.indexOf(`${g}`.toLowerCase())
   }
 
   this.indexAt = function (x, y) {

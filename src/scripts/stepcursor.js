@@ -47,7 +47,7 @@ function StepCursor(canvas) {
     let target  = canvas.marker.getSelectionArea(el)
     target.forEach( item => {
       let g = canvas.seequencer.glyphAt(item.x, item.y)
-      if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isHighlighter(item.x,item.y)){
+      if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isMarker(item.x,item.y)){
         canvas.drawSprite(item.x, item.y, g, 0)
       }
     })
@@ -65,7 +65,7 @@ function StepCursor(canvas) {
               i=_idx
               this.msgOut(step, i)
               value = canvas.marker.markers[index]
-              canvas.drawSprite(step.x, step.y, '＊', 2)
+              canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
               this.triggerFX(null, value)
             } 
           })

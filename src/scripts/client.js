@@ -1,4 +1,4 @@
-/* global client */
+/* global client, canvas */
 
 function Client(){
   
