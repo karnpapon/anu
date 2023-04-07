@@ -9,6 +9,11 @@ unlike others conventional tools or step-sequencers, "anu" explore a new musical
 ## usages
 soon...
 
+
+## demo
+<div style="text-align:center; background-color: black;"><a href="https://www.youtube.com/watch?v=DGaakhSvYOg"><img src="https://i.ytimg.com/vi/DGaakhSvYOg/hqdefault.jpg" /></a></div>
+
+
 ## notes
 written in vanillaJS with dependencies as less as possible in mind. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
 
