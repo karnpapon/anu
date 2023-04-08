@@ -17,7 +17,7 @@ window.addEventListener("load", () => {
     const osc_port = payload.split(" ")[1].replace(/[()]/g, ''); 
     client.console.isOSCToggled = true
     canvas.io.osc.select(osc_port)
-    invoke('osc_list', { setting: payload });
+    invoke('osc_select', { setting: payload });
     client.console.oscInfo.innerText = client.console.isOSCToggled
       ? `${osc_port}`
       : "--";

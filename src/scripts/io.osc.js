@@ -5,6 +5,7 @@
 function Osc (app) {
   const isEven = (x) => { return (x%2)==0; }
   const isOdd = (x) => { return !isEven(x); }
+  const { invoke } = window.__TAURI__;
 
   this.stack = []
   this.socket = new OSC() // osc-js
@@ -12,17 +13,17 @@ function Osc (app) {
 
   // TODO make this configurable.
   this.options = { 
-    default: 49162, 
+    default: 9000, 
     tidalCycles: 6010, 
     superCollider: 57120, 
     sonicPi: 4559 
   }
 
   this.start = function () {
-    if (!this.socket) { console.warn('OSC', 'Could not setting up.'); return }
+    // if (!this.socket) { console.warn('OSC', 'Could not setting up.'); return }
     console.info('OSC', 'Setting Up..')
+    this.select()
     this.setup()
-    // this.select()
   }
 
   this.clear = function () {
@@ -36,9 +37,9 @@ function Osc (app) {
   }
 
   this.close = function(){
-    if(this.socket){
-      this.socket.close()
-    }
+    // if(this.socket){
+    //   this.socket.close()
+    // }
   }
 
   this.push = function (path, msg) {
@@ -48,8 +49,16 @@ function Osc (app) {
   this.play = function ({ path, msg }) {
     if (!this.socket) { console.warn('OSC', 'Unavailable socket'); return }
     if (!msg) { console.warn('OSC', 'Empty message'); return }
-    const oscMsg = new OSC.Message(path, msg)
-    this.socket.send(oscMsg)
+    // const oscMsg = new OSC.Message(path, msg)
+    // this.socket.send(oscMsg)
+    this.sendOsc(path, [
+      { String: msg }, 
+    ])
+  }
+
+  this.sendOsc = function(path, args) {
+    console.log("sendOSC")
+    invoke("plugin:osc|send", { rpc: { path, args } });
   }
 
   this.formatter = function( msg ){
@@ -72,14 +81,14 @@ function Osc (app) {
     if (isNaN(port) || port < 1000) { console.warn('OSC', 'Unavailable port'); return }
     console.info('OSC', `Selected port: ${port}`)
     this.port = parseInt(port)
-    // this.setup()
+    this.setup()
   }
 
-  // setup will be enabled when click osc button.
   this.setup = function () {
     if (!this.port) { return }
-    if (this.socket.status() === OSC.IS_CONNECTING) { this.socket.close() }
-    this.socket.open(); // connect to osc bridge(pkg-scripts/index.js) default port 8080.
+    // if (this.socket.status() === OSC.IS_CONNECTING) { this.socket.close() }
+    invoke('setup_osc_receiver_port', this.port)
+    // this.socket.open(); // default port 8080.
     console.info('OSC', 'Started client at :' + this.port)
   }
 }

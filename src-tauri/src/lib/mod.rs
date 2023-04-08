@@ -1,2 +1,2 @@
-pub mod osc;
 pub mod midi;
+pub mod osc;

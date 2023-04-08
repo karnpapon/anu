@@ -21,7 +21,7 @@ soon...
 
 - [Install Rust/Cargo](https://www.rust-lang.org/learn/get-started)
 - [Install Node/NPM](https://nodejs.org/)
-- Run `yarn build` to start the dev process
+- Run `yarn build`, built file will be located at `src-tauri/target/release/bundle/<depends-on-your-os>`
 
 ## developing
 - `yarn dev`, for development
