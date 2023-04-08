@@ -1,8 +1,6 @@
 use rosc::{encoder, OscMessage, OscPacket, OscType};
 use serde::{Deserialize, Serialize};
-use std::borrow::Borrow;
 use std::net::{SocketAddr, UdpSocket};
-use std::ops::Deref;
 use std::sync::Mutex;
 use tauri::{
   plugin::{Builder, TauriPlugin},
@@ -37,10 +35,7 @@ impl OscPlugin {
   }
 
   fn send(&self, rpc: RpcOscMessage, send_to: u16) {
-    let socket = self.socket.lock().unwrap() else {
-      return;
-    };
-
+    let socket = self.socket.lock().unwrap(); 
     let addr = SocketAddr::from(([127, 0, 0, 1], send_to));
     let args: Vec<OscType> = rpc
       .args

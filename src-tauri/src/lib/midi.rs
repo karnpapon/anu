@@ -1,22 +1,31 @@
 use midir::{MidiOutput, MidiOutputConnection};
 use std::collections::HashMap;
 use std::sync::Mutex;
-use tauri::{Window};
+use tauri::{
+  Window,
+  plugin::{Builder, TauriPlugin},
+  Manager, Runtime, State, Menu, CustomMenuItem, AppHandle,
+};
 
 use crate::App;
 
-#[derive(Default)]
-pub struct MidiState {
+pub struct MidiPlugin {
   pub midi: Mutex<Option<MidiOutput>>,
   pub devices: Mutex<HashMap<usize, String>>,
   pub out_device: Mutex<Option<MidiOutputConnection>>,
 }
 
-#[tauri::command]
-pub fn init_midi(app: tauri::State<'_, App>) {
-  let midi_out = MidiOutput::new("client-midi-output").unwrap();
-  let mut midi = app.midi_states.midi.lock().unwrap();
-  *midi = Some(midi_out);
+impl Default for MidiPlugin {
+  fn default() -> Self {
+    let Ok(midi_out) = MidiOutput::new("client-midi-output") else {
+      return Self { midi: None.into(), devices: HashMap::new().into(), out_device: None.into() };
+    };
+    MidiPlugin {
+      midi: Some(midi_out).into(),
+      devices: HashMap::new().into(),
+      out_device: None.into()
+    }
+  }
 }
 
 #[tauri::command]
@@ -43,26 +52,27 @@ pub fn list_midi_connections(app: tauri::State<'_, App>) -> HashMap<usize, Strin
 }
 
 #[tauri::command]
-pub fn setup_midi_connection_list(
-  app: tauri::State<'_, App>,
-  window: Window,
+pub fn setup_midi_connection_list<R: Runtime>(
+  app_state: tauri::State<'_, App>,
+  app_handle: AppHandle<R>,
 ) -> Result<(), &'static str> {
-  match app.midi_states.devices.lock() {
+  match app_state.midi_states.devices.lock() {
     Ok(mut midi_devices) => {
-      let state = app.clone();
+      let state = app_state.clone();
       *midi_devices = list_midi_connections(state.clone());
-      // let midi_devices_conn = list_midi_connections(state);
+      let midi_devices_conn = list_midi_connections(state);
 
       // inject midi devices to menubar.
-      // std::thread::spawn(move || {
-      //   let osc_submenu =  midi_devices_conn.iter().fold(Menu::new(), |menu, (id, name)| {
-      //     menu.add_item(CustomMenuItem::new(id.to_string(), name))
-      //   });
-      //   window.menu_handle().get_item("MIDI_DEVICES").set_title(title);
-
-      //   // .update_menu_item(self.id, MenuUpdate::SetEnabled(enabled))
-      //   // .map_err(Into::into)
-      // });
+      std::thread::spawn(move || {
+        let available_midi_devices =  midi_devices_conn.iter().fold(Menu::new(), |menu, (id, name)| {
+          menu.add_item(CustomMenuItem::new(id.to_string(), name))
+        });
+        let window = app_handle.get_window("main").unwrap().menu_handle().get_item("MIDI_DEVICES");
+        // TODO: render all available devices.
+        window.set_title(midi_devices_conn.get(&0).unwrap()).unwrap();
+        window.set_selected(true).unwrap();
+        // window.set_enabled(true).unwrap();
+      });
 
       Ok(())
     }
@@ -111,4 +121,19 @@ pub fn send_midi_out(app: tauri::State<'_, App>, msg: Vec<u8>) -> Result<(), &'s
     }
     _ => Err("send_midi_note_out::error"),
   }
+}
+
+pub fn init<R: Runtime>() -> TauriPlugin<R> {
+  Builder::new("midi")
+    .invoke_handler(tauri::generate_handler![
+      send_midi_out,
+      setup_midi_out,
+      setup_midi_connection_list,
+      list_midi_connections 
+    ])
+    .setup(|app| {
+      app.manage(MidiPlugin::default());
+      Ok(())
+    })
+    .build()
 }

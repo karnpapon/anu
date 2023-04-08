@@ -145,7 +145,7 @@ function Marker(canvas) {
   this.onMouseDown = (e) => {
     if (canvas.guide) { canvas.toggleGuide(false)}
     const pos = this.mousePick(e.clientX, e.clientY)
-    this.select(pos.x, pos.y, 0, 0)
+    this.select(pos.x, pos.y, 1, 1)
     this.mouseFrom = pos
   }
 

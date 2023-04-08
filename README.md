@@ -1,5 +1,7 @@
 # `anu`
 
+<img src="./src/media/icons/anu-logoo.png"/>
+
 [[ Demo video ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
 
 <img src="./src/media/images/ss.png"/>

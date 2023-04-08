@@ -63,7 +63,7 @@ function Midi(app) {
 
     if (!n || c === 127) { return }
 
-    invoke('send_midi_out', { msg: [c, n, v] });
+    invoke('plugin:midi|send_midi_out', { msg: [c, n, v] });
   }
 
   this.push = function ({ channel, octave, note, velocity, length }) {
@@ -76,7 +76,7 @@ function Midi(app) {
     if (!this.outputDevice()) { return }
     console.log('MIDI', 'All Notes Off')
     for (let chan = 0; chan < 16; chan++) {
-      invoke('send_midi_out', { msg: [0xB0 + chan, 123, 0] });
+      invoke('plugin:midi|send_midi_out', { msg: [0xB0 + chan, 123, 0] });
     }
   }
 
@@ -85,13 +85,12 @@ function Midi(app) {
   }
 
   this.list = async function () {
-    return await invoke('list_midi_connections')
+    return await invoke('plugin:midi|list_midi_connections')
   }
 
   this.setup = async function () {
-    await invoke('init_midi');
-    await invoke('setup_midi_connection_list')
-    this.targetDevice = await invoke('setup_midi_out');
+    await invoke('plugin:midi|setup_midi_connection_list')
+    this.targetDevice = await invoke('plugin:midi|setup_midi_out');
     client.console.midiInfo.innerText = this.targetDevice 
   }
 
@@ -104,7 +103,7 @@ function Midi(app) {
     if (!this.outputDevice()) { return }
     this.isClock = true
     // 0xFA = Start (Sys Realtime)
-    invoke('send_midi_out', { msg: [0xFA] });
+    invoke('plugin:midi|send_midi_out', { msg: [0xFA] });
     console.log('MIDI', 'MIDI Start Sent')
   }
 
@@ -112,7 +111,7 @@ function Midi(app) {
     if (!this.outputDevice()) { return }
     this.isClock = false
     // 0xFC = Stop (Sys Realtime)
-    invoke('send_midi_out', { msg: [0xFC] });
+    invoke('plugin:midi|send_midi_out', { msg: [0xFC] });
     console.log('MIDI', 'MIDI Stop Sent')
   }
 
@@ -128,7 +127,7 @@ function Midi(app) {
       if (this.ticks[id]) { clearTimeout(this.ticks[id]) }
       this.ticks[id] = setTimeout(() => { 
         // 0xF8 = Timing Clock (Sys Realtime)
-        invoke('send_midi_out', { msg: [0xF8] });
+        invoke('plugin:midi|send_midi_out', { msg: [0xF8] });
       }, parseInt(id) * frameFrag)
     }
   }
@@ -147,15 +146,6 @@ function Midi(app) {
     }
     return (60000 / bpm) * (val / 16)
   }
-
-  // this.transpose = function (n, o = 3) {
-  //   if (!transposeTable[n]) { return null }
-  //   const octave = clamp(parseInt(o) + parseInt(transposeTable[n].charAt(1)), 0, 8)
-  //   const note = transposeTable[n].charAt(0)
-  //   const value = ['C', 'c', 'D', 'd', 'E', 'F', 'f', 'G', 'g', 'A', 'a', 'B'].indexOf(note)
-  //   const id = clamp((octave * 12) + value + 24, 0, 127)
-  //   return { id, value, note, octave }
-  // }
 
   function clamp(v, min, max) { return v < min ? min : v > max ? max : v }
 }
