@@ -90,10 +90,10 @@ function StepCursor(canvas) {
     let veloIndex = i % velocity.length
     let lenIndex = i % notelength.length
 
-    // if(client.console.isOSCToggled){
+    if(client.console.isOSCToggled){
        // TODO: dynamic index only for OSC msg.
       canvas.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
-    // }
+    }
 
     if(client.console.isUDPToggled){
       canvas.io.udp.send( target[0].msg.UDP[midiIndex])

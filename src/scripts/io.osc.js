@@ -87,7 +87,7 @@ function Osc (app) {
   this.setup = function () {
     if (!this.port) { return }
     // if (this.socket.status() === OSC.IS_CONNECTING) { this.socket.close() }
-    invoke('setup_osc_receiver_port', this.port)
+    // invoke('setup_osc_receiver_port', this.port)
     // this.socket.open(); // default port 8080.
     console.info('OSC', 'Started client at :' + this.port)
   }

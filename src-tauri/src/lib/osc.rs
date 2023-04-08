@@ -1,33 +1,47 @@
 use rosc::{encoder, OscMessage, OscPacket, OscType};
 use serde::{Deserialize, Serialize};
+use std::borrow::Borrow;
 use std::net::{SocketAddr, UdpSocket};
+use std::ops::Deref;
+use std::sync::Mutex;
 use tauri::{
   plugin::{Builder, TauriPlugin},
   Manager, Runtime, State,
 };
 
+use crate::App;
+
 pub struct OscPlugin {
-  socket: Option<UdpSocket>,
+  socket: Mutex<Option<UdpSocket>>,
+  send_from_port: Mutex<Option<u16>>,
+  send_to_port: Mutex<Option<u16>>,
 }
 
 impl Default for OscPlugin {
   fn default() -> Self {
     let Ok(socket) = UdpSocket::bind("127.0.0.1:3400") else {
-      return Self { socket: None };
+      return Self { socket: None.into(), send_from_port: None.into(), send_to_port: None.into() };
     };
     OscPlugin {
-      socket: Some(socket),
+      socket: Some(socket).into(),
+      send_from_port: Some(3400).into(),
+      send_to_port: Some(9000).into()
     }
   }
 }
 
 impl OscPlugin {
-  fn send(&self, rpc: RpcOscMessage) {
-    let Some(socket) = &self.socket else {
+  pub fn set_send_to_port(&mut self, port: u16) {
+    println!("set_send_to_port = {:?}", port);
+    self.send_to_port = Some(port).into();
+  }
+
+  fn send(&self, rpc: RpcOscMessage, send_to: u16) {
+    let socket = self.socket.lock().unwrap() else {
       return;
     };
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 9000));
+    let addr = SocketAddr::from(([127, 0, 0, 1], send_to));
     let args: Vec<OscType> = rpc
       .args
       .iter()
@@ -47,7 +61,7 @@ impl OscPlugin {
       args,
     }))
     .unwrap();
-    socket.send_to(&msg_buf, addr).unwrap();
+    socket.as_ref().unwrap().send_to(&msg_buf, addr).unwrap();
   }
 }
 
@@ -66,8 +80,10 @@ pub struct RpcOscMessage {
 }
 
 #[tauri::command]
-fn send(rpc: RpcOscMessage, state: State<OscPlugin>) {
-  state.send(rpc);
+fn send(rpc: RpcOscMessage, app: State<'_, App>) {
+  let osc_states = app.osc_states.lock().unwrap();
+  let p = osc_states.send_to_port.lock().unwrap();
+  osc_states.send(rpc, p.expect("cannot acquire send_to_port"));
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
