@@ -1,6 +1,6 @@
 <img src="./src/media/icons/anu-logoo.png"/>
 
-<img src="./src/media/images/ss.png"/>
+<img src="./src/media/images/sss.png"/>
 
 # `anu`
 
