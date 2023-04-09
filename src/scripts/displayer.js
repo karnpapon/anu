@@ -30,12 +30,14 @@ function Displayer(app) {
 
   this.inputRef = {
     "osc": ["displayer-osc-path", "displayer-osc-msg"],
-    "midi": ["displayer-midi-note", "displayer-midi-notelen","displayer-midi-velo", "displayer-midi-chan"]
+    "midi": ["displayer-midi-note", "displayer-midi-notelen","displayer-midi-velo", "displayer-midi-chan"],
+    "rename-marker": ["displayer-rename-marker"]
   }
 
   this.caretRef = {
     "osc": ["caret-osc-path", "caret-osc-msg"],
-    "midi": ["caret-midi-note", "caret-midi-notelen","caret-midi-velo", "caret-midi-chan"]
+    "midi": ["caret-midi-note", "caret-midi-notelen","caret-midi-velo", "caret-midi-chan"],
+    "rename-marker": ["caret-rename-marker"]
   }
   
   this.oscConf = {
@@ -79,8 +81,7 @@ function Displayer(app) {
       if(self.currentCmd === 'osc'){
         self.oscConf[e.target.id === "osc-path" ? "path" : "msg"] = e.target.textContent;
       } else if( self.currentCmd === 'rename-marker'){
-        console.log("rename-marker")
-        // self.renameInput = target.value 
+        self.renameInput = e.target.textContent
       } else if( self.currentCmd === 'midi'){
         self.midiConf[e.target.getAttribute("type")] =  e.target.textContent
       }
@@ -229,12 +230,19 @@ function Displayer(app) {
         this.isDisplayInputToggled = !this.isDisplayInputToggled
         this.displayType = this.isDisplayInputToggled? "form":"default"
         this.el_with_input.innerHTML = `
-        <div id="dp-cs-rename" class="info-input">
-          <lf>
-            <p>name:</p>
-            <input class="displayer-form" type="rename" value="${active.n}">
-          </lf>
-        </div>`
+          <div id="dp-cs-rename" class="info-input">
+            <lf>
+              <p>name:</p>
+              <terminal>
+                <div id="rename-marker" data-ctrl="displayer-rename-marker" type="rename" tabindex="-1" contenteditable="false">${active.n}</div>
+                <caret id="caret-rename-marker" for="rename-marker" class="caret btn-hide">&nbsp;</caret>
+              </terminal>
+            </lf>
+          </div>`
+
+        let markerRenameElem = qs("div[data-ctrl='displayer-rename-marker']")
+        let markerRenameInput = qs("caret#caret-rename-marker")
+        this.toggleInsert(markerRenameElem, markerRenameInput)
         break;
       case 'default':
         this.displayType = "default"

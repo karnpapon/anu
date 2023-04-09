@@ -37,7 +37,7 @@ window.addEventListener("load", () => {
   });
 
   listen("menu-reset_noteratio", function (msg) {
-    metronome.noteRatio = 16
+    metronome.noteRatio = 1
     client.console.currentNumber.innerText = "1:16"
   });
 });

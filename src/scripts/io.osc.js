@@ -57,7 +57,6 @@ function Osc (app) {
   }
 
   this.sendOsc = function(path, args) {
-    console.log("sendOSC")
     invoke("plugin:osc|send", { rpc: { path, args } });
   }
 

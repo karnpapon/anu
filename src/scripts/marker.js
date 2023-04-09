@@ -48,7 +48,7 @@ function Marker(canvas) {
           channel: 0 
         },
         UDP: [],
-        OSC:  { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" },
+        OSC: { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" },
       }
     }
 

@@ -189,7 +189,6 @@ function Commander(canvas) {
         return;
       }
 
-
       // (e) rename marker's name.
       if (event.keyCode === 69) {
         displayer.displayMsg("rename-marker");
@@ -232,13 +231,6 @@ function Commander(canvas) {
         return;
       }
 
-      // (a) rename marker.
-      if (event.keyCode === 65) {
-        displayer.displayMsg('rename-marker')
-        event.preventDefault();
-        return
-      }
-  
       if (event.key === ">") {
         // canvas.clock.mod(1);
         metronome.mod(1)
