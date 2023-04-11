@@ -138,9 +138,7 @@ function Metronome(canvas) {
               if(currentNote % metronome.noteRatio === 0){
                 canvas.run()
               } 
-            } else {
-              canvas.run()
-            }
+            } 
           }
         }
         metronome.last16thNoteDrawn = currentNote;

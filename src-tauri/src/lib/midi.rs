@@ -68,10 +68,8 @@ pub fn setup_midi_connection_list<R: Runtime>(
           menu.add_item(CustomMenuItem::new(id.to_string(), name))
         });
         let window = app_handle.get_window("main").unwrap().menu_handle().get_item("MIDI_DEVICES");
-        // TODO: render all available devices.
         window.set_title(midi_devices_conn.get(&0).unwrap()).unwrap();
         window.set_selected(true).unwrap();
-        // window.set_enabled(true).unwrap();
       });
 
       Ok(())

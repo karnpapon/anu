@@ -158,14 +158,14 @@ function Displayer(app) {
             <div class="displayer-form-short-wrapper">
               <p>PATH:</p>
               <terminal>
-                <div id="osc-path" data-ctrl="displayer-osc-path" type="osc-path" tabindex="-1" contenteditable="false">${active.msg.OSC.path}</div>
+                <div id="osc-path" data-ctrl="displayer-osc-path" type="osc-path" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${active.msg.OSC.path}</div>
                 <caret id="caret-osc-path" for="osc-path" class="caret btn-hide">&nbsp;</caret>
               </terminal>
             </div>
             <lf>
               <p>MSG:</p>
               <terminal>
-                <div id="osc-msg" data-ctrl="displayer-osc-msg" type="osc-msg" tabindex="-1" contenteditable="false">${active.msg.OSC.msg}</div>
+                <div id="osc-msg" data-ctrl="displayer-osc-msg" type="osc-msg" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${active.msg.OSC.msg}</div>
                 <caret id="caret-osc-msg" for="osc-msg" class="caret btn-hide">&nbsp;</caret>
               </terminal>
             </lf>
@@ -185,28 +185,28 @@ function Displayer(app) {
             <div class="displayer-form-short-wrapper">
               <p>N:</p>
               <terminal>
-                <div id="midi-note" data-ctrl="displayer-midi-note" type="note" tabindex="-1" contenteditable="false">${pairedNoteAndOct}</div>
+                <div id="midi-note" data-ctrl="displayer-midi-note" type="note" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${pairedNoteAndOct}</div>
                 <caret id="caret-midi-note" for="midi-note" class="caret btn-hide">&nbsp;</caret>
               </terminal>
             </div>
             <div class="displayer-form-short-wrapper">
               <p>L:</p>
               <terminal>
-                <div id="midi-notelen" data-ctrl="displayer-midi-notelen" type="notelength" tabindex="-1" contenteditable="false">${active.msg.MIDI.notelength.join()}</div>
+                <div id="midi-notelen" data-ctrl="displayer-midi-notelen" type="notelength" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${active.msg.MIDI.notelength.join()}</div>
                 <caret id="caret-midi-notelen" for="midi-notelen" class="caret btn-hide">&nbsp;</caret>
               </terminal>
             </div>
             <div class="displayer-form-short-wrapper">
               <p>V:</p>
               <terminal>
-                <div id="midi-velo" data-ctrl="displayer-midi-velo" type="velocity" tabindex="-1" contenteditable="false">${active.msg.MIDI.velocity.join()}</div>
+                <div id="midi-velo" data-ctrl="displayer-midi-velo" type="velocity" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${active.msg.MIDI.velocity.join()}</div>
                 <caret id="caret-midi-velo" for="midi-velo" class="caret btn-hide">&nbsp;</caret>
               </terminal>
             </div>
             <div class="displayer-form-short-wrapper">
               <p>C:</p>
               <terminal>
-                <div id="midi-chan" data-ctrl="displayer-midi-chan" type="channel" tabindex="-1" contenteditable="false">${active.msg.MIDI.channel}</div>
+                <div id="midi-chan" data-ctrl="displayer-midi-chan" type="channel" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${active.msg.MIDI.channel}</div>
                 <caret id="caret-midi-chan" for="midi-chan" class="caret btn-hide">&nbsp;</caret>
               </terminal>
           </div>
@@ -234,7 +234,7 @@ function Displayer(app) {
             <lf>
               <p>name:</p>
               <terminal>
-                <div id="rename-marker" data-ctrl="displayer-rename-marker" type="rename" tabindex="-1" contenteditable="false">${active.n}</div>
+                <div id="rename-marker" data-ctrl="displayer-rename-marker" type="rename" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${active.n}</div>
                 <caret id="caret-rename-marker" for="rename-marker" class="caret btn-hide">&nbsp;</caret>
               </terminal>
             </lf>
