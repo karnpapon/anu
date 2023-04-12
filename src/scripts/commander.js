@@ -134,6 +134,12 @@ function Commander(canvas) {
           stepcounter.counter[active_index].i = marker.active;
           return;
         }
+
+        // (Shift-Minus) remove step
+        if (event.keyCode === 189) {
+          canvas.stepcursor.remove();
+          return;
+        }
   
         // (Shift-Plus) add new step
         if (event.keyCode === 187) {
@@ -256,12 +262,6 @@ function Commander(canvas) {
 
     // -- MODIFY-KEY(CMD/SHIFT/CTRL) PRESSED --
     this.doWhen(this.isModifyKey(event), () => {
-
-      // (Shift-Minus) remove step
-      if (event.keyCode === 189) {
-        canvas.stepcursor.remove();
-        return;
-      }
 
       if (event.altKey) {
         this.altFlag = true;

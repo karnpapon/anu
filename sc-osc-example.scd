@@ -4,7 +4,7 @@ b = BufFolders(s, "/Users/karnpaponboonput/Desktop/unorganised-music-master");
 
 /*(
 b.selectionAction_({|selectedBuffers|
-    Pdefn(\polySelected, Pseq(selectedBuffers, inf))
+Pdefn(\polySelected, Pseq(selectedBuffers, inf))
 });
 );*/
 
@@ -15,16 +15,16 @@ b[\root]; // Contains all of the audio files at the root level
 
 (
 SynthDef(\polybuf_sampler,{|out=0, amp=0.5, buffer, rate=1|
-  var sig = PlayBuf.ar(
-    numChannels:2, 
-    bufnum:buffer, 
-    rate:rate * BufRateScale.kr(buffer), 
-    trigger:1.0, 
-    startPos:0.0, 
-    loop:0.0, 
-    doneAction:2
-  );
-  Out.ar(out, sig)
+	var sig = PlayBuf.ar(
+		numChannels:2, 
+		bufnum:buffer, 
+		rate:rate * BufRateScale.kr(buffer), 
+		trigger:1.0, 
+		startPos:0.0, 
+		loop:0.0, 
+		doneAction:2
+	);
+	Out.ar(out, sig)
 }).add;
 
 SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
@@ -67,52 +67,86 @@ SynthDef(\distortion, {
 	mod = SelectX.ar(dst, [signal, mod]);
 	Out.ar(out, mod);
 }).add;
+
+SynthDef(\triode, { 
+	|out,in, tri=1.0|
+	var sig, sc;
+	sig = In.ar(in,2);
+	sc = tri * 10 + 0.001;
+	sig = (sig * (sig > 0)) + (tanh(sig * sc) / sc * (sig < 0));
+	ReplaceOut.ar(out, LeakDC.ar(sig));
+}).add;
+
+SynthDef(\lpf, { 
+	|out,in, cutoff = 440, resonance = 0|
+	var numChannels = 2;
+	var signal = In.ar(in, numChannels);
+	var cutoffClipped = cutoff.abs.clip(20, 20000);
+	signal = RLPF.ar(signal, cutoffClipped, resonance.linexp(0, 1, 1, 0.001));
+	ReplaceOut.ar(out, signal)
+}).add;
 );
 
 (
 s.newBusAllocators;
 ~bus_shaper = Bus.audio(s,2);
 ~bus_dist = Bus.audio(s,2);
-~shaper = {Synth(\shaper, [\in: ~bus_shaper.index,\out: ~bus_dist.index])};
-~dist = {Synth(\distortion, [\in: ~bus_dist.index, \out: 0], Server.default, \addToTail)};
+~bus_tiode = Bus.audio(s,2);
+~bus_lpf = Bus.audio(s,2);
+~shaper = { p = Synth(\shaper, [\in: ~bus_shaper.index,\out: ~bus_dist.index])};
+~dist = {d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_lpf.index], Server.default, \addToTail)};
+~lpf = {l = Synth(\lpf, [\in: ~bus_lpf.index, \out: 0], Server.default, \addToTail)};
+// ~triode = {Synth(\triode, [\in: ~bus_dist.index, \out: 0], Server.default, \addToTail)};
 ServerTree.add(~shaper);
 ServerTree.add(~dist);
-// ServerTree.remove(~shaper);
+ServerTree.add(~lpf);
+// ServerTree.add(~triode);
 )
 
+ServerTree.remove(~dist);
+
+d.set(\dst, 0)
+l.set(\cutoff, 10000)
+p.set(
+	\shape, 0.25, 
+	\amp_compensation_amount, 0.5, 
+	\lo_thresh, 0.5, 
+	\hi_thresh, 0, 
+	\lo, 1, 
+	\hi, 0.5
+)
 
 // setup osc msg from anu 
 (
 ~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
-OSCdef(\test, {
-  |msg, time, addr, recvPort| 
+OSCdef(\handle_sample, {
+	|msg, time, addr, recvPort| 
 	// msg.postln;
 	(Pbind(
-    \instrument, \polybuf_sampler,
-	  \rate, Pwhite(0.5,1.0),
-	  \buffer, Pseq([ b[\sounds].asPxrand(1)],1), 
-	  \dur, Pfunc{|ev| ev[\buffer].duration * ev[\rate].abs.reciprocal}
+		\instrument, \polybuf_sampler,
+		\rate, Pwhite(0.5,1.0),
+		\buffer, Pseq([ b[\sounds].asPxrand(1)],1), 
+		\dur, Pfunc{|ev| ev[\buffer].duration * ev[\rate].abs.reciprocal}
 	).play;);
+}, '/anu_msg_sample', ~anu);
 
-}, '/anumsgsample', ~anu);
-
-OSCdef(\test, {
-  |msg, time, addr, recvPort| 
+OSCdef(\handle_kick, {
+	|msg, time, addr, recvPort| 
 	(
-  Pbind(*[
-    instrument: \drm,
-    dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, 1),
-    tun: Pdup(Pexprand(1, 8), Pexprand(0.0001, 0.25)),
-    fed: Pexprand(0.00001, 2000.0),
-    amp: Pdup(Pexprand(1, 5), Pexprand(0.75, 2.0)),
-    rel: Pexprand(Pkey(\dur) / (4/3), Pkey(\dur) * 64),
-    pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
-    sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
-    out: ~bus_shaper
-    // tri: Pwhite(0.0, 1.0),
-    // lpf: 20000 - Pexprand(2000, 20000),
-  ]).play
-  )
-
-}, '/anumsgkick', ~anu);
+		Pbind(*[
+			instrument: \drm,
+			dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, 1),
+			tun: Pdup(Pexprand(1, 8), Pexprand(0.0001, 0.25)),
+			fed: Pexprand(0.00001, 2000.0),
+			amp: Pdup(Pexprand(1, 5), Pexprand(0.75, 2.0)),
+			rel: Pexprand(Pkey(\dur) / (4/3), Pkey(\dur) * 64),
+			pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
+			legato: Pwrand([Pkey(\dur) * 1.5, Pkey(\dur) * 16], [1, 2].normalizeSum, inf),
+			sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
+			out: ~bus_shaper
+			// tri: Pwhite(0.0, 1.0),
+		]).play
+	)
+	
+}, '/anu_msg_kick', ~anu);
 )
