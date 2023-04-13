@@ -1,8 +1,6 @@
 <img src="./src/media/icons/anu-logoo.png"/>
 
 <img src="./src/media/images/sss.png"/>
-<img src="./src/media/images/ss-3.gif"/>
-<img src="./src/media/images/ss-2.gif"/>
 
 # `anu`
 
@@ -11,6 +9,10 @@ a tiny backend-agnostic step-sequencer/live-coding environment that harnesses th
 unlike others conventional tools or step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously developed under the name "seeq").
 
 written in vanillaJS with dependencies as less as possible in mind. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
+
+<img src="./src/media/images/ss-3.gif"/>
+<img src="./src/media/images/ss-2.gif"/>
+
 
 [[ Demo video ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
 
