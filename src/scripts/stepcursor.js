@@ -5,17 +5,9 @@
 function StepCursor(canvas) {
 
   this.steps = [ { x: 0, y: 0, i: 0 } ]
-  this.duration = 0.125;
-  this.opacitySteps = parseInt(60*this.duration);
-  this.opacityStep = 0;
-  this.offset
 
   this.reset = function(){
     this.steps = [{ x: 0, y: 0, i: 0 }]
-    this.duration = 0.25;
-    this.opacitySteps = parseInt(60 * this.duration);
-    this.opacityStep = 0;
-    this.offset
   }
 
   this.isTrigger = function (x, y) {

@@ -4,7 +4,6 @@ function Canvas () {
 
   this.seequencer = new Seequencer(this)
   this.marker = new Marker(this)
-  this.source = new Source(this)
   this.commander = new Commander(this)
   this.clock = new Clock(this)
   this.io = new IO(this)
@@ -54,7 +53,6 @@ function Canvas () {
   
   this.init = function () {
     this.io.start()
-    this.source.start()
     this.clock.start()
     this.marker.start()
     
