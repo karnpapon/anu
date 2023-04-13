@@ -26,6 +26,7 @@ function Marker(canvas) {
     this.block = []
     this.active = 0
     this.markers = []
+    this.initCursor()
   }
 
   this.initCursor = function(){
@@ -39,6 +40,7 @@ function Marker(canvas) {
       overlapAreas: new Map(),
       overlapIndex: new Set(),
       matched: [],
+      control: {muted: false, reverse: false} ,
       msg: {
         MIDI: { 
           note: ["C", "E", "G"], 
@@ -57,30 +59,30 @@ function Marker(canvas) {
 
   this.reset = function () {
     this.init()
-    this.initCursor()
     this.move(0, 0)
   }
 
   this.select = function (x = this.markers[this.active].x, y = this.markers[this.active].y, w = this.markers[this.active].w, h = this.markers[this.active].h) {
+    const currentMarker = this.currentMarker();
     if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h)) { return }
     const rect = { 
       x: clamp(parseInt(x), 0, canvas.seequencer.w - 1), 
       y: clamp(parseInt(y), 0, canvas.seequencer.h - 1), 
-      w: clamp(parseInt(w), 0, canvas.seequencer.w - 1), 
-      h: clamp(parseInt(h), 0, canvas.seequencer.h - 1) 
+      w: clamp(parseInt(w), 1, canvas.seequencer.w - 1), 
+      h: clamp(parseInt(h), 1, canvas.seequencer.h - 1) 
     }
 
-    if ( this.markers[this.active].x === rect.x && 
-      this.markers[this.active].y === rect.y && 
-      this.markers[this.active].w === rect.w && 
-      this.markers[this.active].h === rect.h) {
+    if ( currentMarker.x === rect.x && 
+      currentMarker.y === rect.y && 
+      currentMarker.w === rect.w && 
+      currentMarker.h === rect.h) {
       return
     }
 
-    this.markers[this.active].x = rect.x
-    this.markers[this.active].y = rect.y
-    this.markers[this.active].w = rect.w
-    this.markers[this.active].h = rect.h
+    currentMarker.x = rect.x
+    currentMarker.y = rect.y
+    currentMarker.w = rect.w
+    currentMarker.h = rect.h
     this.calculateBounds()
     this.findOverlapArea(rect)
     client.console.cursorPosition.innerText = `${canvas.marker.getActivePosition()}`
@@ -134,19 +136,15 @@ function Marker(canvas) {
     })
   }
 
-  // this.clearAllHighlights = function(){
-  //   this.markers.forEach(h=> h.overlapAreas.clear())
-  // }
-
-  // this.clearAllOverlapIndexes = function(){
-  //   this.markers.forEach(h=> h.overlapIndex.clear())
-  // }
-
   this.onMouseDown = (e) => {
     if (canvas.guide) { canvas.toggleGuide(false)}
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(pos.x, pos.y, 1, 1)
     this.mouseFrom = pos
+  }
+
+  this.currentMarker = () => {
+    return this.markers[this.active]
   }
 
   this.onMouseMove = (e) => {
@@ -156,10 +154,10 @@ function Marker(canvas) {
   }
 
   this.onMouseUp = (e) => {
-    if (this.mouseFrom) {
-      const pos = this.mousePick(e.clientX, e.clientY)
-      this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
-    }
+    // if (this.mouseFrom) {
+    //   const pos = this.mousePick(e.clientX, e.clientY)
+    //   this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
+    // }
     this.mouseFrom = null
   }
 
@@ -197,7 +195,7 @@ function Marker(canvas) {
     this.select(this.markers[this.active].x, this.markers[this.active].y, w, h)
   }
 
-  this.selected = (x, y, w = 0, h = 0) => {
+  this.selected = (x, y) => {
     return x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY
   }
   
@@ -406,6 +404,26 @@ function Marker(canvas) {
     return cursorArea
   }
 
-  function sense (s) { return s === s.toUpperCase() && s.toLowerCase() !== s.toUpperCase() }
   function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
+
 }
+
+// function get( value, query, defaultVal = undefined) {
+//   const splitQuery = Array.isArray(query) ? query : query.replace(/(\[(\d)\])/g, ".$2").replace(/^\./, "")
+//     .split(".");
+
+//   if (!splitQuery.length || splitQuery[0] === undefined) return value ;
+
+//   const key = splitQuery[0];
+
+//   if (
+//     typeof value !== "object"
+//     || value === null
+//     || !(key in value)
+//     || (value)[key] === undefined
+//   ) {
+//     return defaultVal;
+//   }
+
+//   return get((value)[key], splitQuery.slice(1), defaultVal);
+// }

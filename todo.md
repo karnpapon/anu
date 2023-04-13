@@ -6,6 +6,8 @@
 - ~~add regex mode~~
 - ~~disable underscore when inputInsert is ON, other it'll remove a step.~~
 
+- mutable marker
+- reversable marker / OSC msg
 - handle sendClockMsg to be compatible with MetronomeWorker
 - customizable osc port / midi-out device
 - fix osc connection when reloading window

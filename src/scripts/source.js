@@ -13,7 +13,6 @@ function Source (canvas) {
     this.queue = []
     canvas.seequencer.reset()
     canvas.marker.init()
-    canvas.marker.initCursor()
     canvas.resize()
   }
 

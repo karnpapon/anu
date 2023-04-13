@@ -187,6 +187,14 @@ function Commander(canvas) {
         return;
       }
 
+      // (x) mute current selected marker.
+      if (event.keyCode === 82 ) {
+        const marker = canvas.marker.currentMarker();
+        marker["control"]["muted"] = !marker["control"]["muted"]
+        event.preventDefault();
+        return;
+      }
+
       // (f) focus
       if (event.keyCode === 70 ) {
         app_console.togglePort('FOCUS', app_console)
@@ -335,7 +343,7 @@ function Commander(canvas) {
   };
 
   this.onArrowUp = function(mod = false, skip = false) {
-    const leap = skip ? canvas.grid.h : 1;
+    const leap = skip ? canvas.grid.h / 2 : 1;
     if (mod) {
       canvas.marker.scale(0, leap);
     } else {
@@ -344,15 +352,15 @@ function Commander(canvas) {
   };
 
   this.onArrowDown = function(mod = false, skip = false) {
-    const c = canvas.getCurrentMarker();
+    const c = canvas.marker.currentMarker();
     let leap;
-    if (!canvas.isSelectionAtEdgeBottom(c[0])) {
+    if (!canvas.isSelectionAtEdgeBottom(c)) {
       // const leap = skip ? canvas.grid.h : 1
       if (skip) {
-        if (c[0].y + c[0].h + canvas.grid.h > canvas.seequencer.h) {
-          leap = canvas.seequencer.h % (c[0].y + c[0].h);
+        if (c.y + c.h + canvas.grid.h > canvas.seequencer.h) {
+          leap = canvas.seequencer.h % (c.y + c.h) - 1;
         } else {
-          leap = canvas.grid.h;
+          leap = canvas.grid.h / 2;
         }
       } else {
         leap = 1;
@@ -367,7 +375,7 @@ function Commander(canvas) {
   };
 
   this.onArrowLeft = function(mod = false, skip = false) {
-    const leap = skip ? canvas.grid.w : 1;
+    const leap = skip ? canvas.grid.w / 2 : 1;
     if (mod) {
       canvas.marker.scale(-leap, 0);
     } else {
@@ -376,14 +384,14 @@ function Commander(canvas) {
   };
 
   this.onArrowRight = function(mod = false, skip = false) {
-    const c = canvas.getCurrentMarker();
+    const c = canvas.marker.currentMarker();
     let leap;
-    if (!canvas.isSelectionAtEdgeRight(c[0])) {
+    if (!canvas.isSelectionAtEdgeRight(c)) {
       if (skip) {
-        if (c[0].x + c[0].w + canvas.grid.w > canvas.seequencer.w) {
-          leap = canvas.seequencer.w % (c[0].x + c[0].w);
+        if (c.x + c.w + canvas.grid.w > canvas.seequencer.w) {
+          leap = canvas.seequencer.w % (c.x + c.w) - 1;
         } else {
-          leap = canvas.grid.w;
+          leap = canvas.grid.w / 2;
         }
       } else {
         leap = 1;

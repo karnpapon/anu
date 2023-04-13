@@ -85,8 +85,8 @@ function Canvas () {
     this.drawProgram()
     this.match()
     this.stepcursor.draw()
+    this.drawStroke(this.marker.toRect())
     this.drawGuide()
-    // this.drawStroke(this.marker.toRect())
   }
 
   this.reset = function () {
@@ -167,9 +167,9 @@ function Canvas () {
     return this.marker.markers.some( cs => x === cs.x && y === cs.y && cs.i === this.marker.markers[ this.marker.active ].i)
   }
 
-  this.getCurrentMarker = function(){
-    return this.marker.markers.filter( cs => cs.i === this.marker.markers[ this.marker.active ].i)
-  }
+  // this.getCurrentMarker = function(){
+  //   return this.marker.markers.filter( cs => cs.i === this.marker.markers[ this.marker.active ].i)
+  // }
 
   this.isWithinMarkerRange = function (x, y) {
     return this.marker.markers.some( item => x >= item.x && x < item.x + item.w && y >= item.y && y < item.y + item.h ) 
@@ -189,9 +189,9 @@ function Canvas () {
     return this.p.some( matched => matched.x === x && matched.y === y)
   }
 
-  this.isSelectionTrigged = function(x,y){
-    return this.getCurrentMarker()
-  }
+  // this.isSelectionTrigged = function(x,y){
+  //   return this.getCurrentMarker()
+  // }
 
   this.isEdge = function (x, y) {
     return x === 0 || y === 0 || x === this.seequencer.w - 1 || y === this.seequencer.h - 1
@@ -202,16 +202,18 @@ function Canvas () {
   }
 
   this.isSelectionAtEdgeRight = function(marker){
-    return ( marker.x + marker.w ) - 1  === this.seequencer.w - 1 
+    return ( marker.x + marker.w ) - 1  === this.seequencer.w - 2 
   }
 
   this.isSelectionAtEdgeBottom = function(marker){
-    return ( marker.y + marker.h ) - 1  === this.seequencer.h - 1
+    return ( marker.y + marker.h ) - 1  === this.seequencer.h - 2
   }
 
   this.makeStyle = function (x, y) {
     if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:1 }
-    if(this.isWithinMarkerRange(x, y)) { return this.isOverlapArea(x,y)? 1:6 }
+    if(this.isWithinMarkerRange(x, y)) { 
+      return this.isOverlapArea(x,y)? 1: 6 
+    }
     return 9
   }
 
@@ -266,7 +268,7 @@ function Canvas () {
         // if (this.isInvisible(x, y)) { continue }
         const g = this.seequencer.glyphAt(x, y)
         const glyph = g !== EMPTY_GLYPH ? g : this.isMarkerHead(x, y) ? (this.clock.isPaused ? MARKER_PAUSE_GLYPH : MARKER_PLAY_GLYPH) : this.isMarker(x, y) ? MARKER_GLYPH : g
-        this.drawSprite(x, y, glyph, this.makeStyle(x, y, glyph, g))
+        this.drawSprite(x, y, glyph, this.makeStyle(x, y))
       }
     }
   }
@@ -279,9 +281,9 @@ function Canvas () {
         w: rect.w * this.scale * this.tile.w,
         h: rect.h * this.scale * this.tile.h
       }
-      this.context.lineWidth = 1;
+      this.context.lineWidth = 2;
       this.context.strokeStyle = this.theme.active.background
-      this.context.strokeRect(r.x + 1, r.y + 1, r.w, r.h)
+      this.context.strokeRect(r.x + 1 , r.y + 1 , r.w, r.h)
     })
   }
 
