@@ -43,20 +43,18 @@ function StepCursor(canvas) {
     })
   }
 
-  this.triggerFX = function(time,el){
-    let target  = canvas.marker.getSelectionArea(el)
-    target.forEach( item => {
-      let g = canvas.seequencer.glyphAt(item.x, item.y)
-      if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isMarker(item.x,item.y)){
-        canvas.drawSprite(item.x, item.y, g, 0)
-      }
-    })
-  }
+  // this.triggerFX = function(time,el){
+  //   let target  = canvas.marker.getSelectionArea(el)
+  //   target.forEach( item => {
+  //     let g = canvas.seequencer.glyphAt(item.x, item.y)
+  //     if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isMarker(item.x,item.y)){
+  //       canvas.drawSprite(item.x, item.y, g, 0)
+  //     }
+  //   })
+  // }
 
   this.trigger = function () {
-    let i
     let value 
-
     this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
         canvas.marker.markers.forEach( ( marker, index) => {
@@ -65,7 +63,7 @@ function StepCursor(canvas) {
               this.msgOut(step, matchedIdx)
               value = canvas.marker.markers[index]
               canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
-              this.triggerFX(null, value)
+              // this.triggerFX(null, value)
             } 
           })
         })

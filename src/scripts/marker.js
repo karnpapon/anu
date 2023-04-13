@@ -379,15 +379,15 @@ function Marker(canvas) {
     return `${this.markers[this.active].w}, ${this.markers[this.active].h}`
   }
 
-  this.getSelectionArea = function(r){
-    const area = []
-    for (let _y = r.y; _y < r.y + r.h; _y++) {
-      for (let _x = r.x; _x < r.x + r.w; _x++) {
-        area.push({x: _x, y: _y })
-      }
-    } 
-    return area
-  }
+  // this.getSelectionArea = function(r){
+  //   const area = []
+  //   for (let _y = r.y; _y < r.y + r.h; _y++) {
+  //     for (let _x = r.x; _x < r.x + r.w; _x++) {
+  //       area.push({x: _x, y: _y })
+  //     }
+  //   } 
+  //   return area
+  // }
 
   this.toRect = function () {
     let cursorArea = []
