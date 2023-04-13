@@ -60,10 +60,9 @@ function StepCursor(canvas) {
     this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
         canvas.marker.markers.forEach( ( marker, index) => {
-          marker.matched.forEach( ( _c, _idx ) => {
-            if(_c.x === step.x && _c.y === step.y){
-              i=_idx
-              this.msgOut(step, i)
+          marker.matched.forEach( ( _c, matchedIdx ) => {
+            if(_c.x === step.x && _c.y === step.y && !marker["control"]["muted"]){
+              this.msgOut(step, matchedIdx)
               value = canvas.marker.markers[index]
               canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
               this.triggerFX(null, value)

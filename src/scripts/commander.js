@@ -188,7 +188,7 @@ function Commander(canvas) {
       }
 
       // (x) mute current selected marker.
-      if (event.keyCode === 82 ) {
+      if (event.keyCode === 88 ) {
         const marker = canvas.marker.currentMarker();
         marker["control"]["muted"] = !marker["control"]["muted"]
         event.preventDefault();

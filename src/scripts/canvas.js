@@ -167,18 +167,18 @@ function Canvas () {
     return this.marker.markers.some( cs => x === cs.x && y === cs.y && cs.i === this.marker.markers[ this.marker.active ].i)
   }
 
-  // this.getCurrentMarker = function(){
-  //   return this.marker.markers.filter( cs => cs.i === this.marker.markers[ this.marker.active ].i)
-  // }
-
   this.isWithinMarkerRange = function (x, y) {
-    return this.marker.markers.some( item => x >= item.x && x < item.x + item.w && y >= item.y && y < item.y + item.h ) 
+    return this.marker.markers.filter( item => x >= item.x && x < item.x + item.w && y >= item.y && y < item.y + item.h ) 
   }
 
   this.isOverlapArea = function (x,y){
     // TODO: overlapped areas for muliples marker still incorrect.
     return this.marker.markers.some( item => item.overlapAreas.has(`${x}:${y}:${item.overlapIndex.values().next().value}`)) 
     // ||  this.marker.markers.some((item) => item.overlapAreas.has(`${x}:${y}:${this.marker.active}`))
+  }
+
+  this.isMutedArea = function (i){
+    return this.marker.markers[i]["control"]["muted"];
   }
 
   this.isMarker = function (x, y) {
@@ -189,11 +189,7 @@ function Canvas () {
     return this.p.some( matched => matched.x === x && matched.y === y)
   }
 
-  // this.isSelectionTrigged = function(x,y){
-  //   return this.getCurrentMarker()
-  // }
-
-  this.isEdge = function (x, y) {
+  this.isEdge = function(x, y) {
     return x === 0 || y === 0 || x === this.seequencer.w - 1 || y === this.seequencer.h - 1
   }
 
@@ -211,9 +207,8 @@ function Canvas () {
 
   this.makeStyle = function (x, y) {
     if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:1 }
-    if(this.isWithinMarkerRange(x, y)) { 
-      return this.isOverlapArea(x,y)? 1: 6 
-    }
+    let marker = this.isWithinMarkerRange(x, y);
+    if(marker.length > 0) { return this.isOverlapArea(x,y)? 1: this.isMutedArea(marker[0].i) ? 5 : 6 }
     return 9
   }
 
