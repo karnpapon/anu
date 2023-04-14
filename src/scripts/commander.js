@@ -75,7 +75,7 @@ function Commander(canvas) {
 
     // EVAL INPUT / EVAL REGEX
     this.doWhen(event.key === "Enter" && app_console.isInputFocused, () => this.runCmd("content", event) )
-    this.doWhen(event.key === "Enter" && app_console.isRegExpFocused && app_console.regexMode[app_console.regexModeIndex] === "regex-mode-oneval", () => this.runCmd("regex", event) )
+    this.doWhen(event.key === "Enter" && app_console.isRegExpFocused && app_console.regexMode[app_console.regexModeIndex] === RegexMode.OnEval, () => this.runCmd("regex", event) )
 
     // DISPLAYER INPUT(OSC/MIDI MSG/ETC.) ON
     this.doWhen(displayer.isDisplayInputToggled, () => { 
@@ -318,6 +318,54 @@ function Commander(canvas) {
       // (Cmd-/) switch between regex-mode (realtime/on-eval)
       if (event.keyCode === 191) {
         app_console.changeRegexMode()
+        displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+
+      // // (Cmd-1) toggle regex-flag global [g]
+      // if (event.keyCode === 49) {
+      //   app_console.changeRegexFlag(0)
+      //   displayer.displayDefault();
+      //   event.preventDefault();
+      //   return;
+      // }
+
+      // (Cmd-1) toggle regex-flag insensitive [i]
+      if (event.keyCode === 49) {
+        app_console.changeRegexFlag(1)
+        displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+
+      // (Cmd-2) toggle regex-flag multiline [m]
+      if (event.keyCode === 50) {
+        app_console.changeRegexFlag(2)
+        displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+
+      // (Cmd-3) toggle regex-flag unicode [u]
+      if (event.keyCode === 51) {
+        app_console.changeRegexFlag(3)
+        displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+
+      // (Cmd-4) toggle regex-flag unicode [s]
+      if (event.keyCode === 52) {
+        app_console.changeRegexFlag(4)
+        displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
+
+      // (Cmd-5) toggle regex-flag unicode [y]
+      if (event.keyCode === 53) {
+        app_console.changeRegexFlag(5)
         displayer.displayDefault();
         event.preventDefault();
         return;

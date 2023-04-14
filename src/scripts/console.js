@@ -89,40 +89,32 @@ function Console(app) {
         </div>
             `
 
-  // button.
-  this.prevBtn
-  this.nextBtn 
-  this.configBtn 
   this.inputFetch
-  this.linkBtn 
-  this.clearBtn 
-  this.nudgeBtn 
   this.oscInfo 
   this.midiInfo
-  this.bpmUpBtn
-  this.bpmDownBtn
-  this.devBtn 
   this.caret
   this.regexCaret
-  
-  // this.notationMode 
-  // this.extractLines 
 
-  // Input. 
   this.searchRegExp
   this.regexInput
-  this.regexMode = ["regex-mode-realtime", "regex-mode-oneval"]
-  this.regexFlags = ["regex-flag-g", "regex-flag-i", "regex-flag-m", "regex-flag-u", "regex-flag-s", "regex-flag-y"]
   this.regexModeIndex = 0
   this.regexModeRealtimeElem
   this.regexModeOnEvalElem
   this.regexErrorElem
   this.fetchSearchInput = ""
   this.searchValue = ""
+  this.regexMode = [RegexMode.Realtime, RegexMode.OnEval]
+  this.regexFlags = [
+    RegexFlag.Global, 
+    RegexFlag.Insensitive, 
+    RegexFlag.Multiline, 
+    RegexFlag.Unicode, 
+    RegexFlag.Dotall, 
+    RegexFlag.Sticky
+  ]
  
   // Console status display.
   this.bpmNumber
-  this.metronomeBtn
   this.currentNumber
   this.highlightLength
   this.cursorPosition
@@ -131,7 +123,6 @@ function Console(app) {
   // state.
   this.isActive = false
   this.isConfigToggle = false
-  this.isLinkToggle = false
   this.isUDPToggled = false
   this.isOSCToggled = false
   this.isReverse = false
@@ -139,10 +130,8 @@ function Console(app) {
   this.isFocus = false
   this.isBPMtoggle = false
   this.isInsertable = false
-  this.updateMarkType = "normal"
-  this.isSearchModeChanged = false
   this.output = ""
-  this.beatRatio = '16th'
+  this.regexFlagSelect = new Set("g")
   
   this.isInputFocused = false
   this.isRegExpFocused = false
@@ -165,7 +154,21 @@ function Console(app) {
     self.regexModeRealtimeElem = qs("p[data-ctrl='regex-mode-realtime']")
     self.regexModeOnEvalElem = qs("p[data-ctrl='regex-mode-oneval']")
     self.regexErrorElem = qs("p[data-ctrl='regex-error']")
-    qs(`p[data-ctrl=${self.regexMode[self.regexModeIndex]}]`).classList.add("active")
+    qs(`p[data-ctrl=${self.regexMode[self.regexModeIndex].description}]`).classList.add("active")
+
+    const attrObserver = new MutationObserver((mutations) => {
+      mutations.forEach(mu => {
+        if (mu.type !== "attributes" && mu.attributeName !== "class") return;
+        if (mu.target.className === "active") {
+          self.regexFlagSelect.add(mu.target.textContent)
+        } else {
+          self.regexFlagSelect.delete(mu.target.textContent) 
+        }
+      });
+    });
+
+    let regexFlagElem = self.regexFlags.map(el => qs(`p[data-ctrl=${el.description}]`));
+    regexFlagElem.forEach(el => attrObserver.observe(el, {attributes: true}));
 
     // input 
     self.inputFetch.addEventListener("input", function (e) { 
@@ -185,7 +188,7 @@ function Console(app) {
     self.searchRegExp.addEventListener("input", function () {
       self.searchType = "regex"
       self.regexInput = this.innerText
-      if (self.regexMode[self.regexModeIndex] === "regex-mode-realtime") {
+      if (self.regexMode[self.regexModeIndex] === RegexMode.Realtime) {
         client.handleRegexInput() 
       } 
       client.displayer.displayMsg("regex")
@@ -225,15 +228,6 @@ function Console(app) {
     app.bpmNumber.innerHTML = app.clock().bpm
   }
 
-  this.setCounterDisplay = function () {
-    app.currentNumber.innerHTML = this.beatRatio
-  }
-
-  this.setCPUUsageDisplay = function(v){
-    let trimmedData = v.toFixed(2)
-    app.cpuUsage.innerHTML = trimmedData + " " + "%"
-  }
-
   this.setTotalLenghtCounterDisplay = function () {
     this.highlightLength.innerHTML = canvas.texts.length
   }
@@ -263,10 +257,6 @@ function Console(app) {
       caret.classList.add("hide")
       el.blur()
     }
-  }
-
-  this.toggleIsSearchModeChanged = function () {
-    this.isSearchModeChanged = !this.isSearchModeChanged
   }
 
   this.runCmd = function(id){
@@ -300,10 +290,14 @@ function Console(app) {
   }
 
   this.changeRegexMode = function() {
-    qs(`p[data-ctrl=${this.regexMode[this.regexModeIndex]}]`).classList.remove("active")
+    qs(`p[data-ctrl=${this.regexMode[this.regexModeIndex].description}]`).classList.remove("active")
     this.regexModeIndex++
     this.regexModeIndex = this.regexModeIndex % this.regexMode.length
-    qs(`p[data-ctrl=${this.regexMode[this.regexModeIndex]}]`).classList.add("active")
+    qs(`p[data-ctrl=${this.regexMode[this.regexModeIndex].description}]`).classList.add("active")
+  }
+
+  this.changeRegexFlag = function(index) {
+    qs(`p[data-ctrl=${this.regexFlags[index].description}]`).classList.toggle("active")
   }
 
   this.setFocusStyle = function(target){

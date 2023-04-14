@@ -32,11 +32,6 @@ function Client(){
 
   // -----------------------------------
 
-  // Marker.
-  // this.matchedPosition = []
-
-  // -----------------------------------
-
   this.build = function(){
     this.console.build()
     this.displayer.build()
@@ -64,7 +59,9 @@ function Client(){
     let textContent = this.trimmedContents(searchFrom)
 		// this.dispatchEvent("change");
     if (searchFrom == "") { canvas.clearMarksPos() }
-    let exp = { pattern: this.console.regexInput, flags: "g" };
+    let flags = ""
+    this.console.regexFlagSelect.forEach(r => flags += r)
+    let exp = { pattern: this.console.regexInput, flags };
 		let o = {pattern:exp.pattern, flags:exp.flags, text: textContent};
 		this.regexSolver.solve(o, (result) => client.handleRegexResult(result));
 	}

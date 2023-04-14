@@ -111,7 +111,7 @@ function Canvas () {
   //   this.setGrid(w, h)
   // }
 
-  this.writeData = function (data = 'please give some input value and hit return, please' ) {
+  this.writeData = function (data = 'Please give some input value and hit return' ) {
     this.texts = data
     let position = this.marker.markers[this.marker.active]
     for (var i = 0; i < this.texts.length; i++) {
@@ -165,7 +165,7 @@ function Canvas () {
     return this.marker.markers.some( cs => x === cs.x && y === cs.y && cs.i === this.marker.markers[ this.marker.active ].i)
   }
 
-  this.isWithinMarkerRange = function (x, y) {
+  this.getMarkerAt = function (x, y) {
     return this.marker.markers.filter( item => x >= item.x && x < item.x + item.w && y >= item.y && y < item.y + item.h ) 
   }
 
@@ -203,10 +203,12 @@ function Canvas () {
     return ( marker.y + marker.h ) - 1  === this.seequencer.h - 2
   }
 
+  this.isWithinMarker = function(marker){ return marker.length > 0 }
+
   this.makeStyle = function (x, y) {
     if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:1 }
-    let marker = this.isWithinMarkerRange(x, y);
-    if(marker.length > 0) { return this.isOverlapArea(x,y)? 1: this.isMutedArea(marker[0].i) ? 5 : 6 }
+    let marker = this.getMarkerAt(x, y);
+    if(this.isWithinMarker(marker)) { return this.isOverlapArea(x,y)? 1: this.isMutedArea(marker[0].i) ? 5 : 6 }
     return 9
   }
 
@@ -276,7 +278,7 @@ function Canvas () {
       }
       this.context.lineWidth = 2;
       this.context.strokeStyle = this.theme.active.background
-      this.context.strokeRect(r.x + 1 , r.y + 1 , r.w, r.h)
+      this.context.strokeRect(r.x + 1 , r.y + 1.5 , r.w, r.h)
     })
   }
 
@@ -304,7 +306,7 @@ function Canvas () {
 
     // bottom_border
     const note_spaces = ((this.seequencer.w - LIBRARY_ENDNOTES.length) / 2) - 3
-    this.write(`|${SPACE_GLYPH.repeat(note_spaces)}${LIBRARY_ENDNOTES}${SPACE_GLYPH.repeat(note_spaces )}|`,2, operators.length + box.y+1, 99, 11, "bold")
+    this.write(`|${SPACE_GLYPH.repeat(note_spaces)}${LIBRARY_ENDNOTES}${SPACE_GLYPH.repeat(note_spaces - 1)}|`,2, operators.length + box.y+1, 99, 11, "bold")
     this.write(`${BOTTOM_BORDER_SYMBOL[0]}${BOTTOM_BORDER_SYMBOL[1].repeat(top_border)}${BOTTOM_BORDER_SYMBOL[2]}`,2, operators.length + box.y+2, 99, 11)
   }
 

@@ -5,6 +5,20 @@ const EMPTY_GLYPH = '.'
 const BANG_GLYPH = '*'
 const SPACE_GLYPH = ' '
 
+const RegexMode = {
+	Realtime: Symbol("regex-mode-realtime"),
+	OnEval: Symbol("regex-mode-oneval"),
+}
+
+const RegexFlag = {
+	Global: Symbol("regex-flag-g"),
+	Insensitive: Symbol("regex-flag-i"),
+	Multiline: Symbol("regex-flag-m"),
+	Unicode: Symbol("regex-flag-u"),
+	Dotall: Symbol("regex-flag-s"),
+	Sticky: Symbol("regex-flag-y"),
+}
+
 
 // helps
 const TOP_BORDER_SYMBOL = ['┌','─','┐']

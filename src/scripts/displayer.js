@@ -220,7 +220,9 @@ function Displayer(app) {
       case 'regex':
         this.displayType = "preview"  
         let regexToDisplay = app.console.regexInput;
-        this.el_general.innerHTML = `<div class="displayer-bold">${regexToDisplay !== "\n" ? `/${regexToDisplay}/g` : "//g" }</div>`
+        let flags = ""
+        app.console.regexFlagSelect.forEach(r => flags += r)
+        this.el_general.innerHTML = `<div class="displayer-bold">${regexToDisplay !== "\n" ? `/${regexToDisplay}/${flags}` : `//${flags}` }</div>`
         break;
       case 'console':
         this.displayType = "preview"  

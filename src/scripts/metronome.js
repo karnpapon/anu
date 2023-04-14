@@ -117,7 +117,6 @@ function Metronome(canvas) {
   };
 
   this.stop = function(){
-    console.log("stop metro")
     this.timerWorker.postMessage("stop"); 
   }
 
