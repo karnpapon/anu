@@ -6,7 +6,7 @@ function Client(){
   this.content = new Content(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
-  this._regexSolver = new RegexSolver();
+  this.regexSolver = new RegexSolver();
 
   // ------------------------------------
 
@@ -59,23 +59,25 @@ function Client(){
     return trimmedText
   }
 
-  this._change = () => {
+  this.handleRegexInput = () => {
     let searchFrom = canvas.texts
     let textContent = this.trimmedContents(searchFrom)
 		// this.dispatchEvent("change");
     if (searchFrom == "") { canvas.clearMarksPos() }
     let exp = { pattern: this.console.regexInput, flags: "g" };
 		let o = {pattern:exp.pattern, flags:exp.flags, text: textContent};
-		this._regexSolver.solve(o, (result) => client._handleResult(result));
+		this.regexSolver.solve(o, (result) => client.handleRegexResult(result));
 	}
 
-  this._handleResult = (result) => {
-    this.result = this._processResult(result);
-    this.console.regexErrorElem.innerText = this.result.error ?  `[${this.result.error.name}]: invalid syntax` :  ""
+  this.handleRegexResult = (result) => {
+    this.result = this.processRegexResult(result);
+    this.console.regexErrorElem.innerText = this.result.error ?  `[${this.result.error.name}]: ${this.result.error.message}` :  ""
     if (this.result.matches) {
       canvas.clearMarksPos()
       this.result.matches.forEach(match => {
-        canvas.p.push(canvas.seequencer.posAt(match.i))
+        for(let i=match.i;i<match.i+match.l;i++){
+          canvas.p.push(canvas.seequencer.posAt(i))
+        }
       })
     } else {
       canvas.clearMarksPos()
@@ -83,58 +85,10 @@ function Client(){
 		// this.dispatchEvent("result");
 	}
 
-	this._processResult = function(result) {
+	this.processRegexResult = function(result) {
     result.matches && result.matches.forEach((o, i)=>o.num=i);
 		return result;
 	}
-
-  // this.getMatchedPosition = function(){
-  //   let searchFrom = canvas.texts
-  //   let trimmed = this.trimmedContents(searchFrom)
-  //   let re
-  //   let match, query
-
-  //   query = this.console.regexInput
-  //   // target = query.replace(/[)(]/g, "\\$&");
-  //   if(query){
-  //     try{ 
-  //       re = new RegExp(query, "g")  //TODO: make this configurable.
-
-  //       if(re){
-  //         canvas.p = []
-  //         this.matchedPosition = []
-  //         if (query !== ""){
-  //           while( (match = re.exec(trimmed)) != null){
-  //             console.log("match", match.length)
-  //             this.matchedPosition.push({
-  //               index: match.index, 
-  //               len: match.length == 2? match[0].length:0 
-  //             })
-  //           } 
-  //         }
-      
-  //         if(this.matchedPosition){
-  //           this.matchedPosition.forEach(pos => {
-  //             if (pos.len > 0) {
-  //               let len = 0
-  //               for (var i = 0; i < pos.len; i++) {
-  //                 canvas.p.push(canvas.seequencer.posAt(pos.index + len))
-  //                 len++
-  //               }
-  //             } else {
-  //               canvas.p.push(canvas.seequencer.posAt(pos.index))
-  //             }
-  //           })
-  //         }
-  //       } else {
-  //         canvas.clearMarksPos()
-  //       }
-
-  //     } catch(e) { 
-  //       console.log("invalid regular expression")
-  //     }
-  //   }    
-  // }
 
   this.startFetch = function(){
     this.getData()

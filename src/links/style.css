@@ -308,7 +308,7 @@ lft p{ font-family: 'input_sans_condensed_bold'; margin: 0;}
 }
 
 .title{
-  font-family: 'input_sans_condensed_regular';
+  font-family: 'input_sans_condensed_bold';
   /* padding-bottom: 5px; */
   /* flex: 1; */
   padding: 0;
@@ -515,9 +515,9 @@ button:active{
 .header-wrapper{ 
   display: flex; 
   flex-direction: column;
-  height: 85px;
+  /* height: 85px; */
   /* flex: 3; */
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
   /* margin-right: 30px; */
   /* justify-content: space-between; */
 }
@@ -581,7 +581,11 @@ button:active{
 .console-2{ flex: 2}
 .console-3{ flex: 2}
 
-[data-ctrl="regex-error"]{ font-style: italic; color: red; }
+.mt {margin-top: 2px;}
+.regex-mode, .regex-flag{ color: rgb(174, 174, 174)}
+.active { color: #000000; }
+
+[data-ctrl="regex-error"]{ color: red; line-height: normal; white-space: nowrap; }
 [data-ctrl="subtract"]{ 
   border-top: 1px solid black !important;
   border-bottom: 1px solid black !important;
@@ -786,7 +790,7 @@ app {
 }
 
 .btn-show{  display: block; }
-.btn-hide{  display: none !important;}
+.hide{  display: none !important;}
 
 .operator{font: 400 11px system-ui;  }
 .tempo{ 

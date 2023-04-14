@@ -75,7 +75,7 @@ function Commander(canvas) {
 
     // EVAL INPUT / EVAL REGEX
     this.doWhen(event.key === "Enter" && app_console.isInputFocused, () => this.runCmd("content", event) )
-    this.doWhen(event.key === "Enter" && app_console.isRegExpFocused && app_console.regexMode[app_console.regexModeIndex] === "ON-EVAL", () => this.runCmd("regex", event) )
+    this.doWhen(event.key === "Enter" && app_console.isRegExpFocused && app_console.regexMode[app_console.regexModeIndex] === "regex-mode-oneval", () => this.runCmd("regex", event) )
 
     // DISPLAYER INPUT(OSC/MIDI MSG/ETC.) ON
     this.doWhen(displayer.isDisplayInputToggled, () => { 

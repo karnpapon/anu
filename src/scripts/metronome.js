@@ -117,10 +117,11 @@ function Metronome(canvas) {
   };
 
   this.stop = function(){
-    metronome.timerWorker.postMessage("stop"); 
+    console.log("stop metro")
+    this.timerWorker.postMessage("stop"); 
   }
 
-  this.draw = function () {
+  function draw() {
     let currentNote = metronome.last16thNoteDrawn;
     if (metronome.audioContext) {
       const currentTime = metronome.audioContext.currentTime;
@@ -145,7 +146,7 @@ function Metronome(canvas) {
       }
     }
 
-    window.requestAnimationFrame(metronome.draw);
+    window.requestAnimationFrame(draw);
   };
 
   function loadWebWorker(worker) {
@@ -155,27 +156,8 @@ function Metronome(canvas) {
   }
 
   this.init = function () {
-    window.requestAnimationFrame(this.draw);
+    window.requestAnimationFrame(draw);
     const workerScript = document.querySelector('#metronomeWorker').textContent
-    // const workerScript = `
-    //   var timerID=null;
-    //   var interval=100;
-    //   onmessage = (e) => { 
-    //     if (e.data=="start") {
-    //       timerID=setInterval(function(){postMessage("tick");},interval)
-    //     } else if (e.data.interval) {
-    //       interval=e.data.interval;
-    //       if (timerID) {
-    //         clearInterval(timerID);
-    //         timerID=setInterval(function(){postMessage("tick");},interval)
-    //       }
-    //     } else if (e.data=="stop") {
-    //       console.log("metro stop")
-    //       clearInterval(timerID);
-    //       timerID=null;
-    //     }
-    //   }
-    // `
     this.timerWorker = loadWebWorker(workerScript)
     this.timerWorker.onmessage = function (e) {
       if (e.data == "tick") {

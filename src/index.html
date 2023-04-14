@@ -26,12 +26,12 @@
     <script type="text/javascript" src="scripts/seequencer.js"></script>
     <script type="text/javascript" src="scripts/stepcounter.js"></script>
     <script type="text/javascript" src="scripts/stepcursor.js"></script>
-    <!-- <script id="regexWorker" type="javascript/worker" src="scripts/regex-worker.js"></script> -->
 
     <script id="metronomeWorker" type="javascript/worker">
       var timerID=null; var interval=100;
       onmessage = (e) => { 
         if (e.data=="start") { 
+          console.log("metro start")
           timerID=setInterval(function(){postMessage("tick");},interval)
         } else if (e.data.interval) {
           interval=e.data.interval;
@@ -47,34 +47,38 @@
       }
     </script>
 
-    <!-- source for this is in ./assets/workers/RegExWorker.js -->
     <script id="regexWorker" type="javascript/worker">
-      onmessage=function(e){postMessage("onload");var t,s,n,a=e.data,i=a.text,d=a.tests,l=a.mode,r=new RegExp(a.pattern,a.flags),o=[];if("tests"===l)for(var g=0,x=d.length;g<x;g++){let e=d[g];i=e.text,r.lastIndex=0,t=r.exec(i),o[g]=t?{i:t.index,l:t[0].length,id:e.id}:{id:e.id}}else for(;t=r.exec(i);){s===r.lastIndex&&(n={id:"infinite",warning:!0},++r.lastIndex),s=r.lastIndex;var f=t.reduce(function(e,t,s){return(0===s||e.push({s:t}))&&e},[]);if(o.push({i:t.index,l:t[0].length,groups:f}),!r.global)break}postMessage({error:n,matches:o,mode:l})};
+      onmessage = function (evt) {
+        postMessage("onload");
+        var data = evt.data, text = data.text;
+        var regex = new RegExp(data.pattern, data.flags);
+        var matches = [], match, index, error;
+        while (match = regex.exec(text)) {
+          if (index === regex.lastIndex) { 
+            error = {
+              id:"infinite", 
+              warning:true, 
+              name:"Error", 
+              message: "infinite loop" 
+            }; 
+            ++regex.lastIndex; 
+          }
+          index = regex.lastIndex;
+          var groups = match.reduce(function (arr, s, i) { return (i===0 || arr.push({s:s})) && arr },[]);
+          matches.push({i:match.index, l:match[0].length, groups:groups});
+          if (!regex.global) { break; } // or it will become infinite.
+        }
+        postMessage({error: error, matches: matches});
+      };
     </script>
     <style>
-       html, body {
-          border-radius: 10px;
-          overflow: hidden;
-        }
-
+       html, body { border-radius: 10px; overflow: hidden; }
       /* .element-inside-your-body { overflow: auto; } */
       ::selection { background: var(--main-bg-color); }
       #devtools { display: none; }
     </style>
   </head>
   <body>
-    <!-- <script>
-      (async () => {
-        const { Command } = window.__TAURI__.shell;
-        const { TauriEvent, listen } = window.__TAURI__.event;
-        const command = Command.sidecar("binaries/my-sidecar");
-        command.on('close', (data) => { console.log("command close", data) })
-        command.on('error', (error) => { console.log("command error", error) })
-        command.stdout.on('data', (line) => { console.log("command stdout", line) })
-        command.stderr.on('data', (line) => { console.log("command stderr", line) })
-        const output = await command.execute()
-      })()
-    </script> -->
     <script type="text/javascript" src="/main.js"></script>
   </body>
 </html>

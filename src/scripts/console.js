@@ -15,23 +15,35 @@ function Console(app) {
             <p data-logo="client" class="title">INPUT:~$ </p>
             <terminal>
               <div id="content" data-ctrl="fetch" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off"></div>
-              <caret id="input-caret" for="terminal-input" class="caret btn-hide">&nbsp;</caret>
+              <caret id="input-caret" for="terminal-input" class="caret hide">&nbsp;</caret>
             </terminal>
           </div>
           <div class="header">
             <p class="title">REGEX:~$ </p>
             <terminal>
               <div id="regex" data-ctrl="regex" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off"></div>
-              <caret id="regex-caret" for="regex" class="caret btn-hide">&nbsp;</caret>
+              <caret id="regex-caret" for="regex" class="caret hide">&nbsp;</caret>
             </terminal>
           </div>
           <div class="header">
-            <p class="title">REGEXMODE:</p>
-            <terminal>
-              <p data-ctrl="regex-mode"></p>
+            <p class="title">MODE:</p>
+            <terminal class="regex-mode"> 
+              <p data-ctrl="regex-mode-realtime">Realtime</p>&nbsp;/&nbsp;
+              <p data-ctrl="regex-mode-oneval">On-Eval</p>
             </terminal>
           </div>
           <div class="header">
+            <p class="title">FLAG:</p>
+            <terminal class="regex-flag">
+              <p data-ctrl="regex-flag-g" class="active">g</p>|
+              <p data-ctrl="regex-flag-i">i</p>|
+              <p data-ctrl="regex-flag-m">m</p>|
+              <p data-ctrl="regex-flag-u">u</p>|
+              <p data-ctrl="regex-flag-s">s</p>|
+              <p data-ctrl="regex-flag-y">y</p>
+            </terminal>
+          </div>
+          <div class="mt">
             <p data-ctrl="regex-error"></p>
           </div>
         </div>
@@ -41,10 +53,10 @@ function Console(app) {
             <div class="tempo">
               <div class="information-details">
                 <div style="display: grid;">
-                  <p class="information-details">BPM:</p>
-                  <p class="information-details">TME:</p>
-                  <p class="information-details">LEN:</p>
-                  <p class="information-details">POS:</p>
+                  <p class="title">BPM:</p>
+                  <p class="title">TME:</p>
+                  <p class="title">LEN:</p>
+                  <p class="title">POS:</p>
                 </div>
                 <div class="performance-details">
                   <p class="init-bpm" data-ctrl="bpm">120</p>
@@ -62,9 +74,9 @@ function Console(app) {
             <div class="tempo">
               <div class="information-details">
                 <div style="display: grid;">
-                  <p class="information-details">OSC:</p>
-                  <p class="information-details">UDP:</p> 
-                  <p class="information-details">MIDI:</p> 
+                  <p class="title">OSC:</p>
+                  <p class="title">UDP:</p> 
+                  <p class="title">MIDI:</p> 
                 </div>
                 <div class="performance-details">
                   <p data-ctrl="osc">--</p>
@@ -99,9 +111,11 @@ function Console(app) {
   // Input. 
   this.searchRegExp
   this.regexInput
-  this.regexMode = ["REALTIME", "ON-EVAL"]
+  this.regexMode = ["regex-mode-realtime", "regex-mode-oneval"]
+  this.regexFlags = ["regex-flag-g", "regex-flag-i", "regex-flag-m", "regex-flag-u", "regex-flag-s", "regex-flag-y"]
   this.regexModeIndex = 0
-  this.regexModeElem
+  this.regexModeRealtimeElem
+  this.regexModeOnEvalElem
   this.regexErrorElem
   this.fetchSearchInput = ""
   this.searchValue = ""
@@ -148,9 +162,10 @@ function Console(app) {
     self.currentNumber = qs("p[data-ctrl='current']")
     self.highlightLength = qs("p[data-ctrl='crsrlen']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
-    self.regexModeElem = qs("p[data-ctrl='regex-mode']")
+    self.regexModeRealtimeElem = qs("p[data-ctrl='regex-mode-realtime']")
+    self.regexModeOnEvalElem = qs("p[data-ctrl='regex-mode-oneval']")
     self.regexErrorElem = qs("p[data-ctrl='regex-error']")
-    self.regexModeElem.innerText = self.regexMode[self.regexModeIndex]
+    qs(`p[data-ctrl=${self.regexMode[self.regexModeIndex]}]`).classList.add("active")
 
     // input 
     self.inputFetch.addEventListener("input", function (e) { 
@@ -170,8 +185,8 @@ function Console(app) {
     self.searchRegExp.addEventListener("input", function () {
       self.searchType = "regex"
       self.regexInput = this.innerText
-      if (self.regexMode[self.regexModeIndex] === "REALTIME") {
-        client._change() //TODO: return value instead.
+      if (self.regexMode[self.regexModeIndex] === "regex-mode-realtime") {
+        client.handleRegexInput() 
       } 
       client.displayer.displayMsg("regex")
     });
@@ -238,14 +253,14 @@ function Console(app) {
   this.toggleInsert = function (el, caret, condition) {
     if (condition) {
       el.classList.remove("disable-input")
-      caret.classList.remove("btn-hide")
+      caret.classList.remove("hide")
       el.setAttribute("contenteditable", "true")
       el.focus()
       this.focusAndMoveCursorToTheEnd(el);
     } else {
       el.classList.add("disable-input")
       el.setAttribute("contenteditable", "false")
-      caret.classList.add("btn-hide")
+      caret.classList.add("hide")
       el.blur()
     }
   }
@@ -262,8 +277,7 @@ function Console(app) {
       app.startFetch()
     } else {
       canvas.clearMarksPos()
-      // app.matchedPosition = []
-      app.getMatchedPosition()
+      app.handleRegexInput()
     } 
     setTimeout(() => {
       target.classList.remove("trigger-input") 
@@ -286,9 +300,10 @@ function Console(app) {
   }
 
   this.changeRegexMode = function() {
+    qs(`p[data-ctrl=${this.regexMode[this.regexModeIndex]}]`).classList.remove("active")
     this.regexModeIndex++
     this.regexModeIndex = this.regexModeIndex % this.regexMode.length
-    this.regexModeElem.innerText = this.regexMode[this.regexModeIndex]
+    qs(`p[data-ctrl=${this.regexMode[this.regexModeIndex]}]`).classList.add("active")
   }
 
   this.setFocusStyle = function(target){
