@@ -111,7 +111,7 @@ function Canvas () {
   //   this.setGrid(w, h)
   // }
 
-  this.writeData = function (data = 'please give some input value and hit return' ) {
+  this.writeData = function (data = 'please give some input value and hit return, please' ) {
     this.texts = data
     let position = this.marker.markers[this.marker.active]
     for (var i = 0; i < this.texts.length; i++) {

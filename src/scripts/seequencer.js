@@ -110,7 +110,8 @@ function Seequencer(canvas){
 
   this.inMark = function(x,y){
     let p = []
-    client.matchedPosition.forEach(pos => { 
+    if (!client.this.result.matches) return false
+    client.result.matches.forEach(pos => { 
       let len = 0
       for(var i=0; i<pos.len;i++){
         p.push(canvas.seequencer.posAt(pos.index + len)) 

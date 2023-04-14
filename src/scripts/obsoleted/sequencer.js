@@ -125,12 +125,14 @@ function Sequencer(app){
 
   this.trigger = function(marker, index, array){
 
+    if (!app.result.matches) return
+
     if( app.searchValue !== ""){
       if(app.isTextSelected){
         if (!marker.isMuted) {
           // trigger letters.
           if (app.matchedPositionLength == 1) {
-            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+            if (app.result.matches.indexOf(marker.position) !== (-1)) {
               this.outputMsg(marker)
               this.addTriggerClass(index)
               marker.note.length > 1? marker.counter++:marker.counter
@@ -141,7 +143,7 @@ function Sequencer(app){
 
           // trigger words.
           else if (app.matchedPositionLength > 1) {
-            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+            if (app.result.matches.indexOf(marker.position) !== (-1)) {
               this.outputMsg(marker)
               this.addTriggerClass(index)
             } else {
@@ -155,7 +157,7 @@ function Sequencer(app){
       } else {
           // trigger letters.
           if (app.matchedPositionLength == 1) {
-            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+            if (app.result.matches.indexOf(marker.position) !== (-1)) {
               this.outputMsg(marker)
               this.addTriggerClass()
             }
@@ -168,7 +170,7 @@ function Sequencer(app){
 
           // trigger words.
           else if (app.matchedPositionLength > 1) {
-            if (app.matchedPosition.indexOf(marker.position) !== (-1)) {
+            if (app.result.matches.indexOf(marker.position) !== (-1)) {
               this.outputMsg(marker)
               this.addTriggerClass()
             } else {

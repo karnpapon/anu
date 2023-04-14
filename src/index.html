@@ -7,8 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/osc-js@2.4.0/lib/osc.min.js"></script>
     <script type="text/javascript" src="scripts/lib/theme.js"></script>
-    <script type="text/javascript" src="scripts/lib/utils.js"></script>
+    <script type="text/javascript" src="scripts/utils.js"></script>
     <script type="text/javascript" src="scripts/metronome.js"></script>
+    <script type="text/javascript" src="scripts/regex.js"></script>
     <script type="text/javascript" src="scripts/const.js"></script>
     <script type="text/javascript" src="scripts/canvas.js"></script>
     <script type="text/javascript" src="scripts/clock.js"></script>
@@ -25,6 +26,31 @@
     <script type="text/javascript" src="scripts/seequencer.js"></script>
     <script type="text/javascript" src="scripts/stepcounter.js"></script>
     <script type="text/javascript" src="scripts/stepcursor.js"></script>
+    <!-- <script id="regexWorker" type="javascript/worker" src="scripts/regex-worker.js"></script> -->
+
+    <script id="metronomeWorker" type="javascript/worker">
+      var timerID=null; var interval=100;
+      onmessage = (e) => { 
+        if (e.data=="start") { 
+          timerID=setInterval(function(){postMessage("tick");},interval)
+        } else if (e.data.interval) {
+          interval=e.data.interval;
+          if (timerID) {
+            clearInterval(timerID);
+            timerID=setInterval(function(){postMessage("tick");},interval)
+          }
+        } else if (e.data=="stop") {
+          console.log("metro stop")
+          clearInterval(timerID);
+          timerID=null;
+        }
+      }
+    </script>
+
+    <!-- source for this is in ./assets/workers/RegExWorker.js -->
+    <script id="regexWorker" type="javascript/worker">
+      onmessage=function(e){postMessage("onload");var t,s,n,a=e.data,i=a.text,d=a.tests,l=a.mode,r=new RegExp(a.pattern,a.flags),o=[];if("tests"===l)for(var g=0,x=d.length;g<x;g++){let e=d[g];i=e.text,r.lastIndex=0,t=r.exec(i),o[g]=t?{i:t.index,l:t[0].length,id:e.id}:{id:e.id}}else for(;t=r.exec(i);){s===r.lastIndex&&(n={id:"infinite",warning:!0},++r.lastIndex),s=r.lastIndex;var f=t.reduce(function(e,t,s){return(0===s||e.push({s:t}))&&e},[]);if(o.push({i:t.index,l:t[0].length,groups:f}),!r.global)break}postMessage({error:n,matches:o,mode:l})};
+    </script>
     <style>
        html, body {
           border-radius: 10px;

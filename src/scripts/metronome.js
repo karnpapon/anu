@@ -156,24 +156,26 @@ function Metronome(canvas) {
 
   this.init = function () {
     window.requestAnimationFrame(this.draw);
-    const workerScript = `
-      var timerID=null;
-      var interval=100;
-      onmessage = (e) => { 
-        if (e.data=="start") {
-          timerID=setInterval(function(){postMessage("tick");},interval)
-        } else if (e.data.interval) {
-          interval=e.data.interval;
-          if (timerID) {
-            clearInterval(timerID);
-            timerID=setInterval(function(){postMessage("tick");},interval)
-          }
-        } else if (e.data=="stop") {
-          clearInterval(timerID);
-          timerID=null;
-        }
-      }
-    `
+    const workerScript = document.querySelector('#metronomeWorker').textContent
+    // const workerScript = `
+    //   var timerID=null;
+    //   var interval=100;
+    //   onmessage = (e) => { 
+    //     if (e.data=="start") {
+    //       timerID=setInterval(function(){postMessage("tick");},interval)
+    //     } else if (e.data.interval) {
+    //       interval=e.data.interval;
+    //       if (timerID) {
+    //         clearInterval(timerID);
+    //         timerID=setInterval(function(){postMessage("tick");},interval)
+    //       }
+    //     } else if (e.data=="stop") {
+    //       console.log("metro stop")
+    //       clearInterval(timerID);
+    //       timerID=null;
+    //     }
+    //   }
+    // `
     this.timerWorker = loadWebWorker(workerScript)
     this.timerWorker.onmessage = function (e) {
       if (e.data == "tick") {

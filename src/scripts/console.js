@@ -31,6 +31,9 @@ function Console(app) {
               <p data-ctrl="regex-mode"></p>
             </terminal>
           </div>
+          <div class="header">
+            <p data-ctrl="regex-error"></p>
+          </div>
         </div>
        
         <div class="info">
@@ -99,6 +102,7 @@ function Console(app) {
   this.regexMode = ["REALTIME", "ON-EVAL"]
   this.regexModeIndex = 0
   this.regexModeElem
+  this.regexErrorElem
   this.fetchSearchInput = ""
   this.searchValue = ""
  
@@ -145,6 +149,7 @@ function Console(app) {
     self.highlightLength = qs("p[data-ctrl='crsrlen']")
     self.cursorPosition = qs("p[data-ctrl='crsrpos']")
     self.regexModeElem = qs("p[data-ctrl='regex-mode']")
+    self.regexErrorElem = qs("p[data-ctrl='regex-error']")
     self.regexModeElem.innerText = self.regexMode[self.regexModeIndex]
 
     // input 
@@ -166,7 +171,7 @@ function Console(app) {
       self.searchType = "regex"
       self.regexInput = this.innerText
       if (self.regexMode[self.regexModeIndex] === "REALTIME") {
-        client.getMatchedPosition() //TODO: return value instead.
+        client._change() //TODO: return value instead.
       } 
       client.displayer.displayMsg("regex")
     });
@@ -257,7 +262,7 @@ function Console(app) {
       app.startFetch()
     } else {
       canvas.clearMarksPos()
-      app.matchedPosition = []
+      // app.matchedPosition = []
       app.getMatchedPosition()
     } 
     setTimeout(() => {
