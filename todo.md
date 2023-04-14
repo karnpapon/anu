@@ -5,8 +5,9 @@
 - ~~change input to terminal styles.~~
 - ~~add regex mode~~
 - ~~disable underscore when inputInsert is ON, other it'll remove a step.~~
+- ~~mutable marker~~
 
-- mutable marker
+- configurable Regex flag.
 - reversable marker / OSC msg
 - handle sendClockMsg to be compatible with MetronomeWorker
 - customizable osc port / midi-out device

@@ -219,8 +219,8 @@ function Displayer(app) {
         break;
       case 'regex':
         this.displayType = "preview"  
-        let regexToDisplay = app.console.regexInput.replace(/[)(]/g, "\\$&");
-        this.el_general.innerHTML = `<div class="displayer-bold">${new RegExp(regexToDisplay,"gi")}</div>`
+        let regexToDisplay = app.console.regexInput;
+        this.el_general.innerHTML = `<div class="displayer-bold">${regexToDisplay !== "\n" ? `/${regexToDisplay}/g` : "//g" }</div>`
         break;
       case 'console':
         this.displayType = "preview"  

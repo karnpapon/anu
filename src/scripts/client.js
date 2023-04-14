@@ -61,45 +61,49 @@ function Client(){
   this.getMatchedPosition = function(){
     let searchFrom = canvas.texts
     let trimmed = this.trimmedContents(searchFrom)
-    let target, search, noBracketTarget
+    let re
     let match, query
 
     query = this.console.regexInput
-    target = query.replace(/[)(]/g, "\\$&");
-    if(target){
-      try{ search = new RegExp("(" + target + ")","ig")  //TODO: make this configurable.
-      } catch(e) { console.log("invalid regular expression")}
-    }
+    // target = query.replace(/[)(]/g, "\\$&");
+    if(query){
+      try{ 
+        console.log("try", query)
+        re = new RegExp(query, "g")  //TODO: make this configurable.
 
-    if(search && target !== ""){
-      canvas.p = []
-      this.matchedPosition = []
-      if (target !== ""){
-        while( match = search.exec(trimmed)){
-          this.matchedPosition.push({
-            index: match.index, 
-            len: match.length == 2? match[0].length:0 
-          })
-        } 
-      }
-  
-      if(this.matchedPosition){
-        this.matchedPosition.forEach(pos => {
-          if (pos.len > 0) {
-            let len = 0
-            for (var i = 0; i < pos.len; i++) {
-              canvas.p.push(canvas.seequencer.posAt(pos.index + len))
-              len++
-            }
-          } else {
-            canvas.p.push(canvas.seequencer.posAt(pos.index))
+        if(re){
+          canvas.p = []
+          this.matchedPosition = []
+          if (query !== ""){
+            while( (match = re.exec("please give some input")) != null){
+              this.matchedPosition.push({
+                index: match.index, 
+                len: match.length == 2? match[0].length:0 
+              })
+            } 
           }
-        })
+      
+          if(this.matchedPosition){
+            this.matchedPosition.forEach(pos => {
+              if (pos.len > 0) {
+                let len = 0
+                for (var i = 0; i < pos.len; i++) {
+                  canvas.p.push(canvas.seequencer.posAt(pos.index + len))
+                  len++
+                }
+              } else {
+                canvas.p.push(canvas.seequencer.posAt(pos.index))
+              }
+            })
+          }
+        } else {
+          canvas.clearMarksPos()
+        }
+
+      } catch(e) { 
+        console.log("invalid regular expression")
       }
-    } else {
-      canvas.clearMarksPos()
-    }
-    
+    }    
   }
 
   this.startFetch = function(){
