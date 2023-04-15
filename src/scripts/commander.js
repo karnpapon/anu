@@ -324,15 +324,15 @@ function Commander(canvas) {
       }
 
       // // (Cmd-1) toggle regex-flag global [g]
-      // if (event.keyCode === 49) {
-      //   app_console.changeRegexFlag(0)
-      //   displayer.displayDefault();
-      //   event.preventDefault();
-      //   return;
-      // }
+      if (event.keyCode === 49) {
+        app_console.changeRegexFlag(0)
+        displayer.displayDefault();
+        event.preventDefault();
+        return;
+      }
 
       // (Cmd-1) toggle regex-flag insensitive [i]
-      if (event.keyCode === 49) {
+      if (event.keyCode === 50) {
         app_console.changeRegexFlag(1)
         displayer.displayDefault();
         event.preventDefault();
@@ -340,7 +340,7 @@ function Commander(canvas) {
       }
 
       // (Cmd-2) toggle regex-flag multiline [m]
-      if (event.keyCode === 50) {
+      if (event.keyCode === 51) {
         app_console.changeRegexFlag(2)
         displayer.displayDefault();
         event.preventDefault();
@@ -348,7 +348,7 @@ function Commander(canvas) {
       }
 
       // (Cmd-3) toggle regex-flag unicode [u]
-      if (event.keyCode === 51) {
+      if (event.keyCode === 52) {
         app_console.changeRegexFlag(3)
         displayer.displayDefault();
         event.preventDefault();
@@ -356,7 +356,7 @@ function Commander(canvas) {
       }
 
       // (Cmd-4) toggle regex-flag unicode [s]
-      if (event.keyCode === 52) {
+      if (event.keyCode === 53) {
         app_console.changeRegexFlag(4)
         displayer.displayDefault();
         event.preventDefault();
@@ -364,7 +364,7 @@ function Commander(canvas) {
       }
 
       // (Cmd-5) toggle regex-flag unicode [y]
-      if (event.keyCode === 53) {
+      if (event.keyCode === 54) {
         app_console.changeRegexFlag(5)
         displayer.displayDefault();
         event.preventDefault();
