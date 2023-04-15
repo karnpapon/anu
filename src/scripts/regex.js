@@ -12,11 +12,11 @@ class RegexSolver {
 		this._callback = callback;
 		this._req = o;
 
-		let regex, text=o.text, tests=o.tests, mode = o.mode;
+		let text=o.text;
 		try {
-			this._regex = regex = new RegExp(o.pattern, o.flags);
+			new RegExp(o.pattern, o.flags);
 		} catch(e) {
-			return this._onRegExComplete({id:"regexparse", name: e.name, message: e.message}, null, mode);
+			return this._onRegExComplete({id:"regexparse", name: e.name, message: e.message}, null);
 		}
 
     const worker = new Worker(this._workerObjectURL);
@@ -25,12 +25,12 @@ class RegexSolver {
       if (evt.data === "onload") {
         this._timeoutId = setTimeout(() => {
           worker.terminate();
-          this._onRegExComplete({id: "timeout"}, null, mode);
+          this._onRegExComplete({id: "timeout"}, null);
         }, 250);
       } else {
         clearTimeout(this._timeoutId);
         worker.terminate();
-        this._onRegExComplete(evt.data.error, evt.data.matches, evt.data.mode);
+        this._onRegExComplete(evt.data.error, evt.data.matches);
       }
     };
 
@@ -38,13 +38,8 @@ class RegexSolver {
     worker.postMessage({pattern:o.pattern, flags:o.flags, text});
 	}
 
-	_onRegExComplete(error, matches, mode) {
-		let result = {
-			error,
-			mode,
-			matches
-		};
-
+	_onRegExComplete(error, matches) {
+		let result = { error, matches };
 		this._callback(result);
 	}
 }
