@@ -278,7 +278,7 @@ function Canvas () {
       }
       this.context.lineWidth = 2;
       this.context.strokeStyle = this.theme.active.background
-      this.context.strokeRect(r.x + 1 , r.y + 1.5 , r.w, r.h)
+      this.context.strokeRect(r.x + 1.5 , r.y + 1.5 , r.w - 2, r.h - 1.5)
     })
   }
 
@@ -300,17 +300,17 @@ function Canvas () {
       const x = (Math.floor(parseInt(id) / frame) * 32) + 2
       const y = (parseInt(id) % frame) + box.y + 1
       const text_line_length = text.length + key.length
-      this.write(`${CONTENT_SYMBOL[0]}${SPACE_GLYPH.repeat(1)}${key}:${SPACE_GLYPH.repeat(1)}`, x, y, 99, 11, "bold")
-      this.write(`${SPACE_GLYPH.repeat(1)}${text}${SPACE_GLYPH.repeat(this.seequencer.w - text_line_length - 9)}${CONTENT_SYMBOL[0]}`, x + key.length + 2, y, 99, 11)
+      this.write(`${CONTENT_SYMBOL[0]}${SPACE_GLYPH}${key}`, x, y, 99, 11, "input_mono_bold")
+      this.write(`:${SPACE_GLYPH}${text}${SPACE_GLYPH.repeat(this.seequencer.w - text_line_length - 10)}${CONTENT_SYMBOL[0]}`, x + key.length + 2, y, 99, 11)
     }
 
     // bottom_border
     const note_spaces = ((this.seequencer.w - LIBRARY_ENDNOTES.length) / 2) - 3
-    this.write(`|${SPACE_GLYPH.repeat(note_spaces)}${LIBRARY_ENDNOTES}${SPACE_GLYPH.repeat(note_spaces - 1)}|`,2, operators.length + box.y+1, 99, 11, "bold")
+    this.write(`|${SPACE_GLYPH.repeat(note_spaces)}${LIBRARY_ENDNOTES}${SPACE_GLYPH.repeat(note_spaces)}|`,2, operators.length + box.y+1, 99, 11, "input_mono_bold")
     this.write(`${BOTTOM_BORDER_SYMBOL[0]}${BOTTOM_BORDER_SYMBOL[1].repeat(top_border)}${BOTTOM_BORDER_SYMBOL[2]}`,2, operators.length + box.y+2, 99, 11)
   }
 
-  this.drawSprite = function (x, y, g, type, text_weight = "normal") {
+  this.drawSprite = function (x, y, g, type, font_family = "input_mono_regular") {
     const theme = this.makeTheme(type)
     if (theme.bg) {
       const bgrect = { 
@@ -330,7 +330,7 @@ function Canvas () {
         h: this.tile.h * this.scale 
       }
       this.context.fillStyle = theme.fg
-      this.context.font = text_weight === "bold" ? `${this.tile.h * 0.75 * this.scale}px input_mono_bold` : `${this.tile.h * 0.75 * this.scale}px input_mono_regular` 
+      this.context.font = `${this.tile.h * 0.75 * this.scale}px ${font_family}`
       this.context.fillText(g, fgrect.x, fgrect.y)
     }
   }
@@ -348,9 +348,9 @@ function Canvas () {
   }
 
 
-  this.write = function (text, offsetX, offsetY, limit = 50, type = 2, text_weight = "normal") {
+  this.write = function (text, offsetX, offsetY, limit = 50, type = 2, font_family = "input_mono_regular") {
     for (let x = 0; x < text.length && x < limit; x++) {
-      this.drawSprite(offsetX + x, offsetY, text.substr(x, 1), type, text_weight)
+      this.drawSprite(offsetX + x, offsetY, text.substr(x, 1), type, font_family)
     }
   }
 

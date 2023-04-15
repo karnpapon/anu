@@ -26,7 +26,6 @@ const CONTENT_SYMBOL = ['|']
 const BOTTOM_BORDER_SYMBOL = ['└','─','┘']
 const LIBRARY = {
   "n": { "info": "add new marker" },
-  "Backspace": { "info": "remove current marker" },
   "f": { "info": "focus only marker(s)" },
   "e": { "info": "rename marker" },
   "o": { "info": "set osc msg" },
@@ -34,18 +33,20 @@ const LIBRARY = {
   "r": { "info": "reverse step" },
   "> or <": { "info": "incr/decr BPM" },
   "[ or ]": { "info": "incr/decr note-ratio (default 1:16)" },
-
+  
+  "Backspace": { "info": "remove current marker" },
   "Spacebar": { "info": "play/pause" },
   "Cmd-Arrow": { "info": "jump" },
+  "CmdOrCtrl-(1..5)": { "info": "toggle regex flag respectively" },
   "CmdOrCtrl-/": { "info": "switch regex mode" },
-  "Shift-Arrow": { "info": "incr/decr marker range" },
-  "Shift-Arrow-Cmd": { "info": "jump incr/decr marker range" },
   "Cmd-Return": { "info": "toggle snap step to marker range" },
   "Option-e": { "info": "show current selected marker name" },
   "Option-Tab": { "info": "change selected markers" },
-  "Shift-Plus or Shift-Minus": { "info": "add/remove step" },
+  "Shift-Arrow": { "info": "incr/decr marker range" },
+  "Shift-Arrow-Cmd": { "info": "jump incr/decr marker range" },
+  "Shift-(Plus or Minus)": { "info": "add/remove step" },
 }
-const LIBRARY_ENDNOTES = "- PLEASE MAKE SURE INPUT HAS BEEN TOGGLED OFF -"
+const LIBRARY_ENDNOTES = "- MAKE SURE INPUT HAS BEEN TOGGLED OFF -"
 
 // displayer
 const DISPLAYER_DEFAULT_TEXTS = "(CmdOrCtrl-i) toggle input\n (CmdOrCtrl-g) toggle Regex input\n(Return) eval input (target input must = ON)\n(h) toggle helps window\n"
