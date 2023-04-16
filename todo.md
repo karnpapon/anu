@@ -7,7 +7,9 @@
 - ~~disable underscore when inputInsert is ON, other it'll remove a step.~~
 - ~~mutable marker~~
 - ~~configurable Regex flag.~~
+- ~~display current active marker clearly.~~
 
+- individual note-ratio per marker.
 - handle error when window width < guide windows.
 - fix sending osc msg to support all kind of OSC msg
 - reversable marker / OSC msg
@@ -19,3 +21,4 @@
 - vim keybinding mode
 - customizable fetch results areas.
 - user-provided input
+- colorizable marker.

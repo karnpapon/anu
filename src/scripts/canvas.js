@@ -277,6 +277,8 @@ function Canvas () {
         h: rect.h * this.scale * this.tile.h
       }
       this.context.lineWidth = 2;
+      if (rect.i !== this.marker.active) { this.context.setLineDash([5, 5]); }
+      else { this.context.setLineDash([]) }
       this.context.strokeStyle = this.theme.active.background
       this.context.strokeRect(r.x + 1.5 , r.y + 1.5 , r.w - 2, r.h - 1.5)
     })
