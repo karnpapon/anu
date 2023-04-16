@@ -9,6 +9,7 @@
 - ~~configurable Regex flag.~~
 
 - handle error when window width < guide windows.
+- fix sending osc msg to support all kind of OSC msg
 - reversable marker / OSC msg
 - handle sendClockMsg to be compatible with MetronomeWorker
 - customizable osc port / midi-out device
@@ -16,6 +17,5 @@
 
 # TBD
 - vim keybinding mode
-- customizable regex flag
 - customizable fetch results areas.
 - user-provided input

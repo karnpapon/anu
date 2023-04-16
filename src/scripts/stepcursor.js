@@ -10,9 +10,9 @@ function StepCursor(canvas) {
     this.steps = [{ x: 0, y: 0, i: 0 }]
   }
 
-  this.isTrigger = function (x, y) {
-    return canvas.p.some(pos => pos.x === x && pos.y === y)
-  }
+  // this.isTrigger = function (x, y) {
+  //   return canvas.p.some(pos => pos.x === x && pos.y === y)
+  // }
 
   this.add = function(){
     let marker = canvas.marker.markers[ canvas.marker.active ]
@@ -45,14 +45,18 @@ function StepCursor(canvas) {
   //   })
   // }
 
+  function shouldPlay(item1,item2, isUnMuted) {
+    return item1.x === item2.x && item1.y === item2.y && isUnMuted
+  }
+
   this.trigger = function () {
     let value 
     this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
         canvas.marker.markers.forEach( ( marker, index) => {
           marker.matched.forEach( ( _c, matchedIdx ) => {
-            if(_c.x === step.x && _c.y === step.y && !marker["control"]["muted"]){
-              this.msgOut(step, matchedIdx)
+            if(shouldPlay(_c,step, !marker["control"]["muted"])){
+              msgOut(step, matchedIdx)
               value = canvas.marker.markers[index]
               canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
               // this.triggerFX(null, value)
@@ -63,7 +67,7 @@ function StepCursor(canvas) {
     })
   }
 
-  this.msgOut = function(step, i){
+  function msgOut(step, i){
     let target = canvas.marker.markers.filter( cs => cs.i === step.i )
     const {
       channel,

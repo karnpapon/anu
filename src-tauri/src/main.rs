@@ -33,6 +33,7 @@ fn osc_select(setting: &'_ str, window: Window) {
   }
 }
 
+// TODO: fix this
 #[tauri::command]
 fn midi_select(setting: &'_ str, window: Window) {
   for &osc in osc_lists().iter() {
@@ -44,6 +45,16 @@ fn midi_select(setting: &'_ str, window: Window) {
   }
 }
 
+#[tauri::command]
+fn get_osc_menu_state(window: Window){
+    let me = window
+        .menu_handle()
+        .get_item("Default 9000");
+
+  // println!("menu = {:?}", me);
+}
+
+
 fn menu<A: Assets>(ctx: &Context<A>) -> Menu {
 
   let midi = CustomMenuItem::new("MIDI_DEVICES".to_string(), "(empty midi devices)").disabled();
@@ -54,8 +65,8 @@ fn menu<A: Assets>(ctx: &Context<A>) -> Menu {
   let metronome = CustomMenuItem::new("METRONOME".to_string(), "Enable Metronome Sound");
   let note_ratio = CustomMenuItem::new("RESETNOTERATIO".to_string(), "Reset Note Ratio (1:16)");
   
-  let osc_submenu = osc_lists().iter().fold(Menu::new(), |menu, &theme| {
-    menu.add_item(CustomMenuItem::new(theme, theme))
+  let osc_submenu = osc_lists().iter().fold(Menu::new(), |menu, &osc_menu| {
+    menu.add_item(CustomMenuItem::new(osc_menu, osc_menu))
   });
   
   let submenu_midi_conn = Submenu::new("MIDI", Menu::new().add_item(midi));
@@ -128,7 +139,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     .manage(App { osc_states: Default::default(), midi_states: Default::default() })
     .invoke_handler(tauri::generate_handler![
       osc_select,
-      midi_select
+      midi_select,
+      get_osc_menu_state
     ])
     .plugin(lib::midi::init())
     .plugin(lib::osc::init())

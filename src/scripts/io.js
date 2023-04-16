@@ -5,9 +5,17 @@ function IO(app) {
   this.midi = new Midi(app)
   this.osc = new Osc(app)
   // this.udp = new UDP(app)
+  const { invoke } = window.__TAURI__;
 
   this.start = function () {
     this.clear()
+
+    // const navigationType = window.performance.getEntriesByType('navigation')[0];
+    // invoke("get_osc_menu_state")
+    // if (navigationType === "reload") {
+    //   console.info("window.performance works fine on this browser", navigationType);
+    // }
+
     this.midi.start()
     this.osc.start()
     // this.udp.start()

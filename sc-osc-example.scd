@@ -1,19 +1,18 @@
-// setup PolyBuf
+// [1]
 (
 b = BufFolders(s, "/Users/karnpaponboonput/Desktop/unorganised-music-master");
-
-/*(
-b.selectionAction_({|selectedBuffers|
-Pdefn(\polySelected, Pseq(selectedBuffers, inf))
-});
-);*/
-
 b.size;
 b[\sounds]; 
 b[\root]; // Contains all of the audio files at the root level
 )
 
+// [2] 
+~sampler_engine = MyLivePerformanceTool("/Users/karnpaponboonput/Desktop/samples/soundpharm/FoleyPerc - Loops/");
+~sampler_engine.loadPreProcessedData("/Users/karnpaponboonput/Desktop/live-perf-data");
+// ~sampler_engine.indices;
+
 (
+// [3]
 SynthDef(\polybuf_sampler,{|out=0, amp=0.5, buffer, rate=1|
 	var sig = PlayBuf.ar(
 		numChannels:2, 
@@ -88,25 +87,35 @@ SynthDef(\lpf, {
 );
 
 (
+~source_group = Group.new;
+~fx_group = Group.new(~source_group, \addAfter);
 s.newBusAllocators;
 ~bus_shaper = Bus.audio(s,2);
 ~bus_dist = Bus.audio(s,2);
 ~bus_tiode = Bus.audio(s,2);
 ~bus_lpf = Bus.audio(s,2);
-~shaper = { p = Synth(\shaper, [\in: ~bus_shaper.index,\out: ~bus_dist.index])};
-~dist = {d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_lpf.index], Server.default, \addToTail)};
-~lpf = {l = Synth(\lpf, [\in: ~bus_lpf.index, \out: 0], Server.default, \addToTail)};
+// ~shaper = { p = Synth(\shaper, [\in: ~bus_shaper.index,\out: 0],~fx_group)};
+// ~dist = {d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_lpf.index], ~fx_group, \addToTail)};
+// ~lpf = {l = Synth(\lpf, [\in: ~bus_lpf.index, \out: 0], ~fx_group, \addToTail)};
 // ~triode = {Synth(\triode, [\in: ~bus_dist.index, \out: 0], Server.default, \addToTail)};
-ServerTree.add(~shaper);
-ServerTree.add(~dist);
-ServerTree.add(~lpf);
+// ServerTree.add(~shaper);
+// ServerTree.add(~dist);
+// ServerTree.add(~lpf);
 // ServerTree.add(~triode);
+
+p = Synth(\shaper, [\in: ~bus_shaper.index,\out: ~bus_dist.index],~fx_group);
+d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_lpf.index], ~fx_group, \addToTail);
+l = Synth(\lpf, [\in: ~bus_lpf.index, \out: 0], ~fx_group, \addToTail);
+
 )
+
+s.plotTree
+s.queryAllNodes
 
 ServerTree.remove(~dist);
 
 d.set(\dst, 0)
-l.set(\cutoff, 10000)
+l.set(\cutoff, 5000)
 p.set(
 	\shape, 0.25, 
 	\amp_compensation_amount, 0.5, 
@@ -116,10 +125,38 @@ p.set(
 	\hi, 0.5
 )
 
+
+(
+~drm = Pbind(*[
+	instrument: \drm,
+	dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, inf),
+	tun: Pdup(Pexprand(1, 8), Pexprand(0.0001, 0.25)),
+	fed: Pexprand(0.00001, 2000.0),
+	amp: Pdup(Pexprand(1, 5), Pexprand(0.75, 2.0)),
+	rel: Pexprand(Pkey(\dur) / (4/3), Pkey(\dur) * 64),
+	pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
+	legato: Pwrand([Pkey(\dur) * 1.5, Pkey(\dur) * 16], [1, 2].normalizeSum, inf),
+	sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
+	out: ~bus_shaper,
+	// group: ~source_group
+	// tri: Pwhite(0.0, 1.0),
+]).play
+)
+
+
+i = Synth(\default, [\out, ~bus_shaper]);
+i.free
+
+i.inspect
+
+
+~drm.stop;
+
+~source_group.free
 // setup osc msg from anu 
 (
-~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
-OSCdef(\handle_sample, {
+// ~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
+OSCdef(\anu_demo_sampler, {
 	|msg, time, addr, recvPort| 
 	// msg.postln;
 	(Pbind(
@@ -128,9 +165,9 @@ OSCdef(\handle_sample, {
 		\buffer, Pseq([ b[\sounds].asPxrand(1)],1), 
 		\dur, Pfunc{|ev| ev[\buffer].duration * ev[\rate].abs.reciprocal}
 	).play;);
-}, '/anu_msg_sample', ~anu);
+}, '/demo_sampler');
 
-OSCdef(\handle_kick, {
+OSCdef(\anu_demo_kick, {
 	|msg, time, addr, recvPort| 
 	(
 		Pbind(*[
@@ -143,10 +180,14 @@ OSCdef(\handle_kick, {
 			pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
 			legato: Pwrand([Pkey(\dur) * 1.5, Pkey(\dur) * 16], [1, 2].normalizeSum, inf),
 			sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
-			out: ~bus_shaper
+			out: ~bus_shaper,
+			group: ~source_group
 			// tri: Pwhite(0.0, 1.0),
 		]).play
 	)
-	
-}, '/anu_msg_kick', ~anu);
+}, '/demo_kick');
+
+OSCdef(\anu_demo_trigger, {|msg, time, addr, recvPort|
+	~sampler_engine.play_slice(~sampler_engine.indices.rand, ~bus_shaper);
+},'/demo_trigger');
 )

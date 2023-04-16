@@ -136,17 +136,17 @@ function Midi(app) {
     return 24 + (octave * 12) + note // 60 = C3
   }
 
-  function convertLength(val, bpm) {
-    // [ 1 = (1/16) ] ~> 
-    // [ 8 = (8/16) or half bar ] ~> 
-    // [ 16 = (16/16) or full bar. ]
-    // return (60000 / bpm) * (val / 16)
-    if (!bpm) {
-      bpm = 120
-    }
-    return (60000 / bpm) * (val / 16)
-  }
+  // function convertLength(val, bpm) {
+  //   // [ 1 = (1/16) ] ~> 
+  //   // [ 8 = (8/16) or half bar ] ~> 
+  //   // [ 16 = (16/16) or full bar. ]
+  //   // return (60000 / bpm) * (val / 16)
+  //   if (!bpm) {
+  //     bpm = 120
+  //   }
+  //   return (60000 / bpm) * (val / 16)
+  // }
 
-  function clamp(v, min, max) { return v < min ? min : v > max ? max : v }
+  // function clamp(v, min, max) { return v < min ? min : v > max ? max : v }
 }
 

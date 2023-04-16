@@ -16,16 +16,15 @@ function StepCounter(canvas) {
   }
 
   this.runCounter = function () {
-    let self = this
     this.counter.forEach(c => {
-      self.increment(c)
+      increment(c)
     })
   }
 
-  this.back = function (c){
+  function back(c){
     let rand
     c.x--
-    if (!this.isSelected) {
+    if (!canvas.stepcounter.isSelected) {
       if (c.x < 0) {
         if (c.y === 0) {
           c.x = canvas.seequencer.w
@@ -61,10 +60,10 @@ function StepCounter(canvas) {
     return
   }
 
-  this.forth = function(c){
+  function forth(c){
     let rand
     c.x++
-    if (!this.isSelected) {
+    if (!canvas.stepcounter.isSelected) {
       if (c.x > canvas.seequencer.w) {
         if (c.y === canvas.seequencer.h - 1) {
           c.y = 0
@@ -104,9 +103,9 @@ function StepCounter(canvas) {
     }
   }
 
-  this.increment = function (c) {
-    if (client.console.isReverse) { return this.back(c) }
-    this.forth(c)
+  function increment(c) {
+    if (client.console.isReverse) { return back(c) }
+    forth(c)
   }
 
   this.range = function () {
