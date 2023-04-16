@@ -1,6 +1,6 @@
 <img src="./src/media/icons/anu-logoo.png"/>
 
-<img src="./src/media/images/sss.png"/>
+<img src="./src/media/images/ssss.png"/>
 
 &nbsp;
 
@@ -10,7 +10,7 @@ a tiny backend-agnostic step-sequencer/live-coding environment that harnesses th
  
 unlike others conventional tools or step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously developed under the name "seeq").
 
-written in vanillaJS with dependencies as less as possible in mind. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
+written in vanillaJS with dependencies as less as possible in minds. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
 
 &nbsp;
 
@@ -20,7 +20,7 @@ written in vanillaJS with dependencies as less as possible in mind. powered by [
 <img src="./src/media/images/output1.gif"/>
 
 
-[[ Demo video ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
+[[ Demo video (old version) ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
 
 ## usages
 soon...
@@ -39,4 +39,4 @@ soon...
 - `yarn dev`, for development
 
 ## inspirations
-draw inspirations from Orca, Sunvox, others obsolete music software.
+draw an inspirations from Xenakis's work [Acchorripsis](https://muse.jhu.edu/article/7871/summary)(1956) and Esoteric Environment like [Orca](https://hundredrabbits.itch.io/orca) also others obsoleted music software.
