@@ -53,18 +53,23 @@ function Commander(canvas) {
 
     // -- ESC PRESSED --
     this.doWhen(event.key === "Escape", () => {
-      if(displayer.isDisplayInputToggled) { 
-        displayer.isDisplayInputToggled = false; 
-        displayer.displayDefault()
-        return 
-      }
+      // if(displayer.isDisplayInputToggled) { 
+        // return 
+      // }
+      displayer.isDisplayInputToggled = false; 
+      app_console.toggleInsert(app_console.inputFetch, app_console.caret, false);
+      app_console.toggleInsert(app_console.searchRegExp, app_console.regexCaret, false); 
+      app_console.inputFocus(false)
+      app_console.regexFocus(false)
+      // console.log("app_console", app_console.) 
+      displayer.displayDefault()
       this.stop();
       canvas.isPaused = false;
       return;
     })
 
     // DISABLE ALL KEYS UNLESS INPUT/REGEX IS BEING TURNED OFF
-    this.doWhen(app_console.isInsertable, () => this.handleWhenInputOn(event) )
+    this.doWhen(app_console.isInsertable(), () => this.handleWhenInputOn(event) )
     
     // CLOSE GUIDE BY PRESSING ANYKEY EXCEPT META/MODIFY KEYS.
     this.doWhen(this.isNotModifyKey(event), () => {
@@ -94,7 +99,7 @@ function Commander(canvas) {
         return;
       }
 
-      // (ESC) jump between input.
+      // (ESC) exit.
       if (event.keyCode === 9) {
         displayer.isDisplayInputToggled = false; 
         displayer.displayDefault()
@@ -104,7 +109,7 @@ function Commander(canvas) {
     })
 
     // -- INPUT/REGEX OFF --
-    this.doWhen(!app_console.isInsertable && !displayer.isDisplayInputToggled, () => { 
+    this.doWhen(!app_console.isInsertable() && !displayer.isDisplayInputToggled, () => { 
       if (displayer.displayType === "default") {
         if (event.keyCode === 38) {
           this.onArrowUp(event.shiftKey, event.metaKey || event.ctrlKey);
@@ -153,122 +158,136 @@ function Commander(canvas) {
           }
           return;
         }
+
+        // ( Shift-{ ) change note-ratio.
+        if (event.keyCode === 219) {
+          canvas.marker.modNoteRatio(-1)
+          event.preventDefault();
+          return;
+        }
+  
+        // ( Shift-} ) change note-ratio.
+        if (event.keyCode === 221) {
+          canvas.marker.modNoteRatio(1)
+          event.preventDefault();
+          return;
+        }
+
+        // ( Shift-GreaterThan ) increase BPM.
+        if (event.key === ">") {
+          metronome.mod(1)
+          event.preventDefault();
+          return;
+        }
+  
+        // ( Shift-LessThan ) decrease BPM.
+        if (event.key === "<") {
+          metronome.mod(-1)
+          event.preventDefault();
+          return;
+        }
+
+        // ( Shift-? ) show current marker info
+        if (event.key === "?") {
+          displayer.displayMsg("show-marker-info");
+          event.preventDefault();
+          return;
+        }
+
       })
 
-      // // toggle UDP
-      // if (event.keyCode === 49 ) {
-      //   // app_console.togglePort('UDP', app_console.udpBtn)
-      //   event.preventDefault();
-      //   return;
-      // }
+      
+      // ONLY SINGLE CHAR IS ACCEPTED
+      this.doWhen(!this.isModifyKey(event) && !event.shiftKey, () => {
+
+        // // toggle UDP
+        // if (event.keyCode === 49 ) {
+        //   // app_console.togglePort('UDP', app_console.udpBtn)
+        //   event.preventDefault();
+        //   return;
+        // }
+
+        // (n) new marker. 
+        if (event.keyCode === 78 ) {
+          canvas.globalIdx += 1;
+          canvas.marker.add();
+          event.preventDefault();
+          return;
+        }
+    
+        // (Backspace)
+        if (
+          event.key === "Backspace" &&
+          canvas.marker.markers.length > 1
+        ) {
+          canvas.eraseSelectionCursor();
+          event.preventDefault();
+          return;
+        }
   
-      // (n) new marker. 
-      if (event.keyCode === 78 ) {
-        canvas.globalIdx += 1;
-        canvas.marker.add();
-        event.preventDefault();
-        return;
-      }
+        // (r) reverse global step.
+        if (event.keyCode === 82 ) {
+          app_console.togglePort('REV', app_console)
+          event.preventDefault();
+          return;
+        }
   
-      // (Backspace)
-      if (
-        event.key === "Backspace" &&
-        canvas.marker.markers.length > 1
-      ) {
-        canvas.eraseSelectionCursor();
-        event.preventDefault();
-        return;
-      }
-
-      // (r) reverse global step.
-      if (event.keyCode === 82 ) {
-        app_console.togglePort('REV', app_console)
-        event.preventDefault();
-        return;
-      }
-
-      // (x) mute current selected marker.
-      if (event.keyCode === 88 ) {
-        const marker = canvas.marker.currentMarker();
-        marker["control"]["muted"] = !marker["control"]["muted"]
-        event.preventDefault();
-        return;
-      }
-
-      // (f) focus
-      if (event.keyCode === 70 ) {
-        app_console.togglePort('FOCUS', app_console)
-        canvas.toggleShowMarks()
-        event.preventDefault();
-        return;
-      }
-
-      // (e) rename marker's name.
-      if (event.keyCode === 69) {
-        displayer.displayMsg("rename-marker");
-        event.preventDefault();
-        return;
-      }
-
-      // ([) change note-ratio.
-        if (event.keyCode === 219) {
-        metronome.modNoteRatio(-1)
-        event.preventDefault();
-        return;
-      }
-
-      // (]) change note-ratio.
-      if (event.keyCode === 221) {
-        metronome.modNoteRatio(1)
-        event.preventDefault();
-        return;
-      }
-
-      // (o) OSC config.
-      if (event.keyCode === 79 ) {
-        displayer.displayMsg("osc");
-        event.preventDefault();
-        return;
-      }
-
-      // (m) MIDI config.
-      if (event.keyCode === 77 ) {
-        displayer.displayMsg("midi");
-        event.preventDefault();
-        return;
-      }
-
-      // (h) show guide.
-      if (event.keyCode === 72) {
-        canvas.toggleGuide(!canvas.guide)
-        event.preventDefault();
-        return;
-      }
-
-      if (event.key === ">") {
-        // canvas.clock.mod(1);
-        metronome.mod(1)
-        event.preventDefault();
-        return;
-      }
-
-      if (event.key === "<") {
-        // canvas.clock.mod(-1);
-        metronome.mod(-1)
-        event.preventDefault();
-        return;
-      }
-
-      // (Spacebar) Play/Pause
-      if (event.key === " " && !displayer.isDisplayInputToggled) {
-        canvas.clock.togglePlay();
-        event.preventDefault();
-        return;
-      }
+        // (x) mute current selected marker.
+        if (event.keyCode === 88 ) {
+          const marker = canvas.marker.currentMarker();
+          marker["control"]["muted"] = !marker["control"]["muted"]
+          event.preventDefault();
+          return;
+        }
+  
+        // (f) focus
+        if (event.keyCode === 70 ) {
+          app_console.togglePort('FOCUS', app_console)
+          canvas.toggleShowMarks()
+          event.preventDefault();
+          return;
+        }
+  
+        // (e) rename marker's name.
+        if (event.keyCode === 69) {
+          displayer.displayMsg("rename-marker");
+          event.preventDefault();
+          return;
+        }
+  
+        // (o) OSC config.
+        if (event.keyCode === 79 ) {
+          displayer.displayMsg("osc");
+          event.preventDefault();
+          return;
+        }
+  
+        // (m) MIDI config.
+        if (event.keyCode === 77 ) {
+          displayer.displayMsg("midi");
+          event.preventDefault();
+          return;
+        }
+  
+        // (h) show guide.
+        if (event.keyCode === 72) {
+          canvas.toggleGuide(!canvas.guide)
+          event.preventDefault();
+          return;
+        }
+  
+        // (Spacebar) Play/Pause
+        if (event.key === " " && !displayer.isDisplayInputToggled) {
+          canvas.clock.togglePlay();
+          event.preventDefault();
+          return;
+        }
+      })
+  
 
     })
 
-    // -- MODIFY-KEY(CMD/SHIFT/CTRL) PRESSED --
+    // -- MODIFY-KEY PRESSED --
     this.doWhen(this.isModifyKey(event), () => {
 
       if (event.altKey) {
@@ -284,19 +303,19 @@ function Commander(canvas) {
         return;
       }
 
-      // show selection name.
-      if (event.keyCode === 69 && this.altFlag) {
-        this.switchFlag = true;
-        event.preventDefault();
-        return;
-      }
+      // // show selection name.
+      // if (event.keyCode === 69 && this.altFlag) {
+      //   this.switchFlag = true;
+      //   event.preventDefault();
+      //   return;
+      // }
 
       // (Cmd-i) insert input.
       if (event.keyCode === 73) {
-        if(!app_console.isInsertable || !app_console.isInputFocused) {
-          app_console.insert()
+        if(!app_console.isInsertable() || !app_console.isInputFocused) {
+          app_console.inputFocus(!app_console.isInputFocused)
         }
-        app_console.toggleInsert(app_console.inputFetch, app_console.caret, app_console.isInsertable);
+        app_console.toggleInsert(app_console.inputFetch, app_console.caret, app_console.isInsertable());
         app_console.toggleInsert(app_console.searchRegExp, app_console.regexCaret, false); // blur regex input
         displayer.displayDefault();
         event.preventDefault();
@@ -305,10 +324,10 @@ function Commander(canvas) {
 
       // (Cmd-g) insert regex input.
       if (event.keyCode === 71) {
-        if(!app_console.isInsertable || !app_console.isRegExpFocused) {
-          app_console.insert()
+        if(!app_console.isInsertable() || !app_console.isRegExpFocused) {
+          app_console.regexFocus(!app_console.isRegExpFocused)
         }
-        app_console.toggleInsert(app_console.searchRegExp,  app_console.regexCaret, app_console.isInsertable);
+        app_console.toggleInsert(app_console.searchRegExp,  app_console.regexCaret, app_console.isInsertable());
         app_console.toggleInsert(app_console.inputFetch,  app_console.caret, false); // blur input
         displayer.displayDefault();
         event.preventDefault();
@@ -494,7 +513,7 @@ function Commander(canvas) {
   }
 
   this.isModifyKey = function(event){
-    return event.shiftKey || event.metaKey || event.ctrlKey || event.altKey
+    return event.ctrlKey || event.metaKey || event.altKey
   }
 
   this.runCmd = function(type, event) {

@@ -150,6 +150,10 @@ function Displayer(app) {
         this.displayType = "preview"
         this.el_general.innerText = `cmd (⌘) or ctrl + h = helps.` 
         break;
+      case 'show-marker-info':
+        this.displayType = "preview"
+        this.el_general.innerText = `${JSON.stringify(canvas.marker.markers[canvas.marker.active]["control"])}` 
+        break;
       case 'osc':
         this.isDisplayInputToggled = !this.isDisplayInputToggled
         this.displayType = this.isDisplayInputToggled? "form":"default"

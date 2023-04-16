@@ -288,7 +288,7 @@ function Canvas () {
     if (this.guide !== true) { return }
     const operators = Object.keys(LIBRARY).filter((val) => { return isNaN(val) })
     const top_border = this.seequencer.w - 7
-    const box = { x: 2, y: 3}
+    const box = { x: 2, y: 2}
 
     // top_border
     this.write(`${TOP_BORDER_SYMBOL[0]}${TOP_BORDER_SYMBOL[1].repeat(top_border)}${TOP_BORDER_SYMBOL[2]}`,2, box.y, 99, 11)
@@ -307,9 +307,11 @@ function Canvas () {
     }
 
     // bottom_border
-    const note_spaces = ((this.seequencer.w - LIBRARY_ENDNOTES.length) / 2) - 3
-    this.write(`|${SPACE_GLYPH.repeat(note_spaces)}${LIBRARY_ENDNOTES}${SPACE_GLYPH.repeat(note_spaces)}|`,2, operators.length + box.y+1, 99, 11, "input_mono_bold")
-    this.write(`${BOTTOM_BORDER_SYMBOL[0]}${BOTTOM_BORDER_SYMBOL[1].repeat(top_border)}${BOTTOM_BORDER_SYMBOL[2]}`,2, operators.length + box.y+2, 99, 11)
+    const note_spaces1 = ((this.seequencer.w - LIBRARY_ENDNOTES_1.length) / 2) - 3
+    const note_spaces2 = ((this.seequencer.w - LIBRARY_ENDNOTES_2.length) / 2) - 3
+    this.write(`|${SPACE_GLYPH.repeat(note_spaces1)}${LIBRARY_ENDNOTES_1}${SPACE_GLYPH.repeat(note_spaces1)}|`,2, operators.length + box.y+1, 99, 11, "input_mono_bold")
+    this.write(`|${SPACE_GLYPH.repeat(note_spaces2)}${LIBRARY_ENDNOTES_2}${SPACE_GLYPH.repeat(note_spaces2)}|`,2, operators.length + box.y+2, 99, 11, "input_mono_bold")
+    this.write(`${BOTTOM_BORDER_SYMBOL[0]}${BOTTOM_BORDER_SYMBOL[1].repeat(top_border)}${BOTTOM_BORDER_SYMBOL[2]}`,2, operators.length + box.y+3, 99, 11)
   }
 
   this.drawSprite = function (x, y, g, type, font_family = "input_mono_regular") {

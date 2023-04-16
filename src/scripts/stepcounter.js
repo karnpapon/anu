@@ -103,9 +103,17 @@ function StepCounter(canvas) {
     }
   }
 
+  // TODO: handle this gracefully.
   function increment(c) {
-    if (client.console.isReverse) { return back(c) }
-    forth(c)
+    if (c.i === null) {
+      if (client.console.isReverse) { return back(c) }
+      forth(c)
+    } else {
+      if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
+        if (client.console.isReverse) { return back(c) }
+        forth(c)
+      }
+    }
   }
 
   this.range = function () {

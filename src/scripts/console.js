@@ -129,7 +129,6 @@ function Console(app) {
   this.isPlaying = false
   this.isFocus = false
   this.isBPMtoggle = false
-  this.isInsertable = false
   this.output = ""
   this.regexFlagSelect = new Set("g")
   
@@ -235,13 +234,13 @@ function Console(app) {
   this.inputFocus = function(state = false){
     this.isInputFocused = state
   }
-
+  
   this.regexFocus = function(state = false) {
     this.isRegExpFocused = state
   }
 
-  this.insert = function(){
-    this.isInsertable = !this.isInsertable
+  this.isInsertable = function(){
+    return this.isInputFocused || this.isRegExpFocused
   }
 
   this.toggleInsert = function (el, caret, condition) {

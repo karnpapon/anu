@@ -27,27 +27,29 @@ const BOTTOM_BORDER_SYMBOL = ['└','─','┘']
 const LIBRARY = {
   "n": { "info": "add new marker" },
   "f": { "info": "focus only marker(s)" },
-  "e": { "info": "rename marker" },
-  "o": { "info": "set osc msg" },
-  "m": { "info": "set midi msg" },
+  "e": { "info": "[*] rename marker" },
+  "o": { "info": "[*] set osc msg" },
+  "m": { "info": "[*] set midi msg" },
   "r": { "info": "reverse step" },
-  "x": { "info": "mute current selected marker" },
-  "> or <": { "info": "incr/decr BPM" },
-  "[ or ]": { "info": "incr/decr note-ratio (default 1:16)" },
+  "x": { "info": "[*] mute" },
+  "> or <": { "info": "incr/decr BPM " },
+  "{ or }": { "info": "[*] incr/decr note-ratio" },
+  "?": { "info": "[*] show control informations" },
   
-  "Backspace": { "info": "remove current marker" },
+  "Backspace": { "info": "[*] remove current marker" },
   "Spacebar": { "info": "play/pause" },
-  "Cmd-Arrow": { "info": "jump" },
+  "Cmd-Arrow": { "info": "[*] jump" },
   "CmdOrCtrl-(1..6)": { "info": "toggle regex flag respectively" },
   "CmdOrCtrl-/": { "info": "switch regex mode" },
-  "Cmd-Return": { "info": "toggle snap step to marker range" },
-  "Option-e": { "info": "show current selected marker name" },
+  "Cmd-Return": { "info": "[*] toggle snap step to marker range" },
+  "Option-e": { "info": "[*] show current name" },
   "Option-Tab": { "info": "change selected markers" },
-  "Shift-Arrow": { "info": "incr/decr marker range" },
-  "Shift-Arrow-Cmd": { "info": "jump incr/decr marker range" },
-  "Shift-(Plus or Minus)": { "info": "add/remove step" },
+  "Shift-Arrow": { "info": "[*] incr/decr marker range" },
+  "Shift-Arrow-Cmd": { "info": "[*] jump incr/decr marker range" },
+  "Shift-(Plus or Minus)": { "info": "[*] add/remove step" },
 }
-const LIBRARY_ENDNOTES = "- MAKE SURE INPUT HAS BEEN TOGGLED OFF -"
+const LIBRARY_ENDNOTES_1 = "[*] affect individual marker"
+const LIBRARY_ENDNOTES_2 = "MAKE SURE INPUT HAS BEEN TOGGLED OFF"
 
 // displayer
 const DISPLAYER_DEFAULT_TEXTS = "(CmdOrCtrl-i) toggle input\n (CmdOrCtrl-g) toggle Regex input\n(Return) eval input (target input must = ON)\n(h) toggle helps window\n"

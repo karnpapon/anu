@@ -40,7 +40,11 @@ function Marker(canvas) {
       overlapAreas: new Map(),
       overlapIndex: new Set(),
       matched: [],
-      control: {muted: false, reverse: false} ,
+      control: {
+        muted: false, 
+        reverse: false,
+        noteRatio: 1
+      },
       msg: {
         MIDI: { 
           note: ["C", "E", "G"], 
@@ -180,6 +184,15 @@ function Marker(canvas) {
 
   this.moveTo = (x, y) => {
     this.select(x, y)
+  }
+
+  this.modNoteRatio = function(mod = 0) {
+    this.setNoteRatio(this.markers[this.active]["control"]["noteRatio"] + mod)
+  }
+
+  this.setNoteRatio = function(value) {
+    if (value) {this.markers[this.active]["control"]["noteRatio"] = clamp(value, 1, 16) }
+    // client.console.currentNumber.innerText = `${this.noteRatio}:16`
   }
 
   this.scale = (w, h) => {
