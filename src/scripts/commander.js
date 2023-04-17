@@ -272,7 +272,7 @@ function Commander(canvas) {
         // (h) show guide.
         if (event.keyCode === 72) {
           canvas.toggleGuide(!canvas.guide)
-          if (document.getElementsByClassName("content")[0].clientWidth < 500) { displayer.displayMsg("helper"); }
+          if (document.getElementsByClassName("content")[0].clientWidth < 458) { displayer.displayMsg("helper"); }
           event.preventDefault();
           return;
         }

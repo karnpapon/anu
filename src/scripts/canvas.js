@@ -286,7 +286,7 @@ function Canvas () {
 
   this.drawGuide = () => {
     if (this.guide !== true) { return }
-    if (document.getElementsByClassName("content")[0].clientWidth < 500) { return }
+    if (document.getElementsByClassName("content")[0].clientWidth < 458) { return }
     const operators = Object.keys(LIBRARY).filter((val) => { return isNaN(val) })
     const top_border = this.seequencer.w - 7
     const box = { x: 2, y: 2}

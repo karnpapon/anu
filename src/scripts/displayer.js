@@ -148,7 +148,7 @@ function Displayer(app) {
         break;
       case 'helper':
         this.displayType = "preview"
-        this.el_general.innerHTML = `<p class="displayer-warning">[WARNING]: cannot display helps window since current window size is less than 500px<p>` 
+        this.el_general.innerHTML = `<p class="displayer-warning">[WARNING]: cannot display helps window since current window width is too narrow<p>` 
         break;
       case 'show-marker-info':
         this.displayType = "preview"
