@@ -148,11 +148,11 @@ function Displayer(app) {
         break;
       case 'helper':
         this.displayType = "preview"
-        this.el_general.innerText = `cmd (⌘) or ctrl + h = helps.` 
+        this.el_general.innerHTML = `<p class="displayer-warning">[WARNING]: cannot display helps window since current window size is less than 500px<p>` 
         break;
       case 'show-marker-info':
         this.displayType = "preview"
-        this.el_general.innerText = `${JSON.stringify(canvas.marker.markers[canvas.marker.active]["control"])}` 
+        this.el_general.innerText = `name: ${canvas.marker.markers[canvas.marker.active].n}\n${JSON.stringify(canvas.marker.markers[canvas.marker.active]["control"])}` 
         break;
       case 'osc':
         this.isDisplayInputToggled = !this.isDisplayInputToggled

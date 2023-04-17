@@ -1,4 +1,4 @@
-// [1]
+// [1]?
 (
 b = BufFolders(s, "/Users/karnpaponboonput/Desktop/unorganised-music-master");
 b.size;
@@ -9,7 +9,6 @@ b[\root]; // Contains all of the audio files at the root level
 // [2] 
 ~sampler_engine = MyLivePerformanceTool("/Users/karnpaponboonput/Desktop/samples/soundpharm/FoleyPerc - Loops/");
 ~sampler_engine.loadPreProcessedData("/Users/karnpaponboonput/Desktop/live-perf-data");
-// ~sampler_engine.indices;
 
 (
 // [3]
@@ -104,9 +103,9 @@ s.newBusAllocators;
 // ServerTree.add(~triode);
 
 p = Synth(\shaper, [\in: ~bus_shaper.index,\out: ~bus_dist.index],~fx_group);
-d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_lpf.index], ~fx_group, \addToTail);
+d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_tiode.index], ~fx_group, \addToTail);
+t = Synth(\triode, [\in: ~bus_tiode.index, \out: ~bus_lpf], ~fx_group, \addToTail);
 l = Synth(\lpf, [\in: ~bus_lpf.index, \out: 0], ~fx_group, \addToTail);
-
 )
 
 s.plotTree
@@ -115,18 +114,19 @@ s.queryAllNodes
 ServerTree.remove(~dist);
 
 d.set(\dst, 0)
-l.set(\cutoff, 5000)
+t.set(\tri, 0);
+l.set(\cutoff, 10000)
 p.set(
-	\shape, 0.25, 
+	\shape, 0.5, 
 	\amp_compensation_amount, 0.5, 
 	\lo_thresh, 0.5, 
-	\hi_thresh, 0, 
+	\hi_thresh, 0.1, 
 	\lo, 1, 
 	\hi, 0.5
 )
 
 
-(
+/*(
 ~drm = Pbind(*[
 	instrument: \drm,
 	dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, inf),
@@ -141,19 +141,14 @@ p.set(
 	// group: ~source_group
 	// tri: Pwhite(0.0, 1.0),
 ]).play
-)
-
+)*/
 
 i = Synth(\default, [\out, ~bus_shaper]);
 i.free
-
 i.inspect
-
-
 ~drm.stop;
-
 ~source_group.free
-// setup osc msg from anu 
+
 (
 // ~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
 OSCdef(\anu_demo_sampler, {

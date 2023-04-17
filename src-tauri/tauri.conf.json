@@ -24,7 +24,8 @@
         "minimize": true,
         "unmaximize": true,
         "unminimize": true,
-        "startDragging": true
+        "startDragging": true,
+        "setMinSize": true
       }
     },
     "bundle": {
@@ -72,6 +73,7 @@
         "title": "anu",
         "width": 577, 
         "height": 728,
+        "minWidth": 577,
         "label": "main",
         "visible": true,
         "alwaysOnTop": false,

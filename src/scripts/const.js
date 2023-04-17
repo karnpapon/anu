@@ -27,26 +27,28 @@ const BOTTOM_BORDER_SYMBOL = ['└','─','┘']
 const LIBRARY = {
   "n": { "info": "add new marker" },
   "f": { "info": "focus only marker(s)" },
+  "r": { "info": "reverse step" },
   "e": { "info": "[*] rename marker" },
   "o": { "info": "[*] set osc msg" },
   "m": { "info": "[*] set midi msg" },
-  "r": { "info": "reverse step" },
   "x": { "info": "[*] mute" },
   "> or <": { "info": "incr/decr BPM " },
-  "{ or }": { "info": "[*] incr/decr note-ratio" },
+  "{ or }": { "info": "[*] incr/decr note-ratio (default 1/16)" },
   "?": { "info": "[*] show control informations" },
   
   "Backspace": { "info": "[*] remove current marker" },
   "Spacebar": { "info": "play/pause" },
+
   "Cmd-Arrow": { "info": "[*] jump" },
-  "CmdOrCtrl-(1..6)": { "info": "toggle regex flag respectively" },
-  "CmdOrCtrl-/": { "info": "switch regex mode" },
-  "Cmd-Return": { "info": "[*] toggle snap step to marker range" },
-  "Option-e": { "info": "[*] show current name" },
+  "Cmd-(1..6)": { "info": "toggle regex flag respectively" },
+  "Cmd-/": { "info": "switch regex mode" },
+
   "Option-Tab": { "info": "change selected markers" },
+
+  "Shift-Return": { "info": "[*] toggle snap step to marker range" },
   "Shift-Arrow": { "info": "[*] incr/decr marker range" },
   "Shift-Arrow-Cmd": { "info": "[*] jump incr/decr marker range" },
-  "Shift-(Plus or Minus)": { "info": "[*] add/remove step" },
+  "Shift-(+ or -)": { "info": "[*] add/remove step" },
 }
 const LIBRARY_ENDNOTES_1 = "[*] affect individual marker"
 const LIBRARY_ENDNOTES_2 = "MAKE SURE INPUT HAS BEEN TOGGLED OFF"

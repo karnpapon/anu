@@ -8,7 +8,7 @@ function Osc (app) {
   const { invoke } = window.__TAURI__;
 
   this.stack = []
-  this.socket = new OSC() // osc-js
+  // this.socket = new OSC() // osc-js
   this.port = null
 
   // TODO make this configurable.
@@ -47,7 +47,7 @@ function Osc (app) {
   }
   
   this.play = function ({ path, msg }) {
-    if (!this.socket) { console.warn('OSC', 'Unavailable socket'); return }
+    // if (!this.socket) { console.warn('OSC', 'Unavailable socket'); return }
     if (!msg) { console.warn('OSC', 'Empty message'); return }
     // const oscMsg = new OSC.Message(path, msg)
     // this.socket.send(oscMsg)

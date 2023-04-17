@@ -4,11 +4,11 @@
 
 function StepCounter(canvas) {
   this.isSelected = false
-  this.counter = [{ x: 0, y: 0, y_counter: 0, i: null }]
+  this.counter = [{ x: 0, y: 0, y_counter: 0, i: 0 }]
 
   this.reset = function () {
     this.isSelected = false
-    this.counter = [{ x: 0, y: 0, y_counter: 0, i: null }]
+    this.counter = [{ x: 0, y: 0, y_counter: 0, i: 0 }]
   }
 
   this.run = function () {
@@ -103,16 +103,10 @@ function StepCounter(canvas) {
     }
   }
 
-  // TODO: handle this gracefully.
   function increment(c) {
-    if (c.i === null) {
+    if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
       if (client.console.isReverse) { return back(c) }
       forth(c)
-    } else {
-      if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
-        if (client.console.isReverse) { return back(c) }
-        forth(c)
-      }
     }
   }
 

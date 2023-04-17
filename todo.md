@@ -9,8 +9,8 @@
 - ~~configurable Regex flag.~~
 - ~~display current active marker clearly.~~
 - ~~individual note-ratio per marker.~~
+- ~~handle error when window width < guide windows.~~
 
-- handle error when window width < guide windows.
 - fix sending osc msg to support all kind of OSC msg
 - reversable marker / OSC msg
 - handle sendClockMsg to be compatible with MetronomeWorker

@@ -724,6 +724,7 @@ div button:active{ marker: pointer; background-color: black; color: white;}
 
 .displayer-show{ opacity: 1; z-index: 99; padding-top: 1rem; padding-bottom: 1rem;}
 .displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1.5rem;}
+.displayer-warning { color: red;}
 
 /* ---------------------- */
 
