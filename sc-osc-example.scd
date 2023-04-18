@@ -202,16 +202,20 @@ OSCdef(\anu_demo_kick, {
 		]).play
 	);
 
-	// TODO: this should not be symbol but should be string.
-	if(msg[1] == \nodes){ "nodes here".postln;};
-	msg[1].class.postln;
+	// msg.postln;
 
-	~processing.sendMsg("/proc_osc",
-		0.0,
-		1.0.rand,
-		~processing_scene.choose,
-		// "reg2B",
+	// TODO: this should not be symbol but should be string.
+	if(msg[1] == \nodes){
+		// "nodes here".postln;
+		~processing.sendMsg("/proc_osc",0.0,1.0.rand,msg[1].asString,
 		1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+	};
+
+	if(msg[1] == \all){
+		var ss = ~processing_scene.choose;
+		~processing.sendMsg("/proc_osc",0.0,1.0.rand,ss,
+		1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+	};
 
 }, '/demo_kick');
 

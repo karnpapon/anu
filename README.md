@@ -24,8 +24,15 @@ written in vanillaJS with dependencies as less as possible in minds. powered by 
 soon...
 
 ## features
-- support OSC, MIDI.
-- precise clock scheduling.
+- support OSC, MIDI (under developing)
+- precise clock scheduling
+- adjustable note-ratio per marker
+- mutable marker
+- reversable marker
+- adjustable BPM (without jittery)
+- fault-tolerance regex
+- performance-oriented
+- lightweight and cross-platform (application size only ~10mb)
 
 ## building the native app
 
