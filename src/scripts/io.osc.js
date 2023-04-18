@@ -44,6 +44,7 @@ function Osc (app) {
 
   this.push = function (path, msg) {
     this.stack.push({ path, msg })
+    // console.log("this.stack", this.stack);
   }
   
   this.play = function ({ path, msg }) {

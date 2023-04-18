@@ -99,18 +99,6 @@ function Canvas () {
   
   // -----------------------------
 
-  // this.setGrid = function (w, h) {
-  //   this.grid.w = w
-  //   this.grid.h = h
-  //   this.update()
-  // }
-
-  // this.modGrid = (x = 0, y = 0) => {
-  //   const w = clamp(this.grid.w + x, 4, 16)
-  //   const h = clamp(this.grid.h + y, 4, 16)
-  //   this.setGrid(w, h)
-  // }
-
   this.writeData = function (data = 'Please give some input value and hit return' ) {
     this.texts = data
     let position = this.marker.markers[this.marker.active]
@@ -129,10 +117,12 @@ function Canvas () {
       this.marker.clearMatchedPos() 
       this.p.forEach((item, i) => {
         let g = this.seequencer.glyphAt(item.x, item.y)
-        if (this.seequencer.inBlock(item.x, item.y)) {
-          this.marker.setMatchedPos(item)
+        let marker = this.getMarkerAt(item.x, item.y);
+        if(this.isWithinMarker(marker)){
+          marker.forEach((m) => { m.matched.add(`${item.x}:${item.y}`) })
           this.drawSprite(item.x, item.y, g, 2) // marked within marker block.
-        } else {
+        }
+        else {
           this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
         }
       })

@@ -39,7 +39,7 @@ function Marker(canvas) {
       n: `marker-name-${canvas.globalIdx}`,
       overlapAreas: new Map(),
       overlapIndex: new Set(),
-      matched: [],
+      matched: new Set(),
       control: {
         muted: false, 
         reverse: false,
@@ -222,20 +222,21 @@ function Marker(canvas) {
     path = path === ""? active.msg.OSC.path:path
     msg = msg === ""? active.msg.OSC.msg:msg
 
-    var fmt = canvas.io.osc.formatter(msg)
-    let len = fmt[1].length
+    // var fmt = canvas.io.osc.formatter(msg)
+    // let len = fmt[1].length
   
     // TODO: dynamic index based on each sound/number length.
-    for(var i=0; i<fmt[3].length; i++){
-      osc_msg = `${fmt[0]} ${fmt[1][i % len ]} ${fmt[2]} ${fmt[3][i]}`
-      fmtMsg.push(osc_msg)
-    }
+    // for(var i=0; i<fmt[3].length; i++){
+      // osc_msg = `${fmt[0]} ${fmt[1][i % len ]} ${fmt[2]} ${fmt[3][i]}`
+    // let mm = msg.split(" ");
+    fmtMsg.push(msg)
+    // }
     
     oscMsg.path = path
     oscMsg.msg = msg
     oscMsg.formattedMsg = fmtMsg
-
-    console.log("oscMsg", oscMsg)
+    
+    // console.log("oscMsg>>>>", oscMsg)
     
     this.markers[this.active].msg.OSC = oscMsg
     
@@ -339,17 +340,17 @@ function Marker(canvas) {
     this.active = 0
   }
 
-  this.setMatchedPos = function(item){
-    let b = this.getBlock()
-    b.forEach(_item => {
-      if( _item.x === item.x && _item.y === item.y){
-        this.markers[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
-        ""
-        :
-        this.markers[_item.i].matched.push(item)
-      } 
-    })
-  }
+  // this.setMatchedPos = function(item){
+  //   let b = this.getBlock()
+  //   b.forEach(_item => {
+  //     if( _item.x === item.x && _item.y === item.y){
+  //       this.markers[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
+  //       ""
+  //       :
+  //       this.markers[_item.i].matched.push(item)
+  //     } 
+  //   })
+  // }
 
   this.getActiveCursor = function(){
     return this.markers[this.active]
@@ -357,7 +358,7 @@ function Marker(canvas) {
 
   this.clearMatchedPos = function(){
     this.markers.forEach( c => {
-      c.matched = []
+      c.matched.clear()
     })
   }
 

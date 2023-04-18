@@ -88,13 +88,15 @@ function Displayer(app) {
     }
 
     function handleFocus(e){
-      self.isDisplayFormFocused = true
-      // console.log("focus")
+      // self.isDisplayFormFocused = true
+      e.preventDefault();
+      console.log("focus", e.target.dataset["ctrl"])
     }
 
     function handleBlur(e){
-      self.isDisplayFormFocused = false
-      // console.log("blur")
+      // self.isDisplayFormFocused = false
+      e.preventDefault();
+      console.log("blur", e)
     }
 
     const observeCallback = function(mutationsList, observer) {

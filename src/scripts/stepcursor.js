@@ -45,23 +45,19 @@ function StepCursor(canvas) {
   //   })
   // }
 
-  function shouldPlay(item1,item2, isUnMuted) {
-    return item1.x === item2.x && item1.y === item2.y && isUnMuted
+  function shouldPlay(marker,step, isUnMuted) {
+    return marker.has(`${step.x}:${step.y}`) && isUnMuted
   }
 
   this.trigger = function () {
-    let value 
     this.steps.forEach( ( step ) => {
       if (!canvas.clock.isPaused) {
         canvas.marker.markers.forEach( ( marker, index) => {
-          marker.matched.forEach( ( _c, matchedIdx ) => {
-            if(shouldPlay(_c,step, !marker["control"]["muted"])){
-              msgOut(step, matchedIdx)
-              value = canvas.marker.markers[index]
-              canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
-              // this.triggerFX(null, value)
-            } 
-          })
+          if(shouldPlay(marker.matched,step, !marker["control"]["muted"])){
+            msgOut(step, index)
+            canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
+            // this.triggerFX(null, value)
+          } 
         })
       }
     })
@@ -83,9 +79,9 @@ function StepCursor(canvas) {
     let veloIndex = i % velocity.length
     let lenIndex = i % notelength.length
 
+    // TODO: no hardcoded
     if(client.console.isOSCToggled){
-       // TODO: dynamic index only for OSC msg.
-      canvas.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[midiIndex] )
+      canvas.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[0] )
     }
 
     if(client.console.isUDPToggled){

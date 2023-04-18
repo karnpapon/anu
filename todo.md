@@ -11,6 +11,7 @@
 - ~~individual note-ratio per marker.~~
 - ~~handle error when window width < guide windows.~~
 
+- fix osc/midi sending 
 - fix sending osc msg to support all kind of OSC msg
 - reversable marker / OSC msg
 - handle sendClockMsg to be compatible with MetronomeWorker

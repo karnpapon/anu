@@ -202,6 +202,10 @@ OSCdef(\anu_demo_kick, {
 		]).play
 	);
 
+	// TODO: this should not be symbol but should be string.
+	if(msg[1] == \nodes){ "nodes here".postln;};
+	msg[1].class.postln;
+
 	~processing.sendMsg("/proc_osc",
 		0.0,
 		1.0.rand,
