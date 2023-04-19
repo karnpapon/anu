@@ -43,9 +43,6 @@ function Console(app) {
               <p data-ctrl="regex-flag-y">y</p>
             </terminal>
           </div>
-          <div class="mt">
-            <p data-ctrl="regex-error"></p>
-          </div>
         </div>
        
         <div class="info">
@@ -86,7 +83,9 @@ function Console(app) {
               </div>
             </div>
           </div>
-        </div>
+
+          </div>
+          <div class="mt"> <p data-ctrl="regex-error"></p> </div>
             `
 
   this.inputFetch

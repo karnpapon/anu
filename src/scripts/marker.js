@@ -54,7 +54,7 @@ function Marker(canvas) {
           channel: 0 
         },
         UDP: [],
-        OSC: { path: 'play2', msg: "s [amencutup] n [12,6,9]", formattedMsg:"" },
+        OSC: { path: 'play2', msg: "s [amencutup] @n [12,6,9]", formattedMsg:"" },
       }
     }
 
@@ -222,24 +222,39 @@ function Marker(canvas) {
     path = path === ""? active.msg.OSC.path:path
     msg = msg === ""? active.msg.OSC.msg:msg
 
-    // var fmt = canvas.io.osc.formatter(msg)
-    // let len = fmt[1].length
-  
-    // TODO: dynamic index based on each sound/number length.
-    // for(var i=0; i<fmt[3].length; i++){
-      // osc_msg = `${fmt[0]} ${fmt[1][i % len ]} ${fmt[2]} ${fmt[3][i]}`
-    // let mm = msg.split(" ");
-    fmtMsg.push(msg)
-    // }
+    let fmt = canvas.io.osc.formatter(msg)
+    let len = fmt[1].length
+
+    let anchor = fmt.map((f,i) => (i%2)==0 ? i : -1 )
+                    .filter(i => i !== -1)
+                    .filter(idx => fmt[idx].charAt(0) === "@")[0];
+    
+    // eg. `s [sound] @n [4,5,6]`
+    // will be formatted as `["s","sound","@n", [4,5,6]]`
+    // index of anchor = 2 (since, it forward by '@'), 
+    // its value index (2+1) will be treated as a boundary of modulo when sending msg out
+    // in this example will send
+    // s sound n 4 -> s sound n 5 -> s sound n 6 -> s sound n 4 -> s sound n 5 -> s sound n 6 and so on
+    if (anchor) {
+      let boundary = Array.isArray(fmt[anchor+1]) ? fmt[anchor+1].length : -1;
+      if(boundary === -1) { return }
+      for(var i=0; i<boundary; i++){
+        // TODO: no fixed index
+        osc_msg = `${fmt[0]} ${fmt[1][i % len ]} ${fmt[anchor].substr(1)} ${fmt[anchor+1][i]}`
+        fmtMsg.push(osc_msg)
+      } 
+    } else {
+      osc_msg = fmt.join(" ")
+      fmtMsg.push(osc_msg)
+      client.displayer.helperMsg = "anchor value can also be an Array eg. `@n [12,14,16]`"
+      client.displayer.displayMsg("helper")
+    }
     
     oscMsg.path = path
     oscMsg.msg = msg
     oscMsg.formattedMsg = fmtMsg
-    
-    // console.log("oscMsg>>>>", oscMsg)
-    
+    console.log("oscMsg: ", oscMsg)
     this.markers[this.active].msg.OSC = oscMsg
-    
   }
 
   this.setMIDImsg  = function(){

@@ -581,11 +581,11 @@ button:active{
 .console-2{ flex: 2}
 .console-3{ flex: 2}
 
-.mt {margin-top: 2px;}
+.mt {margin-top: 2px; grid-column: 1 / -1;}
 .regex-mode, .regex-flag{ color: rgb(174, 174, 174)}
 .active { color: #000000; }
 
-[data-ctrl="regex-error"]{ color: red; line-height: normal; white-space: nowrap; }
+[data-ctrl="regex-error"]{ color: red; line-height: normal; }
 [data-ctrl="subtract"]{ 
   border-top: 1px solid black !important;
   border-bottom: 1px solid black !important;
@@ -724,7 +724,7 @@ div button:active{ marker: pointer; background-color: black; color: white;}
 
 .displayer-show{ opacity: 1; z-index: 99; padding-top: 1rem; padding-bottom: 1rem;}
 .displayer-bold{ font-family: 'input_mono_bold'; padding-left: 10px; font-size: 1.5rem;}
-.displayer-warning { color: red;}
+.displayer-warning { color: red; font-family: 'input_mono_bold';}
 
 /* ---------------------- */
 

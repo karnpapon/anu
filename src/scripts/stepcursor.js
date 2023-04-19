@@ -10,10 +10,6 @@ function StepCursor(canvas) {
     this.steps = [{ x: 0, y: 0, i: 0 }]
   }
 
-  // this.isTrigger = function (x, y) {
-  //   return canvas.p.some(pos => pos.x === x && pos.y === y)
-  // }
-
   this.add = function(){
     let marker = canvas.marker.markers[ canvas.marker.active ]
     canvas.stepcounter.counter.push({ x: marker.x ,y: marker.y , counter: 0, i: canvas.marker.active, y_counter: 0})
@@ -35,32 +31,21 @@ function StepCursor(canvas) {
     })
   }
 
-  // this.triggerFX = function(time,el){
-  //   let target  = canvas.marker.getSelectionArea(el)
-  //   target.forEach( item => {
-  //     let g = canvas.seequencer.glyphAt(item.x, item.y)
-  //     if(!canvas.isMatchedChar(item.x,item.y) && !canvas.isMarker(item.x,item.y)){
-  //       canvas.drawSprite(item.x, item.y, g, 0)
-  //     }
-  //   })
-  // }
-
-  function shouldPlay(marker,step, isUnMuted) {
-    return marker.has(`${step.x}:${step.y}`) && isUnMuted
+  function shouldPlay(isMarkerContainStep, isUnMuted) {
+    return isMarkerContainStep && isUnMuted
   }
 
   this.trigger = function () {
+    if (!canvas.clock.isPaused) {
     this.steps.forEach( ( step ) => {
-      if (!canvas.clock.isPaused) {
         canvas.marker.markers.forEach( ( marker, index) => {
-          if(shouldPlay(marker.matched,step, !marker["control"]["muted"])){
+          if(shouldPlay(marker.matched.has(`${step.x}:${step.y}`), !marker["control"]["muted"])){
             msgOut(marker, index)
             canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
-            // this.triggerFX(null, value)
           } 
         })
-      }
-    })
+      })
+    }
   }
 
   function msgOut(marker, i){
@@ -78,7 +63,6 @@ function StepCursor(canvas) {
     let veloIndex = i % velocity.length
     let lenIndex = i % notelength.length
 
-    // TODO: no hardcoded
     if(client.console.isOSCToggled){
       canvas.io.osc.push('/' + marker.msg.OSC.path, formattedMsg[0] )
     }

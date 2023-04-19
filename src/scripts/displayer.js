@@ -26,6 +26,8 @@ function Displayer(app) {
   this.isDisplayFormFocused = false
   this.displayInputTarget = null
 
+  this.helperMsg = ""
+
   this.tabInputIndex = 0
 
   this.inputRef = {
@@ -39,6 +41,8 @@ function Displayer(app) {
     "midi": ["caret-midi-note", "caret-midi-notelen","caret-midi-velo", "caret-midi-chan"],
     "rename-marker": ["caret-rename-marker"]
   }
+
+  this.omitCmdList = ["osc", "midi", "rename-marker"]
   
   this.oscConf = {
     path: "",
@@ -88,15 +92,13 @@ function Displayer(app) {
     }
 
     function handleFocus(e){
-      // self.isDisplayFormFocused = true
       e.preventDefault();
-      console.log("focus", e.target.dataset["ctrl"])
+      // console.log("focus", e.target.dataset["ctrl"])
     }
 
     function handleBlur(e){
-      // self.isDisplayFormFocused = false
       e.preventDefault();
-      console.log("blur", e)
+      // console.log("blur", e)
     }
 
     const observeCallback = function(mutationsList, observer) {
@@ -150,7 +152,7 @@ function Displayer(app) {
         break;
       case 'helper':
         this.displayType = "preview"
-        this.el_general.innerHTML = `<p class="displayer-warning">[WARNING]: cannot display helps window since current window width is too narrow<p>` 
+        this.el_general.innerHTML = `<p class="displayer-warning">${this.helperMsg}<p>` 
         break;
       case 'show-marker-info':
         this.displayType = "preview"
@@ -254,7 +256,6 @@ function Displayer(app) {
         break;
       case 'default':
         this.displayType = "default"
-        // target = this.el_general
     }
 
     // TODO: cleanup this
@@ -275,7 +276,12 @@ function Displayer(app) {
     if(!this.isDisplayInputToggled) { this.resetTabInputIndex() }
   }
 
+  this.shouldSkipTriggerFX = function(cmd){
+    return !this.omitCmdList.includes(cmd)
+  }
+
   this.runCmd = function(){
+    if (this.timer) { clearTimeout(this.timer)}
     switch (this.currentCmd) {
       case 'osc':
         canvas.marker.setOSCmsg();
@@ -287,8 +293,9 @@ function Displayer(app) {
         canvas.marker.setMIDImsg();
         break;
     }
+    if (this.shouldSkipTriggerFX(this.currentCmd)) return
     this.displayInputTarget.classList.add("trigger-input")
-    setTimeout(() => {this.displayInputTarget.classList.remove("trigger-input")  }, 200);
+    this.timer = setTimeout(() => { this.displayInputTarget.classList.remove("trigger-input")  }, 200);
   }
 
   this.handleTab = function(){
@@ -325,6 +332,7 @@ function Displayer(app) {
 
   this.displayDefault = function(){
     this.currentCmd = "default"
+    this.helperMsg = ""
     this.run();
   }
 

@@ -272,7 +272,10 @@ function Commander(canvas) {
         // (h) show guide.
         if (event.keyCode === 72) {
           canvas.toggleGuide(!canvas.guide)
-          if (document.getElementsByClassName("content")[0].clientWidth < 458) { displayer.displayMsg("helper"); }
+          if (document.getElementsByClassName("content")[0].clientWidth < 458) { 
+            displayer.helperMsg = "[WARNING]: cannot display helps window since current window width is too narrow";
+            displayer.displayMsg("helper"); 
+          }
           event.preventDefault();
           return;
         }
