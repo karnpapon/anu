@@ -160,7 +160,7 @@ function Canvas () {
   }
 
   this.isOverlapArea = function (x,y){
-    // TODO: overlapped areas for muliples marker still incorrect.
+    // TODO: overlapped areas for muliples marker still display incorrectly.
     return this.marker.markers.some( item => item.overlapAreas.has(`${x}:${y}:${item.overlapIndex.values().next().value}`)) 
     // ||  this.marker.markers.some((item) => item.overlapAreas.has(`${x}:${y}:${this.marker.active}`))
   }

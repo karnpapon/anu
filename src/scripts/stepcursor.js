@@ -54,7 +54,7 @@ function StepCursor(canvas) {
       if (!canvas.clock.isPaused) {
         canvas.marker.markers.forEach( ( marker, index) => {
           if(shouldPlay(marker.matched,step, !marker["control"]["muted"])){
-            msgOut(step, index)
+            msgOut(marker, index)
             canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
             // this.triggerFX(null, value)
           } 
@@ -63,17 +63,16 @@ function StepCursor(canvas) {
     })
   }
 
-  function msgOut(step, i){
-    let target = canvas.marker.markers.filter( cs => cs.i === step.i )
+  function msgOut(marker, i){
     const {
       channel,
       note,
       notelength,
       octave,
       velocity
-    } = target[0].msg.MIDI
+    } = marker.msg.MIDI
 
-    const { formattedMsg } = target[0].msg.OSC
+    const { formattedMsg } = marker.msg.OSC
    
     let midiIndex = i % note.length
     let veloIndex = i % velocity.length
@@ -81,11 +80,11 @@ function StepCursor(canvas) {
 
     // TODO: no hardcoded
     if(client.console.isOSCToggled){
-      canvas.io.osc.push('/' + target[0].msg.OSC.path, formattedMsg[0] )
+      canvas.io.osc.push('/' + marker.msg.OSC.path, formattedMsg[0] )
     }
 
     if(client.console.isUDPToggled){
-      canvas.io.udp.send( target[0].msg.UDP[midiIndex])
+      canvas.io.udp.send( marker.msg.UDP[midiIndex])
     }
 
     canvas.io.midi.push({ 
