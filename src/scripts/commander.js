@@ -53,15 +53,12 @@ function Commander(canvas) {
 
     // -- ESC PRESSED --
     this.doWhen(event.key === "Escape", () => {
-      // if(displayer.isDisplayInputToggled) { 
-        // return 
-      // }
+     
       displayer.isDisplayInputToggled = false; 
       app_console.toggleInsert(app_console.inputFetch, app_console.caret, false);
       app_console.toggleInsert(app_console.searchRegExp, app_console.regexCaret, false); 
       app_console.inputFocus(false)
       app_console.regexFocus(false)
-      // console.log("app_console", app_console.) 
       displayer.displayDefault()
       this.stop();
       canvas.isPaused = false;

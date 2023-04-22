@@ -1,9 +1,11 @@
 const client = new Client();
 const canvas = new Canvas();
+const loading = new Loading()
 const metronome = new Metronome(canvas);
 
 client.build();
-canvas.install(client.content.el);
+loading.build();
+canvas.install();
 
 window.addEventListener("load", () => {
   canvas.init();

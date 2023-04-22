@@ -1,7 +1,6 @@
 'use strict'
 
 function Canvas () {
-
   this.seequencer = new Seequencer(this)
   this.marker = new Marker(this)
   this.commander = new Commander(this)
@@ -45,12 +44,12 @@ function Canvas () {
 
   // -----------------------------
 
-  this.install = function (host) {
-    host.appendChild(this.el)
-    this.theme.install(host)
+  this.install = function () {
+    loading.wrapperElem.appendChild(this.el)
+    this.theme.install(loading.wrapperElem)
     this.resize()
   }
-  
+
   this.init = function () {
     this.io.start()
     this.clock.start()

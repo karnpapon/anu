@@ -3,7 +3,6 @@
 function Client(){
   
   const el = tag => document.createElement(tag);
-  this.content = new Content(this)
   this.console = new Console(this)
   this.displayer = new Displayer(this)
   this.regexSolver = new RegexSolver();
@@ -35,7 +34,6 @@ function Client(){
   this.build = function(){
     this.console.build()
     this.displayer.build()
-    this.content.build()
     setTimeout(client.show,400)
   }
 
@@ -102,7 +100,7 @@ function Client(){
     var data = ""
     var res = ""
     
-    client.content.loading.classList.add("loading")
+    loading.loadingElem.classList.add("loading")
 
     axios({
       method: "get",
@@ -119,7 +117,7 @@ function Client(){
         client.repaint(res)
         client.console.setTotalLenghtCounterDisplay()
         client.isGettingData = false
-        client.content.loading.classList.remove("loading")
+        loading.loadingElem.classList.remove("loading")
 
         canvas.clearMarksPos()
         canvas.globalIdx = 0 
@@ -131,7 +129,7 @@ function Client(){
     .catch((error) => {
       res = `${error}, please try again..`
       client.isGettingData = false
-      client.content.loading.classList.remove("loading")
+      loading.loadingElem.classList.remove("loading")
       client.repaint(res)
     });
   }
