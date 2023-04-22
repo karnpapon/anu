@@ -4,6 +4,7 @@
 )]
 
 mod lib;
+mod analyser;
 use std::borrow::Borrow;
 use std::sync::Mutex;
 use crate::lib::osc::{OscPlugin};

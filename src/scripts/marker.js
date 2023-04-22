@@ -158,10 +158,6 @@ function Marker(canvas) {
   }
 
   this.onMouseUp = (e) => {
-    // if (this.mouseFrom) {
-    //   const pos = this.mousePick(e.clientX, e.clientY)
-    //   this.select(this.mouseFrom.x, this.mouseFrom.y, pos.x - this.mouseFrom.x + 1, pos.y - this.mouseFrom.y + 1)
-    // }
     this.mouseFrom = null
   }
 
@@ -222,22 +218,21 @@ function Marker(canvas) {
     path = path === ""? active.msg.OSC.path:path
     msg = msg === ""? active.msg.OSC.msg:msg
     
-    let fmt = canvas.io.osc.formatter(msg)
-    // let len = fmt[1].length
-
-    // console.log("fmt", fmt)
+    // let fmt = canvas.io.osc.formatter(msg)
     
-    let _anchor = fmt.map((f,i) => (i%2)==0 ? i : -1 )
-    .filter(i => i !== -1)
-    .filter(idx => fmt[idx].charAt(0) === "@");
+    // let _anchor = fmt.filter(idx => fmt[idx].charAt(0) === "@");
     
-    if (_anchor.length > 1) { 
-      client.displayer.helperMsg = "[InvalidSyntax]: can have only 1 anchor(@) per msg."
-      client.displayer.displayMsg("helper") 
-      return
-    }
+    // if (_anchor.length > 1) { 
+    //   client.displayer.helperMsg = "[InvalidSyntax]: can have only 1 anchor(@) per msg."
+    //   client.displayer.displayMsg("helper") 
+    //   return
+    // }
 
-    let anchor = _anchor[0];
+    // let anchor = _anchor[0];
+
+    // console.log(">>>", _anchor);
+
+    // s [sound] n @[4,5,6]
     
     // eg. `s [sound] @n [4,5,6]`
     // will be formatted as `["s","sound","@n", [4,5,6]]`
@@ -245,22 +240,20 @@ function Marker(canvas) {
     // its value index (2+1) will be treated as a boundary of modulo when sending msg out
     // in this example will send
     // s sound n 4 -> s sound n 5 -> s sound n 6 -> s sound n 4 -> s sound n 5 -> s sound n 6 and so on
-    if (anchor !== undefined) {
-      let boundary = fmt[anchor+1].length;
-      for(var i=0; i<boundary; i++){
-        // TODO: no fixed index
-        osc_msg = `${fmt[0]} ${fmt[1][0]} ${fmt[anchor].substr(1)} ${fmt[anchor+1][i]}`
-        fmtMsg.push(osc_msg)
-      } 
-    } else {
-      osc_msg = fmt.join(" ")
-      fmtMsg.push(osc_msg)
-      // client.displayer.helperMsg = "anchor value can also be an Array eg. `@n [12,14,16]`"
-      // client.displayer.displayMsg("helper")
-    }
+    // if (anchor !== undefined) {
+    //   let boundary = fmt[anchor].length;
+    //   for(var i=0; i<boundary; i++){
+    //     // TODO: no fixed index
+    //     osc_msg = `${fmt[0]} ${fmt[1][0]} ${fmt[anchor].substr(1)} ${fmt[anchor+1][i]}`
+    //     fmtMsg.push(osc_msg)
+    //   } 
+    // } else {
+    //   osc_msg = fmt.join(" ")
+    //   fmtMsg.push(osc_msg)
+    //   // client.displayer.helperMsg = "anchor value can also be an Array eg. `@n [12,14,16]`"
+    //   // client.displayer.displayMsg("helper")
+    // }
 
-    console.log("active", active)
-    
     oscMsg.path = path
     oscMsg.msg = msg
     oscMsg.formattedMsg = fmtMsg
@@ -418,16 +411,6 @@ function Marker(canvas) {
   this.getStepLength = function(){
     return `${this.markers[this.active].w}, ${this.markers[this.active].h}`
   }
-
-  // this.getSelectionArea = function(r){
-  //   const area = []
-  //   for (let _y = r.y; _y < r.y + r.h; _y++) {
-  //     for (let _x = r.x; _x < r.x + r.w; _x++) {
-  //       area.push({x: _x, y: _y })
-  //     }
-  //   } 
-  //   return area
-  // }
 
   this.toRect = function () {
     let cursorArea = []

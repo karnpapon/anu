@@ -9,6 +9,13 @@ use tauri::{
 
 use crate::App;
 
+use crate::analyser;
+use crate::analyser::lexer::Error;
+
+use analyser::lexer::Lexer;
+use analyser::parser::{parse_message, Expr, Ident, Literal, Parser, Stmt};
+use analyser::token::Tokens;
+
 pub struct OscPlugin {
   socket: Mutex<Option<UdpSocket>>,
   send_from_port: Mutex<Option<u16>>,
@@ -34,29 +41,33 @@ impl OscPlugin {
     self.send_to_port = Some(port).into();
   }
 
-  fn send(&self, rpc: RpcOscMessage, send_to: u16) {
+  fn parse(&self, osc_msg: &str, send_to: u16) -> (Vec<Stmt>, Vec<Error>) {
+    let (osc_msg_vec, lex_error) = Lexer::analyse(&osc_msg);
+
+    let tokens = Tokens::new(&osc_msg_vec);
+    let vec = Vec::new();
+    let (_, stmt) = Parser::parse_tokens(tokens).unwrap_or((Tokens::new(&vec), Vec::new()));
+    (stmt, lex_error)
+  }
+
+  fn send_packet(&self, rpc: RpcOscMessage, send_to: u16) {
     let socket = self.socket.lock().unwrap(); 
     let addr = SocketAddr::from(([127, 0, 0, 1], send_to));
-    let args: Vec<OscType> = rpc
-      .args
-      .iter()
-      .map(|arg| {
-        let tt = match arg {
-          OscValue::Bool(v) => OscType::from(*v),
-          OscValue::Float(v) => OscType::Float(*v as f32),
-          OscValue::Int(v) => OscType::Int(*v as i32),
-          OscValue::String(v) => OscType::from(v.to_string()),
-        };
-        tt
-      })
-      .collect();
+    let msg = rpc.args;
+    let (stmt, lex_error) = self.parse(&msg, send_to);
 
-    let msg_buf = encoder::encode(&OscPacket::Message(OscMessage {
-      addr: rpc.path,
-      args,
-    }))
-    .unwrap();
-    socket.as_ref().unwrap().send_to(&msg_buf, addr).unwrap();
+    match lex_error.is_empty() {
+      true => {
+        let argument_msg = stmt.iter().map(|x| match x { Stmt::ExprStmt(v) => parse_message(v) }).collect::<Vec<OscType>>();
+        let msg_buf = encoder::encode(&OscPacket::Message(OscMessage {
+            addr: rpc.path,
+            args: argument_msg,
+        }))
+        .unwrap();
+        socket.as_ref().unwrap().send_to(&msg_buf, addr).unwrap();
+      }
+      false => println!( "{}{}", "[ERROR]: ", format!("parsing msg {:?}", lex_error))
+    }
   }
 }
 
@@ -71,14 +82,14 @@ enum OscValue {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RpcOscMessage {
   path: String,
-  args: Vec<OscValue>,
+  args: String,
 }
 
 #[tauri::command]
 fn send(rpc: RpcOscMessage, app: State<'_, App>) {
   let osc_states = app.osc_states.lock().unwrap();
   let p = osc_states.send_to_port.lock().unwrap();
-  osc_states.send(rpc, p.expect("cannot acquire send_to_port"));
+  osc_states.send_packet(rpc, p.expect("cannot acquire send_to_port"));
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {

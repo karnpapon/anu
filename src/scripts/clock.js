@@ -85,12 +85,6 @@ function Clock(canvas) {
     if (bpm < 60) { console.warn('Clock', 'Error ' + bpm); return }
     this.clearTimer()
     window.localStorage.setItem('bpm', bpm)
-    // this.timer = new Worker(worker)
-    // this.timer.postMessage((60000 / parseInt(bpm)) / 4)
-    // this.timer.onmessage = (event) => {
-      // canvas.io.midi.sendClock() // TODO: should be compatible with MetronomeWorker
-      // canvas.run()
-    // }
   }
 
   this.mod = function(mod = 0, animate = false) {

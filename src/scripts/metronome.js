@@ -136,6 +136,7 @@ function Metronome(canvas) {
           if(currentNote === i){
             if(metronome.noteRatio !== 16) {
               if(currentNote % metronome.noteRatio === 0){
+                canvas.io.midi.sendClock()
                 canvas.run()
               } 
             } 

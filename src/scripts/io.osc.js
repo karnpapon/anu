@@ -52,9 +52,7 @@ function Osc (app) {
     if (!msg) { console.warn('OSC', 'Empty message'); return }
     // const oscMsg = new OSC.Message(path, msg)
     // this.socket.send(oscMsg)
-    this.sendOsc(path, [
-      { String: msg }, 
-    ])
+    this.sendOsc(path, msg)
   }
 
   this.sendOsc = function(path, args) {

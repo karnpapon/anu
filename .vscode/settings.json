@@ -1,4 +1,7 @@
 {
   "liveServer.settings.port": 5501,
-  "editor.formatOnSave": false
+  "editor.formatOnSave": false,
+  "rust-analyzer.linkedProjects": [
+    "./src-tauri/Cargo.toml"
+  ]
 }

@@ -64,7 +64,7 @@ function StepCursor(canvas) {
     let lenIndex = i % notelength.length
 
     if(client.console.isOSCToggled){
-      canvas.io.osc.push('/' + marker.msg.OSC.path, formattedMsg[0] )
+      canvas.io.osc.push('/' + marker.msg.OSC.path, marker.msg.OSC.msg )
     }
 
     if(client.console.isUDPToggled){
