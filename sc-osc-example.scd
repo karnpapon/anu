@@ -115,7 +115,7 @@ ServerTree.remove(~dist);
 
 d.set(\dst, 0)
 t.set(\tri, 0);
-l.set(\cutoff, 3000)
+l.set(\cutoff, 4000)
 p.set(
 	\shape, 0.5,
 	\amp_compensation_amount, 0.5,
@@ -149,29 +149,12 @@ i.inspect
 ~drm.stop;
 ~source_group.free
 
+(
 ~processing = NetAddr("127.0.0.1", 5000);
-
-~processing_scene = [
-	// "reg1",
-	// "cubeGrid",
-	// "cubeGridB",
-	// "reg1B",
-	// "reg2B",
-	// "vectorGrid",
-	// "vectorGridB",
-	// "rainB",
-	"reg2",
-	"rain",
-	"maze",
-	"mazeB",
-	"nodes",
-	// "cubePops",
-	// "nudges",
-	// "nudgesStatic"
-];
+// ~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
+)
 
 (
-// ~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
 OSCdef(\anu_demo_sampler, {
 	|msg, time, addr, recvPort|
 	// msg.postln;
@@ -202,19 +185,22 @@ OSCdef(\anu_demo_kick, {
 		]).play
 	);
 
-	// msg.postln;
-
-	// TODO: this should not be symbol but should be string.
-	if(msg[1] == \nodes){
-		// "nodes here".postln;
-		~processing.sendMsg("/proc_osc",0.0,1.0.rand,msg[1].asString,
-		1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+	if(msg[1] == \dense){
+		var ss = ["cubeGrid","maze","texts","lines"].choose;
+		ss.postln;
+		~processing.sendMsg("/proc_osc",0.0,1.0.rand,ss,
+			0.1,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
 	};
 
-	if(msg[1] == \all){
-		var ss = ~processing_scene.choose;
+	if(msg[1] == \medium){
+		var ss = ["maze","lines", "texts"].choose;
 		~processing.sendMsg("/proc_osc",0.0,1.0.rand,ss,
-		1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+			0.1,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+	};
+
+	if(msg[1].isSymbol && ( (msg[1] !== \dense) && (msg[1] !== \medium) ) ){
+		~processing.sendMsg("/proc_osc",0.0,1.0.rand,msg[1].asString,
+			0.8,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
 	};
 
 }, '/demo_kick');

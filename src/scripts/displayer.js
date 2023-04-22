@@ -282,6 +282,7 @@ function Displayer(app) {
 
   this.runCmd = function(){
     if (this.timer) { clearTimeout(this.timer)}
+
     switch (this.currentCmd) {
       case 'osc':
         canvas.marker.setOSCmsg();

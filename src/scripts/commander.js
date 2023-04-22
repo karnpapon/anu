@@ -85,7 +85,7 @@ function Commander(canvas) {
     // DISPLAYER INPUT(OSC/MIDI MSG/ETC.) ON
     this.doWhen(displayer.isDisplayInputToggled, () => { 
       // eval input msg.
-      if (event.key === "Enter") {
+      if (event.keyCode === 13) {
         displayer.runCmd();
         event.preventDefault();
         return;

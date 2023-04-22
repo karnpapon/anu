@@ -221,13 +221,23 @@ function Marker(canvas) {
     
     path = path === ""? active.msg.OSC.path:path
     msg = msg === ""? active.msg.OSC.msg:msg
-
+    
     let fmt = canvas.io.osc.formatter(msg)
-    let len = fmt[1].length
+    // let len = fmt[1].length
 
-    let anchor = fmt.map((f,i) => (i%2)==0 ? i : -1 )
-                    .filter(i => i !== -1)
-                    .filter(idx => fmt[idx].charAt(0) === "@")[0];
+    // console.log("fmt", fmt)
+    
+    let _anchor = fmt.map((f,i) => (i%2)==0 ? i : -1 )
+    .filter(i => i !== -1)
+    .filter(idx => fmt[idx].charAt(0) === "@");
+    
+    if (_anchor.length > 1) { 
+      client.displayer.helperMsg = "[InvalidSyntax]: can have only 1 anchor(@) per msg."
+      client.displayer.displayMsg("helper") 
+      return
+    }
+
+    let anchor = _anchor[0];
     
     // eg. `s [sound] @n [4,5,6]`
     // will be formatted as `["s","sound","@n", [4,5,6]]`
@@ -235,20 +245,21 @@ function Marker(canvas) {
     // its value index (2+1) will be treated as a boundary of modulo when sending msg out
     // in this example will send
     // s sound n 4 -> s sound n 5 -> s sound n 6 -> s sound n 4 -> s sound n 5 -> s sound n 6 and so on
-    if (anchor) {
-      let boundary = Array.isArray(fmt[anchor+1]) ? fmt[anchor+1].length : -1;
-      if(boundary === -1) { return }
+    if (anchor !== undefined) {
+      let boundary = fmt[anchor+1].length;
       for(var i=0; i<boundary; i++){
         // TODO: no fixed index
-        osc_msg = `${fmt[0]} ${fmt[1][i % len ]} ${fmt[anchor].substr(1)} ${fmt[anchor+1][i]}`
+        osc_msg = `${fmt[0]} ${fmt[1][0]} ${fmt[anchor].substr(1)} ${fmt[anchor+1][i]}`
         fmtMsg.push(osc_msg)
       } 
     } else {
       osc_msg = fmt.join(" ")
       fmtMsg.push(osc_msg)
-      client.displayer.helperMsg = "anchor value can also be an Array eg. `@n [12,14,16]`"
-      client.displayer.displayMsg("helper")
+      // client.displayer.helperMsg = "anchor value can also be an Array eg. `@n [12,14,16]`"
+      // client.displayer.displayMsg("helper")
     }
+
+    console.log("active", active)
     
     oscMsg.path = path
     oscMsg.msg = msg
@@ -437,22 +448,3 @@ function Marker(canvas) {
 
 }
 
-// function get( value, query, defaultVal = undefined) {
-//   const splitQuery = Array.isArray(query) ? query : query.replace(/(\[(\d)\])/g, ".$2").replace(/^\./, "")
-//     .split(".");
-
-//   if (!splitQuery.length || splitQuery[0] === undefined) return value ;
-
-//   const key = splitQuery[0];
-
-//   if (
-//     typeof value !== "object"
-//     || value === null
-//     || !(key in value)
-//     || (value)[key] === undefined
-//   ) {
-//     return defaultVal;
-//   }
-
-//   return get((value)[key], splitQuery.slice(1), defaultVal);
-// }
