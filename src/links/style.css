@@ -332,17 +332,15 @@ terminal {
   outline: 0px solid transparent;
   border-width: 0; 
   box-shadow: none;
-}
-
-terminal {
   word-break: break-all;
   visibility: visible;
-
+  
   display: flex;
   align-items: center;
   height: 100%;
-
+  
   margin-left: 0.5rem;
+  quotes: """ """ "'" "'";
 }
 
 [contenteditable]:focus {
@@ -676,6 +674,11 @@ div button:active{ marker: pointer; background-color: black; color: white;}
   position: absolute;
   justify-content: center;
   opacity: 0;
+}
+
+#osc-msg { 
+  font-style: normal; 
+  quotes: """ """ "'" "'";
 }
 
 .displayer-active-marker {

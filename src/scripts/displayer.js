@@ -173,7 +173,7 @@ function Displayer(app) {
             <lf>
               <p>MSG:</p>
               <terminal>
-                <div id="osc-msg" data-ctrl="displayer-osc-msg" type="osc-msg" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off">${active.msg.OSC.msg}</div>
+                <div id="osc-msg" data-ctrl="displayer-osc-msg" type="text" tabindex="-1" contenteditable="false" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">${active.msg.OSC.msg}</div>
                 <caret id="caret-osc-msg" for="osc-msg" class="caret hide">&nbsp;</caret>
               </terminal>
             </lf>

@@ -13,7 +13,7 @@ use crate::analyser;
 use crate::analyser::lexer::Error;
 
 use analyser::lexer::Lexer;
-use analyser::parser::{parse_message, Expr, Ident, Literal, Parser, Stmt};
+use analyser::parser::{parse_message, Parser, Stmt};
 use analyser::token::Tokens;
 
 pub struct OscPlugin {
@@ -66,7 +66,7 @@ impl OscPlugin {
         .unwrap();
         socket.as_ref().unwrap().send_to(&msg_buf, addr).unwrap();
       }
-      false => println!( "{}{}", "[ERROR]: ", format!("parsing msg {:?}", lex_error))
+      false => println!( "{}{}", "[ERROR]: ", format!("parsing msg {:?}", lex_error)) //TODO: also display errors on client side.
     }
   }
 }

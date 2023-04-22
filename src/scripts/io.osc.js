@@ -8,7 +8,6 @@ function Osc (app) {
   const { invoke } = window.__TAURI__;
 
   this.stack = []
-  // this.socket = new OSC() // osc-js
   this.port = null
 
   // TODO make this configurable.
@@ -44,14 +43,10 @@ function Osc (app) {
 
   this.push = function (path, msg) {
     this.stack.push({ path, msg })
-    // console.log("this.stack", this.stack);
   }
   
   this.play = function ({ path, msg }) {
-    // if (!this.socket) { console.warn('OSC', 'Unavailable socket'); return }
     if (!msg) { console.warn('OSC', 'Empty message'); return }
-    // const oscMsg = new OSC.Message(path, msg)
-    // this.socket.send(oscMsg)
     this.sendOsc(path, msg)
   }
 
@@ -59,20 +54,6 @@ function Osc (app) {
     invoke("plugin:osc|send", { rpc: { path, args } });
   }
 
-  this.formatter = function( msg ){
-    var noBracket = msg.replace(/[\])}[{(]/g, ''); 
-    var splitted = noBracket.split(" ")
-    var formatted = []
-    
-    splitted.forEach(( item, index ) => {
-      if (isOdd(index)) {
-        formatted.push(item.split(",") )
-      } else {
-        formatted.push(item)
-      }
-    })
-    return formatted
-  }
 
   this.select = function (port = this.options.superCollider) {
     if (parseInt(port) === this.port) { console.warn('OSC', 'Already selected'); return }

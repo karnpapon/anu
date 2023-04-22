@@ -54,7 +54,7 @@ function Marker(canvas) {
           channel: 0 
         },
         UDP: [],
-        OSC: { path: 'play2', msg: "s [amencutup] @n [12,6,9]", formattedMsg:"" },
+        OSC: { path: 'play2', msg: "s amencutup n 12", formattedMsg:"" },
       }
     }
 
@@ -213,49 +213,10 @@ function Marker(canvas) {
     let { path, msg } = client.displayer.oscConf
     let oscMsg = { path: "", msg: ""}
     let fmtMsg = []
-    var osc_msg
-    
     path = path === ""? active.msg.OSC.path:path
     msg = msg === ""? active.msg.OSC.msg:msg
-    
-    // let fmt = canvas.io.osc.formatter(msg)
-    
-    // let _anchor = fmt.filter(idx => fmt[idx].charAt(0) === "@");
-    
-    // if (_anchor.length > 1) { 
-    //   client.displayer.helperMsg = "[InvalidSyntax]: can have only 1 anchor(@) per msg."
-    //   client.displayer.displayMsg("helper") 
-    //   return
-    // }
-
-    // let anchor = _anchor[0];
-
-    // console.log(">>>", _anchor);
-
-    // s [sound] n @[4,5,6]
-    
-    // eg. `s [sound] @n [4,5,6]`
-    // will be formatted as `["s","sound","@n", [4,5,6]]`
-    // index of anchor = 2 (since, it forward by '@'), 
-    // its value index (2+1) will be treated as a boundary of modulo when sending msg out
-    // in this example will send
-    // s sound n 4 -> s sound n 5 -> s sound n 6 -> s sound n 4 -> s sound n 5 -> s sound n 6 and so on
-    // if (anchor !== undefined) {
-    //   let boundary = fmt[anchor].length;
-    //   for(var i=0; i<boundary; i++){
-    //     // TODO: no fixed index
-    //     osc_msg = `${fmt[0]} ${fmt[1][0]} ${fmt[anchor].substr(1)} ${fmt[anchor+1][i]}`
-    //     fmtMsg.push(osc_msg)
-    //   } 
-    // } else {
-    //   osc_msg = fmt.join(" ")
-    //   fmtMsg.push(osc_msg)
-    //   // client.displayer.helperMsg = "anchor value can also be an Array eg. `@n [12,14,16]`"
-    //   // client.displayer.displayMsg("helper")
-    // }
-
     oscMsg.path = path
-    oscMsg.msg = msg
+    oscMsg.msg = msg;
     oscMsg.formattedMsg = fmtMsg
     console.log("oscMsg: ", oscMsg)
     this.markers[this.active].msg.OSC = oscMsg

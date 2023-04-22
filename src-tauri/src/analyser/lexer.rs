@@ -157,7 +157,8 @@ fn lex_reserved_ident(input: LocatedSpan) -> IResult<Token> {
       "false" => Token::BoolLiteral(false),
       "Nil" => Token::Nil,
       "Inf" => Token::Inf,
-      _ => Token::Illegal,
+      // _ => Token::Illegal,
+      i => Token::Ident(i.to_string()),
     },
   )(input)
 }
