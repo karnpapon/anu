@@ -72,14 +72,6 @@ impl OscPlugin {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-enum OscValue {
-  Bool(bool),
-  Float(f64),
-  Int(i64),
-  String(String),
-}
-
-#[derive(Serialize, Deserialize, Debug)]
 pub struct RpcOscMessage {
   path: String,
   args: String,

@@ -184,11 +184,13 @@ function Marker(canvas) {
 
   this.modNoteRatio = function(mod = 0) {
     this.setNoteRatio(this.markers[this.active]["control"]["noteRatio"] + mod)
+    // canvas.stepcounter.resetTarget(this.active)
+    // canvas.stepcursor.reset(this.active)
   }
 
   this.setNoteRatio = function(value) {
     if (value) {this.markers[this.active]["control"]["noteRatio"] = clamp(value, 1, 16) }
-    // client.console.currentNumber.innerText = `${this.noteRatio}:16`
+    client.console.currentNumber.innerText = `${this.markers[this.active]["control"]["noteRatio"]}:16`
   }
 
   this.scale = (w, h) => {

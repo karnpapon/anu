@@ -11,6 +11,10 @@ function StepCounter(canvas) {
     this.counter = [{ x: 0, y: 0, y_counter: 0, i: 0 }]
   }
 
+  this.resetTarget = function(index) {
+    this.counter[index] = { x: canvas.marker.markers[index].x, y: canvas.marker.markers[index].y, y_counter: 0, i: index }
+  }
+
   this.run = function () {
     this.runCounter()
   }
@@ -103,11 +107,12 @@ function StepCounter(canvas) {
     }
   }
 
+  // TODO: [#12] todo.md
   function increment(c) {
-    if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
+    // if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
       if (client.console.isReverse) { return back(c) }
       forth(c)
-    }
+    // }
   }
 
   this.range = function () {

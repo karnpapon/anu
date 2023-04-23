@@ -40,29 +40,31 @@ function Metronome(canvas) {
     // for displaying tick.
     this.notesInQueue.push({ note: beatNumber, time: time });
 
-    // if ( (this.noteResolution==1) && (beatNumber%2))
-    //     return; // we're not playing non-8th 16th notes
-    // if ( (this.noteResolution==2) && (beatNumber%4))
-    //     return; // we're not playing non-quarter 8th notes
+    
+    if (client.enableMetronome) {
+      // if ( (this.noteResolution==1) && (beatNumber%2))
+      //     return; // we're not playing non-8th 16th notes
+      // if ( (this.noteResolution==2) && (beatNumber%4))
+      //     return; // we're not playing non-quarter 8th notes
 
-    // create an oscillator
-    let osc = this.audioContext.createOscillator();
-    let gain = this.audioContext.createGain();
-    gain.gain.value = client.enableMetronome? 0.25:0;
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-
-    if (beatNumber % 16 === 0)
-      // beat 0 == high pitch
-      osc.frequency.value = 880.0;
-    else if (beatNumber % 4 === 0)
-      // quarter notes = medium pitch
-      osc.frequency.value = 440.0;
-    // other 16th notes = low pitch
-    else osc.frequency.value = 220.0;
-
-    osc.start(time);
-    osc.stop(time + this.noteLength);
+      let osc = this.audioContext.createOscillator();
+      let gain = this.audioContext.createGain();
+      gain.gain.value = 0.25;
+      osc.connect(gain);
+      gain.connect(this.audioContext.destination);
+  
+      if (beatNumber % 16 === 0)
+        // beat 0 == high pitch
+        osc.frequency.value = 880.0;
+      else if (beatNumber % 4 === 0)
+        // quarter notes = medium pitch
+        osc.frequency.value = 440.0;
+      // other 16th notes = low pitch
+      else osc.frequency.value = 220.0;
+  
+      osc.start(time);
+      osc.stop(time + this.noteLength);
+    }
   };
 
   this.set = function(value) {

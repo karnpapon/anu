@@ -6,7 +6,8 @@ function StepCursor(canvas) {
 
   this.steps = [ { x: 0, y: 0, i: 0 } ]
 
-  this.reset = function(){
+  this.reset = function(index = undefined){
+    if (index) { this.steps[index] = { x: 0, y: 0, i: index }; return}
     this.steps = [{ x: 0, y: 0, i: 0 }]
   }
 
