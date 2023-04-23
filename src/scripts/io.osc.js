@@ -4,13 +4,12 @@
 
 // osc module is located at /src-tauri/src/lib/osc.rs
 function Osc (app) {
-  const isEven = (x) => { return (x%2)==0; }
-  const isOdd = (x) => { return !isEven(x); }
   const { invoke } = window.__TAURI__;
-
+  
   this.stack = []
   this.port = null
-
+  this.errorMsgTimer = 0;
+  
   this.start = function () {
     console.info('OSC', 'Start..')
   }
@@ -21,20 +20,22 @@ function Osc (app) {
 
   this.run = function () {
     for (const item of this.stack) {
-      this.play(item)
+      this.trigger(item)
     }
   }
 
   this.push = function (path, msg) {
     this.stack.push({ path, msg })
   }
-  
-  this.play = function ({ path, msg }) {
+
+  this.trigger = function ({ path, msg }) {
     if (!msg) { console.warn('OSC', 'Empty message'); return }
     this.sendOsc(path, msg)
   }
 
   this.sendOsc = function(path, args) {
-    invoke("plugin:osc|send", { rpc: { path, args } });
+    invoke("plugin:osc|send", { rpc: { path, args } })
+    .then(() => { if (client.displayer.errorMsgElem.innerText !== "") { client.displayer.setDisplayerErrMsg("") } } )
+    .catch((error) =>  { client.displayer.setDisplayerErrMsg(error); });
   }
 }

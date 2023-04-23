@@ -34,7 +34,13 @@ impl<'a> ToRange for LocatedSpan<'a> {
 }
 
 #[derive(Debug)]
-pub struct Error(Range<usize>, String);
+pub struct Error(pub Range<usize>, pub String);
+
+impl std::fmt::Display for Error {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    write!(f, "{:?}", self.1)
+  }
+}
 
 #[derive(Clone, Debug)]
 pub struct State<'a>(pub &'a RefCell<Vec<Error>>);
@@ -157,8 +163,8 @@ fn lex_reserved_ident(input: LocatedSpan) -> IResult<Token> {
       "false" => Token::BoolLiteral(false),
       "Nil" => Token::Nil,
       "Inf" => Token::Inf,
-      // _ => Token::Illegal,
-      i => Token::Ident(i.to_string()),
+      _ => Token::Illegal,
+      // i => Token::Ident(i.to_string()),
     },
   )(input)
 }

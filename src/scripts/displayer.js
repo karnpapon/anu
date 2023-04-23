@@ -27,6 +27,7 @@ function Displayer(app) {
   this.displayInputTarget = null
 
   this.helperMsg = ""
+  this.errorMsgElem = null
 
   this.tabInputIndex = 0
 
@@ -68,18 +69,14 @@ function Displayer(app) {
   // -------------------------------------------------------
   
   this.el_with_input = el("div")
+  this.el_error_msg = el("div")
   this.el_general = el("div")
-  this.input_text_default = `
-    <form id="info-osc" class="info-input">
-      <lf>
-        <p>MSG:</p>
-        <input id="addosc" class="displayer-form" type="osc" value="">
-      </lf>
-    </form>
-  `
+  this.input_text_default = el("div")
+  this.input_error_default = `<div class="displayer-warning displayer-logger"> <p data-ctrl="osc-error"></p> </div>`
 
   document.addEventListener("DOMContentLoaded", function () {
     const self = app.displayer    
+    self.errorMsgElem = qs("p[data-ctrl='osc-error']")
 
     function handleInput(e){
       if(self.currentCmd === 'osc'){
@@ -182,6 +179,7 @@ function Displayer(app) {
         let oscMsgPathElem = qs("div[data-ctrl='displayer-osc-path']")
         let oscMsgInput = qs("caret#caret-osc-path")
         this.toggleInsert(oscMsgPathElem, oscMsgInput)
+        this.errorMsgElem.classList.remove("hide")
         this.disableNotActiveInput()
         break;
       case 'midi':
@@ -281,7 +279,10 @@ function Displayer(app) {
   }
 
   this.runCmd = function(){
-    if (this.timer) { clearTimeout(this.timer)}
+    if (this.timer) { 
+      this.displayInputTarget.classList.remove("trigger-input")
+      clearTimeout(this.timer)
+    }
 
     switch (this.currentCmd) {
       case 'osc':
@@ -323,7 +324,9 @@ function Displayer(app) {
   this.buildInputDisplay = function () {
     this.el_with_input.classList.add("displayer-osc")
     this.el_with_input.innerHTML += this.input_text_default
+    this.el_error_msg.innerHTML += this.input_error_default
     this.el_elem.appendChild(this.el_with_input)
+    this.el_elem.appendChild(this.el_error_msg)
   }
 
   this.buildGeneralDisplay = function () {
@@ -334,12 +337,17 @@ function Displayer(app) {
   this.displayDefault = function(){
     this.currentCmd = "default"
     this.helperMsg = ""
+    this.errorMsgElem.classList.add("hide")
     this.run();
   }
 
   this.displayMsg = function(type){
     this.currentCmd = type
     this.run();
+  }
+
+  this.setDisplayerErrMsg = function(msg) {
+    this.errorMsgElem.innerText = msg
   }
 
   this.setFocusStyle = function(target){
