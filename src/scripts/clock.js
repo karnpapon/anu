@@ -2,6 +2,7 @@
 
 /* global metronome, window, canvas, client */
 
+// TODO: clean up unused since the clock is handled by metronome.js
 function Clock(canvas) {
   this.bpm = 0
   this.callback = () => { }

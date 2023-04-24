@@ -58,7 +58,7 @@ function StepCursor(canvas) {
       velocity
     } = marker.msg.MIDI
 
-    const { formattedMsg } = marker.msg.OSC
+    // const { formattedMsg } = marker.msg.OSC
    
     let midiIndex = i % note.length
     let veloIndex = i % velocity.length
@@ -72,13 +72,13 @@ function StepCursor(canvas) {
       canvas.io.udp.send( marker.msg.UDP[midiIndex])
     }
 
-    canvas.io.midi.push({ 
-      channel: parseInt(channel) ,
-      octave: octave[midiIndex], 
-      note: note[midiIndex],
-      velocity: velocity[veloIndex], 
-      length: notelength[lenIndex]
-    })
+    // canvas.io.midi.push({ 
+    //   channel: parseInt(channel) ,
+    //   octave: octave[midiIndex], 
+    //   note: note[midiIndex],
+    //   velocity: velocity[veloIndex], 
+    //   length: notelength[lenIndex]
+    // })
 
     canvas.io.run()
     canvas.io.clear()

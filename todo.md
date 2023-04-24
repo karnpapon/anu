@@ -10,10 +10,11 @@
 - ~~display current active marker clearly.~~
 - ~~individual note-ratio per marker.~~
 - ~~handle error when window width < guide windows.~~
+- ~~fix sending osc msg to support all kind of OSC msg~~
 
 - [#12] fix note-ratio per marker jittering when it's have been changed
-- fix osc/midi sending 
-- fix sending osc msg to support all kind of OSC msg
+- handle sending osc array (client side)
+- fix midi sending 
 - reversable marker / OSC msg
 - handle sendClockMsg to be compatible with MetronomeWorker
 - customizable osc port / midi-out device

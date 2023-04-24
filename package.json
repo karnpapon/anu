@@ -12,10 +12,10 @@
     "generate-icon": "tauri icon",
     "package": "pkg package.json --output src-tauri/binaries/my-sidecar && node scripts/move-binary.js"
   },
+  "license": "CC0-1.0",
   "repository": "",
   "keywords": [ "" ],
   "author": "Karnpapon Boonput",
-  "license": "CC0-1.0",
   "dependencies": {},
   "devDependencies": {
     "@tauri-apps/cli": "^1.2.3"

@@ -189,18 +189,24 @@ OSCdef(\anu_demo_kick, {
 		var ss = ["cubeGrid","maze","texts","lines"].choose;
 		ss.postln;
 		~processing.sendMsg("/proc_osc",0.0,1.0.rand,ss,
-			0.1,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+			msg[2] ?? { 0.1 }.value,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
 	};
 
 	if(msg[1] == \medium){
 		var ss = ["maze","lines", "texts"].choose;
 		~processing.sendMsg("/proc_osc",0.0,1.0.rand,ss,
-			0.1,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+			msg[2] ?? { 0.1 }.value,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
 	};
 
-	if(msg[1].isSymbol && ( (msg[1] !== \dense) && (msg[1] !== \medium) ) ){
+	if(msg[1] == \all_texts){
+		var ss = ["texts","texts2", "texts3", "texts4"].choose;
+		~processing.sendMsg("/proc_osc",0.0,1.0.rand,ss,
+			msg[2] ?? { 0.8 }.value,1.0.rand,1.0.rand,1.0.rand,1.0.rand,0.8,1.0,1.0,1.0);
+	};
+
+	if(msg[1].isSymbol && ( (msg[1] !== \dense) && (msg[1] !== \medium) && (msg[1] !== \all_texts)) ){
 		~processing.sendMsg("/proc_osc",0.0,1.0.rand,msg[1].asString,
-			0.8,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
+			msg[2] ?? { 0.8 }.value,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0.rand,1.0,1.0,1.0);
 	};
 
 }, '/demo_kick');
