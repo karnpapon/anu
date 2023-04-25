@@ -110,7 +110,7 @@ function StepCounter(canvas) {
   // TODO: [#12] todo.md
   function increment(c) {
     // if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
-      if (client.console.isReverse) { return back(c) }
+      if (canvas.marker.markers[c.i]["control"]["reverse"]) { return back(c) }
       forth(c)
     // }
   }

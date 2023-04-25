@@ -12,11 +12,10 @@
 - ~~handle error when window width < guide windows.~~
 - ~~fix sending osc msg to support all kind of OSC msg~~
 - ~~handle sending osc array (client side)~~
+- ~~reversable marker / OSC msg~~
 
-- handle reverse OSC msg trigger
 - [#12] fix note-ratio per marker jittering when it's have been changed
 - fix midi sending 
-- reversable marker / OSC msg
 - handle sendClockMsg to be compatible with MetronomeWorker
 - customizable osc port / midi-out device
 - fix osc connection when reloading window

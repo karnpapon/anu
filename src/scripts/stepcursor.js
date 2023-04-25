@@ -64,9 +64,9 @@ function StepCursor(canvas) {
 
     if(client.console.isOSCToggled){
       const { OSC } = marker.msg
-      canvas.io.osc.push('/' + OSC.path, OSC.msg[OSC.counter % OSC.msg.length] )
-      OSC.counter++ // TODO: handle reverse trigger
-      OSC.counter = OSC.counter % OSC.msg.length
+      canvas.io.osc.push('/' + OSC.path, OSC.formattedMsg[OSC.counter % OSC.formattedMsg.length] )
+      OSC.counter += marker["control"]["reverse"]? -1 : 1
+      OSC.counter = ((OSC.counter % OSC.formattedMsg.length) + OSC.formattedMsg.length) % OSC.formattedMsg.length
     }
 
     if(client.console.isUDPToggled){
