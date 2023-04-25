@@ -44,13 +44,13 @@ function Seequencer(canvas){
     const index = this.indexAt(x, y)
     // const glyph = !this.isAllowed(g) ? EMPTY_GLYPH : g
     const glyph =  g
-    const string = this.s.substr(0, index) + glyph + this.s.substr(index + 1)
+    const string = this.s.substring(0, index) + glyph + this.s.substring(index + 1)
     this.replace(string)
     return true
   }
 
   this.clean = function (str) {
-    return `${str}`.replace(/\n/g, '').trim().substr(0, this.w * (this.h + 2))
+    return `${str}`.replace(/\n/g, '').trim().substring(0, this.w * (this.h + 2))
   }
 
   this.replace = function (s) {
@@ -101,11 +101,6 @@ function Seequencer(canvas){
 
   this.inBounds = function (x, y) {
     return Number.isInteger(x) && Number.isInteger(y) && x >= 0 && x < this.w && y >= 0 && y < this.h
-  }
-
-  this.inBlock = function(x,y){
-    let block = canvas.marker.getBlock()
-    return  block.some( b => b.x == x && b.y == y)
   }
 
   this.inMark = function(x,y){

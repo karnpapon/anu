@@ -40,6 +40,7 @@ function Canvas () {
   this.scale = window.devicePixelRatio
   this.guide = true
   this.isShowMarked = true
+  this.notationMode = false
   this.globalIdx = 0
 
   // -----------------------------
@@ -109,6 +110,21 @@ function Canvas () {
         position.y++
       }
     }
+  }
+
+  this.replaceCurrentMarkerBlock = function (glyph = ".") {
+    let currentMarker = this.marker.currentMarker()
+    for (var x = 0; x < currentMarker.w; x++) {
+      for (var y = 0; y < currentMarker.h; y++) {
+        this.seequencer.write(currentMarker.x + x, currentMarker.y + y, glyph)
+
+        // modified fetchedData so regex can properly match.
+        let indexAt = this.seequencer.indexAt(currentMarker.x+x, currentMarker.y + y)
+        this.texts = this.texts.substring(0, indexAt ) + glyph + this.texts.substring(indexAt + 1)
+      }
+    }
+
+    if (client.console.regexInput) { client.handleRegexInput() } // refresh regex matching
   }
 
   this.match = function () {
@@ -342,7 +358,6 @@ function Canvas () {
     this.resize()
   }
 
-
   this.write = function (text, offsetX, offsetY, limit = 50, type = 2, font_family = "input_mono_regular") {
     for (let x = 0; x < text.length && x < limit; x++) {
       this.drawSprite(offsetX + x, offsetY, text.substr(x, 1), type, font_family)
@@ -389,6 +404,10 @@ function Canvas () {
       block = `${block}`.split(/\r?\n/).map((val) => { return val.substr(0, val.length + (w - this.seequencer.w)) }).join('\n').trim()
     }
     this.seequencer.load(w, h, block, this.seequencer.f)
+  }
+
+  this.toggleNotationMode = function(){
+    this.notationMode = !this.notationMode
   }
 
 

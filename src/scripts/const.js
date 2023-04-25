@@ -4,6 +4,7 @@ const MARKER_PAUSE_GLYPH = 'x'
 const EMPTY_GLYPH = '.'
 const BANG_GLYPH = '*'
 const SPACE_GLYPH = ' '
+const BLOCK_REPLACE_GLYPH = '⎯'
 
 const RegexMode = {
 	Realtime: Symbol("regex-mode-realtime"),
@@ -32,6 +33,7 @@ const LIBRARY = {
   "o": { "info": "[*] set osc msg" },
   "m": { "info": "[*] set midi msg" },
   "x": { "info": "[*] mute" },
+  "'": { "info": "[*] replace marker block" },
   "> or <": { "info": "incr/decr BPM " },
   "{ or }": { "info": "[*] incr/decr note-ratio (default 1/16)" },
   "?": { "info": "[*] show control informations" },

@@ -283,6 +283,14 @@ function Commander(canvas) {
           event.preventDefault();
           return;
         }
+
+        // (') notation only mode.
+        if (event.keyCode === 222 ) {
+          // TODO: prevent holding key.
+          canvas.replaceCurrentMarkerBlock(BLOCK_REPLACE_GLYPH)
+          event.preventDefault();
+          return;
+        }
       })
   
 

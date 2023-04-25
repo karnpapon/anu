@@ -54,7 +54,7 @@ function Marker(canvas) {
           channel: 0 
         },
         UDP: [],
-        OSC: { path: 'play2', msg: "s amencutup n 12", formattedMsg:"" },
+        OSC: { path: 'play2', msg: "\"s\" \"amencutup\" \"n\" 12", formattedMsg:"" },
       }
     }
 
@@ -322,18 +322,6 @@ function Marker(canvas) {
     this.active = 0
   }
 
-  // this.setMatchedPos = function(item){
-  //   let b = this.getBlock()
-  //   b.forEach(_item => {
-  //     if( _item.x === item.x && _item.y === item.y){
-  //       this.markers[_item.i].matched.some( m => m.x === item.x && m.y === item.y)? 
-  //       ""
-  //       :
-  //       this.markers[_item.i].matched.push(item)
-  //     } 
-  //   })
-  // }
-
   this.getActiveCursor = function(){
     return this.markers[this.active]
   }
@@ -342,29 +330,6 @@ function Marker(canvas) {
     this.markers.forEach( c => {
       c.matched.clear()
     })
-  }
-
-  // Block
-  this.getBlock = function (idx = undefined) {
-    let rect = []
-    rect = this.toRect()
-    const block = []
-    rect.forEach( r => {
-      if( r.i === idx && idx ){
-        for (let _y = r.y; _y < r.y + r.h; _y++) {
-          for (let _x = r.x; _x < r.x + r.w; _x++) {
-            block.push({x: _x, y: _y })
-          }
-        }
-      } else {
-        for (let _y = r.y; _y < r.y + r.h; _y++) {
-          for (let _x = r.x; _x < r.x + r.w; _x++) {
-            block.push({x: _x, y: _y, i:r.i })
-          }
-        }
-      }
-    })
-    return block
   }
 
   this.getActivePosition = function(){

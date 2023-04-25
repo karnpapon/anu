@@ -28,6 +28,7 @@ function Client(){
   this.urlEnd = "&redirects=1"
   this.isGettingData = false
   this.enableMetronome = false
+  this.fetchedDataBuffer = ""
 
   // -----------------------------------
 
@@ -99,7 +100,7 @@ function Client(){
   this.getData = function() {
     var data = ""
     var res = ""
-    
+    this.fetchedDataBuffer = ""
     loading.loadingElem.classList.add("loading")
 
     axios({
@@ -114,6 +115,7 @@ function Client(){
       })
       if(data){
         res = data.extract
+        client.fetchedDataBuffer = res
         client.repaint(res)
         client.console.setTotalLenghtCounterDisplay()
         client.isGettingData = false

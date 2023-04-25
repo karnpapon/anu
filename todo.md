@@ -25,3 +25,4 @@
 - customizable fetch results areas.
 - user-provided input
 - colorizable marker.
+- notation only mode.
