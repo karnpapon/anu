@@ -4,7 +4,9 @@ const MARKER_PAUSE_GLYPH = 'x'
 const EMPTY_GLYPH = '.'
 const BANG_GLYPH = '*'
 const SPACE_GLYPH = ' '
-const BLOCK_REPLACE_GLYPH = '⎯'
+const BLOCK_REPLACE_GLYPH = '　'
+// const BLOCK_REPLACE_GLYPH = ['⎯']
+// const BLOCK_REPLACE_GLYPH = ['▞', '▟', '▜', '▛', '▚', '▙', '▘','▗','▖','▝']
 
 const RegexMode = {
 	Realtime: Symbol("regex-mode-realtime"),

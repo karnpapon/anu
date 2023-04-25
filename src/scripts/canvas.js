@@ -112,7 +112,7 @@ function Canvas () {
     }
   }
 
-  this.replaceCurrentMarkerBlock = function (glyph = ".") {
+  this.replaceCurrentMarkerBlock = function (glyph = '.') {
     let currentMarker = this.marker.currentMarker()
     for (var x = 0; x < currentMarker.w; x++) {
       for (var y = 0; y < currentMarker.h; y++) {

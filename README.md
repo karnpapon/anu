@@ -1,4 +1,4 @@
-<img src="./src/media/icons/anu-logoo.png"/>
+<img src="./src/media/images/banner2.png"/>
 
 # `anu`
 
