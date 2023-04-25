@@ -54,7 +54,7 @@ function Marker(canvas) {
           channel: 0 
         },
         UDP: [],
-        OSC: { path: 'play2', msg: "\"s\" \"amencutup\" \"n\" 12", formattedMsg:"" },
+        OSC: { path: '', msg: [], counter: 0 },
       }
     }
 
@@ -213,15 +213,11 @@ function Marker(canvas) {
   this.setOSCmsg  = function(){
     let active = this.getActiveCursor()
     let { path, msg } = client.displayer.oscConf
-    let oscMsg = { path: "", msg: ""}
-    let fmtMsg = []
-    path = path === ""? active.msg.OSC.path:path
-    msg = msg === ""? active.msg.OSC.msg:msg
-    oscMsg.path = path
-    oscMsg.msg = msg;
-    oscMsg.formattedMsg = fmtMsg
-    console.log("oscMsg: ", oscMsg)
-    this.markers[this.active].msg.OSC = oscMsg
+    let msgArr = msg.split('|')
+    path = Utils.get(client, "displayer.oscConf.path", active.msg.OSC.path)
+    msg = Utils.get(client, "displayer.oscConf.msg", active.msg.OSC.msg)
+    this.markers[this.active].msg.OSC = { path, msg: msgArr, counter: this.markers[this.active].msg.OSC.counter }
+    // console.log("oscMsg: ", this.markers[this.active].msg.OSC)
   }
 
   this.setMIDImsg  = function(){

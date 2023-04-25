@@ -57,19 +57,20 @@ function StepCursor(canvas) {
       octave,
       velocity
     } = marker.msg.MIDI
-
-    // const { formattedMsg } = marker.msg.OSC
    
     let midiIndex = i % note.length
     let veloIndex = i % velocity.length
     let lenIndex = i % notelength.length
 
     if(client.console.isOSCToggled){
-      canvas.io.osc.push('/' + marker.msg.OSC.path, marker.msg.OSC.msg )
+      const { OSC } = marker.msg
+      canvas.io.osc.push('/' + OSC.path, OSC.msg[OSC.counter % OSC.msg.length] )
+      OSC.counter++ // TODO: handle reverse trigger
+      OSC.counter = OSC.counter % OSC.msg.length
     }
 
     if(client.console.isUDPToggled){
-      canvas.io.udp.send( marker.msg.UDP[midiIndex])
+      canvas.io.udp.send(marker.msg.UDP[midiIndex])
     }
 
     // canvas.io.midi.push({ 

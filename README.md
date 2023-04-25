@@ -23,16 +23,16 @@ written in vanillaJS with dependencies as less as possible in minds. powered by 
 soon...
 
 ## features
+- lightweight and cross-platform (application size only ~9mb)
 - support sending OSC ([osc msg formats](https://github.com/karnpapon/oscd#usage)) 
-- support sending MIDI (under developing)
 - precise clock scheduling
-- adjustable note-ratio per marker (under developing)
 - mutable marker
 - reversable marker
 - adjustable BPM (without jittering)
 - fault-tolerance regex
 - performance-oriented
-- lightweight and cross-platform (application size only ~12mb)
+- support sending MIDI (under developing)
+- adjustable note-ratio per marker (under developing)
 
 ## building the native app
 

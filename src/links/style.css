@@ -71,6 +71,10 @@ binop { padding: 0 0.125rem; }
   height: 20px;
 }
 
+html, body { border-radius: 10px; overflow: hidden; }
+/* ::selection { background: var(--main-bg-color); } */
+/* #devtools { display: none; } */
+
 .limit{
   width: 100%;
   height: 100%;
@@ -150,7 +154,6 @@ terminal {
   height: 100%;
   
   margin-left: 0.5rem;
-  quotes: """ """ "'" "'";
 }
 
 [contenteditable]:focus {
@@ -311,7 +314,9 @@ div button:active{ marker: pointer; background-color: black; color: white;}
 
 #osc-msg { 
   font-style: normal; 
-  quotes: """ """ "'" "'";
+  overflow: hidden;
+  max-width: 20rem;
+  white-space: nowrap;
 }
 
 .displayer-active-marker {

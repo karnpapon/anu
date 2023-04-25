@@ -8,7 +8,6 @@ function Osc (app) {
   
   this.stack = []
   this.port = null
-  this.errorMsgTimer = 0;
   
   this.start = function () {
     console.info('OSC', 'Start..')
