@@ -20,11 +20,13 @@ written in vanillaJS with dependencies as less as possible in minds. powered by 
 [[ Demo video (old version) ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
 
 ## usages
-soon...
+- [OSC]: sending OSC message (based-on [`oscd`](https://github.com/karnpapon/oscd))
+  - in case of sending more than single batch of messages, use `|` as a delimiter, eg. `"msg1" 440.0 | "msg2" 450.0` will send `"msg1" 440.0` and `"msg2" 450.0`, respectively when triggering. 
+  - within a single batch of messages, you can have any type that OSC is supported including an Array ([see complete support list here](https://github.com/karnpapon/oscd#usage)), which means you can send something like `"msg1" 440.0 [12,44,true] | "msg2" 450.0 [30,20.1,"msg inside an array"]`
 
 ## features
 - lightweight and cross-platform (application size only ~9mb)
-- support sending OSC ([osc msg formats](https://github.com/karnpapon/oscd#usage)) 
+- support sending OSC
 - precise clock scheduling
 - mutable marker
 - reversable marker
