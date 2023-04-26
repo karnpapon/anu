@@ -13,12 +13,12 @@
 - ~~fix sending osc msg to support all kind of OSC msg~~
 - ~~handle sending osc array (client side)~~
 - ~~reversable marker / OSC msg~~
+- ~~fix osc connection when reloading window~~
 
 - [#12] fix note-ratio per marker jittering when it's have been changed
 - fix midi sending 
 - handle sendClockMsg to be compatible with MetronomeWorker
 - customizable osc port / midi-out device
-- fix osc connection when reloading window
 
 # TBD
 - marker switcher (Arpeggiator alike) mode

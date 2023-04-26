@@ -11,12 +11,13 @@ use crate::lib::osc::{OscPlugin};
 use crate::lib::midi::{ MidiPlugin };
 use crate::lib::conf::{ AppConf };
 use crate::lib::setup;
+use serde_json::Value;
 use tauri::{
   CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata,
   Manager, Window, RunEvent, AppHandle, Wry, Assets, Context, WindowMenuEvent
 };
 
-pub struct App {
+pub struct AnuApp {
   osc_states: Mutex<OscPlugin>,
   midi_states: MidiPlugin
 }
@@ -49,18 +50,14 @@ fn midi_select(setting: &'_ str, window: Window) {
 }
 
 #[tauri::command]
-fn get_osc_menu_state(window: Window){
-    let me = window
-        .menu_handle()
-        .get_item("Default 9000");
-
-  // println!("menu = {:?}", me);
+fn get_osc_menu_state(window: Window) -> Option<String>{
+  let app_conf = AppConf::read();
+  app_conf.io_osc
 }
 
 
 fn menu<A: Assets>(ctx: &Context<A>) -> Menu {
   let app_conf = AppConf::read();
-
   let midi = CustomMenuItem::new("MIDI_DEVICES".to_string(), "(empty midi devices)").disabled();
   let rev = CustomMenuItem::new("REV".to_string(), "reverse step (r)");
   let focus = CustomMenuItem::new("FOC".to_string(), "focus (f)");
@@ -68,12 +65,15 @@ fn menu<A: Assets>(ctx: &Context<A>) -> Menu {
   let stay_on_top = CustomMenuItem::new("STAY_ON_TOP".to_string(), "Stay On Top");
   let stay_on_top_menu = if app_conf.stay_on_top { stay_on_top.selected() } else { stay_on_top };
   // let udp = CustomMenuItem::new("UDP".to_string(), "UDP (User Datagram Protocol)");
-  // let note_ratio = CustomMenuItem::new("RESETNOTERATIO".to_string(), "Reset Note Ratio (1:16)");
   
   let osc_submenu = osc_lists().iter().fold(Menu::new(), |menu, &osc_menu| {
-    menu.add_item(CustomMenuItem::new(osc_menu, osc_menu))
+    let mut mm = CustomMenuItem::new(osc_menu, osc_menu);
+    if let Some(io_osc) = &app_conf.io_osc { 
+      if osc_menu == io_osc.as_str() { mm = mm.clone().selected(); } 
+    }
+    menu.add_item(mm)
   });
-  
+
   let submenu_midi_conn = Submenu::new("MIDI", Menu::new().add_item(midi));
   let submenu_osc_conn = Submenu::new("OSC (Open Sound Control)", osc_submenu);
   
@@ -92,7 +92,6 @@ fn menu<A: Assets>(ctx: &Context<A>) -> Menu {
   .add_native_item(MenuItem::Separator)
   .add_item(metronome)
   .add_item(stay_on_top_menu)
-  // .add_item(note_ratio)
   );
   
   Menu::new() 
@@ -105,7 +104,7 @@ fn on_ready(event: WindowMenuEvent<tauri::Wry>) {
   let app = win.app_handle();
   let menu_id = event.menu_item_id();
   let menu_handle = win.menu_handle();
-  let state = app.state::<App>();
+  let state = app.state::<AnuApp>();
 
   match menu_id {
     // "REV" => {  window_.emit("menu-rev", true).unwrap(); },
@@ -125,26 +124,57 @@ fn on_ready(event: WindowMenuEvent<tauri::Wry>) {
         .write();
     },
     id if osc_lists().contains(&id) => { 
-      win.emit("menu-osc", Some(id)).unwrap(); 
-      let port = id.split(' ').collect::<Vec<&str>>();
-      let p = port[1].parse::<u16>().unwrap();
-      state.osc_states.lock().unwrap().set_send_to_port(p);
+      let app_conf = AppConf::read();
+      if let Some(osc) = app_conf.clone().io_osc {
+        if id == osc {
+          menu_handle
+          .get_item(id)
+          .set_selected(false)
+          .unwrap(); 
+          win.emit("menu-osc", None::<String>).unwrap(); 
+        } else {
+          for &_osc in osc_lists().iter() {
+            menu_handle
+                .get_item(_osc)
+                .set_selected(_osc == id)
+                .unwrap();
+          }
+          win.emit("menu-osc", Some(id)).unwrap(); 
+          let port = id.split(' ').collect::<Vec<&str>>();
+          let p = port[1].parse::<u16>().unwrap();
+          state.osc_states.lock().unwrap().set_send_to_port(p);
+        }
+        if osc == id {
+          app_conf
+          .amend(serde_json::json!({ "io_osc": Value::Null }))
+          .write();
+        } else {
+          app_conf
+          .amend(serde_json::json!({ "io_osc": Some(id) }))
+          .write(); 
+        }
+      } else {
+        menu_handle
+          .get_item(id)
+          .set_selected(true)
+          .unwrap(); 
+
+        win.emit("menu-osc", Some(id)).unwrap(); 
+        let port = id.split(' ').collect::<Vec<&str>>();
+        let p = port[1].parse::<u16>().unwrap();
+        state.osc_states.lock().unwrap().set_send_to_port(p);
+
+        app_conf
+        .amend(serde_json::json!({ "io_osc": Some(id) }))
+        .write(); 
+      }
+
     },
     id if state.midi_states.devices.lock().borrow().as_ref().unwrap().contains_key(&id.parse().unwrap()) =>  { 
       win.emit("menu-midi", Some(id)).unwrap();
     },
     _ => {}
   }
-  // });
-
-  // Setup state change events in JavaScript
-  // let window_ = window.clone();
-  // std::thread::spawn(move || {
-  //   // let receiver = receiver.lock().unwrap();
-  //   // while let Ok(change) = receiver.recv() {
-  //   //     window_.emit("change", Some(change)).unwrap();
-  //   // }
-  // });
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -153,7 +183,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   tauri::Builder::default()
     .setup(setup::init)
     .menu(menu(&context))
-    .manage(App { osc_states: Default::default(), midi_states: Default::default() })
+    .manage(AnuApp { osc_states: Default::default(), midi_states: Default::default() })
     .invoke_handler(tauri::generate_handler![
       osc_select,
       midi_select,

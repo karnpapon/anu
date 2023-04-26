@@ -62,6 +62,7 @@ function StepCursor(canvas) {
     let veloIndex = i % velocity.length
     let lenIndex = i % notelength.length
 
+    
     if(client.console.isOSCToggled){
       const { OSC } = marker.msg
       canvas.io.osc.push('/' + OSC.path, OSC.formattedMsg[OSC.counter % OSC.formattedMsg.length] )

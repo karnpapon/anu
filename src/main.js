@@ -13,16 +13,21 @@ window.addEventListener("load", () => {
   const { invoke, event } = window.__TAURI__;
   const { listen } = event;
 
-  listen("menu-osc", function (msg) {
-    if (!msg.payload) return
-    const { payload } = msg
-    const osc_port = payload.split(" ")[1].replace(/[()]/g, ''); 
-    client.console.isOSCToggled = true
-    invoke('osc_select', { setting: payload });
-    client.console.oscInfo.innerText = client.console.isOSCToggled
-      ? `${osc_port}`
-      : "--";
-  });
+  function menu_osc(payload){
+    if (payload) {
+      const osc_port = payload.split(" ")[1].replace(/[()]/g, ''); 
+      client.console.isOSCToggled = true
+      client.console.oscInfo.innerText = client.console.isOSCToggled
+        ? `${osc_port}`
+        : "--";
+    } else {
+      client.console.isOSCToggled = false
+      client.console.oscInfo.innerText = "--"; 
+    } 
+  }
+
+  invoke("get_osc_menu_state").then((payload) => menu_osc(payload))
+  listen("menu-osc", ({ payload}) => menu_osc(payload));
 
   // listen("menu-rev", function (msg) {
   //   client.console.togglePort("REV", client.console);

@@ -7,7 +7,7 @@ use tauri::{
   Manager, Runtime, State, Menu, CustomMenuItem, AppHandle,
 };
 
-use crate::App;
+use crate::AnuApp;
 
 pub struct MidiPlugin {
   pub midi: Mutex<Option<MidiOutput>>,
@@ -29,7 +29,7 @@ impl Default for MidiPlugin {
 }
 
 #[tauri::command]
-pub fn list_midi_connections(app: tauri::State<'_, App>) -> HashMap<usize, String> {
+pub fn list_midi_connections(app: tauri::State<'_, AnuApp>) -> HashMap<usize, String> {
   match app.midi_states.midi.lock() {
     Ok(m) => {
       let mut midi_connections = HashMap::new();
@@ -53,7 +53,7 @@ pub fn list_midi_connections(app: tauri::State<'_, App>) -> HashMap<usize, Strin
 
 #[tauri::command]
 pub fn setup_midi_connection_list<R: Runtime>(
-  app_state: tauri::State<'_, App>,
+  app_state: tauri::State<'_, AnuApp>,
   app_handle: AppHandle<R>,
 ) -> Result<(), &'static str> {
   match app_state.midi_states.devices.lock() {
@@ -79,7 +79,7 @@ pub fn setup_midi_connection_list<R: Runtime>(
 }
 
 #[tauri::command]
-pub fn setup_midi_out(app: tauri::State<'_, App>) -> Result<String, &'static str> {
+pub fn setup_midi_out(app: tauri::State<'_, AnuApp>) -> Result<String, &'static str> {
   let mut port = None;
   match (
     app.midi_states.devices.lock(),
@@ -110,7 +110,7 @@ pub fn setup_midi_out(app: tauri::State<'_, App>) -> Result<String, &'static str
 }
 
 #[tauri::command]
-pub fn send_midi_out(app: tauri::State<'_, App>, msg: Vec<u8>) -> Result<(), &'static str> {
+pub fn send_midi_out(app: tauri::State<'_, AnuApp>, msg: Vec<u8>) -> Result<(), &'static str> {
   match app.midi_states.out_device.lock() {
     Ok(mut conn_out) => {
       let connection_out: &mut MidiOutputConnection = conn_out.as_mut().unwrap();

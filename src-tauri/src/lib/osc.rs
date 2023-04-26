@@ -7,8 +7,7 @@ use tauri::{
   Manager, Runtime, State,
 };
 
-use crate::App;
-
+use crate::AnuApp;
 use crate::analyser;
 use crate::analyser::lexer::Error;
 
@@ -90,7 +89,7 @@ pub struct RpcOscMessage {
 }
 
 #[tauri::command]
-fn send(rpc: RpcOscMessage, app: State<'_, App>) -> Result<(), Error> {
+fn send(rpc: RpcOscMessage, app: State<'_, AnuApp>) -> Result<(), Error> {
   let osc_states = app.osc_states.lock().unwrap();
   let p = osc_states.send_to_port.lock().unwrap();
   osc_states.send_packet(rpc, p.expect("cannot acquire send_to_port"))?;

@@ -47,6 +47,7 @@ pub_struct!(AppConf {
   stay_on_top: bool,
   save_window_state: bool,
   global_shortcut: Option<String>,
+  io_osc: Option<String>,
   default_origin: String,
 
   // Main Window
@@ -64,7 +65,7 @@ impl AppConf {
       titlebar: !cfg!(target_os = "macos"),
       hide_dock_icon: false,
       save_window_state: false,
-      // theme: "light".into(),
+      io_osc: None,
       isinit: true,
       main_close: false,
       stay_on_top: false,
