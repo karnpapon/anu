@@ -58,6 +58,8 @@ dependencies = [
 name = "anu-tauri"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "log",
  "midir",
  "nom",
  "nom_locate",

@@ -43,7 +43,7 @@
         "icons/icon.ico"
       ],
       "identifier": "com.anu",
-      "longDescription": "",
+      "longDescription": "anu, a notation for ubiquitous patterns.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -52,7 +52,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "anu application",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
@@ -65,21 +65,6 @@
     },
     "updater": {
       "active": false
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "resizable": true,
-        "title": "anu",
-        "width": 577, 
-        "height": 728,
-        "minWidth": 577,
-        "label": "main",
-        "visible": true,
-        "alwaysOnTop": false,
-        "decorations": false,
-        "transparent": true
-      }
-    ]
+    }
   }
 }

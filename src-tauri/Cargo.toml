@@ -1,10 +1,10 @@
 [package]
 name = "anu-tauri"
 version = "0.1.0"
-description = "A anu application built with Tauri"
-authors = ["you"]
-license = ""
-repository = ""
+description = "anu application built with Tauri"
+authors = ["karnpapon <karnpapon@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/karnpapon/anu"
 default-run = "anu-tauri"
 edition = "2021"
 rust-version = "1.59"
@@ -19,6 +19,8 @@ serde_json = "1.0"
 rosc = "0.8.1"
 midir = "0.9.1"
 nom = "7.1.1"
+log = "0.4.17"
+anyhow = "1.0.66"
 nom_locate = "4.0.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2.4", features = ["macos-private-api", "window-close", "window-hide", "window-maximize", "window-minimize", "window-set-min-size", "window-show", "window-start-dragging", "window-unmaximize", "window-unminimize"] }

@@ -222,9 +222,8 @@ function Commander(canvas) {
           return;
         }
   
-        // (r) reverse global step.
+        // (r) reverse marker step.
         if (event.keyCode === 82 ) {
-          // app_console.togglePort('REV', app_console)
           const currentMarker = canvas.marker.currentMarker()
           currentMarker["control"]["reverse"] = !currentMarker["control"]["reverse"]
           event.preventDefault();

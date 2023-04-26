@@ -31,7 +31,7 @@ const BOTTOM_BORDER_SYMBOL = ['└','─','┘']
 const LIBRARY = {
   "n": { "info": "add new marker" },
   "f": { "info": "focus only marker(s)" },
-  "r": { "info": "reverse step" },
+  "r": { "info": "[*] reverse step" },
   "e": { "info": "[*] rename marker" },
   "o": { "info": "[*] set osc msg" },
   "m": { "info": "[*] set midi msg" },

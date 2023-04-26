@@ -24,9 +24,9 @@ window.addEventListener("load", () => {
       : "--";
   });
 
-  listen("menu-rev", function (msg) {
-    client.console.togglePort("REV", client.console);
-  });
+  // listen("menu-rev", function (msg) {
+  //   client.console.togglePort("REV", client.console);
+  // });
 
   listen("menu-focus", function (msg) {
     client.console.togglePort("FOCUS", client.console);
@@ -37,8 +37,8 @@ window.addEventListener("load", () => {
     client.enableMetronome = !client.enableMetronome
   });
 
-  listen("menu-reset_noteratio", function (msg) {
-    metronome.noteRatio = 1
-    client.console.currentNumber.innerText = "1:16"
-  });
+  // listen("menu-reset_noteratio", function (msg) {
+  //   metronome.noteRatio = 1
+  //   client.console.currentNumber.innerText = "1:16"
+  // });
 });

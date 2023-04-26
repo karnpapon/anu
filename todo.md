@@ -21,6 +21,7 @@
 - fix osc connection when reloading window
 
 # TBD
+- marker switcher (Arpeggiator alike) mode
 - vim keybinding mode
 - customizable fetch results areas.
 - user-provided input
