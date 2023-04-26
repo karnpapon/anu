@@ -19,7 +19,7 @@ function Metronome(canvas) {
 
   this.nextNoteTime = 0.0; // when the next note is due.
   this.noteResolution = 0; // 0 == 16th, 1 == 8th, 2 == quarter note
-  this.noteLength = 0.05; // length of "beep" (in seconds)
+  this.noteLength = 0.0; // length of "beep" (in seconds)
   this.last16thNoteDrawn = -1; // the last "box" we drew on the screen
   this.notesInQueue = []; // the notes that have been put into the web audio, and may or may not have played yet. {note, time}
   this.timerWorker = null; // The Web Worker used to fire timer messages
@@ -40,31 +40,34 @@ function Metronome(canvas) {
     // for displaying tick.
     this.notesInQueue.push({ note: beatNumber, time: time });
 
+    // console.log("scheduleNote", time)
+    // window.__TAURI__.invoke("plugin:osc|send", { rpc: { path: "/test_metro",  args: "0.1"} });
     
-    if (client.enableMetronome) {
-      // if ( (this.noteResolution==1) && (beatNumber%2))
-      //     return; // we're not playing non-8th 16th notes
-      // if ( (this.noteResolution==2) && (beatNumber%4))
-      //     return; // we're not playing non-quarter 8th notes
+    // if (client.enableMetronome) {
+    //   // if ( (this.noteResolution==1) && (beatNumber%2))
+    //   //     return; // we're not playing non-8th 16th notes
+    //   // if ( (this.noteResolution==2) && (beatNumber%4))
+    //   //     return; // we're not playing non-quarter 8th notes
 
       let osc = this.audioContext.createOscillator();
-      let gain = this.audioContext.createGain();
-      gain.gain.value = 0.25;
-      osc.connect(gain);
-      gain.connect(this.audioContext.destination);
+      // let gain = this.audioContext.createGain();
+      // gain.gain.value = 0.25;
+      // osc.connect(gain);
+      osc.connect(this.audioContext.destination);
   
-      if (beatNumber % 16 === 0)
-        // beat 0 == high pitch
-        osc.frequency.value = 880.0;
-      else if (beatNumber % 4 === 0)
-        // quarter notes = medium pitch
-        osc.frequency.value = 440.0;
-      // other 16th notes = low pitch
-      else osc.frequency.value = 220.0;
+      // if (beatNumber % 16 === 0)
+      //   // beat 0 == high pitch
+      //   osc.frequency.value = 880.0;
+      // else if (beatNumber % 4 === 0)
+      //   // quarter notes = medium pitch
+      //   osc.frequency.value = 440.0;
+      // // other 16th notes = low pitch
+      // else osc.frequency.value = 220.0;
   
       osc.start(time);
       osc.stop(time + this.noteLength);
-    }
+      osc.onended = () => { canvas.run() }
+    // }
   };
 
   this.set = function(value) {
@@ -122,34 +125,48 @@ function Metronome(canvas) {
     this.timerWorker.postMessage("stop"); 
   }
 
-  function draw() {
-    let currentNote = metronome.last16thNoteDrawn;
-    if (metronome.audioContext) {
-      const currentTime = metronome.audioContext.currentTime;
-      while (
-        metronome.notesInQueue.length &&
-        metronome.notesInQueue[0].time < currentTime
-      ) {
-        currentNote = metronome.notesInQueue[0].note;
-        metronome.notesInQueue.splice(0, 1); // remove note from queue
-      }
-      if (metronome.last16thNoteDrawn != currentNote) {
-        for (var i = 0; i < 16; i++) {
-          if(currentNote === i){
-            if(metronome.noteRatio !== 16) {
-              if(currentNote % metronome.noteRatio === 0){
-                canvas.io.midi.sendClock()
-                canvas.run()
-              } 
-            } 
-          }
-        }
-        metronome.last16thNoteDrawn = currentNote;
-      }
-    }
+  // function draw() {
+  //   let currentNote = metronome.last16thNoteDrawn;
+  //   if (metronome.audioContext) {
+  //     const currentTime = metronome.audioContext.currentTime;
+  //     while (
+  //       metronome.notesInQueue.length &&
+  //       metronome.notesInQueue[0].time < currentTime
+  //     ) {
+  //       currentNote = metronome.notesInQueue[0].note;
+  //       metronome.notesInQueue.splice(0, 1); // remove note from queue
+  //     }
+  //     if (metronome.last16thNoteDrawn != currentNote) {
+  //       for (var i = 0; i < 16; i++) {
+  //         if(currentNote === i){
+  //           if(metronome.noteRatio !== 16) {
+  //             if(currentNote % metronome.noteRatio === 0){
+  //               // canvas.io.midi.sendClock()
+  //               // canvas.run()
+  //               // if (client.enableMetronome) {
+  //                 // let osc = metronome.audioContext.createOscillator();
+  //                 // let gain = metronome.audioContext.createGain();
+  //                 // gain.gain.value = 0.0;
+  //                 // osc.connect(gain);
+  //                 // canvas.run()
+  //                 // osc.connect(metronome.audioContext.destination);
+  //                 // osc.frequency.value = 440.0;
+  //                 // osc.start(metronome.nextNoteTime);
+  //                 // osc.stop(metronome.nextNoteTime + metronome.noteLength);
+  //                 // osc.onended = () => {
+  //                   // window.__TAURI__.invoke("plugin:osc|send", { rpc: { path: "/test_metro",  args: "0.1"} });
+  //                 // }
+  //               // }
+  //             } 
+  //           } 
+  //         }
+  //       }
+  //       metronome.last16thNoteDrawn = currentNote;
+  //     }
+  //   }
 
-    window.requestAnimationFrame(draw);
-  };
+  //   window.requestAnimationFrame(draw);
+  // };
 
   function loadWebWorker(worker) {
     const code = worker.toString();
@@ -158,7 +175,7 @@ function Metronome(canvas) {
   }
 
   this.init = function () {
-    window.requestAnimationFrame(draw);
+    // window.requestAnimationFrame(draw);
     const workerScript = document.querySelector('#metronomeWorker').textContent
     this.timerWorker = loadWebWorker(workerScript)
     this.timerWorker.onmessage = function (e) {

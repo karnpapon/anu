@@ -115,15 +115,19 @@ ServerTree.remove(~dist);
 
 d.set(\dst, 0)
 t.set(\tri, 0);
-l.set(\cutoff, 4000)
+
+(
+l.set(\cutoff, 4000);
 p.set(
 	\shape, 0.5,
 	\amp_compensation_amount, 0.5,
-	\lo_thresh, 0.5,
+	\lo_thresh, 0.2,
 	\hi_thresh, 0.1,
 	\lo, 1,
 	\hi, 0.5
+);
 )
+
 
 
 /*(
@@ -143,15 +147,33 @@ out: ~bus_shaper,
 ]).play
 )*/
 
-i = Synth(\default, [\out, ~bus_shaper]);
+// Synth("sine")
+
+/*(
+// send a synth def to server
+SynthDef("sine", { arg out = 0,freq = 440;
+	var sig = SinOsc.ar(freq, 0, 0.5);
+	var env = EnvGen.kr(Env.perc(0.01,0.1), doneAction: 2);
+    Out.ar(out, sig * env);
+}).add;
+)*/
+
+/*i = Synth(\default, [\out, ~bus_shaper]);
 i.free
 i.inspect
 ~drm.stop;
-~source_group.free
+~source_group.free*/
 
 (
 ~processing = NetAddr("127.0.0.1", 5000);
 // ~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
+)
+
+
+(
+OSCdef(\test_sine, {
+	Synth("sine")
+}, \test_metro)
 )
 
 (
@@ -213,6 +235,6 @@ OSCdef(\anu_demo_kick, {
 
 OSCdef(\anu_demo_trigger, {|msg, time, addr, recvPort|
 	~sampler_engine.play_slice(~sampler_engine.indices.rand, ~bus_shaper);
-},'/demo_trigger');
+},'/demo_corpus');
 )
 

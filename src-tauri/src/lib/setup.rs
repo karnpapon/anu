@@ -16,9 +16,9 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
       .title("anu")
       .resizable(true)
       .fullscreen(false)
-      .inner_size(app_conf.main_width, app_conf.main_height);
+      .inner_size(app_conf.main_width, app_conf.main_height)
+      .always_on_top(app_conf.stay_on_top);
       // .theme(Some(theme))
-      // .always_on_top(app_conf2.stay_on_top);
       // .user_agent(&app_conf2.ua_window);
 
     #[cfg(target_os = "macos")]

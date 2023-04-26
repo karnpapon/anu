@@ -62,17 +62,12 @@ fn menu<A: Assets>(ctx: &Context<A>) -> Menu {
   let app_conf = AppConf::read();
 
   let midi = CustomMenuItem::new("MIDI_DEVICES".to_string(), "(empty midi devices)").disabled();
-  // let udp = CustomMenuItem::new("UDP".to_string(), "UDP (User Datagram Protocol)");
-
   let rev = CustomMenuItem::new("REV".to_string(), "reverse step (r)");
   let focus = CustomMenuItem::new("FOC".to_string(), "focus (f)");
   let metronome = CustomMenuItem::new("METRONOME".to_string(), "Enable Metronome Sound");
   let stay_on_top = CustomMenuItem::new("STAY_ON_TOP".to_string(), "Stay On Top");
-  let stay_on_top_menu = if app_conf.stay_on_top {
-    stay_on_top.selected()
-  } else {
-    stay_on_top
-  };
+  let stay_on_top_menu = if app_conf.stay_on_top { stay_on_top.selected() } else { stay_on_top };
+  // let udp = CustomMenuItem::new("UDP".to_string(), "UDP (User Datagram Protocol)");
   // let note_ratio = CustomMenuItem::new("RESETNOTERATIO".to_string(), "Reset Note Ratio (1:16)");
   
   let osc_submenu = osc_lists().iter().fold(Menu::new(), |menu, &osc_menu| {

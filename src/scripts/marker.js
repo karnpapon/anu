@@ -216,8 +216,8 @@ function Marker(canvas) {
     let formattedMsg = msg.split('|')
     path = Utils.get(client, "displayer.oscConf.path", active.msg.OSC.path)
     msg = Utils.get(client, "displayer.oscConf.msg", active.msg.OSC.msg)
-    this.markers[this.active].msg.OSC = { path, msg,formattedMsg , counter: this.markers[this.active].msg.OSC.counter }
-    console.log("oscMsg: ", this.markers[this.active].msg.OSC)
+    this.markers[this.active].msg.OSC = { path, msg,formattedMsg , counter: 0 }
+    // console.log("oscMsg: ", this.markers[this.active].msg.OSC)
   }
 
   this.setMIDImsg  = function(){
