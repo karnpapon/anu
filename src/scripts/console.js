@@ -51,7 +51,7 @@ function Console(app) {
               <div class="information-details">
                 <div style="display: grid;">
                   <p class="title">BPM:</p>
-                  <p class="title">TME:</p>
+                  <p class="title">RTO:</p>
                   <p class="title">LEN:</p>
                   <p class="title">POS:</p>
                 </div>
@@ -282,7 +282,7 @@ function Console(app) {
     } else if ( type === 'REV'){
       this.isReverse = !this.isReverse
     } else if ( type === 'FOCUS'){
-      this.isFocus = !this.isFocus 
+      this.isFocus = !this.isFocus  // TODO: remove this 
     }
   }
 

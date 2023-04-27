@@ -16,7 +16,7 @@ function Canvas () {
     background: '#000000',
     f_high: '#FFFFFF',  
     f_med: '#e6e6e6', 
-    f_low: '#40A021',  
+    f_low: '#5bd532',  
     f_inv: '#6C00FF', 
     b_high: '#eeeeee', 
     b_med: '#3EFB00',  
@@ -80,7 +80,7 @@ function Canvas () {
   this.update = function () {
     if (document.hidden === true) { return }
     this.clear()
-    this.drawProgram()
+    this.drawProgram() // TBD: should MarkerHead be placed on top of `this.match` ?
     this.match()
     this.stepcursor.draw()
     this.drawStroke(this.marker.toRect())
@@ -135,9 +135,8 @@ function Canvas () {
         let marker = this.getMarkerAt(item.x, item.y);
         if(this.isWithinMarker(marker)){
           marker.forEach((m) => { m.matched.add(`${item.x}:${item.y}`) })
-          this.drawSprite(item.x, item.y, g, 2) // marked within marker block.
-        }
-        else {
+          this.drawSprite(item.x, item.y, g, this.isShowMarked? 1:0) // marked within marker block.
+        } else {
           this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
         }
       })
@@ -213,7 +212,7 @@ function Canvas () {
   this.makeStyle = function (x, y) {
     if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:1 }
     let marker = this.getMarkerAt(x, y);
-    if(this.isWithinMarker(marker)) { return this.isOverlapArea(x,y)? 1: this.isMutedArea(marker[0].i) ? 5 : 6 }
+    if(this.isWithinMarker(marker)) { return this.isOverlapArea(x,y)? 1: this.isMutedArea(marker[0].i) ? 5 : 12 }
     return 9
   }
 
@@ -221,7 +220,7 @@ function Canvas () {
     // match.
     if (type === 0) { return { bg: this.theme.active.b_med, fg: this.theme.active.background } }
     // _
-    if (type === 1) { return { bg: this.theme.active.f_low, fg: this.theme.active.b_inv  } }
+    if (type === 1) { return { bg: this.theme.active.f_low, fg: this.theme.active.background  } }
     // _
     if (type === 2) { return { bg: '#4B4B4B', fg: this.theme.active.b_med } }
     // step marker

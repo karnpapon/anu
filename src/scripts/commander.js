@@ -240,7 +240,7 @@ function Commander(canvas) {
   
         // (f) focus
         if (event.keyCode === 70 ) {
-          app_console.togglePort('FOCUS', app_console)
+          // app_console.togglePort('FOCUS', app_console)
           canvas.toggleShowMarks()
           event.preventDefault();
           return;
