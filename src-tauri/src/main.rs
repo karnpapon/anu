@@ -11,7 +11,6 @@ use crate::lib::osc::{OscPlugin};
 use crate::lib::midi::{ MidiPlugin };
 use crate::lib::conf::{ AppConf };
 use crate::lib::setup;
-use serde_json::Value;
 use tauri::{
   CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata,
   Manager, Window, RunEvent, AppHandle, Wry, Assets, Context, WindowMenuEvent
@@ -50,7 +49,7 @@ fn midi_select(setting: &'_ str, window: Window) {
 }
 
 #[tauri::command]
-fn get_osc_menu_state(window: Window) -> Option<String>{
+fn get_osc_menu_state(_window: Window) -> Option<String>{
   let app_conf = AppConf::read();
   app_conf.io_osc
 }
@@ -107,8 +106,6 @@ fn on_ready(event: WindowMenuEvent<tauri::Wry>) {
   let state = app.state::<AnuApp>();
 
   match menu_id {
-    // "REV" => {  window_.emit("menu-rev", true).unwrap(); },
-    // "RESETNOTERATIO" => {  window_.emit("menu-reset_noteratio", true).unwrap(); },
     "FOC" => {  win.emit("menu-focus", true).unwrap(); },
     "METRONOME" => {  win.emit("menu-metronome", true).unwrap(); },
     "STAY_ON_TOP" => {
@@ -125,50 +122,35 @@ fn on_ready(event: WindowMenuEvent<tauri::Wry>) {
     },
     id if osc_lists().contains(&id) => { 
       let app_conf = AppConf::read();
-      if let Some(osc) = app_conf.clone().io_osc {
-        if id == osc {
-          menu_handle
-          .get_item(id)
-          .set_selected(false)
-          .unwrap(); 
-          win.emit("menu-osc", None::<String>).unwrap(); 
-        } else {
-          for &_osc in osc_lists().iter() {
-            menu_handle
-                .get_item(_osc)
-                .set_selected(_osc == id)
-                .unwrap();
+      let mut payload = None::<&str>;
+
+      match app_conf.clone().io_osc {
+        Some(osc) => { 
+          match id == osc {
+            true => { menu_handle.get_item(id).set_selected(false).unwrap(); }
+            false => {
+              for &_osc in osc_lists().iter() {
+                menu_handle.get_item(_osc).set_selected(_osc == id).unwrap();
+              }
+              payload = Some(id);
+            }
           }
-          win.emit("menu-osc", Some(id)).unwrap(); 
-          let port = id.split(' ').collect::<Vec<&str>>();
-          let p = port[1].parse::<u16>().unwrap();
-          state.osc_states.lock().unwrap().set_send_to_port(p);
         }
-        if osc == id {
-          app_conf
-          .amend(serde_json::json!({ "io_osc": Value::Null }))
-          .write();
-        } else {
-          app_conf
-          .amend(serde_json::json!({ "io_osc": Some(id) }))
-          .write(); 
+        None => { 
+          menu_handle.get_item(id).set_selected(true).unwrap(); 
+          payload = Some(id);
         }
-      } else {
-        menu_handle
-          .get_item(id)
-          .set_selected(true)
-          .unwrap(); 
-
-        win.emit("menu-osc", Some(id)).unwrap(); 
-        let port = id.split(' ').collect::<Vec<&str>>();
-        let p = port[1].parse::<u16>().unwrap();
-        state.osc_states.lock().unwrap().set_send_to_port(p);
-
-        app_conf
-        .amend(serde_json::json!({ "io_osc": Some(id) }))
-        .write(); 
       }
 
+      win.emit("menu-osc", payload).unwrap();  // emit payload to frontend
+
+      if let Some(_id) = payload {
+        let port = _id.split(' ').collect::<Vec<&str>>();
+        let p = port[1].parse::<u16>().unwrap();
+        state.osc_states.lock().unwrap().set_send_to_port(p);
+      }
+       
+      app_conf.amend(serde_json::json!({ "io_osc": payload })).write(); // update config file (~/.anu/anu.config.json)
     },
     id if state.midi_states.devices.lock().borrow().as_ref().unwrap().contains_key(&id.parse().unwrap()) =>  { 
       win.emit("menu-midi", Some(id)).unwrap();
