@@ -19,15 +19,20 @@ function Midi(app) {
   }
 
   this.clear = function () {
-    this.stack = []
+    this.stack = this.stack.filter((item) => { return item })
   }
 
   this.run = function () {
     for (const id in this.stack) {
       const item = this.stack[id]
-      if (item.isPlayed === false) { this.press(item) }
-      if (item.length < 1) { this.release(item, id) } 
-      else { item.length-- }
+      if (item.isPlayed === false) {
+        this.press(item)
+      }
+      if (item.length < 1) {
+        this.release(item, id)
+      } else {
+        item.length--
+      }
     }
   }
 
@@ -62,6 +67,8 @@ function Midi(app) {
     const v = parseInt((item.velocity / 16) * 127)
 
     if (!n || c === 127) { return }
+
+    // console.log("midi trigger c,n,v", c,n,v)
 
     invoke('plugin:midi|send_midi_out', { msg: [c, n, v] });
   }

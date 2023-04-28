@@ -50,8 +50,9 @@ function Marker(canvas) {
           note: ["C", "E", "G"], 
           notelength: [3,4,5], 
           velocity: [9,10,11], 
-          octave: [2,3,4], 
-          channel: 0 
+          octave: [4,5,4], 
+          channel: 0,
+          counter: 0
         },
         UDP: [],
         OSC: { path: '', msg: "", formattedMsg: [],  counter: 0 },
@@ -228,6 +229,7 @@ function Marker(canvas) {
       velocity: [], 
       octave: [], 
       channel: "",
+      counter: 0,
     }
     let noteAndOct = [], len = "", vel = ""
     let noteOnly = []

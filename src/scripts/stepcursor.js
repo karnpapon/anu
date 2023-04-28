@@ -39,9 +39,9 @@ function StepCursor(canvas) {
   this.trigger = function () {
     if (!canvas.clock.isPaused) {
     this.steps.forEach( ( step ) => {
-        canvas.marker.markers.forEach( ( marker, index) => {
+        canvas.marker.markers.forEach( ( marker) => {
           if(shouldPlay(marker.matched.has(`${step.x}:${step.y}`), !marker["control"]["muted"])){
-            msgOut(marker, index)
+            msgOut(marker)
             canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
           } 
         })
@@ -49,19 +49,7 @@ function StepCursor(canvas) {
     }
   }
 
-  function msgOut(marker, i){
-    const {
-      channel,
-      note,
-      notelength,
-      octave,
-      velocity
-    } = marker.msg.MIDI
-   
-    let midiIndex = i % note.length
-    let veloIndex = i % velocity.length
-    let lenIndex = i % notelength.length
-
+  function msgOut(marker){
     
     if(client.console.isOSCToggled){
       const { OSC } = marker.msg
@@ -70,17 +58,30 @@ function StepCursor(canvas) {
       OSC.counter = ((OSC.counter % OSC.formattedMsg.length) + OSC.formattedMsg.length) % OSC.formattedMsg.length
     }
 
-    if(client.console.isUDPToggled){
-      canvas.io.udp.send(marker.msg.UDP[midiIndex])
-    }
+    // if(client.console.isUDPToggled){
+    //   canvas.io.udp.send(marker.msg.UDP[midiIndex])
+    // }
 
-    // canvas.io.midi.push({ 
-    //   channel: parseInt(channel) ,
-    //   octave: octave[midiIndex], 
-    //   note: note[midiIndex],
-    //   velocity: velocity[veloIndex], 
-    //   length: notelength[lenIndex]
-    // })
+
+    if(client.console.isMIDIOutToggled){
+      const { MIDI } = marker.msg
+      const { channel, note, notelength, octave, velocity } = MIDI
+
+      let midiIndex = MIDI.counter % note.length
+      let veloIndex = MIDI.counter % velocity.length
+      let lenIndex = MIDI.counter % notelength.length
+
+      canvas.io.midi.push({ 
+        channel: parseInt(channel) ,
+        octave: octave[midiIndex], 
+        note: note[midiIndex],
+        velocity: parseInt(velocity[veloIndex]), 
+        length: parseInt(notelength[lenIndex])
+      })
+
+      MIDI.counter += marker["control"]["reverse"]? -1 : 1
+      MIDI.counter = ((MIDI.counter % MIDI.note.length) + MIDI.note.length) % MIDI.note.length
+    }
 
     canvas.io.run()
     canvas.io.clear()
