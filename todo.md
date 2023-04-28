@@ -14,9 +14,9 @@
 - ~~handle sending osc array (client side)~~
 - ~~reversable marker / OSC msg~~
 - ~~fix osc connection when reloading window~~
+- ~~fix midi sending~~
 
 - [#12] fix note-ratio per marker jittering when it's have been changed
-- fix midi sending 
 - handle sendClockMsg to be compatible with MetronomeWorker
 - customizable osc port / midi-out device
 
@@ -27,3 +27,5 @@
 - user-provided input
 - colorizable marker.
 - notation only mode.
+- scriptable marker control
+- auto-envelope based-on phonetic glyph

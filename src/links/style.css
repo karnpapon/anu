@@ -39,6 +39,8 @@ canvas {
   white-space: pre;
   text-transform: uppercase; 
   width:300px; -webkit-app-region: drag; 
+  height: auto;
+  cursor: text;
   opacity: 0; 
   transition: opacity 1000ms
 }
@@ -403,7 +405,6 @@ appwrapper{
   overflow: hidden;
 }
 
-canvas { height: auto; }
 app { 
   display: flex; 
   flex-direction: column;

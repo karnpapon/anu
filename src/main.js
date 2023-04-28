@@ -26,12 +26,24 @@ window.addEventListener("load", () => {
     } 
   }
 
+  async function menu_midi(payload){
+    await invoke('plugin:midi|setup_midi_out')
+
+    if (payload[1]) {
+      client.console.isMIDIOutToggled = true
+      client.console.midiInfo.innerText = client.console.isMIDIOutToggled
+        ? `${payload[1]}`
+        : "--";
+    } else {
+      client.console.isMIDIOutToggled = false
+      client.console.midiInfo.innerText = "--"; 
+    } 
+  }
+
   invoke("get_osc_menu_state").then((payload) => menu_osc(payload))
   listen("menu-osc", ({ payload}) => menu_osc(payload));
 
-  // listen("menu-rev", function (msg) {
-  //   client.console.togglePort("REV", client.console);
-  // });
+  listen("menu-midi", ({ payload }) => menu_midi(payload));
 
   listen("menu-focus", function (msg) {
     client.console.togglePort("FOCUS", client.console);

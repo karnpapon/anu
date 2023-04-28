@@ -124,6 +124,7 @@ function Console(app) {
   this.isConfigToggle = false
   this.isUDPToggled = false
   this.isOSCToggled = false
+  this.isMIDIOutToggled = false
   this.isReverse = false
   this.isPlaying = false
   this.isFocus = false

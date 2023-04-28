@@ -1,17 +1,18 @@
 use midir::{MidiOutput, MidiOutputConnection};
-use std::collections::HashMap;
+use std::{collections::HashMap};
 use std::sync::Mutex;
 use tauri::{
-  Window,
   plugin::{Builder, TauriPlugin},
-  Manager, Runtime, State, Menu, CustomMenuItem, AppHandle,
+  Manager, Runtime, AppHandle,
 };
 
 use crate::AnuApp;
 
+use super::conf::AppConf;
+
 pub struct MidiPlugin {
   pub midi: Mutex<Option<MidiOutput>>,
-  pub devices: Mutex<HashMap<usize, String>>,
+  pub devices: Mutex<HashMap<String, String>>,
   pub out_device: Mutex<Option<MidiOutputConnection>>,
 }
 
@@ -29,7 +30,7 @@ impl Default for MidiPlugin {
 }
 
 #[tauri::command]
-pub fn list_midi_connections(app: tauri::State<'_, AnuApp>) -> HashMap<usize, String> {
+pub fn list_midi_connections(app: tauri::State<'_, AnuApp>) -> HashMap<String, String> {
   match app.midi_states.midi.lock() {
     Ok(m) => {
       let mut midi_connections = HashMap::new();
@@ -38,7 +39,7 @@ pub fn list_midi_connections(app: tauri::State<'_, AnuApp>) -> HashMap<usize, St
         let port_name = _midi.port_name(p);
         match port_name {
           Ok(port_name) => {
-            midi_connections.insert(i, port_name);
+            midi_connections.insert(format!("io-midi-{}", i), port_name);
           }
           Err(e) => {
             println!("Error getting port name: {}", e);
@@ -56,6 +57,11 @@ pub fn setup_midi_connection_list<R: Runtime>(
   app_state: tauri::State<'_, AnuApp>,
   app_handle: AppHandle<R>,
 ) -> Result<(), &'static str> {
+  let app_conf = AppConf::read();
+  let io_midi = match app_conf.io_midi {
+    Some(_io_midi) => _io_midi,
+    None => "".to_string()
+  };
   match app_state.midi_states.devices.lock() {
     Ok(mut midi_devices) => {
       let state = app_state.clone();
@@ -64,12 +70,13 @@ pub fn setup_midi_connection_list<R: Runtime>(
 
       // inject midi devices to menubar.
       std::thread::spawn(move || {
-        let available_midi_devices =  midi_devices_conn.iter().fold(Menu::new(), |menu, (id, name)| {
-          menu.add_item(CustomMenuItem::new(id.to_string(), name))
-        });
-        let window = app_handle.get_window("main").unwrap().menu_handle().get_item("MIDI_DEVICES");
-        window.set_title(midi_devices_conn.get(&0).unwrap()).unwrap();
-        window.set_selected(true).unwrap();
+        let window = app_handle.get_window("core").unwrap().menu_handle();
+        for (key, val) in midi_devices_conn.iter() {
+          let ww = window.get_item(key);
+          ww.set_title(val).unwrap();
+          ww.set_selected(key == &io_midi).unwrap();
+          ww.set_enabled(true).unwrap();
+        }
       });
 
       Ok(())
@@ -81,6 +88,14 @@ pub fn setup_midi_connection_list<R: Runtime>(
 #[tauri::command]
 pub fn setup_midi_out(app: tauri::State<'_, AnuApp>) -> Result<String, &'static str> {
   let mut port = None;
+  let app_conf = AppConf::read();
+  let io_midi = match app_conf.io_midi {
+    Some(_io_midi) => _io_midi,
+    None => "".to_string()
+  };
+
+  if io_midi == *"" { return Ok("--".to_string()) }
+
   match (
     app.midi_states.devices.lock(),
     app.midi_states.midi.lock(),
@@ -88,7 +103,7 @@ pub fn setup_midi_out(app: tauri::State<'_, AnuApp>) -> Result<String, &'static 
   ) {
     (Ok(devices), Ok(midi), Ok(mut out)) => {
       let _midi = midi.as_ref().unwrap();
-      let target_device = devices.get(&0).unwrap(); //TODO: no hardcode.
+      let target_device = devices.get(&io_midi).expect("cannot get devices value"); 
       for (_, p) in _midi.ports().iter().enumerate() {
         let port_name = _midi.port_name(p).unwrap();
         if &port_name == target_device {

@@ -48,6 +48,7 @@ pub_struct!(AppConf {
   save_window_state: bool,
   global_shortcut: Option<String>,
   io_osc: Option<String>,
+  io_midi: Option<String>,
   default_origin: String,
 
   // Main Window
@@ -66,6 +67,7 @@ impl AppConf {
       hide_dock_icon: false,
       save_window_state: false,
       io_osc: None,
+      io_midi: None,
       isinit: true,
       main_close: false,
       stay_on_top: false,
