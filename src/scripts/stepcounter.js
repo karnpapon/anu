@@ -67,6 +67,7 @@ function StepCounter(canvas) {
   function forth(c){
     let rand
     c.x++
+    // TODO: should b named shouldSnapped.
     if (!canvas.stepcounter.isSelected) {
       if (c.x > canvas.seequencer.w) {
         if (c.y === canvas.seequencer.h - 1) {
