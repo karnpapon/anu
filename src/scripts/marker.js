@@ -47,10 +47,10 @@ function Marker(canvas) {
       },
       msg: {
         MIDI: { 
-          note: ["C", "E", "G"], 
-          notelength: [3,4,5], 
-          velocity: [9,10,11], 
-          octave: [4,5,4], 
+          note: [], 
+          notelength: [], 
+          velocity: [], 
+          octave: [], 
           channel: 0,
           counter: 0
         },

@@ -1,30 +1,50 @@
-// [1]?
+// [1]
 (
-b = BufFolders(s, "/Users/karnpaponboonput/Desktop/unorganised-music-master");
-b.size;
-b[\sounds];
-b[\root]; // Contains all of the audio files at the root level
+MIDIClient.init;
+s.options.outDevice = "Scarlett 2i4 USB";
+// s.options.outDevice = "Built-in Output";
+s.options.numInputBusChannels = 0;
+s.boot;
+
+s.waitForBoot{
+	n = NanoKontrol();  // https://github.com/karnpapon/NanoKontrol
+}
 )
 
-// [2]
+// [2]: for using in \demo_corpus
 ~sampler_engine = MyLivePerformanceTool("/Users/karnpaponboonput/Desktop/samples/soundpharm/FoleyPerc - Loops/");
 ~sampler_engine.loadPreProcessedData("/Users/karnpaponboonput/Desktop/live-perf-data");
 
-(
-// [3]
-SynthDef(\polybuf_sampler,{|out=0, amp=0.5, buffer, rate=1|
-	var sig = PlayBuf.ar(
-		numChannels:2,
-		bufnum:buffer,
-		rate:rate * BufRateScale.kr(buffer),
-		trigger:1.0,
-		startPos:0.0,
-		loop:0.0,
-		doneAction:2
-	);
-	Out.ar(out, sig)
-}).add;
 
+// [3]: setup faders/sliders
+// should add it to ServerTree ?
+// so it can survive after `Cmd+Period`
+(
+if(c.notNil){
+	(c.faders.size).do{|fader,i| c.faders[i].free};
+	(c.knobs.size).do{|knob,i| c.knobs[i].free};
+};
+
+n.faders.do{|fader, i |
+	fader.onChange = {|fadervalue|
+		c.faders.at(i).set(fadervalue/127);
+	}
+};
+
+n.knobs.do{|knob, i |
+	knob.onChange = {|knobvalue|
+		c.knobs.at(i).set(knobvalue/127);
+	}
+};
+
+c = ();  // controlBusses
+c.faders = Array.fill(9,{Bus.control(s,1).set(0.0)});
+c.knobs = Array.fill(9, {Bus.control(s,1).set(0.25)});
+)
+
+
+// [4]: setup SynthDef
+(
 SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 	var env, sound, freq;
 	tun = ((tun>0)*tun) + ((tun<1)*3);
@@ -33,16 +53,43 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 	sound = LPF.ar(SinOscFB.ar(XLine.ar(freq.expexp(10, 2000, 1000, 8000), freq, 0.025/pew), fed), 9000);
 	OffsetOut.ar(out, CleanPan.ar(sound, 2, pan, env))
 }).add;
+)
 
-SynthDef(\shaper, {
-	|out,in, shape = 0.5, amp = 1.0,  amp_compensation_amount = 0.99, lo = 1, hi = 0.5, offset = 0, lo_thresh = 0.5, hi_thresh = 0.5|
+// [5]: setup mixer (ddwMixerChannel: https://github.com/supercollider-quarks/ddwMixerChannel)
+(
+~srcMixerChannel = MixerChannel(\src, s, 2, 2, 1);
+~src2MixerChannel = MixerChannel(\src2, s, 2, 2, 1);
+~reverbMixerChannel = MixerChannel(\rvb, s, 2, 2, level: 1,
+	completionFunc: { |chan|
+		~rvb = chan.playfx { |outbus|
+			var sig = In.ar(outbus, 2);
+			FreeVerb2.ar(sig[0], sig[1], mix: 1, room: 0.8, damp: 0.2);
+		}
+	}
+); // reverb is being add here
+)
+
+// [5.5]: correct group order after `Cmd+Period`
+(
+~reverbMixerChannel.fadergroup.moveToTail(s.defaultGroup);
+)
+
+(
+~srcMixerChannel.free;
+~src2MixerChannel.free;
+~reverbMixerChannel.free;
+)
+
+// [6]: setup fx chains;
+(
+~shaper = ~srcMixerChannel.playfx({ |outbus,in, shape = 0.5, amp = 1.0,  amp_compensation_amount = 0.99, lo = 1, hi = 0.5, offset = 0, lo_thresh = 0.5, hi_thresh = 0.5|
 	var abs, diff, numChannels = 2;
-	var signal = In.ar(in, numChannels);
+	var sig = In.ar(outbus, numChannels);
 	shape = min(shape, 1.0 - 4e-10).explin(0.001, 1, 0.0, 0.999999);
 	amp_compensation_amount = amp_compensation_amount.linlin(0.0,1.0,0.0001,1.0);
 	amp = 1.0 - (amp_compensation_amount * shape / (shape +amp_compensation_amount )) * amp;
 	shape = (1.0 * shape) / (1.0 - shape);
-	signal = (1 + shape) * signal / (1 + (shape * abs(signal)));
+	sig = (1 + shape) * sig / (1 + (shape * abs(sig)));
 	offset = offset.linlin(0.0,1.0,1.0,5.0);
 	hi = hi * offset; lo = lo * offset;
 	abs = hi - lo;
@@ -50,132 +97,113 @@ SynthDef(\shaper, {
 	lo = lo + (abs * lo_thresh);
 	hi_thresh = hi_thresh.linlin(0.0,1.0,-1.0,1.0);
 	hi = hi - (abs * hi_thresh);
-	signal = Fold.ar(signal, lo, hi);
+	sig = Fold.ar(sig, lo, hi);
 	diff = 1 - (lo - hi + (hi * lo));
-	ReplaceOut.ar(out, Limiter.ar(LeakDC.ar(signal * (amp+diff))));
-}).add;
+	Limiter.ar(LeakDC.ar(sig * (amp+diff)));
+});
 
-SynthDef(\distortion, {
-	|out, dst = 0, in|
-	var signal, mod;
-	signal = In.ar(in, 2);
-	mod = CrossoverDistortion.ar(signal, amp: 0.2, smooth: 0.01);
-	mod = mod + (0.1 * dst * DynKlank.ar(`[[60,61,240,3000 + SinOsc.ar(62,mul: 100)],nil,[0.1, 0.1, 0.05, 0.01]], signal));
+~dist = ~srcMixerChannel.playfx({ |outbus, dst = 0|
+	var sig, mod;
+	sig = In.ar(outbus, 2);
+	mod = CrossoverDistortion.ar(sig, amp: 0.2, smooth: 0.01);
+	mod = mod + (0.1 * dst * DynKlank.ar(`[[60,61,240,3000 + SinOsc.ar(62,mul: 100)],nil,[0.1, 0.1, 0.05, 0.01]], sig));
 	mod = (mod.cubed * 8).softclip * 0.5;
-	mod = SelectX.ar(dst, [signal, mod]);
-	Out.ar(out, mod);
-}).add;
+	mod = SelectX.ar(dst, [sig, mod]);
+});
 
-SynthDef(\triode, {
-	|out,in, tri=1.0|
+~triode = ~srcMixerChannel.playfx({
+	|outbus,in, tri=1.0|
 	var sig, sc;
-	sig = In.ar(in,2);
+	sig = In.ar(outbus,2);
 	sc = tri * 10 + 0.001;
 	sig = (sig * (sig > 0)) + (tanh(sig * sc) / sc * (sig < 0));
-	ReplaceOut.ar(out, LeakDC.ar(sig));
-}).add;
+	LeakDC.ar(sig);
+});
 
-SynthDef(\lpf, {
-	|out,in, cutoff = 440, resonance = 0|
+~lpf = ~srcMixerChannel.playfx({
+	|outbus,in, cutoff = 0.5, resonance = 0|
 	var numChannels = 2;
-	var signal = In.ar(in, numChannels);
-	var cutoffClipped = cutoff.abs.clip(20, 20000);
-	signal = RLPF.ar(signal, cutoffClipped, resonance.linexp(0, 1, 1, 0.001));
-	ReplaceOut.ar(out, signal)
-}).add;
-);
-
-(
-~source_group = Group.new;
-~fx_group = Group.new(~source_group, \addAfter);
-s.newBusAllocators;
-~bus_shaper = Bus.audio(s,2);
-~bus_dist = Bus.audio(s,2);
-~bus_tiode = Bus.audio(s,2);
-~bus_lpf = Bus.audio(s,2);
-// ~shaper = { p = Synth(\shaper, [\in: ~bus_shaper.index,\out: 0],~fx_group)};
-// ~dist = {d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_lpf.index], ~fx_group, \addToTail)};
-// ~lpf = {l = Synth(\lpf, [\in: ~bus_lpf.index, \out: 0], ~fx_group, \addToTail)};
-// ~triode = {Synth(\triode, [\in: ~bus_dist.index, \out: 0], Server.default, \addToTail)};
-// ServerTree.add(~shaper);
-// ServerTree.add(~dist);
-// ServerTree.add(~lpf);
-// ServerTree.add(~triode);
-
-p = Synth(\shaper, [\in: ~bus_shaper.index,\out: ~bus_dist.index],~fx_group);
-d = Synth(\distortion, [\in: ~bus_dist.index, \out: ~bus_tiode.index], ~fx_group, \addToTail);
-t = Synth(\triode, [\in: ~bus_tiode.index, \out: ~bus_lpf], ~fx_group, \addToTail);
-l = Synth(\lpf, [\in: ~bus_lpf.index, \out: 0], ~fx_group, \addToTail);
+	var sig = In.ar(outbus, numChannels);
+	var cutoffClipped = cutoff.linexp(0.0, 1.0, 40, 20000);
+	sig = RLPF.ar(sig, cutoffClipped, resonance.linexp(0, 1, 1, 0.001));
+});
 )
 
-s.plotTree
-s.queryAllNodes
+// [7]: send to reverb
+// this will create new instance and push to nodeTree every evaluation.
+// so, better run once (or don't forget to cleanup first).
+~postsend = ~srcMixerChannel.newPostSend(~reverbMixerChannel, 0.9);
+~postsend.free
 
-ServerTree.remove(~dist);
+~postsend2 = ~src2MixerChannel.newPostSend(~reverbMixerChannel, 0.9);
 
-d.set(\dst, 0)
-t.set(\tri, 0);
-
+// [8]: map Korg NanoKontrol (faders/slides)
 (
-l.set(\cutoff, 4000);
-p.set(
-	\shape, 0.5,
-	\amp_compensation_amount, 0.5,
-	\lo_thresh, 0.2,
-	\hi_thresh, 0.1,
-	\lo, 1,
-	\hi, 0.5
-);
+~srcMixerChannel.synth.set(\level, c.faders.at(0).asMap); // fader[0] -> src level [\demo_kick]
+~src2MixerChannel.synth.set(\level, c.faders.at(1).asMap); // fader[1] -> src2 level [\demo_corpus]
+~lpf.set(\cutoff, c.knobs.at(8).asMap); // knob[8] -> cutoff level
+~postsend.sendSynth.set(\level, c.knobs.at(0).asMap); // knob[1] -> sendLevel
+~postsend2.sendSynth.set(\level, c.knobs.at(1).asMap); // knob[1] -> sendLevel
+~dist.set(\dst, c.knobs.at(2).asMap); // knob[2] -> distortion level
+~triode.set(\tri, c.knobs.at(3).asMap); // knob[3] -> triode level
+~shaper.set(\offset, c.knobs.at(4).asMap); // knob[4] -> shaper::shape level
+~shaper.set(\lo, c.knobs.at(5).asMap); // knob[5] -> shaper::lo level
+~shaper.set(\hi, c.knobs.at(6).asMap); // knob[6] -> shaper::hi level
+~shaper.set(\lo_thresh, c.knobs.at(7).asMap); // knob[7] -> shaper::lo_thresh level
+// ~shaper.set(\hi_thresh, c.knobs.at(8).asMap); // knob[8] -> shaper::hi_thresh level
+)
+
+// for testing
+(
+~srcMixerChannel.play(
+	(
+		Pbind(*[
+			instrument: \drm,
+			dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, 64*4),
+			tun: Pdup(Pexprand(1, 8), Pexprand(0.0001, 0.25)),
+			fed: Pexprand(0.00001, 2000.0),
+			amp: Pdup(Pexprand(1, 5), Pexprand(0.75, 2.0)),
+			rel: Pexprand(Pkey(\dur) / (4/3), Pkey(\dur) * 64),
+			pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
+			legato: Pwrand([Pkey(\dur) * 1.5, Pkey(\dur) * 16], [1, 2].normalizeSum, inf),
+			sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
+		])
+	);
+)
 )
 
 
+// ---------------UNDER DEVELOPING--------------------------
 
-/*(
-~drm = Pbind(*[
-instrument: \drm,
-dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, inf),
-tun: Pdup(Pexprand(1, 8), Pexprand(0.0001, 0.25)),
-fed: Pexprand(0.00001, 2000.0),
-amp: Pdup(Pexprand(1, 5), Pexprand(0.75, 2.0)),
-rel: Pexprand(Pkey(\dur) / (4/3), Pkey(\dur) * 64),
-pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
-legato: Pwrand([Pkey(\dur) * 1.5, Pkey(\dur) * 16], [1, 2].normalizeSum, inf),
-sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
-out: ~bus_shaper,
-// group: ~source_group
-// tri: Pwhite(0.0, 1.0),
-]).play
-)*/
+(~src2MixerChannel.play({ |indices, index, src|
+	{
+		var startsamp = Index.kr(indices,index);
+		var stopsamp =  Index.kr(indices,index+1);
+		var phs = Phasor.ar(0,BufRateScale.ir(src),startsamp,stopsamp);
+		var sig = BufRd.ar(1,src,phs);
+		var dursecs = (stopsamp - startsamp) / BufSampleRate.ir(src);
+		var env;
+		// var sig = BufRd.ar(1,src,Phasor.ar(0,BufRateScale.kr(src), 0, BufFrames.kr(b)));
+		dursecs = min(dursecs,1);
+		env = EnvGen.kr(Env([0,1,1,0],[0.03,dursecs-0.06,0.03]),doneAction:2);
+		sig = sig.dup * env;
+	}
+}, args: [
+	\src, ~sampler_engine.get_src,
+	\indices, ~sampler_engine.get_indices,
+	\index, ~sampler_engine.get_indices.numFrames.rand
+])
+)
 
-// Synth("sine")
+// ---------------------------------------------------------
 
-/*(
-// send a synth def to server
-SynthDef("sine", { arg out = 0,freq = 440;
-	var sig = SinOsc.ar(freq, 0, 0.5);
-	var env = EnvGen.kr(Env.perc(0.01,0.1), doneAction: 2);
-    Out.ar(out, sig * env);
-}).add;
-)*/
-
-/*i = Synth(\default, [\out, ~bus_shaper]);
-i.free
-i.inspect
-~drm.stop;
-~source_group.free*/
-
+// [9]: connect to anu_processing (https://github.com/karnpapon/anu-processing)
 (
 ~processing = NetAddr("127.0.0.1", 5000);
 // ~anu = NetAddr("127.0.0.1", 3400); // anu "send_from" port (default 3400)
 )
 
-
-(
-OSCdef(\test_sine, {
-	Synth("sine")
-}, \test_metro)
-)
-
+// [10]: init osc definitions.
 (
 OSCdef(\anu_demo_sampler, {
 	|msg, time, addr, recvPort|
@@ -191,20 +219,21 @@ OSCdef(\anu_demo_sampler, {
 OSCdef(\anu_demo_kick, {
 	|msg, time, addr, recvPort|
 	(
-		Pbind(*[
-			instrument: \drm,
-			dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, 1),
-			tun: Pdup(Pexprand(1, 8), Pexprand(0.0001, 0.25)),
-			fed: Pexprand(0.00001, 2000.0),
-			amp: Pdup(Pexprand(1, 5), Pexprand(0.75, 2.0)),
-			rel: Pexprand(Pkey(\dur) / (4/3), Pkey(\dur) * 64),
-			pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
-			legato: Pwrand([Pkey(\dur) * 1.5, Pkey(\dur) * 16], [1, 2].normalizeSum, inf),
-			sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
-			out: ~bus_shaper,
-			group: ~source_group
-			// tri: Pwhite(0.0, 1.0),
-		]).play
+		~srcMixerChannel.play(
+			(
+				Pbind(*[
+					instrument: \drm,
+					dur: 1 / Pwrand([5, 10], [3, 8].normalizeSum, 1),
+					tun: Pdup(Pexprand(1, 8), Pexprand(0.0001, 0.25)),
+					fed: Pexprand(0.00001, 2000.0),
+					amp: Pdup(Pexprand(1, 5), Pexprand(0.75, 2.0)),
+					rel: Pexprand(Pkey(\dur) / (4/3), Pkey(\dur) * 64),
+					pan: Pdup(Pexprand(1, 7), Pseq([0.5, 0.75, 1.0, 0.75, 0.5, 0.25, 0.0, 0.25], inf)),
+					legato: Pwrand([Pkey(\dur) * 1.5, Pkey(\dur) * 16], [1, 2].normalizeSum, inf),
+					sustain: Pdup(Pexprand(1, 3), Pexprand(0.1, 2.0)),
+				])
+			);
+		);
 	);
 
 	if(msg[1] == \dense){
@@ -234,7 +263,25 @@ OSCdef(\anu_demo_kick, {
 }, '/demo_kick');
 
 OSCdef(\anu_demo_trigger, {|msg, time, addr, recvPort|
-	~sampler_engine.play_slice(~sampler_engine.indices.rand, ~bus_shaper);
+	(~src2MixerChannel.play({ |indices, index, src|
+		{
+			var startsamp = Index.kr(indices,index);
+			var stopsamp =  Index.kr(indices,index+1);
+			var phs = Phasor.ar(0,BufRateScale.ir(src),startsamp,stopsamp);
+			var sig = BufRd.ar(1,src,phs);
+			var dursecs = (stopsamp - startsamp) / BufSampleRate.ir(src);
+			var env;
+			// var sig = BufRd.ar(1,src,Phasor.ar(0,BufRateScale.kr(src), 0, BufFrames.kr(b)));
+			dursecs = min(dursecs,1);
+			env = EnvGen.kr(Env([0,1,1,0],[0.03,dursecs-0.06,0.03]),doneAction:2);
+			sig = sig.dup * env;
+		}
+	}, args: [
+		\src, ~sampler_engine.get_src,
+		\indices, ~sampler_engine.get_indices,
+		\index, ~sampler_engine.get_indices.numFrames.rand
+	])
+	)
 },'/demo_corpus');
 )
 
