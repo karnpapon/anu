@@ -4,9 +4,9 @@
 
 a tiny backend-agnostic step-sequencer/live-coding environment that harnesses the power of matching patterns ([RegEx](https://regexr.com)) to create triggers. as the name suggests "anu" (or "อนุ"), which in Thai grammar denotes a prefix meaning "small", "sub" or "minor". It can be prefixed(compatible) with any others software/hardware that support [ OSC ](https://en.wikipedia.org/wiki/Open_Sound_Control) or [MIDI](https://en.wikipedia.org/wiki/MIDI) protocol (under developing, more to be implemented).
  
-unlike others conventional tools or step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously developed under the name "seeq").
+unlike others conventional tools or step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously, this project have been developed under the name "seeq").
 
-written in vanillaJS with dependencies as less as possible in minds. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
+written in plain JavaScript with dependencies as less as possible in minds. powered by [Tauri](https://tauri.app/), a framework for building tiny, blazing fast binaries for all major desktop platforms.
 
 &nbsp;
 
@@ -27,13 +27,13 @@ written in vanillaJS with dependencies as less as possible in minds. powered by 
 ## features
 - lightweight and cross-platform (application size only ~9mb)
 - support sending OSC
+- support sending MIDI
 - precise clock scheduling
 - mutable marker
 - reversable marker
 - adjustable BPM (without jittering)
 - fault-tolerance regex
-- performance-oriented
-- support sending MIDI (under developing)
+- live-performance oriented
 - adjustable note-ratio per marker (under developing)
 
 ## building the native app
