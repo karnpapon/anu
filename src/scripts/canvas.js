@@ -11,7 +11,7 @@ function Canvas () {
 
   this.texts = ""
 
-  // Themes
+  // Themes 9affcc
   this.theme = new Theme({ 
     background: '#000000',
     f_high: '#FFFFFF',  
@@ -20,6 +20,7 @@ function Canvas () {
     f_inv: '#6C00FF', 
     b_high: '#eeeeee', 
     b_med: '#3EFB00',  
+    // b_med: '#9affcc',  
     b_low: '#00FFD4', 
     b_inv: '#69DA44'  
   })
@@ -118,7 +119,7 @@ function Canvas () {
       for (var y = 0; y < currentMarker.h; y++) {
         this.seequencer.write(currentMarker.x + x, currentMarker.y + y, glyph)
 
-        // modified fetchedData so regex can properly match.
+        // modified fetchedData so regex can properly re-calculated.
         let indexAt = this.seequencer.indexAt(currentMarker.x+x, currentMarker.y + y)
         this.texts = this.texts.substring(0, indexAt ) + glyph + this.texts.substring(indexAt + 1)
       }
@@ -134,8 +135,11 @@ function Canvas () {
         let g = this.seequencer.glyphAt(item.x, item.y)
         let marker = this.getMarkerAt(item.x, item.y);
         if(this.isWithinMarker(marker)){
-          marker.forEach((m) => { m.matched.add(`${item.x}:${item.y}`) })
-          this.drawSprite(item.x, item.y, g, this.isShowMarked? 1:0) // marked within marker block.
+          marker.forEach((m) => { 
+            m.matched.add(`${item.x}:${item.y}`) 
+            this.drawSprite(item.x, item.y, m["control"]["muted"] ? g : BANG_GLYPH, 12) // marked within marker block.
+          })
+          
         } else {
           this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
         }
@@ -212,7 +216,7 @@ function Canvas () {
   this.makeStyle = function (x, y) {
     if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:1 }
     let marker = this.getMarkerAt(x, y);
-    if(this.isWithinMarker(marker)) { return this.isOverlapArea(x,y)? 1: this.isMutedArea(marker[0].i) ? 5 : 12 }
+    if(this.isWithinMarker(marker)) { return this.isOverlapArea(x,y)? 1: 12 }
     return 9
   }
 
@@ -224,7 +228,7 @@ function Canvas () {
     // _
     if (type === 2) { return { bg: '#4B4B4B', fg: this.theme.active.b_med } }
     // step marker
-    if (type === 3) { return { bg: this.theme.active.b_low, fg: this.theme.active.f_high } }
+    if (type === 3) { return { bg: "#919191", fg: this.theme.active.f_high } }
     // marker
     if (type === 4) { return { bg: this.theme.active.f_med, fg: this.theme.active.f_low } }
     // Mark Step inverse.

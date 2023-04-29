@@ -28,7 +28,7 @@ function StepCursor(canvas) {
         step.x = canvas.stepcounter.counter[idx].x
         step.y = canvas.stepcounter.counter[idx].y
       }
-      canvas.drawSprite( step.x, step.y,canvas.seequencer.glyphAt(step.x, step.y),10)
+      canvas.drawSprite( step.x, step.y,canvas.seequencer.glyphAt(step.x, step.y),2)
     })
   }
 
@@ -42,7 +42,6 @@ function StepCursor(canvas) {
         canvas.marker.markers.forEach( ( marker) => {
           if(shouldPlay(marker.matched.has(`${step.x}:${step.y}`), !marker["control"]["muted"])){
             msgOut(marker)
-            canvas.drawSprite(step.x, step.y, BANG_GLYPH, 2)
           } 
         })
       })
