@@ -28,7 +28,7 @@ function StepCursor(canvas) {
         step.x = canvas.stepcounter.counter[idx].x
         step.y = canvas.stepcounter.counter[idx].y
       }
-      canvas.drawSprite( step.x, step.y,canvas.seequencer.glyphAt(step.x, step.y),2)
+      canvas.drawSprite( step.x, step.y,canvas.seequencer.glyphAt(step.x, step.y),10)
     })
   }
 

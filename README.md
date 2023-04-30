@@ -2,7 +2,7 @@
 
 # `anu`
 
-a tiny backend-agnostic step-sequencer/live-coding environment that harnesses the power of matching patterns ([RegEx](https://regexr.com)) to create triggers. as the name suggests "anu" (or "อนุ"), which in Thai grammar denotes a prefix meaning "small", "sub" or "minor". It can be prefixed(compatible) with any others software/hardware that support [ OSC ](https://en.wikipedia.org/wiki/Open_Sound_Control) or [MIDI](https://en.wikipedia.org/wiki/MIDI) protocol (under developing, more to be implemented).
+a tiny backend-agnostic step-sequencer/live-coding environment that harnesses the power of matching patterns ([RegEx](https://regexr.com)) to create triggers. as the name suggests "anu" (or "อนุ"), which in Thai grammar denotes a prefix meaning "small", "sub" or "minor". It can be prefixed(compatible) with any others software/hardware that support [ OSC ](https://en.wikipedia.org/wiki/Open_Sound_Control) or [MIDI](https://en.wikipedia.org/wiki/MIDI) protocol (more to be implemented).
  
 unlike others conventional tools or step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously, this project have been developed under the name "seeq").
 
@@ -10,11 +10,11 @@ written in plain JavaScript with dependencies as less as possible in minds. powe
 
 &nbsp;
 
-<img src="./src/media/images/ssss.png"/>
+<img src="./src/media/images/anu-ss.png"/>
 <img src="./src/media/images/anu-console.gif"/>
-<img src="./src/media/images/output3.gif"/>
-<img src="./src/media/images/output2.gif"/>
-<img src="./src/media/images/output1.gif"/>
+<img src="./src/media/images/anu-ss-1.gif"/>
+<img src="./src/media/images/anu-ss-2.gif"/>
+<img src="./src/media/images/anu-ss-3.gif"/>
 
 
 [[ Demo video (old version) ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
