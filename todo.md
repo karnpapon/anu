@@ -16,8 +16,9 @@
 - ~~fix osc connection when reloading window~~
 - ~~fix midi sending~~
 - ~~handle sendClockMsg to be compatible with MetronomeWorker~~
+- ~~[#12] fix note-ratio per marker jittering when it's have been changed~~
+- ~~fix reversed marker not working correctly when h > 1~~
 
-- [#12] fix note-ratio per marker jittering when it's have been changed
 - customizable osc port / midi-out device
 
 # TBD

@@ -3,11 +3,11 @@
 /* global client */
 
 function StepCounter(canvas) {
-  this.isSelected = false
+  this.isSnappedOnMarker = false
   this.counter = [{ x: 0, y: 0, y_counter: 0, i: 0 }]
 
   this.reset = function () {
-    this.isSelected = false
+    this.isSnappedOnMarker = false
     this.counter = [{ x: 0, y: 0, y_counter: 0, i: 0 }]
   }
 
@@ -28,7 +28,7 @@ function StepCounter(canvas) {
   function back(c){
     let rand
     c.x--
-    if (!canvas.stepcounter.isSelected) {
+    if (!canvas.stepcounter.isSnappedOnMarker) {
       if (c.x < 0) {
         if (c.y === 0) {
           c.x = canvas.seequencer.w
@@ -46,8 +46,8 @@ function StepCounter(canvas) {
             if( c.x < (value.x) || c.y < (value.y)) {
               c.x = value.x + value.w - 1
               c.y = value.h > 1 ? value.y + c.y_counter % value.h : value.y
-              c.y_counter++
-              c.y_counter = c.y_counter % value.h
+              c.y_counter--
+              c.y_counter = ((c.y_counter % value.h) + value.h) % value.h
             }
           } else {
             value.overlapIndex.forEach((i) => {
@@ -67,8 +67,7 @@ function StepCounter(canvas) {
   function forth(c){
     let rand
     c.x++
-    // TODO: should b named shouldSnapped.
-    if (!canvas.stepcounter.isSelected) {
+    if (!canvas.stepcounter.isSnappedOnMarker) {
       if (c.x > canvas.seequencer.w) {
         if (c.y === canvas.seequencer.h - 1) {
           c.y = 0
@@ -108,12 +107,11 @@ function StepCounter(canvas) {
     }
   }
 
-  // TODO: [#12] todo.md
   function increment(c) {
-    // if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
+    if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
       if (canvas.marker.markers[c.i]["control"]["reverse"]) { return back(c) }
       forth(c)
-    // }
+    }
   }
 
   this.range = function () {

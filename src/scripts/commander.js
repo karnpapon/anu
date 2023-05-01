@@ -132,7 +132,7 @@ function Commander(canvas) {
         // (Shift-Enter) get step into marker range.
         if (event.keyCode === 13) {
           const active_index = stepcounter.counter.length > 1 ? marker.active : 0
-          stepcounter.isSelected = !stepcounter.isSelected
+          stepcounter.isSnappedOnMarker = !stepcounter.isSnappedOnMarker
           stepcounter.counter[active_index].i = marker.active;
           return;
         }
@@ -145,11 +145,11 @@ function Commander(canvas) {
   
         // (Shift-Plus) add new step
         if (event.keyCode === 187) {
-          if (!stepcounter.isSelected) {
+          if (!stepcounter.isSnappedOnMarker) {
             stepcursor.remove();
             stepcursor.add();
             stepcounter.range();
-            stepcounter.isSelected = true;
+            stepcounter.isSnappedOnMarker = true;
           } else {
             stepcursor.add();
           }

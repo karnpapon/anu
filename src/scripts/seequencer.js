@@ -92,10 +92,10 @@ function Seequencer(canvas){
     this.locks[this.indexAt(x, y)] = null
   }
 
-  this.lock = function (x, y) {
-    if (this.lockAt(x, y)) { return }
-    this.locks[this.indexAt(x, y)] = true
-  }
+  // this.lock = function (x, y) {
+  //   if (this.lockAt(x, y)) { return }
+  //   this.locks[this.indexAt(x, y)] = true
+  // }
 
   // Helpers
 
@@ -152,9 +152,9 @@ function Seequencer(canvas){
     return this.valueOf(this.glyphAt(x, y))
   }
 
-  this.lockAt = function (x, y) {
-    return this.locks[this.indexAt(x, y)] === true
-  }
+  // this.lockAt = function (x, y) {
+  //   return this.locks[this.indexAt(x, y)] === true
+  // }
 
   // this.valueIn = function (key) {
   //   return this.variables[key]

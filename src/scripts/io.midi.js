@@ -56,8 +56,6 @@ function Midi(app) {
 
   this.trigger = function (item, down) {
     if (!this.outputDevice()) { console.warn('MIDI', 'No midi output!'); return }
-
-    // const transposed = this.transpose(item.note, item.octave)
     const n = convertNote(item.octave, item.note)
     const channel = !isNaN(item.channel) ? parseInt(item.channel) : 0
 
@@ -67,8 +65,6 @@ function Midi(app) {
     const v = parseInt((item.velocity / 16) * 127)
 
     if (!n || c === 127) { return }
-
-    // console.log("midi trigger c,n,v", c,n,v)
 
     invoke('plugin:midi|send_midi_out', { msg: [c, n, v] });
   }

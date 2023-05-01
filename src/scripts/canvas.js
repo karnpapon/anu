@@ -214,7 +214,7 @@ function Canvas () {
   this.isWithinMarker = function(marker){ return marker.length > 0 }
 
   this.makeStyle = function (x, y) {
-    if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:1 }
+    if(this.isMarkerHead(x,y)) { return this.isCurrentMarker(x,y)? 10:5 }
     let marker = this.getMarkerAt(x, y);
     if(this.isWithinMarker(marker)) { return this.isOverlapArea(x,y)? 1: 12 }
     return 9

@@ -9,13 +9,6 @@ function IO(app) {
 
   this.start = function () {
     this.clear()
-
-    // const navigationType = window.performance.getEntriesByType('navigation')[0];
-    // invoke("get_osc_menu_state")
-    // if (navigationType === "reload") {
-    //   console.info("window.performance works fine on this browser", navigationType);
-    // }
-
     this.midi.start()
     this.osc.start()
     // this.udp.start()

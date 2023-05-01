@@ -66,7 +66,10 @@ function Metronome(canvas) {
   
       osc.start(time);
       osc.stop(time + this.noteLength);
-      osc.onended = () => { canvas.run() }
+      osc.onended = () => { 
+        // canvas.io.midi.sendClock()
+        canvas.run() 
+      }
     // }
   };
 

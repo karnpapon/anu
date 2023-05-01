@@ -56,7 +56,6 @@ function Client(){
   this.handleRegexInput = () => {
     let searchFrom = canvas.texts
     let textContent = this.trimmedContents(searchFrom)
-		// this.dispatchEvent("change");
     if (searchFrom == "") { canvas.clearMarksPos() }
     let flags = ""
     this.console.regexFlagSelect.forEach(r => flags += r)
@@ -78,7 +77,6 @@ function Client(){
     } else {
       canvas.clearMarksPos()
     }
-		// this.dispatchEvent("result");
 	}
 
 	this.processRegexResult = function(result) {
