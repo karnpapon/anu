@@ -137,11 +137,10 @@ function Canvas () {
         if(this.isWithinMarker(marker)){
           marker.forEach((m) => { 
             m.matched.add(`${item.x}:${item.y}`) 
-            this.drawSprite(item.x, item.y, m["control"]["muted"] ? g : BANG_GLYPH, 12) // marked within marker block.
+            this.drawSprite(item.x, item.y, m["control"]["muted"] ? g : BANG_GLYPH, this.isMarkerHead(item.x, item.y) ? 10 : 12) // matched within marker block.
           })
-          
         } else {
-          this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5)
+          this.drawSprite(item.x, item.y, g, this.isShowMarked? 0:5) // matched not within marker block.
         }
       })
     } else {
