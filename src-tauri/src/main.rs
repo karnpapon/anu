@@ -6,7 +6,6 @@
 mod lib;
 mod analyser;
 use std::borrow::Borrow;
-use std::fmt::format;
 use std::sync::Mutex;
 use crate::lib::osc::{OscPlugin};
 use crate::lib::midi::{ MidiPlugin };
@@ -14,7 +13,7 @@ use crate::lib::conf::{ AppConf };
 use crate::lib::setup;
 use tauri::{
   CustomMenuItem, Menu, MenuItem, Submenu, AboutMetadata,
-  Manager, Window, RunEvent, AppHandle, Wry, Assets, Context, WindowMenuEvent
+  Manager, Window, Assets, Context, WindowMenuEvent
 };
 
 pub struct AnuApp {
@@ -32,18 +31,6 @@ fn midi_init_lists() -> &'static [&'static str] {
 
 #[tauri::command]
 fn osc_select(setting: &'_ str, window: Window) {
-  for &osc in osc_lists().iter() {
-    window
-        .menu_handle()
-        .get_item(osc)
-        .set_selected(osc == setting)
-        .unwrap();
-  }
-}
-
-// TODO: fix this
-#[tauri::command]
-fn midi_select(setting: &'_ str, window: Window) {
   for &osc in osc_lists().iter() {
     window
         .menu_handle()
@@ -211,7 +198,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     .manage(AnuApp { osc_states: Default::default(), midi_states: Default::default() })
     .invoke_handler(tauri::generate_handler![
       osc_select,
-      midi_select,
       get_osc_menu_state
     ])
     .plugin(lib::midi::init())

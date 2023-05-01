@@ -81,7 +81,7 @@ function Canvas () {
   this.update = function () {
     if (document.hidden === true) { return }
     this.clear()
-    this.drawProgram() // TBD: should MarkerHead be placed on top of `this.match` ?
+    this.drawProgram()
     this.match()
     this.stepcursor.draw()
     this.drawStroke(this.marker.toRect())

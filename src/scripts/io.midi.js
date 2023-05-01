@@ -119,6 +119,7 @@ function Midi(app) {
   }
 
   this.sendClock = function () {
+    // if (!client.console.isMIDIOutToggled) { return }
     if (!this.outputDevice()) { return }
     if (this.isClock !== true) { return }
 

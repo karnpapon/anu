@@ -53,9 +53,4 @@ window.addEventListener("load", () => {
   listen("menu-metronome", function (msg) {
     client.enableMetronome = !client.enableMetronome
   });
-
-  // listen("menu-reset_noteratio", function (msg) {
-  //   metronome.noteRatio = 1
-  //   client.console.currentNumber.innerText = "1:16"
-  // });
 });

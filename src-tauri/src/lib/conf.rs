@@ -177,9 +177,9 @@ impl AppConf {
   //   self.theme.to_lowercase() == mode
   // }
 
-  pub fn restart(self, app: tauri::AppHandle) {
-    tauri::api::process::restart(&app.env());
-  }
+  // pub fn restart(self, app: tauri::AppHandle) {
+  //   tauri::api::process::restart(&app.env());
+  // }
 }
 
 impl Default for AppConf {
@@ -192,25 +192,25 @@ pub mod cmd {
   use super::AppConf;
   use tauri::{command, AppHandle, Manager};
 
-  #[command]
-  pub fn get_app_conf() -> AppConf {
-    AppConf::read()
-  }
+  // #[command]
+  // pub fn get_app_conf() -> AppConf {
+  //   AppConf::read()
+  // }
 
-  #[command]
-  pub fn reset_app_conf() -> AppConf {
-    AppConf::default().write()
-  }
+  // #[command]
+  // pub fn reset_app_conf() -> AppConf {
+  //   AppConf::default().write()
+  // }
 
   // #[command]
   // pub fn get_theme() -> String {
   //   AppConf::get_theme()
   // }
 
-  #[command]
-  pub fn form_confirm(_app: AppHandle, data: serde_json::Value) {
-    AppConf::read().amend(serde_json::json!(data)).write();
-  }
+  // #[command]
+  // pub fn form_confirm(_app: AppHandle, data: serde_json::Value) {
+  //   AppConf::read().amend(serde_json::json!(data)).write();
+  // }
 
   // #[command]
   // pub fn form_cancel(app: AppHandle, label: &str, title: &str, msg: &str) {

@@ -39,9 +39,6 @@ function Metronome(canvas) {
     // push the note on the queue, even if we're not playing.
     // for displaying tick.
     this.notesInQueue.push({ note: beatNumber, time: time });
-
-    // console.log("scheduleNote", time)
-    // window.__TAURI__.invoke("plugin:osc|send", { rpc: { path: "/test_metro",  args: "0.1"} });
     
     // if (client.enableMetronome) {
     //   // if ( (this.noteResolution==1) && (beatNumber%2))
@@ -67,7 +64,7 @@ function Metronome(canvas) {
       osc.start(time);
       osc.stop(time + this.noteLength);
       osc.onended = () => { 
-        // canvas.io.midi.sendClock()
+        canvas.io.midi.sendClock()
         canvas.run() 
       }
     // }
