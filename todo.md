@@ -20,6 +20,7 @@
 - ~~fix reversed marker not working correctly when h > 1~~
 
 - customizable osc port / midi-out device
+- ratcheting trigger
 
 # TBD
 - marker switcher (Arpeggiator alike) mode

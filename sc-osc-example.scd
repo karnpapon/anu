@@ -1,8 +1,8 @@
 // [1]
 (
 MIDIClient.init;
-s.options.outDevice = "Scarlett 2i4 USB";
-// s.options.outDevice = "Built-in Output";
+// s.options.outDevice = "Scarlett 2i4 USB";
+s.options.outDevice = "Built-in Output";
 s.options.numInputBusChannels = 0;
 s.boot;
 
@@ -67,6 +67,15 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 		}
 	}
 ); // reverb is being add here
+// ~cloudMixerChannel = MixerChannel(\cld, s, 2, 2, level: 1,
+// 	completionFunc: { |chan|
+// 		~cld = chan.playfx { |outbus,freeze,mode=1|
+// 			var sig = In.ar(outbus, 2);
+// 			var position = LFNoise1.kr(0.5,0.5,0.5);
+// 			MiClouds.ar(sig, 0, position, 0.1, 1, 0.5, drywet: 0.5, in_gain: 2, rvb:0.3, fb: 0.2, freeze: freeze, lofi: 1, mode: mode);
+// 		}
+// 	}
+// ); // cloud is being add here
 )
 
 // [5.5]: correct group order after `Cmd+Period`
@@ -78,6 +87,7 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 ~srcMixerChannel.free;
 ~src2MixerChannel.free;
 ~reverbMixerChannel.free;
+// ~cloudMixerChannel.free;
 )
 
 // [6]: setup fx chains;
@@ -136,6 +146,7 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 ~postsend.free
 
 ~postsend2 = ~src2MixerChannel.newPostSend(~reverbMixerChannel, 0.9);
+// ~postsend2 = ~src2MixerChannel.newPostSend(~cloudMixerChannel, 0.9);
 
 // [8]: map Korg NanoKontrol (faders/slides)
 (
@@ -173,8 +184,8 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 )
 
 
-// ---------------UNDER DEVELOPING--------------------------
-
+~cld.set(\freeze, 0)
+~cld.set(\freeze, 1)
 (~src2MixerChannel.play({ |indices, index, src|
 	{
 		var startsamp = Index.kr(indices,index);
@@ -183,7 +194,6 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 		var sig = BufRd.ar(1,src,phs);
 		var dursecs = (stopsamp - startsamp) / BufSampleRate.ir(src);
 		var env;
-		// var sig = BufRd.ar(1,src,Phasor.ar(0,BufRateScale.kr(src), 0, BufFrames.kr(b)));
 		dursecs = min(dursecs,1);
 		env = EnvGen.kr(Env([0,1,1,0],[0.03,dursecs-0.06,0.03]),doneAction:2);
 		sig = sig.dup * env;
@@ -195,8 +205,6 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 ])
 )
 
-// ---------------------------------------------------------
-
 // [9]: connect to anu_processing (https://github.com/karnpapon/anu-processing)
 (
 ~processing = NetAddr("127.0.0.1", 5000);
@@ -205,17 +213,6 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 
 // [10]: init osc definitions.
 (
-OSCdef(\anu_demo_sampler, {
-	|msg, time, addr, recvPort|
-	// msg.postln;
-	(Pbind(
-		\instrument, \polybuf_sampler,
-		\rate, Pwhite(0.5,1.0),
-		\buffer, Pseq([ b[\sounds].asPxrand(1)],1),
-		\dur, Pfunc{|ev| ev[\buffer].duration * ev[\rate].abs.reciprocal}
-	).play;);
-}, '/demo_sampler');
-
 OSCdef(\anu_demo_kick, {
 	|msg, time, addr, recvPort|
 	(
@@ -262,7 +259,7 @@ OSCdef(\anu_demo_kick, {
 
 }, '/demo_kick');
 
-OSCdef(\anu_demo_trigger, {|msg, time, addr, recvPort|
+OSCdef(\anu_demo_corpus, {|msg, time, addr, recvPort|
 	(~src2MixerChannel.play({ |indices, index, src|
 		{
 			var startsamp = Index.kr(indices,index);
@@ -271,7 +268,6 @@ OSCdef(\anu_demo_trigger, {|msg, time, addr, recvPort|
 			var sig = BufRd.ar(1,src,phs);
 			var dursecs = (stopsamp - startsamp) / BufSampleRate.ir(src);
 			var env;
-			// var sig = BufRd.ar(1,src,Phasor.ar(0,BufRateScale.kr(src), 0, BufFrames.kr(b)));
 			dursecs = min(dursecs,1);
 			env = EnvGen.kr(Env([0,1,1,0],[0.03,dursecs-0.06,0.03]),doneAction:2);
 			sig = sig.dup * env;

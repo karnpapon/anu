@@ -1,6 +1,4 @@
-// 'use strict'
-
-/* global OSC */
+'use strict'
 
 // osc module is located at /src-tauri/src/lib/osc.rs
 function Osc (app) {
