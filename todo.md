@@ -21,6 +21,8 @@
 
 - customizable osc port / midi-out device
 - ratcheting trigger
+- fix unintended retriggering when note-ratio is high  (step is slow)
+- osc evaluating(when hit Return) somehow mismatch current marker with another marker.
 
 # TBD
 - marker switcher (Arpeggiator alike) mode

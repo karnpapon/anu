@@ -46,27 +46,27 @@ function Metronome(canvas) {
     //   // if ( (this.noteResolution==2) && (beatNumber%4))
     //   //     return; // we're not playing non-quarter 8th notes
 
-      let osc = this.audioContext.createOscillator();
-      // let gain = this.audioContext.createGain();
-      // gain.gain.value = 0.25;
-      // osc.connect(gain);
-      osc.connect(this.audioContext.destination);
-  
-      // if (beatNumber % 16 === 0)
-      //   // beat 0 == high pitch
-      //   osc.frequency.value = 880.0;
-      // else if (beatNumber % 4 === 0)
-      //   // quarter notes = medium pitch
-      //   osc.frequency.value = 440.0;
-      // // other 16th notes = low pitch
-      // else osc.frequency.value = 220.0;
-  
-      osc.start(time);
-      osc.stop(time + this.noteLength);
-      osc.onended = () => { 
-        // canvas.io.midi.sendClock()
-        canvas.run() 
-      }
+    let osc = this.audioContext.createOscillator();
+    // let gain = this.audioContext.createGain();
+    // gain.gain.value = 0.25;
+    // osc.connect(gain);
+    osc.connect(this.audioContext.destination);
+
+    // if (beatNumber % 16 === 0)
+    //   // beat 0 == high pitch
+    //   osc.frequency.value = 880.0;
+    // else if (beatNumber % 4 === 0)
+    //   // quarter notes = medium pitch
+    //   osc.frequency.value = 440.0;
+    // // other 16th notes = low pitch
+    // else osc.frequency.value = 220.0;
+
+    osc.start(time);
+    osc.stop(time + this.noteLength);
+    osc.onended = () => { 
+      // canvas.io.midi.sendClock()
+      canvas.run() 
+    }
     // }
   };
 
@@ -94,7 +94,7 @@ function Metronome(canvas) {
     while (
       this.nextNoteTime <
       this.audioContext.currentTime + this.scheduleAheadTime
-    ) {
+      ) {
       this.scheduleNote(this.current16thNote, this.nextNoteTime);
       this.nextNote();
     }

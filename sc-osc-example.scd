@@ -2,7 +2,7 @@
 (
 MIDIClient.init;
 // s.options.outDevice = "Scarlett 2i4 USB";
-s.options.outDevice = "Built-in Output";
+s.options.outDevice ="QuickTime Output";
 s.options.numInputBusChannels = 0;
 s.boot;
 
@@ -67,27 +67,27 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 		}
 	}
 ); // reverb is being add here
-// ~cloudMixerChannel = MixerChannel(\cld, s, 2, 2, level: 1,
-// 	completionFunc: { |chan|
-// 		~cld = chan.playfx { |outbus,freeze,mode=1|
-// 			var sig = In.ar(outbus, 2);
-// 			var position = LFNoise1.kr(0.5,0.5,0.5);
-// 			MiClouds.ar(sig, 0, position, 0.1, 1, 0.5, drywet: 0.5, in_gain: 2, rvb:0.3, fb: 0.2, freeze: freeze, lofi: 1, mode: mode);
-// 		}
-// 	}
-// ); // cloud is being add here
+
+~delayMixerChannel = MixerChannel(\cld, s, 2, 2, level: 1,
+	completionFunc: { |chan|
+		~del = chan.playfx {|outbus,maxdelaytime=0.25,decaytime=4|
+ Mix.arFill(4, { CombL.ar(In.ar(outbus, 1), maxdelaytime, LFNoise1.kr(Rand(0, 0.1), 0.1, 0.2), decaytime) })
+		};
+	}
+); // delay is being add here
 )
 
 // [5.5]: correct group order after `Cmd+Period`
 (
 ~reverbMixerChannel.fadergroup.moveToTail(s.defaultGroup);
+~delayMixerChannel.fadergroup.moveToTail(s.defaultGroup);
 )
 
 (
 ~srcMixerChannel.free;
 ~src2MixerChannel.free;
 ~reverbMixerChannel.free;
-// ~cloudMixerChannel.free;
+~delayMixerChannel.free;
 )
 
 // [6]: setup fx chains;
@@ -145,8 +145,9 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 ~postsend = ~srcMixerChannel.newPostSend(~reverbMixerChannel, 0.9);
 ~postsend.free
 
-~postsend2 = ~src2MixerChannel.newPostSend(~reverbMixerChannel, 0.9);
-// ~postsend2 = ~src2MixerChannel.newPostSend(~cloudMixerChannel, 0.9);
+// ~postsend2 = ~src2MixerChannel.newPostSend(~reverbMixerChannel, 0.9);
+~postsend2 = ~src2MixerChannel.newPostSend(~delayMixerChannel, 0.9);
+
 
 // [8]: map Korg NanoKontrol (faders/slides)
 (
@@ -155,6 +156,7 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 ~lpf.set(\cutoff, c.knobs.at(8).asMap); // knob[8] -> cutoff level
 ~postsend.sendSynth.set(\level, c.knobs.at(0).asMap); // knob[1] -> sendLevel
 ~postsend2.sendSynth.set(\level, c.knobs.at(1).asMap); // knob[1] -> sendLevel
+~postsend2.sendSynth.set(\level, c.faders.at(2).asMap); // fader[2] -> sendLevel
 ~dist.set(\dst, c.knobs.at(2).asMap); // knob[2] -> distortion level
 ~triode.set(\tri, c.knobs.at(3).asMap); // knob[3] -> triode level
 ~shaper.set(\offset, c.knobs.at(4).asMap); // knob[4] -> shaper::shape level
@@ -163,7 +165,8 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 ~shaper.set(\lo_thresh, c.knobs.at(7).asMap); // knob[7] -> shaper::lo_thresh level
 // ~shaper.set(\hi_thresh, c.knobs.at(8).asMap); // knob[8] -> shaper::hi_thresh level
 )
-
+s.meter
+s.plotTree
 // for testing
 (
 ~srcMixerChannel.play(

@@ -17,7 +17,7 @@ written in plain JavaScript with dependencies as less as possible in minds. powe
 <img src="./src/media/images/anu-ss-3.gif"/>
 
 
-[[ Demo video (old version) ]](https://www.youtube.com/watch?v=DGaakhSvYOg)
+for more in-depth details/implementations, please watch: [[ Regular Expression as an Irregular Musical Expression ]](https://www.youtube.com/watch?v=kXfi4FhzCi8), @ CreativeCoding meetup 2023, Thailand (organized by [Creatorsgarten](https://creatorsgarten.org/))
 
 ## usages
 - [OSC]: sending OSC message (based-on [`oscd`](https://github.com/karnpapon/oscd))

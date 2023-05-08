@@ -1,11 +1,7 @@
 :root {
-  --main-gray: #e6e6e6;
   --main-bg-color: white;
-  --trigger-color: rgb(62, 251, 0);
   --trigger-input-color: #000000;
-  --reverse-target: #f287ff;
   --clock: 200ms;
-  --hl-color: rgb(255, 212, 57);
   --osc-msg: 0.85rem;
 }
 
@@ -54,7 +50,6 @@ p, bold { display: flex; line-height: 1.25rem;}
 body p, button{font-family: 'input_mono_regular'; font-size:12px}
 body input{ font-family: 'input_mono_regular'; font-size:12px}
 body .header{ font-family: 'input_mono_regular'; font-size:12px}
-code { background-color: var(--main-gray); border-radius: 4px; align-items: center; display: flex;}
 .info { display: flex; flex: 1;}
 bold { 
   align-items: center;
@@ -181,15 +176,6 @@ caret:hover {
   color: white;
   background-color: var( --trigger-input-color )  !important;
   transition: all .2s ease;
-}
-
-@keyframes blinking {
-  0%{
-    background-color: var( --trigger-color );
-  }
-  100%{
-    background-color: black;
-  }
 }
 
 .loading {
@@ -470,14 +456,6 @@ div input{
 }
 
 span.current-active{ background: black; color: white;}
-
-mark { 
-  padding: unset !important;
-  background-color: var( --trigger-color ) !important;
-}
-mark.current { 
-  background: rgb(255, 62, 168) !important;
-}
 
 div input:focus{ outline: none;}
 .content {

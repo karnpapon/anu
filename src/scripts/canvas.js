@@ -8,7 +8,6 @@ function Canvas () {
   this.io = new IO(this)
   this.stepcursor = new StepCursor(this)
   this.stepcounter = new StepCounter(this)
-
   this.texts = ""
 
   // Themes 9affcc
