@@ -137,25 +137,6 @@ function Commander(canvas) {
           return;
         }
 
-        // (Shift-Minus) remove step
-        // if (event.keyCode === 189) {
-        //   canvas.stepcursor.remove();
-        //   return;
-        // }
-  
-        // (Shift-Plus) add new step
-        // if (event.keyCode === 187) {
-        //   if (!stepcounter.isSnappedOnMarker) {
-        //     stepcursor.remove();
-        //     stepcursor.add();
-        //     stepcounter.range();
-        //     stepcounter.isSnappedOnMarker = true;
-        //   } else {
-        //     stepcursor.add();
-        //   }
-        //   return;
-        // }
-
         // ( Shift-{ ) change note-ratio.
         if (event.keyCode === 219) {
           canvas.marker.modNoteRatio(-1)
@@ -292,6 +273,16 @@ function Commander(canvas) {
           event.preventDefault();
           return;
         }
+
+        // (;) toggle mono step mode
+        if (event.keyCode === 186 ) {
+          canvas.marker.markers.forEach(m => m["control"]["muted"] = !canvas.monoStepMode)
+          if (!canvas.stepcounter.isSnappedOnMarker) return;
+          canvas.monoStepMode = !canvas.monoStepMode
+          event.preventDefault();
+          return;
+        }
+
       })
   
 

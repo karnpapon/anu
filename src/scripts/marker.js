@@ -186,8 +186,6 @@ function Marker(_canvas) {
 
   this.modNoteRatio = function(mod = 0) {
     this.setNoteRatio(this.markers[this.active]["control"]["noteRatio"] + mod)
-    // _canvas.stepcounter.resetTarget(this.active)
-    // _canvas.stepcursor.reset(this.active)
   }
 
   this.setNoteRatio = function(value) {
@@ -213,7 +211,7 @@ function Marker(_canvas) {
   }
   
   this.setOSCmsg  = function(){
-    let active = this.getActiveCursor()
+    let active = this.currentMarker()
     let { path, msg } = client.displayer.oscConf
     let formattedMsg = msg.split('|')
     path = Utils.get(client, "displayer.oscConf.path", active.msg.OSC.path)
@@ -223,7 +221,7 @@ function Marker(_canvas) {
   }
 
   this.setMIDImsg  = function(){
-    let active = this.getActiveCursor()
+    let active = this.currentMarker()
     let midiMsg = {
       note: [], 
       notelength: [], 
@@ -319,10 +317,6 @@ function Marker(_canvas) {
     }
     this.markers = filteredCursor
     this.active = 0
-  }
-
-  this.getActiveCursor = function(){
-    return this.markers[this.active]
   }
 
   this.clearMatchedPos = function(){

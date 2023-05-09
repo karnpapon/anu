@@ -40,6 +40,7 @@ const LIBRARY = {
   "> or <": { "info": "incr/decr BPM " },
   "{ or }": { "info": "[*] incr/decr note-ratio (default 1/16)" },
   "?": { "info": "[*] show control informations" },
+  ";": { "info": "toggle mono-step mode" },
   
   "Backspace": { "info": "[*] remove current marker" },
   "Spacebar": { "info": "play/pause" },

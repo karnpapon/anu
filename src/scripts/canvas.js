@@ -41,6 +41,7 @@ function Canvas () {
   this.guide = true
   this.isShowMarked = true
   this.notationMode = false
+  this.monoStepMode = false
   this.globalIdx = 0
 
   // -----------------------------
@@ -118,7 +119,7 @@ function Canvas () {
       for (var y = 0; y < currentMarker.h; y++) {
         this.seequencer.write(currentMarker.x + x, currentMarker.y + y, glyph)
 
-        // modified fetchedData so regex can properly re-calculated.
+        // modified fetchedData so regex can be properly re-calculated.
         let indexAt = this.seequencer.indexAt(currentMarker.x+x, currentMarker.y + y)
         this.texts = this.texts.substring(0, indexAt ) + glyph + this.texts.substring(indexAt + 1)
       }

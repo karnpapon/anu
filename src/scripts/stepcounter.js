@@ -5,6 +5,7 @@
 function StepCounter(canvas) {
   this.isSnappedOnMarker = false
   this.counter = [{ x: 0, y: 0, y_counter: 0, i: 0 }]
+  this.monoStepMarkerIndex = canvas.marker.active;
 
   this.reset = function () {
     this.isSnappedOnMarker = false
@@ -16,6 +17,9 @@ function StepCounter(canvas) {
   }
 
   this.run = function () {
+    if (canvas.monoStepMode) {
+      return this.runMonoStepCounter()
+    }
     this.runCounter()
   }
 
@@ -23,6 +27,10 @@ function StepCounter(canvas) {
     this.counter.forEach(c => {
       increment(c)
     })
+  }
+
+  this.runMonoStepCounter = function () {
+    incrementMonoMode(this.counter[this.monoStepMarkerIndex])
   }
 
   function back(c){
@@ -107,6 +115,60 @@ function StepCounter(canvas) {
     }
   }
 
+  function forthMonoMode(c, marker){
+    // TODO: first matched index not trigger
+    marker["control"]["muted"] = false
+    c.x++
+    // TODO: should works only when  isSnappedOnMarker = true
+    if (!canvas.stepcounter.isSnappedOnMarker) {
+      if (c.x > canvas.seequencer.w) {
+        if (c.y === canvas.seequencer.h - 1) {
+          c.y = 0
+          c.x = 0
+        } else {
+          c.x = 0
+          c.y++
+        }
+      }
+    } else {
+      // canvas.marker.markers.forEach(value => {
+        if (marker.i === c.i) {
+          c.isOverlap = canvas.isOverlapArea(c.x, c.y)
+          if (!c.isOverlap) {
+            if (
+              c.x > (marker.x + marker.w - 1) ||
+              c.y > (marker.y + marker.h) ||
+              marker.x > c.x ||
+              marker.y > c.y
+            ) {
+              // increasing monoStepMarkerIndex (but keep within total marker length)
+              if (canvas.seequencer.indexAt(c.x,c.y) > canvas.seequencer.indexAt(marker.x + marker.w - 1, marker.y + ( marker.h - 1 ))) {
+                canvas.stepcounter.monoStepMarkerIndex++
+                canvas.stepcounter.monoStepMarkerIndex = canvas.stepcounter.monoStepMarkerIndex % canvas.marker.markers.length 
+                marker["control"]["muted"] = true
+              }
+              
+              c.x = marker.x
+              c.y = marker.h > 1 ? marker.y + c.y_counter % marker.h : marker.y
+              c.y_counter++
+              c.y_counter = c.y_counter % marker.h 
+            }
+          } else {
+            // TODO: should handle overlapped area ?
+          }
+        } 
+        // })
+      }
+  }
+
+  function incrementMonoMode(c) {
+    if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
+      // TODO: should handle reverse for mono step ?
+      // if (canvas.marker.markers[c.i]["control"]["reverse"]) { return back(c) }
+      forthMonoMode(c, canvas.marker.markers[canvas.stepcounter.monoStepMarkerIndex])
+    }
+  }
+
   function increment(c) {
     if(metronome.current16thNote % canvas.marker.markers[c.i]["control"]["noteRatio"] === 0 ){ 
       if (canvas.marker.markers[c.i]["control"]["reverse"]) { return back(c) }
@@ -114,17 +176,8 @@ function StepCounter(canvas) {
     }
   }
 
-  this.range = function () {
-    // canvas.marker.markers.forEach(cs => {
-    //   canvas.seequencer.resetFrameToRange(cs)
-    // })
-    // canvas.seequencer.resetFrameToRange(canvas.marker.markers[canvas.marker.active])
-  }
-
   function getRandomValue(collection) {
     let keys = Array.from(collection.keys());
     return  collection.get(keys[Math.floor(Math.random() * keys.length)]);
   }
-
-  function clamp(v, min, max) { return v < min ? min : v > max ? max : v }
 }

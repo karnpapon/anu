@@ -19,11 +19,11 @@
 - ~~[#12] fix note-ratio per marker jittering when it's have been changed~~
 - ~~fix reversed marker not working correctly when h > 1~~
 - ~~fix unintended retriggering when note-ratio is high  (step is slow)~~
+- ~~remove "add step" feature, since its hard to manage trigger length (slow step)~~
 
 - customizable osc port / midi-out device
 - ratcheting trigger
 - osc evaluating(when hit Return) somehow mismatch current marker with another marker.
-- remove "add step" feature?, since its hard to manage trigger length (slow step)
 
 # TBD
 - marker switcher (Arpeggiator alike) mode
