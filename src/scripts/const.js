@@ -53,7 +53,6 @@ const LIBRARY = {
   "Shift-Return": { "info": "[*] toggle snap step to marker range" },
   "Shift-Arrow": { "info": "[*] incr/decr marker range" },
   "Shift-Arrow-Cmd": { "info": "[*] jump incr/decr marker range" },
-  "Shift-(+ or -)": { "info": "[*] add/remove step" },
 }
 const LIBRARY_ENDNOTES_1 = "[*] affect individual marker"
 const LIBRARY_ENDNOTES_2 = "MAKE SURE INPUT HAS BEEN TOGGLED OFF"

@@ -138,23 +138,23 @@ function Commander(canvas) {
         }
 
         // (Shift-Minus) remove step
-        if (event.keyCode === 189) {
-          canvas.stepcursor.remove();
-          return;
-        }
+        // if (event.keyCode === 189) {
+        //   canvas.stepcursor.remove();
+        //   return;
+        // }
   
         // (Shift-Plus) add new step
-        if (event.keyCode === 187) {
-          if (!stepcounter.isSnappedOnMarker) {
-            stepcursor.remove();
-            stepcursor.add();
-            stepcounter.range();
-            stepcounter.isSnappedOnMarker = true;
-          } else {
-            stepcursor.add();
-          }
-          return;
-        }
+        // if (event.keyCode === 187) {
+        //   if (!stepcounter.isSnappedOnMarker) {
+        //     stepcursor.remove();
+        //     stepcursor.add();
+        //     stepcounter.range();
+        //     stepcounter.isSnappedOnMarker = true;
+        //   } else {
+        //     stepcursor.add();
+        //   }
+        //   return;
+        // }
 
         // ( Shift-{ ) change note-ratio.
         if (event.keyCode === 219) {

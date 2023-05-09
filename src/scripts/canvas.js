@@ -72,9 +72,9 @@ function Canvas () {
     this.clock.run()
     this.seequencer.run()
     this.stepcounter.run()
-    this.io.run()
     this.update()
     this.stepcursor.trigger()
+    this.io.run()
   }
   
   this.update = function () {

@@ -11,16 +11,16 @@ function StepCursor(canvas) {
     this.steps = [{ x: 0, y: 0, i: 0 }]
   }
 
-  this.add = function(){
-    let marker = canvas.marker.markers[ canvas.marker.active ]
-    canvas.stepcounter.counter.push({ x: marker.x ,y: marker.y , counter: 0, i: canvas.marker.active, y_counter: 0})
+  this.add = function(index){
+    let marker = canvas.marker.markers[index]
+    canvas.stepcounter.counter.push({ x: marker.x ,y: marker.y , counter: 0, i: index, y_counter: 0})
     this.steps.push({ x: 0, y:0, i: marker.i})
   }
 
-  this.remove = function(){
-    canvas.stepcounter.counter.pop({ x:0 ,y: 0, counter: 0})
-    this.steps.pop()
-  }
+  // this.remove = function(){
+  //   canvas.stepcounter.counter.pop({ x:0 ,y: 0, counter: 0})
+  //   this.steps.pop()
+  // }
 
   this.draw = function () {
     this.steps.forEach( ( step, idx ) => {
@@ -52,7 +52,7 @@ function StepCursor(canvas) {
     
     if(client.console.isOSCToggled){
       const { OSC } = marker.msg
-      canvas.io.osc.push('/' + OSC.path, OSC.formattedMsg[OSC.counter % OSC.formattedMsg.length] )
+      canvas.io.osc.push('/' + OSC.path, OSC.formattedMsg[OSC.counter % OSC.formattedMsg.length], marker["control"]["noteRatio"] )
       OSC.counter += marker["control"]["reverse"]? -1 : 1
       OSC.counter = ((OSC.counter % OSC.formattedMsg.length) + OSC.formattedMsg.length) % OSC.formattedMsg.length
     }
@@ -81,8 +81,5 @@ function StepCursor(canvas) {
       MIDI.counter += marker["control"]["reverse"]? -1 : 1
       MIDI.counter = ((MIDI.counter % MIDI.note.length) + MIDI.note.length) % MIDI.note.length
     }
-
-    canvas.io.run()
-    canvas.io.clear()
   }
 }

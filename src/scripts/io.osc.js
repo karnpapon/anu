@@ -6,6 +6,13 @@ function Osc (app) {
   
   this.stack = []
   this.port = null
+  this.isPlayed = false
+
+  // for preventing re-triggering (note latching) when noteRatio is not 1, 
+  // eg. noteRatio = 4, will cause re-triggering 4 times since it's based-on clock's `tick` 
+  // and master clock ratio is 1:16
+  this.notelength = 1 
+  this.noteRatio = 1
   
   this.start = function () {
     console.info('OSC', 'Start..')
@@ -16,18 +23,28 @@ function Osc (app) {
   }
 
   this.run = function () {
-    for (const item of this.stack) {
-      this.trigger(item)
+    for (const id in this.stack) {
+      const item = this.stack[id]
+      if (this.isPlayed === false) { this.trigger(item) }
     }
+
+    this.notelength--
+    this.notelength = ((this.notelength % this.noteRatio) + this.noteRatio) % this.noteRatio
+    if(this.notelength === 0) { this.isPlayed = false }
   }
 
-  this.push = function (path, msg) {
-    this.stack.push({ path, msg })
+  this.push = function (path, msg, length) {
+    if (!this.isPlayed){
+      this.notelength = length
+      this.noteRatio = length
+      this.stack.push({ path, msg })
+    }
   }
   
-  this.trigger = function ({ path, msg }) {
-    if (!msg) { console.warn('OSC', 'Empty message'); return }
-    this.sendOsc(path, msg)
+  this.trigger = function (item) {
+    this.isPlayed = true
+    if (!item.msg) { console.warn('OSC', 'Empty message'); return }
+    this.sendOsc(item.path, item.msg)
   }
   
   this.sendOsc = function(path, args) {

@@ -2,7 +2,7 @@
 
 /* global client */
 
-function Marker(canvas) {
+function Marker(_canvas) {
 
   this.mode = 0
   this.block = []
@@ -16,9 +16,9 @@ function Marker(canvas) {
   this.maxY = 0
 
   this.start = () => {
-    canvas.el.onmousedown = this.onMouseDown
-    canvas.el.onmouseup = this.onMouseUp
-    canvas.el.onmousemove = this.onMouseMove
+    _canvas.el.onmousedown = this.onMouseDown
+    _canvas.el.onmouseup = this.onMouseUp
+    _canvas.el.onmousemove = this.onMouseMove
   }
 
   this.init = function(){
@@ -35,8 +35,8 @@ function Marker(canvas) {
 
   this.getNewMarker = function(){
     let newCursor = { 
-      x: 0, y: 0, w: 8, h:1, i: canvas.globalIdx, 
-      n: `marker-name-${canvas.globalIdx}`,
+      x: 0, y: 0, w: 8, h:1, i: _canvas.globalIdx, 
+      n: `marker-name-${_canvas.globalIdx}`,
       overlapAreas: new Map(),
       overlapIndex: new Set(),
       matched: new Set(),
@@ -71,10 +71,10 @@ function Marker(canvas) {
     const currentMarker = this.currentMarker();
     if (isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h)) { return }
     const rect = { 
-      x: clamp(parseInt(x), 0, canvas.seequencer.w - 1), 
-      y: clamp(parseInt(y), 0, canvas.seequencer.h - 1), 
-      w: clamp(parseInt(w), 1, canvas.seequencer.w - 1), 
-      h: clamp(parseInt(h), 1, canvas.seequencer.h - 1) 
+      x: clamp(parseInt(x), 0, _canvas.seequencer.w - 1), 
+      y: clamp(parseInt(y), 0, _canvas.seequencer.h - 1), 
+      w: clamp(parseInt(w), 1, _canvas.seequencer.w - 1), 
+      h: clamp(parseInt(h), 1, _canvas.seequencer.h - 1) 
     }
 
     if ( currentMarker.x === rect.x && 
@@ -90,9 +90,9 @@ function Marker(canvas) {
     currentMarker.h = rect.h
     this.calculateBounds()
     this.findOverlapArea(rect)
-    client.console.cursorPosition.innerText = `${canvas.marker.getActivePosition()}`
+    client.console.cursorPosition.innerText = `${_canvas.marker.getActivePosition()}`
     client.console.highlightLength.innerText = (w >= 0 && h >= 0) ? `${this.getStepLength()}` : "1,1"
-    canvas.update()
+    _canvas.update()
   }
 
   this.calculateBounds = () => {
@@ -142,7 +142,7 @@ function Marker(canvas) {
   }
 
   this.onMouseDown = (e) => {
-    if (canvas.guide) { canvas.toggleGuide(false)}
+    if (_canvas.guide) { _canvas.toggleGuide(false)}
     const pos = this.mousePick(e.clientX, e.clientY)
     this.select(pos.x, pos.y, 1, 1)
     this.mouseFrom = pos
@@ -162,8 +162,8 @@ function Marker(canvas) {
     this.mouseFrom = null
   }
 
-  this.mousePick = (x, y, w = canvas.tile.w, h = canvas.tile.h) => {
-    const rect = canvas.el.getBoundingClientRect();
+  this.mousePick = (x, y, w = _canvas.tile.w, h = _canvas.tile.h) => {
+    const rect = _canvas.el.getBoundingClientRect();
     return { x: parseInt(((x - rect.left)) / w) , y: parseInt(((y - rect.top )) / h) }
   }
 
@@ -177,6 +177,7 @@ function Marker(canvas) {
 
   this.add = function(){
     this.markers.push(this.getNewMarker()) 
+    _canvas.stepcursor.add(_canvas.globalIdx)
   }
 
   this.moveTo = (x, y) => {
@@ -185,8 +186,8 @@ function Marker(canvas) {
 
   this.modNoteRatio = function(mod = 0) {
     this.setNoteRatio(this.markers[this.active]["control"]["noteRatio"] + mod)
-    // canvas.stepcounter.resetTarget(this.active)
-    // canvas.stepcursor.reset(this.active)
+    // _canvas.stepcounter.resetTarget(this.active)
+    // _canvas.stepcursor.reset(this.active)
   }
 
   this.setNoteRatio = function(value) {
@@ -297,12 +298,12 @@ function Marker(canvas) {
 
   this.read = function () {
     let active = this.markers[this.active] 
-    return canvas.seequencer.glyphAt(active.x, active.y)
+    return _canvas.seequencer.glyphAt(active.x, active.y)
   }
 
   this.write = function (g) {
     let active = this.markers[this.active]
-    if (canvas.seequencer.write(active.x, active.y, g) && this.mode === 1) {
+    if (_canvas.seequencer.write(active.x, active.y, g) && this.mode === 1) {
       this.move(1, 0)
     }
   }
@@ -310,11 +311,11 @@ function Marker(canvas) {
   this.erase = function(){
     let filteredCursor, filterStep, filterStepCounter
     filteredCursor = this.markers.filter( ( cs ) => cs.i !== this.markers[ this.active ].i)
-    if( canvas.stepcursor.steps[this.active]){
-      filterStep = canvas.stepcursor.steps.filter( ( step ) => step.i !== canvas.stepcursor.steps[ this.active ].i)
-      filterStepCounter = canvas.stepcounter.counter.filter( ( c ) => c.i !== canvas.stepcounter.counter[ this.active ].i)
-      canvas.stepcursor.steps = filterStep
-      canvas.stepcounter.counter = filterStepCounter
+    if( _canvas.stepcursor.steps[this.active]){
+      filterStep = _canvas.stepcursor.steps.filter( ( step ) => step.i !== _canvas.stepcursor.steps[ this.active ].i)
+      filterStepCounter = _canvas.stepcounter.counter.filter( ( c ) => c.i !== _canvas.stepcounter.counter[ this.active ].i)
+      _canvas.stepcursor.steps = filterStep
+      _canvas.stepcounter.counter = filterStepCounter
     }
     this.markers = filteredCursor
     this.active = 0
