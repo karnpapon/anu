@@ -129,14 +129,6 @@ function Commander(canvas) {
       this.doWhen(event.shiftKey, () => {
         const { marker, stepcounter,  stepcursor } = canvas
 
-        // (Shift-Enter) get step into marker range.
-        if (event.keyCode === 13) {
-          const active_index = stepcounter.counter.length > 1 ? marker.active : 0
-          stepcounter.isSnappedOnMarker = !stepcounter.isSnappedOnMarker
-          stepcounter.counter[active_index].i = marker.active;
-          return;
-        }
-
         // ( Shift-{ ) change note-ratio.
         if (event.keyCode === 219) {
           canvas.marker.modNoteRatio(-1)
@@ -277,7 +269,6 @@ function Commander(canvas) {
         // (;) toggle mono step mode
         if (event.keyCode === 186 ) {
           canvas.marker.markers.forEach(m => m["control"]["muted"] = !canvas.monoStepMode)
-          if (!canvas.stepcounter.isSnappedOnMarker) return;
           canvas.monoStepMode = !canvas.monoStepMode
           event.preventDefault();
           return;

@@ -51,7 +51,6 @@ const LIBRARY = {
 
   "Option-Tab": { "info": "change selected markers" },
 
-  "Shift-Return": { "info": "[*] toggle snap step to marker range" },
   "Shift-Arrow": { "info": "[*] incr/decr marker range" },
   "Shift-Arrow-Cmd": { "info": "[*] jump incr/decr marker range" },
 }
