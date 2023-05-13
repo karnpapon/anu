@@ -39,7 +39,8 @@ const LIBRARY = {
   "x": { "info": "[*] mute" },
   "'": { "info": "[*] replace marker block" },
   "> or <": { "info": "incr/decr BPM " },
-  "{ or }": { "info": "[*] incr/decr note-ratio (default 1/16)" },
+  "[ or ]": { "info": "[*] incr/decr note-ratio (default 1/16)" },
+  "{ or }": { "info": "[*] incr/decr note-ratio for ratcheting" },
   "?": { "info": "[*] show control informations" },
   ";": { "info": "toggle mono-step mode" },
   

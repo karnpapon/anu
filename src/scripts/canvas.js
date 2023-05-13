@@ -44,6 +44,8 @@ function Canvas () {
   this.notationMode = false
   this.monoStepMode = false
   this.globalIdx = 0
+  this.ratchetRatios = [1,2,4,8]
+  // this.ratchetRatios = [1,2,4,8,16,32,64,128]
 
   // -----------------------------
 
@@ -324,10 +326,10 @@ function Canvas () {
     // bottom_border
     const note_spaces1 = ((this.seequencer.w - LIBRARY_ENDNOTES_1.length) / 2) - 3
     // const note_spaces2 = ((this.seequencer.w - LIBRARY_ENDNOTES_2.length) / 2) - 3
-    this.write(`|${SPACE_GLYPH.repeat(this.seequencer.w - 7)}|`,2, operators.length + box.y+1, 99, 11, "input_mono_bold")
-    this.write(`|${SPACE_GLYPH.repeat(note_spaces1)}${LIBRARY_ENDNOTES_1}${SPACE_GLYPH.repeat(note_spaces1)}|`,2, operators.length + box.y+2, 99, 11, "input_mono_bold")
+    // this.write(`|${SPACE_GLYPH.repeat(this.seequencer.w - 7)}|`,2, operators.length + box.y+1, 99, 11, "input_mono_bold")
+    this.write(`|${SPACE_GLYPH.repeat(note_spaces1)}${LIBRARY_ENDNOTES_1}${SPACE_GLYPH.repeat(note_spaces1)}|`,2, operators.length + box.y+1, 99, 11, "input_mono_bold")
     // this.write(`|${SPACE_GLYPH.repeat(note_spaces2)}${LIBRARY_ENDNOTES_2}${SPACE_GLYPH.repeat(note_spaces2)}|`,2, operators.length + box.y+2, 99, 11, "input_mono_bold")
-    this.write(`${BOTTOM_BORDER_SYMBOL[0]}${BOTTOM_BORDER_SYMBOL[1].repeat(top_border)}${BOTTOM_BORDER_SYMBOL[2]}`,2, operators.length + box.y+3, 99, 11)
+    this.write(`${BOTTOM_BORDER_SYMBOL[0]}${BOTTOM_BORDER_SYMBOL[1].repeat(top_border)}${BOTTOM_BORDER_SYMBOL[2]}`,2, operators.length + box.y+2, 99, 11)
   }
 
   this.drawSprite = function (x, y, g, type, font_family = "input_mono_regular") {

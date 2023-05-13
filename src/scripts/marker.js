@@ -43,7 +43,8 @@ function Marker(_canvas) {
       control: {
         muted: false, 
         reverse: false,
-        noteRatio: 1
+        noteRatio: 1,
+        noteRatioRatchetIndex: 0
       },
       msg: {
         MIDI: { 
@@ -185,12 +186,25 @@ function Marker(_canvas) {
   }
 
   this.modNoteRatio = function(mod = 0) {
-    this.setNoteRatio(this.markers[this.active]["control"]["noteRatio"] + mod)
+    this.setNoteRatio(this.getCurrentMarkerControlByField("noteRatio") + mod)
   }
 
   this.setNoteRatio = function(value) {
     if (value) {this.markers[this.active]["control"]["noteRatio"] = clamp(value, 1, 16) }
-    client.console.currentNumber.innerText = `${this.markers[this.active]["control"]["noteRatio"]}:16`
+    client.console.currentNumber.innerText = `${this.getCurrentMarkerControlByField("noteRatio")}:16`
+  }
+
+  this.modRatchetNoteRatio = function(mod = 0) {
+    this.setRatchetNoteRatio(this.getCurrentMarkerControlByField("noteRatioRatchetIndex") + mod)
+  }
+
+  this.setRatchetNoteRatio = function(value) {
+    if (value || value === 0) {this.markers[this.active]["control"]["noteRatioRatchetIndex"] = clamp(value, 0, canvas.ratchetRatios.length - 1) }
+    client.console.currentNumber.innerText = `${this.getCurrentMarkerControlByField("noteRatio")}:16,${canvas.ratchetRatios[this.getCurrentMarkerControlByField("noteRatioRatchetIndex")]}`
+  }
+
+  this.getCurrentMarkerControlByField = function(field){
+    return this.markers[this.active]["control"][field]
   }
 
   this.scale = (w, h) => {
@@ -330,7 +344,7 @@ function Marker(_canvas) {
   }
 
   this.getStepLength = function(){
-    return `${this.markers[this.active].w}, ${this.markers[this.active].h}`
+    return `${this.markers[this.active].w},${this.markers[this.active].h}`
   }
 
   this.toRect = function () {

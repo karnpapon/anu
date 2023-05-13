@@ -7,9 +7,6 @@ function Osc (app) {
   this.stack = []
   this.port = null
   this.isPlayed = false
-  this.m_limit = 4
-  this.m_current = 0
-  this.gate = false
 
   // for preventing re-triggering (note latching) when noteRatio is not 1, 
   // eg. noteRatio = 4, will cause re-triggering 4 times since it's based-on clock's `tick` 

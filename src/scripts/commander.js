@@ -129,16 +129,18 @@ function Commander(canvas) {
       this.doWhen(event.shiftKey, () => {
         const { marker, stepcounter,  stepcursor } = canvas
 
-        // ( Shift-{ ) change note-ratio.
+        // ( Shift-{ ) decr note-ratio for ratcheting.
         if (event.keyCode === 219) {
-          canvas.marker.modNoteRatio(-1)
+          if (!canvas.isRatcheting) return 
+          canvas.marker.modRatchetNoteRatio(-1)
           event.preventDefault();
           return;
         }
   
-        // ( Shift-} ) change note-ratio.
+        // ( Shift-} ) incr note-ratio for ratcheting.
         if (event.keyCode === 221) {
-          canvas.marker.modNoteRatio(1)
+          if (!canvas.isRatcheting) return 
+          canvas.marker.modRatchetNoteRatio(1)
           event.preventDefault();
           return;
         }
@@ -231,13 +233,29 @@ function Commander(canvas) {
           canvas.isRatcheting = !canvas.isRatcheting
           if(canvas.isRatcheting){
             metronome.timerWorker.postMessage("ratchet");
+            client.console.currentNumber.innerText += `,${canvas.ratchetRatios[canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")]}`
           } else {
             metronome.timerWorker.postMessage("ratchet_stop"); 
+            client.console.currentNumber.innerText = `${canvas.marker.getCurrentMarkerControlByField("noteRatio")}:16`
           }
           event.preventDefault();
           return;
         }
+
+        // (]) decr note-ratio.
+        if (event.keyCode === 219) {
+          canvas.marker.modNoteRatio(-1)
+          event.preventDefault();
+          return;
+        }
   
+        // (]) incr note-ratio.
+        if (event.keyCode === 221) {
+          canvas.marker.modNoteRatio(1)
+          event.preventDefault();
+          return;
+        }
+
         // (o) OSC config.
         if (event.keyCode === 79 ) {
           displayer.displayMsg("osc");

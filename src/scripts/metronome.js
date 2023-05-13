@@ -74,18 +74,17 @@ function Metronome(_canvas) {
     // while there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     
-    while((this.nextRatchetingNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) && canvas.isRatcheting) {
-      var secondsPerBeat = 60.0 / this.tempo.value; 
-      this.nextRatchetingNoteTime += (0.25 * secondsPerBeat) / 4;
-      _canvas.io.osc.runstack()
-    }
-
     while (
       this.nextNoteTime <
       this.audioContext.currentTime + this.scheduleAheadTime
       ) {
       this.scheduleNote(this.current16thNote, this.nextNoteTime);
       this.nextNote();
+    }
+
+    while((this.nextRatchetingNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) && canvas.isRatcheting) {
+      this.nextRatchetingNoteTime += (0.25 * (60.0 / this.tempo.value)) / _canvas.ratchetRatios[_canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")];
+      _canvas.io.osc.runstack()
     }
   };
 
@@ -127,12 +126,6 @@ function Metronome(_canvas) {
     this.timerWorker.onmessage = function (e) {
       if (e.data == "tick") {
         metronome.scheduler();
-      } else if (e.data == "ratchet_start") { 
-        console.log("message: ratchet_start");
-        _canvas.isRatcheting = true
-      } else if (e.data == "ratchet_stop") { 
-        console.log("message: ratchet_stop");
-        _canvas.isRatcheting = false
       } else {
         console.log("message: " + e.data);
       }
