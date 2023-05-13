@@ -1,7 +1,7 @@
 "use strict";
 
 // implementation based on https://github.com/cwilso/metronome.
-function Metronome(canvas) {
+function Metronome(_canvas) {
   this.audioContext = null;
   this.unlocked = false;
   this.isPlaying = false; // Are we currently playing?
@@ -18,6 +18,7 @@ function Metronome(canvas) {
   this.scheduleAheadTime = 0.1; 
 
   this.nextNoteTime = 0.0; // when the next note is due.
+  this.nextRatchetingNoteTime = 0.0; 
   this.noteResolution = 0; // 0 == 16th, 1 == 8th, 2 == quarter note
   this.noteLength = 0.0; // length of "beep" (in seconds)
   this.last16thNoteDrawn = -1; // the last "box" we drew on the screen
@@ -27,7 +28,9 @@ function Metronome(canvas) {
   this.nextNote = function () {
     // Advance current note and time by a 16th note...
     var secondsPerBeat = 60.0 / this.tempo.value; // Notice this picks up the CURRENT tempo value to calculate beat length.
-    this.nextNoteTime += 0.25 * secondsPerBeat; // Add beat length to last beat time
+    this.nextNoteTime += (0.25 * secondsPerBeat); // Add beat length to last beat time
+    // this.nextRatchetingNoteTime += (0.25 * secondsPerBeat) / 2;
+
 
     this.current16thNote++; // Advance the beat number, wrap to zero
     if (this.current16thNote == 16) {
@@ -38,36 +41,15 @@ function Metronome(canvas) {
   this.scheduleNote = function (beatNumber, time) {
     // push the note on the queue, even if we're not playing.
     // for displaying tick.
-    this.notesInQueue.push({ note: beatNumber, time: time });
-    
-    // if (client.enableMetronome) {
-    //   // if ( (this.noteResolution==1) && (beatNumber%2))
-    //   //     return; // we're not playing non-8th 16th notes
-    //   // if ( (this.noteResolution==2) && (beatNumber%4))
-    //   //     return; // we're not playing non-quarter 8th notes
-
+    // this.notesInQueue.push({ note: beatNumber, time: time });
     let osc = this.audioContext.createOscillator();
-    // let gain = this.audioContext.createGain();
-    // gain.gain.value = 0.25;
-    // osc.connect(gain);
     osc.connect(this.audioContext.destination);
-
-    // if (beatNumber % 16 === 0)
-    //   // beat 0 == high pitch
-    //   osc.frequency.value = 880.0;
-    // else if (beatNumber % 4 === 0)
-    //   // quarter notes = medium pitch
-    //   osc.frequency.value = 440.0;
-    // // other 16th notes = low pitch
-    // else osc.frequency.value = 220.0;
-
     osc.start(time);
     osc.stop(time + this.noteLength);
     osc.onended = () => { 
-      // canvas.io.midi.sendClock()
-      canvas.run() 
+      // _canvas.io.midi.sendClock()
+      _canvas.run() 
     }
-    // }
   };
 
   this.set = function(value) {
@@ -91,6 +73,13 @@ function Metronome(canvas) {
   this.scheduler = function () {
     // while there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
+    
+    while((this.nextRatchetingNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) && canvas.isRatcheting) {
+      var secondsPerBeat = 60.0 / this.tempo.value; 
+      this.nextRatchetingNoteTime += (0.25 * secondsPerBeat) / 4;
+      _canvas.io.osc.runstack()
+    }
+
     while (
       this.nextNoteTime <
       this.audioContext.currentTime + this.scheduleAheadTime
@@ -114,7 +103,7 @@ function Metronome(canvas) {
       this.unlocked = true;
     }
     
-    if (!canvas.clock.isPaused) {
+    if (!_canvas.clock.isPaused) {
       this.current16thNote = 0;
       this.nextNoteTime = this.audioContext.currentTime;
       metronome.timerWorker.postMessage("start");
@@ -123,50 +112,8 @@ function Metronome(canvas) {
 
   this.stop = function(){
     this.timerWorker.postMessage("stop"); 
+    this.timerWorker.postMessage("ratchet_stop"); 
   }
-
-  // function draw() {
-  //   let currentNote = metronome.last16thNoteDrawn;
-  //   if (metronome.audioContext) {
-  //     const currentTime = metronome.audioContext.currentTime;
-  //     while (
-  //       metronome.notesInQueue.length &&
-  //       metronome.notesInQueue[0].time < currentTime
-  //     ) {
-  //       currentNote = metronome.notesInQueue[0].note;
-  //       metronome.notesInQueue.splice(0, 1); // remove note from queue
-  //     }
-  //     if (metronome.last16thNoteDrawn != currentNote) {
-  //       for (var i = 0; i < 16; i++) {
-  //         if(currentNote === i){
-  //           if(metronome.noteRatio !== 16) {
-  //             if(currentNote % metronome.noteRatio === 0){
-  //               // canvas.io.midi.sendClock()
-  //               // canvas.run()
-  //               // if (client.enableMetronome) {
-  //                 // let osc = metronome.audioContext.createOscillator();
-  //                 // let gain = metronome.audioContext.createGain();
-  //                 // gain.gain.value = 0.0;
-  //                 // osc.connect(gain);
-  //                 // canvas.run()
-  //                 // osc.connect(metronome.audioContext.destination);
-  //                 // osc.frequency.value = 440.0;
-  //                 // osc.start(metronome.nextNoteTime);
-  //                 // osc.stop(metronome.nextNoteTime + metronome.noteLength);
-  //                 // osc.onended = () => {
-  //                   // window.__TAURI__.invoke("plugin:osc|send", { rpc: { path: "/test_metro",  args: "0.1"} });
-  //                 // }
-  //               // }
-  //             } 
-  //           } 
-  //         }
-  //       }
-  //       metronome.last16thNoteDrawn = currentNote;
-  //     }
-  //   }
-
-  //   window.requestAnimationFrame(draw);
-  // };
 
   function loadWebWorker(worker) {
     const code = worker.toString();
@@ -175,12 +122,17 @@ function Metronome(canvas) {
   }
 
   this.init = function () {
-    // window.requestAnimationFrame(draw);
     const workerScript = document.querySelector('#metronomeWorker').textContent
     this.timerWorker = loadWebWorker(workerScript)
     this.timerWorker.onmessage = function (e) {
       if (e.data == "tick") {
         metronome.scheduler();
+      } else if (e.data == "ratchet_start") { 
+        console.log("message: ratchet_start");
+        _canvas.isRatcheting = true
+      } else if (e.data == "ratchet_stop") { 
+        console.log("message: ratchet_stop");
+        _canvas.isRatcheting = false
       } else {
         console.log("message: " + e.data);
       }

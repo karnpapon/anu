@@ -35,6 +35,7 @@ for more in-depth details/implementations, please watch: [[ Regular Expression a
 - fault-tolerance regex
 - live-performance oriented
 - adjustable note-ratio per marker
+- [!experimental] ratcheting 
 
 ## building the native app
 

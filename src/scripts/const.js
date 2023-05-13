@@ -35,6 +35,7 @@ const LIBRARY = {
   "e": { "info": "[*] rename marker" },
   "o": { "info": "[*] set osc msg" },
   "m": { "info": "[*] set midi msg" },
+  "c": { "info": "[*] ratcheting" },
   "x": { "info": "[*] mute" },
   "'": { "info": "[*] replace marker block" },
   "> or <": { "info": "incr/decr BPM " },

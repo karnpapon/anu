@@ -7,6 +7,9 @@ function Osc (app) {
   this.stack = []
   this.port = null
   this.isPlayed = false
+  this.m_limit = 4
+  this.m_current = 0
+  this.gate = false
 
   // for preventing re-triggering (note latching) when noteRatio is not 1, 
   // eg. noteRatio = 4, will cause re-triggering 4 times since it's based-on clock's `tick` 
@@ -22,12 +25,16 @@ function Osc (app) {
     this.stack = []
   }
 
-  this.run = function () {
+  this.runstack = function() {
     for (const id in this.stack) {
       const item = this.stack[id]
       if (this.isPlayed === false) { this.trigger(item) }
     }
+  }
 
+  this.run = function () {
+    this.runstack()
+	
     this.notelength--
     this.notelength = ((this.notelength % this.noteRatio) + this.noteRatio) % this.noteRatio
     if(this.notelength === 0) { this.isPlayed = false }
@@ -42,7 +49,7 @@ function Osc (app) {
   }
   
   this.trigger = function (item) {
-    this.isPlayed = true
+    if(!canvas.isRatcheting) { this.isPlayed = true }
     if (!item.msg) { console.warn('OSC', 'Empty message'); return }
     this.sendOsc(item.path, item.msg)
   }

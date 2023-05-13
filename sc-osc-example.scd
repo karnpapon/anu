@@ -2,7 +2,7 @@
 (
 MIDIClient.init;
 // s.options.outDevice = "Scarlett 2i4 USB";
-s.options.outDevice ="QuickTime Output";
+s.options.outDevice ="MacBook Pro Speakers";
 s.options.numInputBusChannels = 0;
 s.boot;
 

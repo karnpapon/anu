@@ -225,6 +225,18 @@ function Commander(canvas) {
           event.preventDefault();
           return;
         }
+
+        // (c) toggle ratcheting
+        if (event.keyCode === 67) {
+          canvas.isRatcheting = !canvas.isRatcheting
+          if(canvas.isRatcheting){
+            metronome.timerWorker.postMessage("ratchet");
+          } else {
+            metronome.timerWorker.postMessage("ratchet_stop"); 
+          }
+          event.preventDefault();
+          return;
+        }
   
         // (o) OSC config.
         if (event.keyCode === 79 ) {
