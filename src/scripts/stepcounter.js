@@ -88,7 +88,6 @@ function StepCounter(canvas) {
   }
 
   function forthMonoMode(c, marker){
-    // TODO: first matched index not trigger
     c.x++
     if (marker.i === c.i) {
       c.isOverlap = canvas.isOverlapArea(c.x, c.y)

@@ -21,8 +21,8 @@ for more in-depth details/implementations, please watch: [[ Regular Expression a
 
 ## usages
 - [OSC]: sending OSC message (based-on [`oscd`](https://github.com/karnpapon/oscd))
-  - in case of sending more than single batch of messages (like Arpeggiator), use `|` as a delimiter, eg. `"msg1" 440.0 | "msg2" 450.0` will send `"msg1" 440.0` and `"msg2" 450.0`, respectively when triggering. 
-  - within a single batch of messages, you can have any type that OSC is supported including an Array ([see complete support list here](https://github.com/karnpapon/oscd#usage)), which means you can send something like `"msg1" 440.0 [12,44,true] | "msg2" 450.0 [30,20.1,"msg inside an array"]`
+  - in case of sending sequencial messages (like Arpeggiator), use `|` as a delimiter, eg. `"msg1" 440.0 | "msg2" 450.0` will send `"msg1" 440.0` and `"msg2" 450.0`, respectively when triggering. 
+  - within sequencial messages, you can have any type that OSC is supported including an Array ([see complete support list here](https://github.com/karnpapon/oscd#usage)), which means you can send something like `"msg1" 440.0 [12,44,true] | "msg2" 450.0 [30,20.1,"msg inside an array"]`
 
 ## features
 - lightweight and cross-platform (application size only ~9mb)
@@ -31,10 +31,10 @@ for more in-depth details/implementations, please watch: [[ Regular Expression a
 - precise clock scheduling
 - mutable marker
 - reversable marker
-- adjustable BPM (without jittering)
+- adjustable BPM (without jittery)
 - fault-tolerance regex
 - live-performance oriented
-- adjustable note-ratio per marker (under developing)
+- adjustable note-ratio per marker
 
 ## building the native app
 
