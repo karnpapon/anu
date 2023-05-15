@@ -40,11 +40,10 @@ function Canvas () {
   this.scale = window.devicePixelRatio
   this.guide = true
   this.isShowMarked = true
-  this.isRatcheting = false
   this.notationMode = false
   this.monoStepMode = false
   this.globalIdx = 0
-  this.ratchetRatios = [1,2,4,8]
+  this.ratchetRatios = [1,2,4,6,8,12]
   // this.ratchetRatios = [1,2,4,8,16,32,64,128]
 
   // -----------------------------
@@ -76,14 +75,8 @@ function Canvas () {
     this.clock.run()
     this.seequencer.run()
     this.stepcounter.run()
-    this.update()
-
-
-    // FIXME: 
-    // if move this line before this.update() when in mono-step mode it'll will trigger all notes but visually delay (you'll hear the sound after it's triggering)
-    // otherwise the first note will be ignored, but visually correct.
     this.stepcursor.trigger() 
-
+    this.update()
     this.io.run()
   }
   

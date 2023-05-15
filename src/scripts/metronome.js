@@ -29,7 +29,7 @@ function Metronome(_canvas) {
     // Advance current note and time by a 16th note...
     var secondsPerBeat = 60.0 / this.tempo.value; // Notice this picks up the CURRENT tempo value to calculate beat length.
     this.nextNoteTime += (0.25 * secondsPerBeat); // Add beat length to last beat time
-    // this.nextRatchetingNoteTime += (0.25 * secondsPerBeat) / 2;
+    // console.log("this.nextRatchetingNoteTime", this.nextRatchetingNoteTime)
 
 
     this.current16thNote++; // Advance the beat number, wrap to zero
@@ -73,7 +73,6 @@ function Metronome(_canvas) {
   this.scheduler = function () {
     // while there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
-    
     while (
       this.nextNoteTime <
       this.audioContext.currentTime + this.scheduleAheadTime
@@ -81,18 +80,27 @@ function Metronome(_canvas) {
       this.scheduleNote(this.current16thNote, this.nextNoteTime);
       this.nextNote();
     }
-
-    while((this.nextRatchetingNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) && canvas.isRatcheting) {
-      this.nextRatchetingNoteTime += (0.25 * (60.0 / this.tempo.value)) / _canvas.ratchetRatios[_canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")];
-      _canvas.io.osc.runstack()
-    }
   };
+
+  this.scheduleRatcheting = function(){
+    while(
+      this.nextRatchetingNoteTime < 
+      this.audioContext.currentTime + 0.01
+      ) {
+        let osc = this.audioContext.createOscillator();
+        osc.connect(this.audioContext.destination);
+        osc.start(this.nextRatchetingNoteTime);
+        osc.stop(this.nextRatchetingNoteTime + this.noteLength);
+        osc.onended = () => { _canvas.io.osc.sendCurrentMsg() }
+        this.nextRatchetingNoteTime += (0.5 * (0.25 * (60.0 / this.tempo.value))) / _canvas.ratchetRatios[_canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")];
+      }
+  }
 
   this.play = function () {
     if (!this.audioContext) {
       this.audioContext = new AudioContext();
     }
-
+    
     if (!this.unlocked) {
       // play silent buffer to unlock the audio
       const buffer = this.audioContext.createBuffer(1, 1, 22050);
@@ -105,13 +113,16 @@ function Metronome(_canvas) {
     if (!_canvas.clock.isPaused) {
       this.current16thNote = 0;
       this.nextNoteTime = this.audioContext.currentTime;
+      this.nextRatchetingNoteTime = this.audioContext.currentTime;
       metronome.timerWorker.postMessage("start");
+      _canvas.marker.anyRatcheting() ? metronome.timerWorker.postMessage("ratchet"):null;
     } 
   };
 
   this.stop = function(){
     this.timerWorker.postMessage("stop"); 
     this.timerWorker.postMessage("ratchet_stop"); 
+    client.console.currentNumber.innerText = `${canvas.marker.getCurrentMarkerControlByField("noteRatio")}:16`
   }
 
   function loadWebWorker(worker) {
@@ -126,7 +137,9 @@ function Metronome(_canvas) {
     this.timerWorker.onmessage = function (e) {
       if (e.data == "tick") {
         metronome.scheduler();
-      } else {
+      } else if (e.data === "ratchet_start") {
+        metronome.scheduleRatcheting(); 
+      } else  {
         console.log("message: " + e.data);
       }
     };

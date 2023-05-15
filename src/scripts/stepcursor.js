@@ -52,7 +52,7 @@ function StepCursor(canvas) {
     
     if(client.console.isOSCToggled){
       const { OSC } = marker.msg
-      canvas.io.osc.push('/' + OSC.path, OSC.formattedMsg[OSC.counter % OSC.formattedMsg.length], marker["control"]["noteRatio"] )
+      canvas.io.osc.push('/' + OSC.path, OSC.formattedMsg[OSC.counter % OSC.formattedMsg.length], marker["control"]["noteRatio"], marker["control"]["isRatcheting"] )
       OSC.counter += marker["control"]["reverse"]? -1 : 1
       OSC.counter = ((OSC.counter % OSC.formattedMsg.length) + OSC.formattedMsg.length) % OSC.formattedMsg.length
     }

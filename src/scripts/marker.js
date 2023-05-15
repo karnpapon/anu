@@ -43,6 +43,7 @@ function Marker(_canvas) {
       control: {
         muted: false, 
         reverse: false,
+        isRatcheting: false,
         noteRatio: 1,
         noteRatioRatchetIndex: 0
       },
@@ -91,7 +92,7 @@ function Marker(_canvas) {
     currentMarker.h = rect.h
     this.calculateBounds()
     this.findOverlapArea(rect)
-    client.console.cursorPosition.innerText = `${_canvas.marker.getActivePosition()}`
+    client.console.cursorPosition.innerText = `${this.getActivePosition()}`
     client.console.highlightLength.innerText = (w >= 0 && h >= 0) ? `${this.getStepLength()}` : "1,1"
     _canvas.update()
   }
@@ -149,6 +150,10 @@ function Marker(_canvas) {
     this.mouseFrom = pos
   }
 
+  this.anyRatcheting = function(){
+    return this.markers.some(m => m["control"]["isRatcheting"])
+  }
+
   this.currentMarker = () => {
     return this.markers[this.active]
   }
@@ -190,8 +195,10 @@ function Marker(_canvas) {
   }
 
   this.setNoteRatio = function(value) {
+    let ratchet = ""
     if (value) {this.markers[this.active]["control"]["noteRatio"] = clamp(value, 1, 16) }
-    client.console.currentNumber.innerText = `${this.getCurrentMarkerControlByField("noteRatio")}:16`
+    if (canvas.marker.getCurrentMarkerControlByField("isRatcheting")) { ratchet = `,${canvas.ratchetRatios[this.getCurrentMarkerControlByField("noteRatioRatchetIndex")]}`}
+    client.console.currentNumber.innerText = `${this.getCurrentMarkerControlByField("noteRatio")}:16${ratchet}`
   }
 
   this.modRatchetNoteRatio = function(mod = 0) {

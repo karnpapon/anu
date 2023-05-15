@@ -131,7 +131,7 @@ function Commander(canvas) {
 
         // ( Shift-{ ) decr note-ratio for ratcheting.
         if (event.keyCode === 219) {
-          if (!canvas.isRatcheting) return 
+          if (!canvas.marker.getCurrentMarkerControlByField("isRatcheting")) return 
           canvas.marker.modRatchetNoteRatio(-1)
           event.preventDefault();
           return;
@@ -139,7 +139,7 @@ function Commander(canvas) {
   
         // ( Shift-} ) incr note-ratio for ratcheting.
         if (event.keyCode === 221) {
-          if (!canvas.isRatcheting) return 
+          if (!canvas.marker.getCurrentMarkerControlByField("isRatcheting")) return 
           canvas.marker.modRatchetNoteRatio(1)
           event.preventDefault();
           return;
@@ -230,8 +230,9 @@ function Commander(canvas) {
 
         // (c) toggle ratcheting
         if (event.keyCode === 67) {
-          canvas.isRatcheting = !canvas.isRatcheting
-          if(canvas.isRatcheting){
+          let currentMarker = canvas.marker.currentMarker();
+          currentMarker["control"]["isRatcheting"] = !currentMarker["control"]["isRatcheting"]
+          if(currentMarker["control"]["isRatcheting"]){
             metronome.timerWorker.postMessage("ratchet");
             client.console.currentNumber.innerText += `,${canvas.ratchetRatios[canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")]}`
           } else {
@@ -284,6 +285,7 @@ function Commander(canvas) {
         // (Spacebar) Play/Pause
         if (event.key === " " && !displayer.isDisplayInputToggled) {
           canvas.clock.togglePlay();
+          client.console.refresh();
           event.preventDefault();
           return;
         }
@@ -420,6 +422,7 @@ function Commander(canvas) {
     if( this.switchFlag ){
       if( this.switchFlag && this.altFlag ){
         canvas.marker.switch(this.switchCounter % canvas.marker.markers.length)
+        client.console.refresh()
         this.altFlag = false
         displayer.displayMsg('active-marker')
       } else {

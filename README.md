@@ -35,6 +35,7 @@ for more in-depth details/implementations, please watch: [[ Regular Expression a
 - fault-tolerance regex
 - live-performance oriented
 - adjustable note-ratio per marker
+- mono step (when finish running current marker it'll automatically run the next marker, and so on, basically the marker will run one-by-one)
 - [!experimental] ratcheting 
 
 ## building the native app

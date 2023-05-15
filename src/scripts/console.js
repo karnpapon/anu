@@ -243,6 +243,14 @@ function Console(app) {
     return this.isInputFocused || this.isRegExpFocused
   }
 
+  this.refresh = function(){
+    this.cursorPosition.innerText = `${canvas.marker.getActivePosition()}`
+    this.highlightLength.innerText = `${canvas.marker.getStepLength()}`
+    let ratchet = ""
+    if (canvas.marker.getCurrentMarkerControlByField("isRatcheting")) { ratchet = `,${canvas.ratchetRatios[canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")]}`}
+    this.currentNumber.innerText = `${canvas.marker.getCurrentMarkerControlByField("noteRatio")}:16${ratchet}`
+  }
+
   this.toggleInsert = function (el, caret, condition) {
     if (condition) {
       el.classList.remove("disable-input")

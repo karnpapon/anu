@@ -27,7 +27,7 @@
     <script type="text/javascript" src="scripts/stepcursor.js"></script>
 
     <script id="metronomeWorker" type="javascript/worker">
-      var timerID=null; var interval=100; 
+      var timerID=null; var interval=100; var timerRatchetID=null; 
       onmessage = (e) => { 
         if (e.data=="start") { 
           console.log("metro start")
@@ -43,10 +43,13 @@
           clearInterval(timerID);
           timerID=null;
         } else if (e.data=="ratchet") {
-          postMessage("ratchet_start")
+          console.log("ratchet_start...")
+          timerRatchetID=setInterval(function(){postMessage("ratchet_start");},interval)
         } else if (e.data=="ratchet_stop") {
           postMessage("ratchet_stop")
-        }
+          clearInterval(timerRatchetID);
+          timerRatchetID=null;
+        } 
       }
     </script>
 
