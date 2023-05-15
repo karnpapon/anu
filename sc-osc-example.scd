@@ -53,6 +53,14 @@ SynthDef(\drm, {|out, pew=1, sustain=1, pan, fed=0, tun|
 	sound = LPF.ar(SinOscFB.ar(XLine.ar(freq.expexp(10, 2000, 1000, 8000), freq, 0.025/pew), fed), 9000);
 	OffsetOut.ar(out, CleanPan.ar(sound, 2, pan, env))
 }).add;
+
+// testing sound
+SynthDef(\metro, {
+	var sig = SinOsc.ar(330,0);
+	var env = EnvGen.kr(Env.perc(0.01, 0.125, 1, -4), doneAction: 2);
+	sig = sig * env;
+	Out.ar(0, sig!2);
+}).add
 )
 
 // [5]: setup mixer (ddwMixerChannel: https://github.com/supercollider-quarks/ddwMixerChannel)
@@ -282,5 +290,9 @@ OSCdef(\anu_demo_corpus, {|msg, time, addr, recvPort|
 	])
 	)
 },'/demo_corpus');
+
+OSCdef(\anu_demo_ss, {|msg, time, addr, recvPort|
+	(Synth(\metro));
+},'/demo_ss');
 )
 

@@ -31,6 +31,7 @@
 - customizable fetch results areas.
 - user-provided input
 - colorizable marker.
+- web-editor for customize color theme
 - notation only mode.
 - scriptable marker control
 - auto-envelope based-on phonetic glyph

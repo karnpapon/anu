@@ -85,14 +85,14 @@ function Metronome(_canvas) {
   this.scheduleRatcheting = function(){
     while(
       this.nextRatchetingNoteTime < 
-      this.audioContext.currentTime + 0.01
+      this.audioContext.currentTime + this.scheduleAheadTime
       ) {
         let osc = this.audioContext.createOscillator();
         osc.connect(this.audioContext.destination);
         osc.start(this.nextRatchetingNoteTime);
         osc.stop(this.nextRatchetingNoteTime + this.noteLength);
         osc.onended = () => { _canvas.io.osc.sendCurrentMsg() }
-        this.nextRatchetingNoteTime += (0.5 * (0.25 * (60.0 / this.tempo.value))) / _canvas.ratchetRatios[_canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")];
+        this.nextRatchetingNoteTime += ((0.25 * (60.0 / this.tempo.value))) / _canvas.ratchetRatios[_canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")];
       }
   }
 

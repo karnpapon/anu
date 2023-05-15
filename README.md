@@ -36,7 +36,7 @@ for more in-depth details/implementations, please watch: [[ Regular Expression a
 - live-performance oriented
 - adjustable note-ratio per marker
 - mono step (when finish running current marker it'll automatically run the next marker, and so on, basically the marker will run one-by-one)
-- [!experimental] ratcheting 
+- [!experimental] [ratcheting](https://learningmodular.com/glossary/ratcheting/)
 
 ## building the native app
 
@@ -48,7 +48,7 @@ for more in-depth details/implementations, please watch: [[ Regular Expression a
 - `yarn dev`, for development
 
 ## caveats
-- cannot build on `aarch64` and `arm`, since it's blocked by `linuxdeploy`. [#4174](https://github.com/tauri-apps/tauri/issues/4174#issuecomment-1134954542) [#175](https://github.com/linuxdeploy/linuxdeploy/issues/175)
+- cannot be built on `aarch64` and `arm`, since it's blocked by `linuxdeploy`. [#4174](https://github.com/tauri-apps/tauri/issues/4174#issuecomment-1134954542) [#175](https://github.com/linuxdeploy/linuxdeploy/issues/175)
 
 ## inspirations
 draw an inspirations from Xenakis's work [Achorripsis](https://muse.jhu.edu/article/7871/summary)(1956) and Esoteric Environment like [Orca](https://hundredrabbits.itch.io/orca) also others obsoleted music software.
