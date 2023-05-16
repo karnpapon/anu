@@ -2,6 +2,8 @@
 
 # `anu`
 
+watch talk: [[ Regular Expression as an Irregular Musical Expression ]](https://www.youtube.com/watch?v=kXfi4FhzCi8), @ CreativeCoding meetup 2023, Thailand (organized by [Creatorsgarten](https://creatorsgarten.org/))
+
 a tiny backend-agnostic step-sequencer/live-coding environment that harnesses the power of matching patterns ([RegEx](https://regexr.com)) to create triggers. as the name suggests "anu" (or "อนุ"), which in Thai grammar denotes a prefix meaning "small", "sub" or "minor". It can be prefixed(compatible) with any others software/hardware that support [ OSC ](https://en.wikipedia.org/wiki/Open_Sound_Control) or [MIDI](https://en.wikipedia.org/wiki/MIDI) protocol (more to be implemented).
  
 unlike others conventional step-sequencers, "anu" explore a new musical expressions and territories, while still balancing deterministic and stochastic processes (previously, this project have been developed under the name "seeq").
@@ -15,9 +17,6 @@ written in plain JavaScript with dependencies as less as possible in minds. powe
 <img src="./src/media/images/anu-ss-1.gif"/>
 <img src="./src/media/images/anu-ss-2.gif"/>
 <img src="./src/media/images/anu-ss-3.gif"/>
-
-
-for more in-depth details/implementations, please watch: [[ Regular Expression as an Irregular Musical Expression ]](https://www.youtube.com/watch?v=kXfi4FhzCi8), @ CreativeCoding meetup 2023, Thailand (organized by [Creatorsgarten](https://creatorsgarten.org/))
 
 ## usages
 - [OSC]: sending OSC message (based-on [`oscd`](https://github.com/karnpapon/oscd))
