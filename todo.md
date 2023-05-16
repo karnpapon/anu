@@ -20,18 +20,17 @@
 - ~~fix reversed marker not working correctly when h > 1~~
 - ~~fix unintended retriggering when note-ratio is high  (step is slow)~~
 - ~~remove "add step" feature, since its hard to manage trigger length (slow step)~~
+- ~~marker switcher (Arpeggiator alike) mode~~
 
 - customizable osc port / midi-out device
 - ratcheting trigger
 - osc evaluating(when hit Return) somehow mismatch current marker with another marker.
 
 # TBD
-- marker switcher (Arpeggiator alike) mode
 - vim keybinding mode
 - customizable fetch results areas.
 - user-provided input
-- colorizable marker.
-- web-editor for customize color theme
+- colorizable marker (web-editor for customize color theme)
 - notation only mode.
 - scriptable marker control
 - auto-envelope based-on phonetic glyph

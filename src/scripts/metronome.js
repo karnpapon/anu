@@ -115,13 +115,13 @@ function Metronome(_canvas) {
       this.nextNoteTime = this.audioContext.currentTime;
       this.nextRatchetingNoteTime = this.audioContext.currentTime;
       metronome.timerWorker.postMessage("start");
-      _canvas.marker.anyRatcheting() ? metronome.timerWorker.postMessage("ratchet"):null;
+      _canvas.marker.anyRatcheting() ? metronome.timerWorker.postMessage("start_ratchet"):null;
     } 
   };
 
   this.stop = function(){
     this.timerWorker.postMessage("stop"); 
-    this.timerWorker.postMessage("ratchet_stop"); 
+    this.timerWorker.postMessage("stop_ratchet"); 
     client.console.currentNumber.innerText = `${canvas.marker.getCurrentMarkerControlByField("noteRatio")}:16`
   }
 
@@ -137,7 +137,7 @@ function Metronome(_canvas) {
     this.timerWorker.onmessage = function (e) {
       if (e.data == "tick") {
         metronome.scheduler();
-      } else if (e.data === "ratchet_start") {
+      } else if (e.data === "tick_ratchet") {
         metronome.scheduleRatcheting(); 
       } else  {
         console.log("message: " + e.data);

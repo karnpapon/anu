@@ -42,11 +42,10 @@
           console.log("metro stop")
           clearInterval(timerID);
           timerID=null;
-        } else if (e.data=="ratchet") {
-          console.log("ratchet_start...")
-          timerRatchetID=setInterval(function(){postMessage("ratchet_start");},interval)
-        } else if (e.data=="ratchet_stop") {
-          postMessage("ratchet_stop")
+        } else if (e.data=="start_ratchet") {
+          timerRatchetID=setInterval(function(){postMessage("tick_ratchet");},interval)
+        } else if (e.data=="stop_ratchet") {
+          postMessage("stop_ratchet")
           clearInterval(timerRatchetID);
           timerRatchetID=null;
         } 

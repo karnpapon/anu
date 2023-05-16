@@ -233,10 +233,10 @@ function Commander(canvas) {
           let currentMarker = canvas.marker.currentMarker();
           currentMarker["control"]["isRatcheting"] = !currentMarker["control"]["isRatcheting"]
           if(currentMarker["control"]["isRatcheting"]){
-            metronome.timerWorker.postMessage("ratchet");
+            metronome.timerWorker.postMessage("start_ratchet");
             client.console.currentNumber.innerText += `,${canvas.ratchetRatios[canvas.marker.getCurrentMarkerControlByField("noteRatioRatchetIndex")]}`
           } else {
-            metronome.timerWorker.postMessage("ratchet_stop"); 
+            metronome.timerWorker.postMessage("stop_ratchet"); 
             client.console.currentNumber.innerText = `${canvas.marker.getCurrentMarkerControlByField("noteRatio")}:16`
           }
           event.preventDefault();
