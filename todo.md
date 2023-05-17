@@ -27,6 +27,7 @@
 - osc evaluating(when hit Return) somehow mismatch current marker with another marker.
 
 # TBD
+- parameter-lock
 - vim keybinding mode
 - customizable fetch results areas.
 - user-provided input

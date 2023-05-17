@@ -9,8 +9,7 @@
     "build": "tauri build",
     "reInstall": "rm -rf node_modules && rm -rf package-lock.json && npm install",
     "tauri": "tauri",
-    "generate-icon": "tauri icon",
-    "package": "pkg package.json --output src-tauri/binaries/my-sidecar && node scripts/move-binary.js"
+    "generate-icon": "tauri icon"
   },
   "license": "CC0-1.0",
   "repository": "",
