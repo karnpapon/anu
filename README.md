@@ -37,6 +37,9 @@ watch talk: [[ Regular Expression as an Irregular Musical Expression ]](https://
 - mono step (when finish running current marker it'll automatically run the next marker, and so on, basically the marker will run one-by-one)
 - [!experimental] [ratcheting](https://learningmodular.com/glossary/ratcheting/)
 
+## download
+- [download latest installer](https://github.com/karnpapon/anu/releases), support all major platforms(OSX/WIN/LINUX)
+
 ## building the native app
 
 - [Install Rust/Cargo](https://www.rust-lang.org/learn/get-started)
